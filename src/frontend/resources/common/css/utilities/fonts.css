@@ -1,0 +1,20 @@
+@font-face {
+    font-family:"IBMPlexSans";
+    font-style:normal;
+    font-weight:400;
+    src:url({URL_RESOURCES}/common/fonts/IBMPlexSans-Regular.woff2) format('woff2');
+}
+
+@font-face {
+    font-family:"IBMPlexSans";
+    font-style:semibold;
+    font-weight:600;
+    src:url({URL_RESOURCES}/common/fonts/IBMPlexSans-Semibold.woff2) format('woff2');
+}
+
+@font-face {
+    font-family:"IBMPlexSans";
+    font-style:bold;
+    font-weight:700;
+    src:url({URL_RESOURCES}/common/fonts/IBMPlexSans-Bold.woff2) format('woff2');
+}

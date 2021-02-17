@@ -1,0 +1,17 @@
+Product api
+ -creditProduct
+ -fetchProductsByFilter
+
+ ShipmentApi
+  -creditShipment
+  -fetchShipmentsByFilter
+  -fetchShipmentById
+
+NotificationApi
+ -fetchNotificationsByFilter
+
+DocumentApi
+ -uploadDocument
+
+SiteApi
+ -fetchAllSites

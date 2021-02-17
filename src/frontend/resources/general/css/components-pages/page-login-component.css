@@ -1,0 +1,22 @@
+.PageLogin .PageContent {
+    display: flex; flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.PageLogin .LoginBox {
+    width: 380px;
+    display: flex; flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 32px;
+    border-radius: 24px;
+    margin: 90px 0;
+    background: #f8f8f8;
+    box-shadow: 0px 7px 8px #BCBCBC29;
+}
+
+.PageLogin .Logo {
+    width: 106px;
+    margin-bottom: 48px;
+}

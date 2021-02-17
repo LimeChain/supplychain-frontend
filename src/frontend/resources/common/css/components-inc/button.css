@@ -1,0 +1,20 @@
+.Button {
+    min-width: 110px !important;
+    line-height: normal !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    position: absolute;
+}
+
+.Sidebar .Actions .Active {
+    border-right: 3px solid #3C4552;
+    border-radius: 0px;
+    font-weight: bold
+}
+
+.Sidebar .Actions .Button .SVG {
+    margin-bottom: 8px;
+}

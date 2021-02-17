@@ -1,0 +1,25 @@
+.PageNotFound .Page {
+    position:relative;
+}
+
+.PageNotFound .PageContent {
+    align-items:center;
+    position:relative;
+    margin:64px 0;
+    width: 600px;
+    text-align: center;
+}
+
+.PageNotFound .PageContent .ErrorCodeText {
+    font-size: 100px;
+    color: #FF9226;
+}
+
+.PageNotFound .PageContent .ErrorHeader {
+    margin: 20px;
+    font-size: 30px;
+}
+
+.PageNotFound .PageContent .ErrorMessage a {
+    color: #ff8944;
+}

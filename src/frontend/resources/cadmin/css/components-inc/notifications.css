@@ -1,0 +1,75 @@
+.Notifications {
+    position: absolute;
+    right: 60px;
+    top: 35px;
+    cursor: pointer;
+}
+
+.Notifications .SVG.Dot {
+    position: absolute;
+    right: 1px;
+    top: 2px;
+}
+
+.NotificationsPopover .NotificationBox .NotificationsHeader {
+    margin:14px 20px;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 21px;
+}
+.NotificationsPopover .NotificationBox .NotificationsHeaderMenu {
+    float: right;
+}
+
+.NotificationsPopover .NotificationBox .NotificationMessage {
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+
+.NotificationsPopover .NotificationMessage {
+    height: 65px;
+    background: #F9F9F9;
+    border-top: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    padding: 18px;
+    border-radius: 0 0 10px 10px;
+}
+.NotificationsPopover .NotificationLogo {
+    width: 29px;
+    height: 29px;
+    border-radius: 30px;
+    flex: 0 0 auto;
+}
+
+.NotificationsPopover .NotificationMessage .NotificationMessageInfo {
+    margin: 0 9px;
+    width: 0px;
+    flex: 1 1 auto;
+}
+
+.NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageHeader {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 18px;
+    box-sizing: border-box;
+}
+.NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageText {
+    margin-top: 3px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #A0A4B3;
+    box-sizing: border-box;
+}
+.NotificationsPopover .NotificationMessage .NotificationMessageTime {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #959AA1;
+    margin-left: auto;
+    flex: 0 0 auto;
+}

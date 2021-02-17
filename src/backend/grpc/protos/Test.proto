@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+service ProtoService {
+    rpc SayHello(SendMessage) returns (MessageResponse) {};
+    rpc SayHelloTwice(SendMessage) returns (MessageResponse) {};
+}
+
+message SendMessage{
+    string text = 1;
+}
+
+message SendMessage2{
+    string text = 1;
+}
+
+message MessageResponse{
+    string response = 1;
+}
