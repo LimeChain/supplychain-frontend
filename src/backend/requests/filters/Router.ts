@@ -16,6 +16,7 @@ import Response from '../network-response/Response';
 import DatabasePool from '../../utilities/database/DatabasePool';
 import ServicesFactory from '../../services/common/ServicesFactory';
 import Context from '../../utilities/helpers/Context';
+import Database from '../../utilities/database/Database';
 
 const Config = require('./../../../../config/config');
 
@@ -37,7 +38,7 @@ export default class Router {
     static async onRequest(ctx) {
         Router.processCtx(ctx);
 
-        let db = null;
+        let db: Database = null;
         try {
             if ((await Router.processResources(ctx)) === true) {
                 return;
@@ -83,6 +84,9 @@ export default class Router {
                 }
             } else {
                 Router.processRequestError(ctx, e);
+            }
+            if (db !== null) {
+                db.rollbackTransaction();
             }
         } finally {
             if (db !== null) {

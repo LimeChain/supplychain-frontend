@@ -2,9 +2,6 @@ import fs from 'fs';
 
 import PageDraftsH from './PageDrafts.h';
 import SV from '../../../../utilities/SV';
-import ServicesFactory from '../../../../services/common/ServicesFactory';
-import Session from '../../../../utilities/Session';
-import Payload from '../../../../utilities/helpers/Payload';
 import Context from '../../../../utilities/helpers/Context';
 
 const Config = require('../../../../../../config/config');
