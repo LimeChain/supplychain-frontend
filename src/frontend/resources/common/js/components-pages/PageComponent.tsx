@@ -26,16 +26,19 @@ export interface PageComponentProps {
 export default class PageComponent < Pr extends PageComponentProps, St = {}, SS = any > extends React.Component < Pr, St, SS > {
 
     static layout(componentNode: React.ReactNode) {
+        const appStore = new AppStore();
+        const alertStore = new AlertStore();
+
         ReactDOM.render((
             <Provider
-                appStore = { new AppStore() }
+                appStore = { appStore }
                 productStore = { new ProductStore() }
                 shipmentStore = { new ShipmentStore() }
                 siteStore = { new SiteStore() }
-                notificationStore = { new NotificationStore() }
+                notificationStore = { new NotificationStore(appStore, alertStore) }
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
-                alertStore = { new AlertStore() }>
+                alertStore = { alertStore }>
 
                 { componentNode }
 

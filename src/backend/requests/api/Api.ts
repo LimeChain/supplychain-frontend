@@ -1,5 +1,5 @@
 import Session from '../../utilities/Session';
-import Database from '../../utilities/Database';
+import Database from '../../utilities/database/Database';
 import Response from '../network-response/Response';
 import Payload from '../../utilities/helpers/Payload';
 import ServicesFactory from '../../services/common/ServicesFactory';

@@ -1,4 +1,4 @@
-import Database from '../../utilities/Database';
+import Database from '../../utilities/database/Database';
 
 export default class ServicesFactory {
 

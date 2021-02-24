@@ -119,7 +119,7 @@ export default class DraftsPageComponent extends ContextPageComponent < Props > 
             <>
                 <Header page = { PagesCAdmin.DRAFTS} />
                 <div className = {` PageContent FlexColumn`}>
-                    <Notifications notifications = {this.props.notificationStore.screenNotificationModels}/>
+                    <Notifications />
                     <div onClick = { this.saveShipment }>add shipment</div>
                     <div onClick = { this.fetchShipments }>fetch shipments</div>
                 </div>

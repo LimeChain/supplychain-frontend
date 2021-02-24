@@ -3,9 +3,7 @@ import os from 'os';
 import cluster from 'cluster';
 
 import Logger from './backend/utilities/Logger';
-
-// const cluster = require('cluster');
-// const os = require('os');
+import DatabasePool from './backend/utilities/database/DatabasePool';
 
 const Config = require('../config/config');
 
@@ -15,12 +13,15 @@ const NUM_CPUS = Config.Build.DEV === true ? 1 : os.cpus().length;
 
 class ServerCluster {
 
-    workers: Map < number, cluster.Worker >;
-    exiting: boolean;
+    // master
+    masterExiting: boolean = false;
+    workerExiting: boolean = false;
+
+    // worker
+    dbPool: DatabasePool | null = null;
 
     constructor() {
-        this.workers = new Map();
-        this.exiting = false;
+        // Config.Build.DEV = false;
     }
 
     async start() {
@@ -33,18 +34,22 @@ class ServerCluster {
                 this.forkServerWorker();
             }
 
-            cluster.on('exit', this.onWorkerExit.bind(this));
+            cluster.on('exit', this.clusterOnWorkerExit);
+            process.on('SIGINT', () => {}); // Just to wait for all works to finish;
+            process.on('SIGTERM', () => {}); // Just to wait for all works to finish;
 
             if (Config.Build.DEV === true) {
                 process.send('SERVER_MSG::STARTED');
             }
         } else {
             this.initErrorListeners();
+            this.initWorkerListeners();
 
             switch (process.env.PROCESS_NAME) {
                 case SERVER_WORKER_NAME:
                     const ServerWorker = require('./ServerWorker'); /* it should be here to avoid creating of dummy objects (QueueDispatcher) */
-                    new ServerWorker(Config.Server.BACKEND_PORT, Config.Server.SESSION_UNIQUE_KEY).start();
+                    this.dbPool = new DatabasePool();
+                    new ServerWorker(Config.Server.BACKEND_PORT, Config.Server.SESSION_UNIQUE_KEY, this.dbPool).start();
                     break;
                 default:
             }
@@ -58,13 +63,12 @@ class ServerCluster {
 
     initErrorListeners() {
         if (Config.Build.DEV === true) {
-            process.on('unhandledRejection', (reason, p) => {
-                console.log(p);
+            process.on('unhandledRejection', async (reason, p) => {
                 Logger.error('Promise error', reason);
                 if (cluster.isMaster) {
                     process.exit(0);
                 } else {
-                    cluster.worker.kill();
+                    await this.workerExit();
                 }
             });
         }
@@ -72,16 +76,29 @@ class ServerCluster {
 
     initFiles() {
         if (fs.existsSync(Config.Path.Root.DATA) === false) {
-            console.error('Create root /data folder');
+            fs.mkdirSync(Config.Path.Root.DATA);
             return;
         }
 
         if (fs.existsSync(Config.Path.Root.LOGS) === false) {
-            console.error('Create root /logs folder');
+            fs.mkdirSync(Config.Path.Root.LOGS);
             return;
         }
 
         fs.mkdirSync(Config.Path.Root.Data.SESSIONS, { 'recursive': true });
+    }
+
+    initWorkerListeners() {
+        cluster.worker.process.on('exit', this.workerExit);
+        cluster.worker.on('exit', this.workerExit);
+        cluster.worker.process.on('disconnect', this.workerExit);
+        cluster.worker.on('disconnect', this.workerExit);
+        process.on('SIGINT', async () => {
+            await this.workerExit();
+        });
+        process.on('SIGTERM', async () => {
+            await this.workerExit();
+        });
     }
 
     // listeners
@@ -89,9 +106,9 @@ class ServerCluster {
         switch (data) {
             case 'SERVER_MSG::EXIT':
                 if (Config.Build.DEV === true) {
-                    this.exiting = true;
-                    this.workers.forEach((worker, pid) => {
-                        worker.process.kill();
+                    this.masterExiting = true;
+                    Object.keys(cluster.workers).forEach((key) => {
+                        cluster.workers[key].kill();
                     });
                 }
                 break;
@@ -99,9 +116,22 @@ class ServerCluster {
         }
     }
 
-    onWorkerExit(worker, code, signal) {
-        this.workers.delete(worker.process.pid);
+    workerExit = async () => {
+        if (this.workerExiting === true) {
+            return;
+        }
 
+        this.workerExiting = true;
+        try {
+            await this.dbPool.close();
+        } catch (e) {
+            Logger.error(e);
+        }
+        this.dbPool = null;
+        process.exit(0);
+    }
+
+    clusterOnWorkerExit = async (worker, code, signal) => {
         if (code === null) {
             Logger.log(`Worker ${worker.process.pid} restarted with code: ${code} and signal: ${signal} (${worker.process.env.PROCESS_NAME})`);
         } else {
@@ -117,20 +147,20 @@ class ServerCluster {
             }
         }
 
-        if (this.workers.size === 0) {
+        if (Object.keys(cluster.workers).length === 0) {
             process.exit(0);
         }
     }
 
     // utilities
     forkServerWorker() {
-        const serverWorker = this.fork(new Env(SERVER_WORKER_NAME));
+        const env = new Env(SERVER_WORKER_NAME);
+        return this.fork(env);
     }
 
-    fork(env) {
+    fork(env: Env) {
         const worker = cluster.fork(env);
         worker.process.env = env;
-        this.workers.set(worker.process.pid, worker);
         return worker;
     }
 

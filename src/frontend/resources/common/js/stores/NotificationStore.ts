@@ -8,13 +8,14 @@ export default class NotificationStore {
     notificationApi: NotificationApi;
     static NOTIFICATION_SHOW_COUNT: number = 4;
     isFetching: boolean = false;
+    hasMore: boolean = true;
     totalSize: number = 0;
     notificationsMap: Map < string, NotificationModel > = new Map();
     screenNotificationModels: NotificationModel[] = [];
 
-    constructor() {
+    constructor(appStore, alertStore) {
         makeAutoObservable(this);
-        this.notificationApi = new NotificationApi();
+        this.notificationApi = new NotificationApi(appStore.enableActions, appStore.disableActions, alertStore.show);
     }
 
     onScreenData(notificationModels: NotificationModel[], totalSize: number){
@@ -53,6 +54,8 @@ export default class NotificationStore {
 
         this.notificationApi.fetchNotificationsByFilter(S.INT_FALSE, from, to, (notificationModels: NotificationModel[], totalSize: number) => {
             this.isFetching = false;
+
+            this.hasMore = !(this.screenNotificationModels.length === totalSize)
 
             if (this.totalSize < totalSize){
                 this.fetchMoreNotifications(true);

@@ -3,6 +3,7 @@ import KoaBodyParser from 'koa-bodyparser';
 import Session from 'koa-session';
 
 import Router from './backend/requests/filters/Router';
+import DatabasePool from './backend/utilities/database/DatabasePool';
 import Logger from './backend/utilities/Logger';
 
 import FileSessionStore from './backend/utilities/session-store/KoaSessionFile';
@@ -50,15 +51,17 @@ const SESSION_CONFIG = {
 class ServerWorker {
 
     app: Koa;
+    dbPool: DatabasePool;
     port: number;
     sessionKey: string;
     count: number;
 
-    constructor(port: number, sessionKey: string) {
+    constructor(port: number, sessionKey: string, dbPool: DatabasePool) {
         this.port = port;
         this.app = new Koa();
         this.count = 0;
         this.app.keys = [sessionKey];
+        this.dbPool = dbPool;
     }
 
     start() {
@@ -66,7 +69,7 @@ class ServerWorker {
         this.app.use(KoaBodyParser({ formLimit: '128mb' }));
         this.app.use(Session(SESSION_CONFIG, this.app));
 
-        Router.init();
+        Router.init(this.dbPool);
         this.app.use(Router.onRequest);
 
         this.app.listen(this.port, () => {

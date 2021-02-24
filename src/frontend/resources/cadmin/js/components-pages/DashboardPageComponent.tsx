@@ -9,6 +9,7 @@ import Header from '../components-inc/header';
 
 import './../../css/components-pages/page-dashboard-component.css';
 import Notifications from '../components-inc/Notifications';
+import Chart from '../../../common/js/components-inc/Chart';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -30,7 +31,7 @@ export default class DashboardPageComponent extends ContextPageComponent < Props
             <>
                 <Header page = { PagesCAdmin.DASHBOARD } />
                 <div className = {` PageContent FlexColumn`}>
-                    <Notifications notifications = {this.props.notificationStore.screenNotificationModels}/>
+                    <Notifications />
                     
                     <div className = { `PageHeader` }>Dashboard</div>
                     <div className = { `ContentHolder FlexRow` }>
@@ -51,6 +52,11 @@ export default class DashboardPageComponent extends ContextPageComponent < Props
 
                         </div>
                     </div>
+
+                    <Chart
+                        labels = { ['Label 1', 'Label 2'] }
+                        data = { [Chart.makeChartDataSet('Sublabel 1', [1, 2], 'red')] }
+                        type = { Chart.TYPE_LINE } />
 
                 </div>
             </>

@@ -2,7 +2,7 @@ import Page from '../pages/Page';
 import PageNotFound from '../pages/general/not-found/PageNotFound';
 import Payload from '../../utilities/helpers/Payload';
 import Session from '../../utilities/Session';
-import Database from '../../utilities/Database';
+import Database from '../../utilities/database/Database';
 import PageDashboard from '../pages/cadmin/dashboard/PageDashboard';
 
 const Config = require('./../../../../config/config');

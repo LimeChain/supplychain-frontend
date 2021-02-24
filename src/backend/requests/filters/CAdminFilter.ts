@@ -6,7 +6,7 @@ import PageOutgoing from '../pages/cadmin/outgoing/PageOutgoing';
 import PageIncomming from '../pages/cadmin/incomming/PageIncomming';
 import Payload from '../../utilities/helpers/Payload';
 import Session from '../../utilities/Session';
-import Database from '../../utilities/Database';
+import Database from '../../utilities/database/Database';
 
 const Config = require('./../../../../config/config');
 

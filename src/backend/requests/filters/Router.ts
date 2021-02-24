@@ -8,12 +8,12 @@ import Payload from '../../utilities/helpers/Payload';
 import GeneralFilter from './GeneralFilter';
 import CAdminFilter from './CAdminFilter';
 import ApiFilter from './ApiFilter';
-import Database from '../../utilities/Database';
 import Session from '../../utilities/Session';
 import Logger from '../../utilities/Logger';
 import TR from '../../utilities/TR';
 import StateException from '../../utilities/helpers/StateException';
 import Response from '../network-response/Response';
+import DatabasePool from '../../utilities/database/DatabasePool';
 
 const Config = require('./../../../../config/config');
 
@@ -23,7 +23,10 @@ const TR_EN = JSON.stringify(TR.EN);
 
 export default class Router {
 
-    static init() {
+    static dbPool: DatabasePool | null = null;
+
+    static init(dbPool: DatabasePool) {
+        Router.dbPool = dbPool;
         ApiFilter.init();
         GeneralFilter.init();
         CAdminFilter.init();
@@ -32,14 +35,15 @@ export default class Router {
     static async onRequest(ctx) {
         Router.processCtx(ctx);
 
+        let db = null;
         try {
             if ((await Router.processResources(ctx)) === true) {
                 return;
             }
 
             const payload = new Payload(ctx);
-            const db = new Database();
             const session = new Session(ctx);
+            db = await Router.dbPool.aquireConnection();
 
             ctx.set('Cache-Control', 'no-cache, max-age=0, must-revalidate, no-store');
 
@@ -65,7 +69,7 @@ export default class Router {
                 switch (e.errorCode) {
                     default:
                     case Response.S_STATUS_DO_NOT_HANDLE:
-                        let res = new Response();
+                        const res = new Response();
                         res.setStatus(e.errorCode);
                         ctx.body = res;
                         break;
@@ -75,6 +79,10 @@ export default class Router {
                 }
             } else {
                 Router.processRequestError(ctx, e);
+            }
+        } finally {
+            if (db !== null) {
+                Router.dbPool.releaseConnection(db);
             }
         }
     }
@@ -153,7 +161,7 @@ export default class Router {
     }
 
     static async processVideoFile(ctx, path) {
-        let range = ctx.header.range;
+        const range = ctx.header.range;
         if (!range) {
             return false;
         }
@@ -179,15 +187,15 @@ export default class Router {
         }
         return token[1]
             .split(',')
-            .map(range => {
-                return range.split('-').map(value => {
+            .map((range) => {
+                return range.split('-').map((value) => {
                     if (value === '') {
                         return Infinity;
                     }
                     return Number(value);
                 });
             })
-            .filter(range => {
+            .filter((range) => {
                 return !isNaN(range[0]) && !isNaN(range[1]) && range[0] <= range[1];
             });
     }

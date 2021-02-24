@@ -1,31 +1,36 @@
 import React, { RefObject } from 'react';
 import Config from '../../../../../../builds/dev-generated/Config';
 import NotificationModel from '../../../common/js/models/NotificationModel';
-import NotificationStatusModelH from "../../../../../backend/modules/product-group-module/shipment-module/NotificationStatusModel.h";
+import NotificationStatusModelH from '../../../../../backend/modules/product-group-module/shipment-module/NotificationStatusModel.h';
 
 import SvgNotificationNone from '../../../common/svg/notification-none.svg';
 import SvgNotificationDot from '../../../common/svg/notification-dot.svg';
 
-
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import './../../css/components-inc/notifications.css';
 import Popover from '../../../common/js/components-inc/Popover';
 import S from '../../../common/js/utilities/Main';
 import ProjectUtils from '../../../common/js/ProjectUtils';
+import NotificationStore from '../../../common/js/stores/NotificationStore';
+import { inject, observer } from 'mobx-react';
+import NotificationApi from '../../../common/js/api/NotificationApi';
+import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 
 interface Props {
     notifications: NotificationModel[];
     show: number,
     hasNotifications: number,
+    notificationStore: NotificationStore;
 }
 
 interface State {
     show: boolean;
 }
 
-let getNotificationStatus = (status: number, capitalLeter: number): string => {
+const getNotificationStatus = (status: number, capitalLeter: number): string => {
     let result = '';
-    
-    switch(status){
+
+    switch (status) {
         case NotificationStatusModelH.S_NOTIFICATION_SENT:
             result = 'sent';
             break;
@@ -37,10 +42,12 @@ let getNotificationStatus = (status: number, capitalLeter: number): string => {
     return capitalLeter ? result.charAt(0).toUpperCase() + result.slice(1) : result;
 }
 
-export default class Notifications extends React.Component < Props, State > {
+class Notifications extends React.Component<Props, State> {
+
+    notificationApi: NotificationApi;
 
     nodes: {
-        root: RefObject < HTMLDivElement >,
+        root: RefObject<HTMLDivElement>,
     };
 
     constructor(props) {
@@ -53,51 +60,69 @@ export default class Notifications extends React.Component < Props, State > {
         this.state = {
             show: false,
         }
+
+        this.notificationApi = new NotificationApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+
     }
 
-    onClickNotification = () => {   
+    onClickNotification = () => {
         this.setState({
             show: !this.state.show,
         });
     }
 
+    notificationScroll = (event) => {
+        if (!this.props.notificationStore.hasMore) {
+            return;
+        }
+
+        const notiBoxDiv = event.target;
+
+        const lastNotiDiv = notiBoxDiv.querySelector('.NotificationMessage:nth-last-child(2)');
+
+        if (notiBoxDiv.scrollTop + notiBoxDiv.offsetHeight + lastNotiDiv.offsetHeight > lastNotiDiv.offsetTop) {
+            this.props.notificationStore.fetchMoreNotifications(false);
+        }
+    }
+
     render() {
         return (
-            <div className = {` Notifications `} ref = { this.nodes.root } >
-                <div className = {` NotificationsIcon`} onClick = {this.onClickNotification}>
-                    <div className = { `SVG Icon` } dangerouslySetInnerHTML = {{ __html: SvgNotificationNone }}></div>
-                    <div className = { `SVG Dot ActiveVisibilityHidden Transition ${S.CSS.getActiveClassName(this.props.notifications.length > 0)}` } dangerouslySetInnerHTML = {{ __html: SvgNotificationDot }}></div>
-                </div> 
-                <Popover classes={{ root: 'NotificationsPopover'}} 
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'right',}}
-                    transformOrigin={{vertical: 'top',horizontal: 'right',}}
-                    onClose = {this.onClickNotification} 
-                    open = {this.state.show} 
-                    anchorEl = { this.nodes.root.current }>
-                    <div className = {` NotificationBox `}>
-                        <div className = {` NotificationsHeader `}>
+            <div className={'Notifications'} ref={this.nodes.root}>
+                <div className={'NotificationsIcon'} onClick={this.onClickNotification}>
+                    <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotificationNone }}></div>
+                    <div className={`SVG Dot ActiveVisibilityHidden Transition ${S.CSS.getActiveClassName(this.props.notificationStore.screenNotificationModels.length > 0)}`} dangerouslySetInnerHTML={{ __html: SvgNotificationDot }}></div>
+                </div>
+                <Popover classes={{ root: 'NotificationsPopover' }}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    onClose={this.onClickNotification}
+                    open={this.state.show}
+                    anchorEl={this.nodes.root.current}>
+                    <div className={'NotificationBox'}>
+                        <div className={'NotificationsHeader'}>
                             Notifications
-                            <div className = {` NotificationsHeaderMenu `}>
-                                ...
+                            <div className={'NotificationsHeaderMenu SVG'}>
+                                <MoreHorizIcon />
                             </div>
                         </div>
-                        <div>
-                        {this.props.notifications.map(notification => 
-                            <div className = {` NotificationMessage FlexRow `} key = {notification.notificationId}>
-                                <div className = {` NotificationLogo ImgCoverNode`} style = {ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.Common.IMG}/logo.png`)}/>
-                                <div className = {` NotificationMessageInfo FlexColumnt `}>
-                                    <div className = {` NotificationMessageHeader`}>
+                        <div className={'NotificationMessageBox FlexColumn'} onScroll={this.notificationScroll}>
+                            {this.props.notificationStore.screenNotificationModels.map((notification) => <div className={' NotificationMessage FlexRow '} key={notification.notificationId}>
+                                <div className={' NotificationLogo ImgCoverNode'} style={ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.Common.IMG}/logo.png`)} />
+                                <div className={' NotificationMessageInfo FlexColumnt '}>
+                                    <div className={' NotificationMessageHeader'}>
                                         Goods {getNotificationStatus(notification.notificationStatus, S.INT_TRUE)}
                                     </div>
-                                    <div className = {` NotificationMessageText `}>
+                                    <div className={' NotificationMessageText '}>
                                         Shipment # {notification.shipmentId} has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
                                     </div>
                                 </div>
-                                <div className = {` NotificationMessageTime `}>
+                                <div className={' NotificationMessageTime '}>
                                     {new Date(notification.notificationTime).formatCalendarDateAndTime()}
                                 </div>
-                            </div>
-                        )}
+                            </div>)}
+                            {this.props.notificationStore.hasMore
+                                ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
+                            }
                         </div>
                     </div>
                 </Popover>
@@ -106,3 +131,5 @@ export default class Notifications extends React.Component < Props, State > {
     }
 
 }
+
+export default inject('appStore', 'alertStore', 'notificationStore')(observer(Notifications));

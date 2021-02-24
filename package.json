@@ -7,7 +7,10 @@
   "license": "ISC",
   "scripts": {
     "dev": "node ./tools/builder/Main.js -target=dev",
-    "prod": "export ENV_FILENAME=.env.production|| set ENV_FILENAME=.env.production&& node ./tools/builder/Main.js -target=prod"
+    "prod": "export ENV_FILENAME=.env.production|| set ENV_FILENAME=.env.production&& node ./tools/builder/Main.js -target=prod",
+    "create-migration": "node ./src/backend/db/cli/CreateMigration.js",
+    "dev-migrate-db": "node ./builds/dev/src/backend/db/cli/ExecuteMigrations.js",
+    "migrate-db": "node ./src/backend/db/cli/ExecuteMigrations.js"
   },
   "engines": {
     "node": ">=12"
@@ -20,7 +23,6 @@
     "express": "^4.17.1",
     "grpc": "^1.24.4",
     "js-sha256": "^0.9.0",
-    "knex": "^0.21.12",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.0.0",
@@ -35,6 +37,7 @@
     "@types/node": "^14.14.9",
     "@types/react-dom": "^17.0.0",
     "@types/react-datepicker": "^3.1.1",
+    "@types/mysql": "^2.15.17",
     "@babel/cli": "^7.12.7",
     "@babel/core": "^7.12.7",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
@@ -72,6 +75,7 @@
     "react-datepicker": "^3.3.0",
     "react-select": "^3.1.0",
     "mobx": "^6.0.4",
-    "mobx-react": "^7.0.5"
+    "mobx-react": "^7.0.5",
+    "chart.js": "^2.9.4"
   }
 }

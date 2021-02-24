@@ -11,13 +11,23 @@
     top: 2px;
 }
 
+.NotificationsPopover .NotificationBox .NotificationMessageBox {
+    max-height: 259px;
+    overflow: auto;
+}
+
+.NotificationsPopover .NotificationBox .NotificationMessageBox .LoadingIndicator {
+    flex: 0 0 auto;
+}
+
 .NotificationsPopover .NotificationBox .NotificationsHeader {
-    margin:14px 20px;
+    padding: 14px 20px;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
     line-height: 21px;
 }
+
 .NotificationsPopover .NotificationBox .NotificationsHeaderMenu {
     float: right;
 }
@@ -35,6 +45,7 @@
     padding: 18px;
     border-radius: 0 0 10px 10px;
 }
+
 .NotificationsPopover .NotificationLogo {
     width: 29px;
     height: 29px;
@@ -55,6 +66,7 @@
     line-height: 18px;
     box-sizing: border-box;
 }
+
 .NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageText {
     margin-top: 3px;
     font-style: normal;
@@ -64,6 +76,7 @@
     color: #A0A4B3;
     box-sizing: border-box;
 }
+
 .NotificationsPopover .NotificationMessage .NotificationMessageTime {
     font-style: normal;
     font-weight: normal;
