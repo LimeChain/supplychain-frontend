@@ -1,9 +1,6 @@
 import Page from '../pages/Page';
 import PageNotFound from '../pages/general/not-found/PageNotFound';
-import Payload from '../../utilities/helpers/Payload';
-import Session from '../../utilities/Session';
-import Database from '../../utilities/database/Database';
-import PageDashboard from '../pages/cadmin/dashboard/PageDashboard';
+import Context from '../../utilities/helpers/Context';
 
 const Config = require('./../../../../config/config');
 
@@ -16,14 +13,14 @@ export default class GeneralFilter {
         GeneralFilter.map.set(PageNotFound.URL, new PageNotFound());
     }
 
-    static async onRequest(payload: Payload, session: Session, db: Database) {
-        const page = GeneralFilter.map.get(Config.URL.ROOT + payload.ctx.URL.pathname);
+    static async onRequest(context: Context) {
+        const page = GeneralFilter.map.get(Config.URL.ROOT + context.payload.ctx.URL.pathname);
         if (page === undefined) {
-            (new PageNotFound()).onRequest(payload, session, db);
+            (new PageNotFound()).onRequest(context);
             return false;
         }
 
-        await page.onRequest(payload, session, db);
+        await page.onRequest(context);
         return true;
     }
 

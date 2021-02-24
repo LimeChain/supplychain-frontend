@@ -5,6 +5,7 @@ import SV from '../../../../utilities/SV';
 import ServicesFactory from '../../../../services/common/ServicesFactory';
 import Session from '../../../../utilities/Session';
 import Payload from '../../../../utilities/helpers/Payload';
+import Context from '../../../../utilities/helpers/Context';
 
 const Config = require('../../../../../../config/config');
 
@@ -14,9 +15,9 @@ const CSS_PAGE_LOADING = fs.readFileSync(`${Config.Path.Root.Frontend.RESOURCES}
 
 export default class PageDrafts extends PageDraftsH {
 
-    async processRequest(payload: Payload, session: Session, servicesFactory: ServicesFactory) {
-        payload.ctx.type = 'html';
-        payload.ctx.body = TEMPLATE.stream({
+    async onRequest(context: Context): Promise < boolean > {
+        context.payload.ctx.type = 'html';
+        context.payload.ctx.body = TEMPLATE.stream({
             META: {
                 TITLE: 'Hedera Admin | Drafts',
                 DESC: '',
@@ -27,8 +28,8 @@ export default class PageDrafts extends PageDraftsH {
             CSS: {
                 PAGE_LOADING: CSS_PAGE_LOADING,
             },
-            TR: payload.ctx.TR,
-            TR_STRING: payload.ctx.TR_STRING,
+            TR: context.payload.ctx.TR,
+            TR_STRING: context.payload.ctx.TR_STRING,
             Config,
         });
 

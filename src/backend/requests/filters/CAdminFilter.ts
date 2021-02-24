@@ -4,9 +4,7 @@ import PageProducts from '../pages/cadmin/products/PageProducts';
 import PageDrafts from '../pages/cadmin/drafts/PageDrafts';
 import PageOutgoing from '../pages/cadmin/outgoing/PageOutgoing';
 import PageIncomming from '../pages/cadmin/incomming/PageIncomming';
-import Payload from '../../utilities/helpers/Payload';
-import Session from '../../utilities/Session';
-import Database from '../../utilities/database/Database';
+import Context from '../../utilities/helpers/Context';
 
 const Config = require('./../../../../config/config');
 
@@ -24,13 +22,13 @@ export default class CAdminFilter {
         CAdminFilter.map.set(PageIncomming.URL, new PageIncomming());
     }
 
-    static async onRequest(payload: Payload, session: Session, db: Database) {
-        const page = CAdminFilter.map.get(Config.URL.ROOT + payload.ctx.URL.pathname);
+    static async onRequest(context: Context) {
+        const page = CAdminFilter.map.get(Config.URL.ROOT + context.payload.ctx.URL.pathname);
         if (page === undefined) {
             return false;
         }
 
-        await page.onRequest(payload, session, db);
+        await page.onRequest(context);
         return true;
     }
 

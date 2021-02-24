@@ -5,6 +5,7 @@ import Session from '../../../utilities/Session';
 import Response from '../../network-response/Response';
 import ServicesFactory from '../../../services/common/ServicesFactory';
 import Payload from '../../../utilities/helpers/Payload';
+import Context from '../../../utilities/helpers/Context';
 
 export default class GeneralApi extends GeneralApiH {
 
@@ -17,10 +18,10 @@ export default class GeneralApi extends GeneralApiH {
         this.grpcController = new GrpcController();
     }
 
-    async processRequest(payload: Payload, res: Response, session: Session, servicesFactory: ServicesFactory) {
-        switch (payload.action) {
+    async processRequest(context: Context) {
+        switch (context.payload.action) {
             case GeneralApiH.Actions.GRPCTEST:
-                await this.grpcController.grpcTest(payload, res, session, servicesFactory);
+                await this.grpcController.grpcTest(context);
                 break;
             default:
                 break;

@@ -14,6 +14,8 @@ import TR from '../../utilities/TR';
 import StateException from '../../utilities/helpers/StateException';
 import Response from '../network-response/Response';
 import DatabasePool from '../../utilities/database/DatabasePool';
+import ServicesFactory from '../../services/common/ServicesFactory';
+import Context from '../../utilities/helpers/Context';
 
 const Config = require('./../../../../config/config');
 
@@ -44,19 +46,21 @@ export default class Router {
             const payload = new Payload(ctx);
             const session = new Session(ctx);
             db = await Router.dbPool.aquireConnection();
+            const servicesFactory = new ServicesFactory(db);
+            const context = new Context(payload, session, servicesFactory);
 
             ctx.set('Cache-Control', 'no-cache, max-age=0, must-revalidate, no-store');
 
-            const response = await ApiFilter.onRequest(payload, session, db);
+            const response = await ApiFilter.onRequest(context);
             if (response !== null) {
                 ctx.body = response;
                 return;
             }
 
-            if (await CAdminFilter.onRequest(payload, session, db) === true) {
+            if (await CAdminFilter.onRequest(context) === true) {
                 return;
             }
-            if (await GeneralFilter.onRequest(payload, session, db) === true) {
+            if (await GeneralFilter.onRequest(context) === true) {
                 return;
             }
         } catch (e) {

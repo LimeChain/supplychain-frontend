@@ -1,10 +1,8 @@
 import Api from '../api/Api';
 import GeneralApi from '../api/general/GeneralApi';
-import Session from '../../utilities/Session';
-import Database from '../../utilities/database/Database';
 import Logger from '../../utilities/Logger';
 import Response from '../network-response/Response';
-import Payload from '../../utilities/helpers/Payload';
+import Context from '../../utilities/helpers/Context';
 
 const Config = require('../../../../config/config');
 
@@ -17,8 +15,8 @@ export default class ApiFilter {
         ApiFilter.map.set(GeneralApi.URL, new GeneralApi());
     }
 
-    static async onRequest(payload: Payload, session: Session, db: Database) {
-        const api = ApiFilter.map.get(Config.URL.ROOT + payload.ctx.URL.pathname);
+    static async onRequest(context: Context) {
+        const api = ApiFilter.map.get(Config.URL.ROOT + context.payload.ctx.URL.pathname);
 
         if (api === undefined) {
             return null;
@@ -26,15 +24,15 @@ export default class ApiFilter {
 
         if (Config.Build.DEV === true) {
             Logger.request({
-                'path': payload.ctx.URL.pathname,
-                'body': payload.ctx.request.body,
-                'session': payload.ctx.session,
+                'path': context.payload.ctx.URL.pathname,
+                'body': context.payload.ctx.request.body,
+                'session': context.payload.ctx.session,
             });
         }
 
-        const res = new Response();
-        await api.onRequest(payload, res, session, db);
-        return res;
+        context.res = new Response();
+        await api.onRequest(context);
+        return context.res;
     }
 
 }
