@@ -2,9 +2,9 @@ import SkuOriginRepoH from './SkuOriginRepoH';
 import SkuOriginModel from '../Model/SkuOriginModel';
 import SkuOriginModelG from '../Model/SkuOriginModelG';
 import SkuOriginModelH from '../Model/SkuOriginModelH';
-import DatabaseWhere from '../../../../Utilities/Database/DatabaseWhere';
-import DatabaseWhereClause from '../../../../Utilities/Database/DatabaseWhereClause';
-import Repo from '../../../../Utilities/Database/Repo';
+import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
+import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
+import Repo from '../../../../utilities/database/Repo';
 
 
 export default class SkuOriginRepoG extends Repo {

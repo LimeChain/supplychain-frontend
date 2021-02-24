@@ -2,9 +2,9 @@ import CountryRepoH from './CountryRepoH';
 import CountryModel from '../Model/CountryModel';
 import CountryModelG from '../Model/CountryModelG';
 import CountryModelH from '../Model/CountryModelH';
-import DatabaseWhere from '../../../Utilities/Database/DatabaseWhere';
-import DatabaseWhereClause from '../../../Utilities/Database/DatabaseWhereClause';
-import Repo from '../../../Utilities/Database/Repo';
+import DatabaseWhere from '../../../utilities/database/DatabaseWhere';
+import DatabaseWhereClause from '../../../utilities/database/DatabaseWhereClause';
+import Repo from '../../../utilities/database/Repo';
 
 
 export default class CountryRepoG extends Repo {

@@ -2,9 +2,9 @@ import NotificationRepoH from './NotificationRepoH';
 import NotificationModel from '../Model/NotificationModel';
 import NotificationModelG from '../Model/NotificationModelG';
 import NotificationModelH from '../Model/NotificationModelH';
-import DatabaseWhere from '../../../Utilities/Database/DatabaseWhere';
-import DatabaseWhereClause from '../../../Utilities/Database/DatabaseWhereClause';
-import Repo from '../../../Utilities/Database/Repo';
+import DatabaseWhere from '../../../utilities/database/DatabaseWhere';
+import DatabaseWhereClause from '../../../utilities/database/DatabaseWhereClause';
+import Repo from '../../../utilities/database/Repo';
 
 
 export default class NotificationRepoG extends Repo {
