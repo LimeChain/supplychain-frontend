@@ -20,10 +20,6 @@ class ServerCluster {
     // worker
     dbPool: DatabasePool | null = null;
 
-    constructor() {
-        // Config.Build.DEV = false;
-    }
-
     async start() {
         if (cluster.isMaster) {
             this.initMasterListeners();
@@ -93,10 +89,10 @@ class ServerCluster {
         cluster.worker.on('exit', this.workerExit);
         cluster.worker.process.on('disconnect', this.workerExit);
         cluster.worker.on('disconnect', this.workerExit);
-        process.on('SIGINT', async () => {
+        cluster.worker.process.on('SIGINT', async () => {
             await this.workerExit();
         });
-        process.on('SIGTERM', async () => {
+        cluster.worker.process.on('SIGTERM', async () => {
             await this.workerExit();
         });
     }
@@ -108,7 +104,14 @@ class ServerCluster {
                 if (Config.Build.DEV === true) {
                     this.masterExiting = true;
                     Object.keys(cluster.workers).forEach((key) => {
-                        cluster.workers[key].kill();
+                        const worker = cluster.workers[key];
+                        worker.disconnect();
+                        const interval = setInterval(() => {
+                            if (worker.isConnected() === false) {
+                                worker.kill();
+                                clearInterval(interval);
+                            }
+                        }, 25);
                     });
                 }
                 break;
@@ -117,17 +120,15 @@ class ServerCluster {
     }
 
     workerExit = async () => {
-        if (cluster.isWorker === false) {
-            return;
-        }
-
         if (this.workerExiting === true) {
             return;
         }
 
         this.workerExiting = true;
         try {
-            await this.dbPool.close();
+            if (this.dbPool !== null) {
+                await this.dbPool.close();
+            }
         } catch (e) {
             Logger.error(e);
         }
