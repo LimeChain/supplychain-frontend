@@ -1,5 +1,5 @@
 import { testGrpcClient } from '../grpc/GrpcClient';
-import Context from '../utilities/helpers/Context';
+import Context from '../utilities/network/Context';
 
 export default class TestController {
 

@@ -15,4 +15,3 @@ GeneralApiH.Actions = {
     LOGIN: 'a',
     GRPCTEST: 't',
 };
-

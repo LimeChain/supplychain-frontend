@@ -1,6 +1,6 @@
 import Payload from './Payload';
 import Session from '../Session';
-import Response from '../../requests/network-response/Response';
+import Response from '../../utilities/network/Response';
 import ServicesFactory from '../../services/common/ServicesFactory';
 
 export default class Context {

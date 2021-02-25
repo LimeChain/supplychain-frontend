@@ -1,7 +1,7 @@
 import GeneralApiH from './GeneralApi.h';
 import GeneralController from '../../../controllers/GeneralController';
 import GrpcController from '../../../controllers/GrpcController';
-import Context from '../../../utilities/helpers/Context';
+import Context from '../../../utilities/network/Context';
 
 export default class GeneralApi extends GeneralApiH {
 

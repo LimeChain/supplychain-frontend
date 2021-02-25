@@ -4,7 +4,7 @@ import PageProducts from '../pages/cadmin/products/PageProducts';
 import PageDrafts from '../pages/cadmin/drafts/PageDrafts';
 import PageOutgoing from '../pages/cadmin/outgoing/PageOutgoing';
 import PageIncomming from '../pages/cadmin/incomming/PageIncomming';
-import Context from '../../utilities/helpers/Context';
+import Context from '../../utilities/network/Context';
 
 const Config = require('./../../../../config/config');
 

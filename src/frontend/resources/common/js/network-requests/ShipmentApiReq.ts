@@ -3,17 +3,31 @@ import SkuModel from '../models/product-module/SkuModel';
 import SkuOriginModel from '../models/product-module/SkuOriginModel';
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 
+export class CreditShipmentReq2 {
+
+    shipmentJson: ShipmentModel
+    skuOriginJsons: SkuOriginModel[]
+    skuJsons: SkuModel[]
+
+    constructor(shipmentModel: ShipmentModel, skuOriginModels: SkuOriginModel[], skuModels: SkuModel[]) {
+        this.shipmentJson = shipmentModel.toJson();
+        this.skuOriginJsons = skuOriginModels.map((skuOriginModel) => skuOriginModel.toJson());
+        this.skuJsons = skuModels.map((skuModel) => skuModel.toJson());
+    }
+
+}
+
 export class CreditShipmentReq {
 
     shipmentModel: ShipmentModel
     skuOriginModels: SkuOriginModel[]
     skuModels: SkuModel[]
-    
+
     constructor(shipmentModel: ShipmentModel, skuOriginModels: SkuOriginModel[], skuModels: SkuModel[]) {
         this.shipmentModel = shipmentModel.toJson();
         this.skuOriginModels = skuOriginModels.map((skuOriginModel) => skuOriginModel.toJson());
         this.skuModels = skuModels.map((skuModel) => skuModel.toJson());
-    }   
+    }
 }
 
 export class FetchShipmentsByFilterReq {
@@ -21,7 +35,7 @@ export class FetchShipmentsByFilterReq {
     pageSize: number
     pageNumber: number
 
-    constructor(filter, pageSize, pageNumber){
+    constructor(filter, pageSize, pageNumber) {
         this.filter = filter;
         this.pageSize = pageSize;
         this.pageNumber = pageNumber;
@@ -31,7 +45,7 @@ export class FetchShipmentsByFilterReq {
 export class FetchShipmentsByIdReq {
     shipmentId: string
 
-    constructor(shipmentId: string){
+    constructor(shipmentId: string) {
         this.shipmentId = shipmentId;
     }
 }

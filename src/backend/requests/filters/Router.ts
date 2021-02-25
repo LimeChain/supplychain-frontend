@@ -4,18 +4,18 @@
 import fs from 'fs';
 import util from 'util';
 
-import Payload from '../../utilities/helpers/Payload';
+import Payload from '../../utilities/network/Payload';
 import GeneralFilter from './GeneralFilter';
 import CAdminFilter from './CAdminFilter';
 import ApiFilter from './ApiFilter';
 import Session from '../../utilities/Session';
 import Logger from '../../utilities/Logger';
 import TR from '../../utilities/TR';
-import StateException from '../../utilities/helpers/StateException';
-import Response from '../network-response/Response';
+import StateException from '../../utilities/network/StateException';
+import Response from '../../utilities/network/Response';
 import DatabasePool from '../../utilities/database/DatabasePool';
 import ServicesFactory from '../../services/common/ServicesFactory';
-import Context from '../../utilities/helpers/Context';
+import Context from '../../utilities/network/Context';
 import Database from '../../utilities/database/Database';
 
 const Config = require('./../../../../config/config');

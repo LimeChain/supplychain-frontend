@@ -13,6 +13,7 @@ class DevGeneratedModule {
         DevGeneratedModule.processPages(targetPathObj);
         DevGeneratedModule.processApis(targetPathObj);
         DevGeneratedModule.processNetwork(targetPathObj);
+        DevGeneratedModule.processNetworkResponse(targetPathObj);
         DevGeneratedModule.processParams(targetPathObj);
         DevGeneratedModule.processConfig();
         DevGeneratedModule.processModules(targetPathObj);
@@ -80,11 +81,39 @@ class DevGeneratedModule {
     }
 
     static processNetwork(targetPathObj) {
-        const sourcePath = path.join(targetPathObj.BACKEND, 'requests');
-        FileHelper.traversePath(sourcePath, path.join(Config.Path.Builds.DEV_GENERATED, ''), {
-            'include': [path.join(targetPathObj.BACKEND, '/requests/network-request'), path.join(targetPathObj.BACKEND, '/requests/network-response')],
-            'exclude': [sourcePath],
-        }, false, (sourceChildPath, targetChildPath) => {
+        const sourcePath = path.join(targetPathObj.BACKEND, 'requests', 'network');
+        FileHelper.traversePath(sourcePath, path.join(Config.Path.Builds.DEV_GENERATED, 'requests', 'network'), null, false, (sourceChildPath, targetChildPath) => {
+            const model = DevGeneratedModule.requireFileWithoutTransform(sourceChildPath);
+            const frontendObj = {};
+
+            let hasConsts = false;
+
+            Object.keys(model).forEach((key) => {
+                if (key.indexOf('S_') === 0) {
+                    hasConsts = true;
+                    frontendObj[key] = model[key];
+                }
+            })
+
+            targetChildPath = targetChildPath.replace('.ts', '').replace('.js', '').replace('Model', '');
+            targetChildPath = `${targetChildPath}Consts.ts`;
+
+            if (hasConsts === true) {
+                const className = model.name.replace('Model', 'Consts');
+                const dirPath = path.dirname(targetChildPath);
+                if (fs.existsSync(dirPath) === false) {
+                    fs.mkdirSync(dirPath, { 'recursive': true });
+                }
+                fs.writeFileSync(targetChildPath, `const ${className} = ${JSON.stringify(frontendObj)}; export default ${className};`);
+            } else if (fs.existsSync(targetChildPath)) {
+                fs.unlinkSync(targetChildPath);
+            }
+        });
+    }
+
+    static processNetworkResponse(targetPathObj) {
+        const sourcePath = path.join(targetPathObj.BACKEND, 'utilities', 'network');
+        FileHelper.traversePath(sourcePath, path.join(Config.Path.Builds.DEV_GENERATED, 'utilities', 'network'), null, false, (sourceChildPath, targetChildPath) => {
             const model = DevGeneratedModule.requireFileWithoutTransform(sourceChildPath);
             const frontendObj = {};
 

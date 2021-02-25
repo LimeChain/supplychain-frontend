@@ -15,7 +15,7 @@ export class FetchProductsByFilterReq {
     pageSize: number
     pageNumber: number
 
-    constructor(filter: string, pageSize: number, pageNumber: number){
+    constructor(filter: string, pageSize: number, pageNumber: number) {
         this.filter = filter;
         this.pageSize = pageSize;
         this.pageNumber = pageNumber;

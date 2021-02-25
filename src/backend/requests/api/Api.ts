@@ -1,5 +1,5 @@
 import Session from '../../utilities/Session';
-import Context from '../../utilities/helpers/Context';
+import Context from '../../utilities/network/Context';
 
 export default class Api {
 

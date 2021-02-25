@@ -117,6 +117,10 @@ class ServerCluster {
     }
 
     workerExit = async () => {
+        if (cluster.isWorker === false) {
+            return;
+        }
+
         if (this.workerExiting === true) {
             return;
         }

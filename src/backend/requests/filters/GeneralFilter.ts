@@ -1,6 +1,6 @@
 import Page from '../pages/Page';
 import PageNotFound from '../pages/general/not-found/PageNotFound';
-import Context from '../../utilities/helpers/Context';
+import Context from '../../utilities/network/Context';
 
 const Config = require('./../../../../config/config');
 

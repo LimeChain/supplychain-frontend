@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import PageOutgoingH from './PageOutgoing.h';
 import SV from '../../../../utilities/SV';
-import Context from '../../../../utilities/helpers/Context';
+import Context from '../../../../utilities/network/Context';
 
 const Config = require('../../../../../../config/config');
 
