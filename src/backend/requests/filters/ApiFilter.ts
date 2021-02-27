@@ -4,17 +4,19 @@ import Logger from '../../utilities/Logger';
 import Context from '../../utilities/network/Context';
 import ShipmentApi from '../api/shipment/ShipmentApi';
 import Response from '../../utilities/network/Response';
+import ProductApi from '../api/product/ProductApi';
 
 const Config = require('../../../../config/config');
 
 export default class ApiFilter {
 
-    static map: Map < string, Api >;
+    static map: Map<string, Api>;
 
     static init() {
         ApiFilter.map = new Map();
         ApiFilter.map.set(GeneralApi.URL, new GeneralApi());
         ApiFilter.map.set(ShipmentApi.URL, new ShipmentApi());
+        ApiFilter.map.set(ProductApi.URL, new ProductApi());
     }
 
     static async onRequest(context: Context) {

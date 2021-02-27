@@ -17,6 +17,7 @@ import DatabasePool from '../../utilities/database/DatabasePool';
 import ServicesFactory from '../../services/common/ServicesFactory';
 import Context from '../../utilities/network/Context';
 import Database from '../../utilities/database/Database';
+import DatabaseWhere from '../../utilities/database/DatabaseWhere';
 
 const Config = require('./../../../../config/config');
 
@@ -28,12 +29,16 @@ export default class Router {
 
     static dbPool: DatabasePool | null = null;
 
-    static init(dbPool: DatabasePool) {
+    static async init(dbPool: DatabasePool) {
         Router.dbPool = dbPool;
+        let db = await Router.dbPool.aquireConnection();
+        //db.query('SHOW DATABASES').then(result => console.log(result));
+
         ApiFilter.init();
         GeneralFilter.init();
         CAdminFilter.init();
     }
+
 
     static async onRequest(ctx) {
         Router.processCtx(ctx);
@@ -47,6 +52,7 @@ export default class Router {
             const payload = new Payload(ctx);
             const session = new Session(ctx);
             db = await Router.dbPool.aquireConnection();
+
             const servicesFactory = new ServicesFactory(db);
             const context = new Context(payload, session, servicesFactory);
 

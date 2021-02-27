@@ -5,7 +5,7 @@ export class CreditProductRes {
     productModel: ProductModel;
 
     constructor(json) {
-        this.productModel = ProductModel.fromJson(json.product);
+        this.productModel = ProductModel.fromJson(json.productJson);
     }
 
 }
@@ -13,7 +13,7 @@ export class CreditProductRes {
 export class FetchProductsByFilterRes {
     productModels: ProductModel[]
 
-    constructor(json){
+    constructor(json) {
         this.productModels = json.productJsons;
     }
 }

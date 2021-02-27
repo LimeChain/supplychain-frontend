@@ -1,5 +1,7 @@
 import Database from '../../utilities/database/Database';
 import RepoFactory from '../../utilities/database/RepoFactory';
+import ProductService from '../ProductService';
+import productService from '../ProductService';
 import ShipmentService from '../ShipmentService';
 
 export default class ServicesFactory {
@@ -8,6 +10,7 @@ export default class ServicesFactory {
     repoFactory: RepoFactory;
 
     shipmentService: ShipmentService | null;
+    productService: ProductService | null;
 
     constructor(db: Database) {
         this.db = db;
@@ -18,6 +21,10 @@ export default class ServicesFactory {
 
     getShipmentService(): ShipmentService {
         return this.shipmentService ?? new ShipmentService(this);
+    }
+
+    getProductService(): ProductService {
+        return this.productService ?? new ProductService(this);
     }
 
 }

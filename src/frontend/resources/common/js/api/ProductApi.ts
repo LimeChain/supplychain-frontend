@@ -1,58 +1,41 @@
 import AbsApi from './AbsApi';
-import {CreditProductReq, FetchProductsByFilterReq} from '../network-requests/ProductApiReq';
-import {CreditProductRes, FetchProductsByFilterRes} from '../network-responses/ProductApiRes';
+import { CreditProductReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
+import { CreditProductRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
+import Api from '../utilities/Api';
+import Apis from '../../../../../../builds/dev-generated/Apis';
+import Actions from '../../../../../../builds/dev-generated/Actions';
+import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
+
 
 export default class ProductApi extends AbsApi {
 
+    productApi: Api
+
+    constructor(enableActions: null | (() => void) = null, disableActions: null | (() => void) = null, showAlert: null | ((msg: string, positiveListener?: null | (() => boolean | void), negativeListener?: null | (() => boolean | void)) => void) = null) {
+        super(enableActions, disableActions, showAlert);
+        this.productApi = new Api(Apis.PRODUCT, this.enableActions, this.disableActions);
+    }
+
     creditProduct(productModel: ProductModel, callback: () => void) {
         this.disableActions();
-        
-        setTimeout(() => {
-            this.enableActions();
 
-            const req = new CreditProductReq(productModel);
+        const req = new CreditProductReq(productModel);
 
-            let json = {
-                product: null
+        this.productApi.req(Actions.PRODUCT.CREDIT_PRODUCT, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            if (productModel.isNew() === true) {
-                let nextId;
-
-                if (storageHelper.productsJson.length > 0) {
-                    const lastProductJson = storageHelper.productsJson[storageHelper.productsJson.length - 1];
-                    nextId = (parseInt(lastProductJson.productId) + 1).toString();
-                } else {
-                    nextId = '1';
-                }
-
-                json.product = {
-                    productId: nextId,
-                };
-            } else {
-                const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
-                json.product = ProductModel.fromJson(productJson);
-            }
-
-            
-            const res = new CreditProductRes(json);
-
+            const res = new CreditProductRes(json.obj);
             productModel.productId = res.productModel.productId;
-
-            const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
-            if (productJson !== undefined) {
-                Object.assign(productJson, productModel.toJson());
-            } else {
-                storageHelper.productsJson.push(productModel.toJson());
-            }
-
-            storageHelper.save();
-
             callback();
-        }, 100);
+
+            this.enableActions();
+        });
     }
 
     fetchProductsByFilter(filter: string, pageSize: number, pageNumber: number, callback: (productModels: ProductModel[]) => void) {
@@ -66,22 +49,22 @@ export default class ProductApi extends AbsApi {
             const json = {
                 productJsons: []
             }
-            
-            if(filter === S.Strings.EMPTY){
+
+            if (filter === S.Strings.EMPTY) {
                 json.productJsons = storageHelper.productsJson;
-            }else{
+            } else {
                 storageHelper.productsJson.forEach((productJson: ProductModel) => {
                     let occurance = 0;
-    
-                    if(productJson.productName.includes(filter)){
+
+                    if (productJson.productName.includes(filter)) {
                         occurance++;
                     }
-    
-                    if(productJson.productDescription.includes(filter)){
+
+                    if (productJson.productDescription.includes(filter)) {
                         occurance++;
                     }
-    
-                    if(productJson.productId.includes(filter)){
+
+                    if (productJson.productId.includes(filter)) {
                         occurance++;
                     }
 
@@ -94,7 +77,7 @@ export default class ProductApi extends AbsApi {
             let totalSize = json.productJsons.length;
             let sliceBegin = totalSize - pageNumber * pageSize;
             let sliceEnd = sliceBegin + pageSize;
-            
+
             json.productJsons = json.productJsons.slice(sliceBegin < 0 ? 0 : sliceBegin, sliceEnd);
 
             const res = new FetchProductsByFilterRes(json);

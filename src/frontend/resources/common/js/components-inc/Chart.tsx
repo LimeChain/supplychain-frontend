@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ChartJs from 'chart.js';
 import S from '../utilities/Main';
 
 import '../../css/components-inc/chart.css';
@@ -195,10 +194,10 @@ export default class Chart extends React.Component {
 
         return (
             <div
-                ref = { this.nodes.root }
-                className = { `Chart ${this.props.className}` } >
+                ref={this.nodes.root}
+                className={`Chart ${this.props.className}`} >
 
-                <canvas ref = { this.nodes.canvas } />
+                <canvas ref={this.nodes.canvas} />
 
             </div>
         );

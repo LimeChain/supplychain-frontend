@@ -2,10 +2,10 @@ import ProductModel from '../models/product-module/ProductModel';
 
 export class CreditProductReq {
 
-    product: any;
+    productJson: any;
 
     constructor(productModel: ProductModel) {
-        this.product = productModel.toJson();
+        this.productJson = productModel.toJson();
     }
 
 }

@@ -22,8 +22,8 @@ export default class ProductModelG extends ProductModelH {
         this.skus = sourceModel.skus;
     }
 
-    static asMap(models: ProductModel[]): Map < any, ProductModel > {
-        const map = new Map < any, ProductModel >();
+    static asMap(models: ProductModel[]): Map<any, ProductModel> {
+        const map = new Map<any, ProductModel>();
 
         models.forEach((m) => {
             map.set(m.productId, m);
@@ -73,7 +73,7 @@ export default class ProductModelG extends ProductModelH {
 
         return model;
     }
-        
+
 
     toNetwork(): any {
         return {
@@ -94,7 +94,7 @@ export default class ProductModelG extends ProductModelH {
         }
 
         const model = new ProductModel();
-        
+
         model.productId = parseInt(json.productId ?? model.productId);
         model.productName = json.productName ?? model.productName;
         model.productUnit = parseInt(json.productUnit ?? model.productUnit);
@@ -124,10 +124,10 @@ export default class ProductModelG extends ProductModelH {
         }
     }
 
-    static getPropsAsMap(props: number[] | null = null): Map < number, boolean > {
+    static getPropsAsMap(props: number[] | null = null): Map<number, boolean> {
         props = props ?? ProductModelH.PROPERTIES;
 
-        const map = new Map < number, boolean >();
+        const map = new Map<number, boolean>();
         props.forEach((prop) => {
             map.set(prop, true);
         });

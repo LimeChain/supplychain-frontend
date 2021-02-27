@@ -1,6 +1,7 @@
 const CountryRepoH = require('../../modules/Country/Repo/CountryRepoH').default;
 const ShipmentRepoH = require('../../modules/ShipmentModule/Shipment/Repo/ShipmentRepoH').default;
 const ShipmentDocumentRepoH = require('../../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepoH').default;
+const ProductRepoH = require('../../modules/ProductModule/Product/Repo/ProductRepoH').default;
 
 module.exports = class Migration20210224124242 {
 
@@ -11,6 +12,16 @@ module.exports = class Migration20210224124242 {
             ${CountryRepoH.C_COUNTRY_NAME} TEXT,
             ${CountryRepoH.C_COUNTRY_VAT} INT,
             PRIMARY KEY(${CountryRepoH.C_COUNTRY_ID})
+        ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
+
+        await db.query(`DROP TABLE IF EXISTS ${ProductRepoH.TABLE_NAME}`);
+        await db.query(`CREATE TABLE IF NOT EXISTS ${ProductRepoH.TABLE_NAME}(
+            ${ProductRepoH.C_PRODUCT_ID} INT AUTO_INCREMENT,
+            ${ProductRepoH.C_PRODUCT_NAME} TEXT,
+            ${ProductRepoH.C_PRODUCT_UNIT} INT,
+            ${ProductRepoH.C_PRODUCT_DESCRIPTION} TEXT,
+            ${ProductRepoH.C_PRODUCT_DELETED} INT,
+            PRIMARY KEY(${ProductRepoH.C_PRODUCT_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
 
         await db.query(`DROP TABLE IF EXISTS ${ShipmentDocumentRepoH.TABLE_NAME}`);

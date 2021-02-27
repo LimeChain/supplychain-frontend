@@ -6,7 +6,7 @@ const Config = require('./../../../../config/config');
 
 export default class GeneralFilter {
 
-    static map: Map < string, Page >;
+    static map: Map<string, Page>;
 
     static init() {
         GeneralFilter.map = new Map();
