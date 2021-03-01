@@ -1,30 +1,30 @@
 import { makeAutoObservable } from 'mobx';
-import NotificationApi from '../api/NotificationApi';
+import GeneralApi from '../api/GeneralApi';
 import NotificationModel from '../models/NotificationModel';
 import S from '../utilities/Main';
 
 
 export default class NotificationStore {
-    notificationApi: NotificationApi;
+    generalApi: GeneralApi;
     static NOTIFICATION_SHOW_COUNT: number = 4;
     isFetching: boolean = false;
     hasMore: boolean = true;
     totalSize: number = 0;
-    notificationsMap: Map < string, NotificationModel > = new Map();
+    notificationsMap: Map<string, NotificationModel> = new Map();
     screenNotificationModels: NotificationModel[] = [];
 
     constructor(appStore, alertStore) {
         makeAutoObservable(this);
-        this.notificationApi = new NotificationApi(appStore.enableActions, appStore.disableActions, alertStore.show);
+        this.generalApi = new GeneralApi(appStore.enableActions, appStore.disableActions, alertStore.show);
     }
 
-    onScreenData(notificationModels: NotificationModel[], totalSize: number){
+    onScreenData(notificationModels: NotificationModel[], totalSize: number) {
         this.screenNotificationModels = notificationModels;
         this.totalSize = totalSize;
         this.updateNotificationModels(notificationModels);
     }
 
-    updateNotificationModels(notificationModels: NotificationModel[]){
+    updateNotificationModels(notificationModels: NotificationModel[]) {
         const cacheMap = this.notificationsMap;
         this.notificationsMap = null;
 
@@ -35,15 +35,15 @@ export default class NotificationStore {
         this.notificationsMap = cacheMap;
     }
 
-    appendToScreenData(notificationModels: NotificationModel[]){
+    appendToScreenData(notificationModels: NotificationModel[]) {
         notificationModels.forEach((notificationModel) => {
             this.screenNotificationModels.push(notificationModel);
             this.notificationsMap.set(notificationModel.notificationId, notificationModel);
         })
     }
 
-    fetchMoreNotifications(wipe: boolean = false){
-        if(this.isFetching){
+    fetchMoreNotifications(wipe: boolean = false) {
+        if (this.isFetching) {
             return;
         }
 
@@ -52,12 +52,12 @@ export default class NotificationStore {
         const from = wipe === true ? 0 : this.screenNotificationModels.length;
         const to = from + NotificationStore.NOTIFICATION_SHOW_COUNT;
 
-        this.notificationApi.fetchNotificationsByFilter(S.INT_FALSE, from, to, (notificationModels: NotificationModel[], totalSize: number) => {
+        this.generalApi.fetchNotificationsByFilter(S.INT_FALSE, from, to, (notificationModels: NotificationModel[], totalSize: number) => {
             this.isFetching = false;
 
             this.hasMore = !(this.screenNotificationModels.length === totalSize)
 
-            if (this.totalSize < totalSize){
+            if (this.totalSize < totalSize) {
                 this.fetchMoreNotifications(true);
                 return;
             }

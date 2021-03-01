@@ -14,35 +14,42 @@ export class CreditShipmentReq2 {
         this.skuOriginJsons = skuOriginModels.map((skuOriginModel) => skuOriginModel.toJson());
         this.skuJsons = skuModels.map((skuModel) => skuModel.toJson());
     }
-
 }
 
 export class CreditShipmentReq {
 
-    shipmentModel: ShipmentModel
-    skuOriginModels: SkuOriginModel[]
-    skuModels: SkuModel[]
+    shipmentJson: ShipmentModel
+    skuOriginJsons: SkuOriginModel[]
+    skuJsons: SkuModel[]
 
     constructor(shipmentModel: ShipmentModel, skuOriginModels: SkuOriginModel[], skuModels: SkuModel[]) {
-        this.shipmentModel = shipmentModel.toJson();
-        this.skuOriginModels = skuOriginModels.map((skuOriginModel) => skuOriginModel.toJson());
-        this.skuModels = skuModels.map((skuModel) => skuModel.toJson());
+        this.shipmentJson = shipmentModel.toJson();
+        this.skuOriginJsons = skuOriginModels.map((skuOriginModel) => skuOriginModel.toJson());
+        this.skuJsons = skuModels.map((skuModel) => skuModel.toJson());
+    }
+}
+
+export class DeleteShipmentReq {
+    shipmentId: string
+
+    constructor(shipmentId: string) {
+        this.shipmentId = shipmentId;
     }
 }
 
 export class FetchShipmentsByFilterReq {
     filter: string
-    pageSize: number
-    pageNumber: number
+    from: number
+    to: number
 
-    constructor(filter, pageSize, pageNumber) {
+    constructor(filter: string, from: number, to: number) {
         this.filter = filter;
-        this.pageSize = pageSize;
-        this.pageNumber = pageNumber;
+        this.from = from;
+        this.to = to;
     }
 }
 
-export class FetchShipmentsByIdReq {
+export class FetchShipmentByIdReq {
     shipmentId: string
 
     constructor(shipmentId: string) {

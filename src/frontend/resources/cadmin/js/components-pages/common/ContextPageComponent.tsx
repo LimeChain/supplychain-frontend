@@ -1,7 +1,5 @@
-import NotificationApi from '../../../../common/js/api/NotificationApi';
+import GeneralApi from '../../../../common/js/api/GeneralApi';
 import ShipmentApi from '../../../../common/js/api/ShipmentApi';
-import SiteApi from '../../../../common/js/api/SiteApi';
-
 import PageComponent, { PageComponentProps } from '../../../../common/js/components-pages/PageComponent';
 import NotificationStore from '../../../../common/js/stores/NotificationStore';
 import ShipmentStore from '../../../../common/js/stores/ShipmentStore';
@@ -14,16 +12,14 @@ export interface ContextPageComponentProps extends PageComponentProps {
     shipmentStore: ShipmentStore;
 }
 
-export default class ContextPageComponent < Pr extends ContextPageComponentProps, St = {}, SS = any > extends PageComponent < Pr, St, SS > {
+export default class ContextPageComponent<Pr extends ContextPageComponentProps, St = {}, SS = any> extends PageComponent<Pr, St, SS> {
     shipmentApi: ShipmentApi;
-    notificationApi: NotificationApi;
-    siteApi: SiteApi;
+    generalApi: GeneralApi;
 
     constructor(props: Pr) {
         super(props);
         this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
-        this.notificationApi = new NotificationApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
-        this.siteApi = new SiteApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+        this.generalApi = new GeneralApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
     }
 
     async loadData() {
@@ -44,12 +40,12 @@ export default class ContextPageComponent < Pr extends ContextPageComponentProps
 
 
             ++requiredParallelRequests;
-            this.notificationApi.fetchNotificationsByFilter(S.INT_FALSE, 0, NotificationStore.NOTIFICATION_SHOW_COUNT, (notificationModels, totalSize) => {
+            this.generalApi.fetchNotificationsByFilter(S.INT_FALSE, 0, NotificationStore.NOTIFICATION_SHOW_COUNT, (notificationModels, totalSize) => {
                 this.props.notificationStore.onScreenData(notificationModels, totalSize);
                 onRequest();
             })
 
-            this.siteApi.fetchAllSites((siteModels, countryModels) => {
+            this.generalApi.fetchAllSites((siteModels, countryModels) => {
                 this.props.siteStore.onScreenData(siteModels, countryModels);
             })
         });

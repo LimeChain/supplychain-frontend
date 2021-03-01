@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditShipmentReq, CreditShipmentReq2, FetchShipmentsByFilterReq, FetchShipmentsByIdReq } from '../network-requests/ShipmentApiReq';
-import { CreditShipmentRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
+import { CreditShipmentReq, CreditShipmentReq2, DeleteShipmentReq, FetchShipmentsByFilterReq, FetchShipmentByIdReq } from '../network-requests/ShipmentApiReq';
+import { CreditShipmentRes, DeleteShipmentRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -16,7 +16,7 @@ export default class ShipmentApi extends AbsApi {
 
     shipmentApi: Api;
 
-    constructor(enableActions: null | (() => void) = null, disableActions: null | (() => void) = null, showAlert: null | ((msg: string, positiveListener? : null | (() => boolean | void), negativeListener?: null | (() => boolean | void)) => void) = null) {
+    constructor(enableActions: null | (() => void) = null, disableActions: null | (() => void) = null, showAlert: null | ((msg: string, positiveListener?: null | (() => boolean | void), negativeListener?: null | (() => boolean | void)) => void) = null) {
         super(enableActions, disableActions, showAlert);
         this.shipmentApi = new Api(Apis.SHIPMENT, this.enableActions, this.disableActions);
     }
@@ -171,6 +171,28 @@ export default class ShipmentApi extends AbsApi {
         }, 100);
     }
 
+    deleteShipment(shipmentId: string, callback: (shipmentModel: ShipmentModel) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new DeleteShipmentReq(shipmentId);
+
+            // Server code
+            const json = {
+                shipmentJson: storageHelper.shipmentsJson.find((shipmentJson) => shipmentJson.shipmentId === shipmentId),
+            }
+
+            json.shipmentJson.shipmentDeleted = S.INT_TRUE;
+
+            const res = new DeleteShipmentRes(json);
+
+            callback(res.shipmentModel);
+        }, 100);
+    }
+
+
     fetchShipmentByFilter(filter: string, pageSize: number, pageNumber: number, callback: (shipmentModels: ShipmentModel[]) => void) {
         this.disableActions();
 
@@ -250,7 +272,7 @@ export default class ShipmentApi extends AbsApi {
         setTimeout(() => {
             this.enableActions();
 
-            const req = new FetchShipmentsByIdReq(shipmentId);
+            const req = new FetchShipmentByIdReq(shipmentId);
 
             // Server code
             const json = {

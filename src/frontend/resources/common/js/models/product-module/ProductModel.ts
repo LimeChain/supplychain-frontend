@@ -7,12 +7,12 @@ export default class ProductModel {
     productDescription: string
     productDeleted: number
 
-    constructor(){
+    constructor() {
         this.productId = S.Strings.NOT_EXISTS;
         this.productName = S.Strings.EMPTY;
         this.productUnit = S.NOT_EXISTS;
         this.productDescription = S.Strings.EMPTY;
-        this.productDeleted = S.NOT_EXISTS;
+        this.productDeleted = S.INT_FALSE;
     }
 
     isNew(): boolean {
@@ -39,7 +39,7 @@ export default class ProductModel {
         model.productId = (json.productId || model.productId).toString();
         model.productName = json.productName || model.productName;
         model.productUnit = json.productUnit || model.productUnit;
-        model.productDescription = json.productDescription || model.productDescription;    
+        model.productDescription = json.productDescription || model.productDescription;
         model.productDeleted = json.productDeleted || model.productDeleted;
 
         return model;

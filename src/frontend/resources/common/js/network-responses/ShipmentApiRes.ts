@@ -15,16 +15,24 @@ export class CreditShipmentRes {
     }
 }
 
+export class DeleteShipmentRes {
+    shipmentModel: ShipmentModel;
+
+    constructor(json) {
+        this.shipmentModel = ShipmentModel.fromJson(json.shipmentJson);
+    }
+}
+
 export class FetchShipmentsByFilterRes {
     shipmentModels: ShipmentModel[];
 
     constructor(json) {
         this.shipmentModels = [];
-        
-        for(let shipmentJson of json.shipmentJsons){
+
+        for (let shipmentJson of json.shipmentJsons) {
             this.shipmentModels.push(ShipmentModel.fromJson(shipmentJson));
         }
-        
+
     }
 }
 

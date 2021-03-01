@@ -13,7 +13,7 @@ import S from '../../../common/js/utilities/Main';
 import ProjectUtils from '../../../common/js/ProjectUtils';
 import NotificationStore from '../../../common/js/stores/NotificationStore';
 import { inject, observer } from 'mobx-react';
-import NotificationApi from '../../../common/js/api/NotificationApi';
+import GeneralApi from '../../../common/js/api/GeneralApi';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 
 interface Props {
@@ -44,7 +44,7 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
 
 class Notifications extends React.Component<Props, State> {
 
-    notificationApi: NotificationApi;
+    generalApi: GeneralApi;
 
     nodes: {
         root: RefObject<HTMLDivElement>,
@@ -61,7 +61,7 @@ class Notifications extends React.Component<Props, State> {
             show: false,
         }
 
-        this.notificationApi = new NotificationApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+        this.generalApi = new GeneralApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
 
     }
 

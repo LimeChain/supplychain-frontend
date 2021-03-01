@@ -7,7 +7,14 @@ export class CreditProductReq {
     constructor(productModel: ProductModel) {
         this.productJson = productModel.toJson();
     }
+}
 
+export class DeleteProductReq {
+    productId: string
+
+    constructor(productId: string) {
+        this.productId = productId;
+    }
 }
 
 export class FetchProductsByFilterReq {
@@ -19,5 +26,13 @@ export class FetchProductsByFilterReq {
         this.filter = filter;
         this.pageSize = pageSize;
         this.pageNumber = pageNumber;
+    }
+}
+
+export class FetchProductByIdReq {
+    productId: string
+
+    constructor(productId: string) {
+        this.productId = productId;
     }
 }

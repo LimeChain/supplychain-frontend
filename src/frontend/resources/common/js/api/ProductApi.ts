@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditProductReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
-import { CreditProductRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
+import { CreditProductReq, DeleteProductReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
+import { CreditProductRes, FetchProductByIdRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -36,6 +36,31 @@ export default class ProductApi extends AbsApi {
 
             this.enableActions();
         });
+    }
+
+    deleteProduct(productId: string, callback: (productModel: ProductModel) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new DeleteProductReq(productId);
+
+            const json = {
+                productJson: ProductModel,
+            }
+
+            if (productId === S.Strings.EMPTY) {
+                return;
+            }
+
+            json.productJson = storageHelper.productJsons.get(productId);
+            json.productJson.productDeleted = S.INT_TRUE;
+
+            const res = new FetchProductByIdRes(json);
+
+            callback(res.productModel);
+        }, 100);
     }
 
     fetchProductsByFilter(filter: string, pageSize: number, pageNumber: number, callback: (productModels: ProductModel[]) => void) {
@@ -83,6 +108,30 @@ export default class ProductApi extends AbsApi {
             const res = new FetchProductsByFilterRes(json);
 
             callback(res.productModels);
+        }, 100);
+    }
+
+    fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new FetchProductByIdReq(productId);
+
+            const json = {
+                productJson: ProductModel,
+            }
+
+            if (productId === S.Strings.EMPTY) {
+                return;
+            }
+
+            json.productJson = storageHelper.productJsons.get(productId);
+
+            const res = new FetchProductByIdRes(json);
+
+            callback(res.productModel);
         }, 100);
     }
 }

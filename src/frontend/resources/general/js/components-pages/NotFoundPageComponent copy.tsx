@@ -21,7 +21,6 @@ import GrpcApi from '../../../common/js/api/GrpcApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import ProductsApi from '../../../common/js/api/ProductApi';
 import ShipmentApi from '../../../common/js/api/ShipmentApi';
-import CountryApi from '../../../common/js/api/SiteApi';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import ShipmentDocumentApi from '../../../common/js/api/ShipmentDocumentApi';
@@ -39,7 +38,7 @@ interface Props extends ContextPageComponentProps {
     shipmentDocumentStore: ShipmentDocumentStore;
 }
 
-export default class PageNotFoundComponent extends ContextPageComponent < Props > {
+export default class PageNotFoundComponent extends ContextPageComponent<Props> {
 
 
     static layout() {
@@ -82,7 +81,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             'originCountryId': 1,
             'description': 'Stylish oven'
         }
-        
+
         let productModel = ProductModel.fromJson(productJson);
         this.productsApi.creditProduct(productModel, () => {
             console.log(productModel);
@@ -99,7 +98,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             'originCountryId': 1,
             'description': 'Stylish chair'
         }
-        
+
         let productModel = ProductModel.fromJson(productJson);
         this.productsApi.creditProduct(productModel, () => {
             console.log(productModel);
@@ -116,7 +115,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             'dateOfArrival': Date.now() + 10000,
             'description': 'new test chipment'
         }
-        
+
         let shipmentModel = ShipmentModel.fromJson(shipmentJson);
         this.shipmentApi.creditShipment(shipmentModel, () => {
             console.log(shipmentModel);
@@ -130,7 +129,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
         }
 
         let shipmentDocumentModel = ShipmentDocumentModel.fromJson(shipmentDocumentJson);
-        this.shipmentDocumentApi.uploadDocument(shipmentDocumentModel, () =>{});
+        this.shipmentDocumentApi.uploadDocument(shipmentDocumentModel, () => { });
     }
 
     editShipment = () => {
@@ -143,7 +142,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             'dateOfArrival': Date.now() + 10000,
             'description': 'new test edit shipment'
         }
-        
+
         let shipmentModel = ShipmentModel.fromJson(shipmentJson);
         this.shipmentApi.creditShipment(shipmentModel, () => {
             console.log(shipmentModel);
@@ -159,83 +158,83 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             S.NOT_EXISTS,
             S.Strings.EMPTY,
             (shipmentModels: ShipmentModel[]) => {
-            this.props.shipmentStore.onScreenData(shipmentModels);
-            for(let value of this.props.shipmentStore.shipmentsMap.values()){
-                console.log(value.name);
-            }
-
-            this.countryApi.fetchAllOrigins((originModels) => {
-                this.props.originStore.onScreenData(originModels);
-                
-                for(let value of this.props.originStore.originsMap.values()){
+                this.props.shipmentStore.onScreenData(shipmentModels);
+                for (let value of this.props.shipmentStore.shipmentsMap.values()) {
                     console.log(value.name);
                 }
-                
-            });
-        })
+
+                this.countryApi.fetchAllOrigins((originModels) => {
+                    this.props.originStore.onScreenData(originModels);
+
+                    for (let value of this.props.originStore.originsMap.values()) {
+                        console.log(value.name);
+                    }
+
+                });
+            })
     }
     renderContent() {
         return (
-            <div style = { { 'width': '1000px', 'height': '500px', 'margin': 'auto' } } className = { 'FlexSingleCenter' } >
+            <div style={{ 'width': '1000px', 'height': '500px', 'margin': 'auto' }} className={'FlexSingleCenter'} >
                 <LayoutBlock>
 
                     <LayoutBlock
-                        direction = { LayoutBlock.DIRECTION_ROW } >
+                        direction={LayoutBlock.DIRECTION_ROW} >
                         <Input
-                            label = { 'test' } />
+                            label={'test'} />
 
                         <Input
-                            label = { 'test' } error />
+                            label={'test'} error />
                     </LayoutBlock>
 
                     <LayoutBlock
-                        direction = { LayoutBlock.DIRECTION_ROW } >
+                        direction={LayoutBlock.DIRECTION_ROW} >
                         <Select
-                            label = { 'test' } >
-                            <MenuItem value = { 1 } >1</MenuItem>
-                            <MenuItem value = { 2 } >2</MenuItem>
+                            label={'test'} >
+                            <MenuItem value={1} >1</MenuItem>
+                            <MenuItem value={2} >2</MenuItem>
                         </Select>
 
                         <Select
-                            label = { 'test' }
+                            label={'test'}
                             error >
-                            <MenuItem value = { 1 } >1</MenuItem>
-                            <MenuItem value = { 2 } >2</MenuItem>
+                            <MenuItem value={1} >1</MenuItem>
+                            <MenuItem value={2} >2</MenuItem>
                         </Select>
                     </LayoutBlock>
 
-                    <Tooltip title = { 'some info' } arrow ><span>Value</span></Tooltip>
+                    <Tooltip title={'some info'} arrow ><span>Value</span></Tooltip>
 
-                    <Checkbox onChange = { () => { this.checkbox ^= 1; this.setState({}); } } value = { this.checkbox } label = { (<div>'some text'</div>) } />
+                    <Checkbox onChange={() => { this.checkbox ^= 1; this.setState({}); }} value={this.checkbox} label={(<div>'some text'</div>)} />
 
                     <Actions>
-                        <Button type = { Button.TYPE_ROUNDED } color = { Button.COLOR_SCHEME_1 } onClick = {this.grpcReq}>GRPC Req</Button>
-                        <Button type = { Button.TYPE_ROUNDED } color = { Button.COLOR_SCHEME_2 } onClick = {this.createProduct}>Create Product</Button>
-                        <Button type = { Button.TYPE_TEXT_INLINE } color = { Button.COLOR_SCHEME_1 } onClick = {this.editProduct} >Edit Product</Button>
-                        <Button type = { Button.TYPE_TEXT_INLINE } color = { Button.COLOR_SCHEME_2 } onClick = {this.createShipment} >Create Shipment</Button>
-                        <Button type = { Button.TYPE_TEXT_INLINE } color = { Button.COLOR_SCHEME_2 } onClick = {this.editShipment} >Edit Shipment</Button>
-                        <Button type = { Button.TYPE_TEXT_INLINE } color = { Button.COLOR_SCHEME_2 } onClick = {this.uploadShipmentDocument} >Upload ShipmentDocument</Button>
-                        <Button type = { Button.TYPE_TEXT_INLINE } color = { Button.COLOR_SCHEME_1 } onClick = {this.fetchShipmentsByFilter} >Fetch Shipment By Name</Button>
+                        <Button type={Button.TYPE_ROUNDED} color={Button.COLOR_SCHEME_1} onClick={this.grpcReq}>GRPC Req</Button>
+                        <Button type={Button.TYPE_ROUNDED} color={Button.COLOR_SCHEME_2} onClick={this.createProduct}>Create Product</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_1} onClick={this.editProduct} >Edit Product</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.createShipment} >Create Shipment</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.editShipment} >Edit Shipment</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.uploadShipmentDocument} >Upload ShipmentDocument</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_1} onClick={this.fetchShipmentsByFilter} >Fetch Shipment By Name</Button>
                     </Actions>
 
-                    <span onClick = { (e) => { this.anchorEl = e.target; this.setState({}); } } >Popover</span>
+                    <span onClick={(e) => { this.anchorEl = e.target; this.setState({}); }} >Popover</span>
                     <Popover
-                        anchorEl = { this.anchorEl }
-                        open = { this.anchorEl !== null }
-                        onClose = { () => { this.anchorEl = null; this.setState({}) }} >
+                        anchorEl={this.anchorEl}
+                        open={this.anchorEl !== null}
+                        onClose={() => { this.anchorEl = null; this.setState({}) }} >
                         some content
                     </Popover>
 
                     <DatepickerComponent
-                        className = { 'DatepickerComponent'}
-                        showMonthDropdown = { true }
-                        showYearDropdown = { true }
-                        selected = { new Date() }
-                        onChange = { (e) => {
+                        className={'DatepickerComponent'}
+                        showMonthDropdown={true}
+                        showYearDropdown={true}
+                        selected={new Date()}
+                        onChange={(e) => {
                             this.datepicker = e.getTime();
                             this.setState({});
                         }}
-                        customInput = { <div> { new Date(this.datepicker).formatCalendarDate() } </div> } />
+                        customInput={<div> {new Date(this.datepicker).formatCalendarDate()} </div>} />
 
                 </LayoutBlock>
             </div>
