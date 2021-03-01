@@ -152,7 +152,7 @@ export default class Database {
 
     async rollbackTransaction(): Promise < void > {
         return new Promise < void >((resolve, reject) => {
-            this.dbc.rollbackTransaction((er) => {
+            this.dbc.rollback((er) => {
                 if (er) {
                     reject(er);
                     return;
