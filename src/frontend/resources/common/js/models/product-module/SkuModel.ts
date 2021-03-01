@@ -8,7 +8,7 @@ export default class SkuModel {
     pricePerUnit: number;
     currency: number;
 
-    constructor(){
+    constructor() {
         this.skuId = S.Strings.NOT_EXISTS;
         this.productId = S.Strings.NOT_EXISTS;
         this.quantity = S.NOT_EXISTS;
@@ -18,7 +18,7 @@ export default class SkuModel {
 
     isNew(): boolean {
         let skuIdParseInt = parseInt(this.skuId);
-        
+
         return this.skuId === S.Strings.NOT_EXISTS ||
             (!isNaN(skuIdParseInt) && skuIdParseInt < 0);
     }
@@ -29,7 +29,7 @@ export default class SkuModel {
             'productId': this.productId,
             'quantity': this.quantity,
             'pricePerUnit': this.pricePerUnit,
-            'currency': this.pricePerUnit,
+            'currency': this.currency,
         }
     }
 

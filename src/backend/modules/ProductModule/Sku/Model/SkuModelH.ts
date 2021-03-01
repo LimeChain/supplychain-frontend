@@ -2,7 +2,8 @@
             
 export default class SkuModelH {
 
-    static S_TYPE_A = 1;
+    static S_CURRENCY_EUR = 1;
+    static S_CURRENCY_USD = 2;
 
     static P_SKU_ID = 1;
     static P_SHIPMENT_ID = 2;

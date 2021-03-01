@@ -5,11 +5,11 @@ import ShipmentDocumentModelH from '../../../modules/ShipmentModule/ShipmentDocu
             
 export default class UploadShipmentDocumentReq {
     
-    shipmentDocument: ShipmentDocumentModel;
+    shipmentDocumentModel: ShipmentDocumentModel;
 
     constructor(payload: Payload) {
         const json = payload.params;
-        this.shipmentDocument = ShipmentDocumentModel.fromNetwork(json.shipmentDocument);
+        this.shipmentDocumentModel = ShipmentDocumentModel.fromNetwork(json.shipmentDocumentJson);
     }
 
 }

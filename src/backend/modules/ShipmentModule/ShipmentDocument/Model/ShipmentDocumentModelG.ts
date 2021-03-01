@@ -10,7 +10,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         super();
         this.shipmentDocumentId = SV.NOT_EXISTS;
         this.shipmentId = SV.NOT_EXISTS;
-        this.documentId = SV.NOT_EXISTS;
         this.documentType = SV.NOT_EXISTS;
         this.shipmentDocumentUrl = SV.Strings.EMPTY;
     }
@@ -43,10 +42,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
             repo.shipmentId = this.shipmentId;
             repo.shipmentIdToDb = true;
         }
-        if (map.has(ShipmentDocumentModelH.P_DOCUMENT_ID) === true && this.documentId !== undefined) {
-            repo.documentId = this.documentId;
-            repo.documentIdToDb = true;
-        }
         if (map.has(ShipmentDocumentModelH.P_DOCUMENT_TYPE) === true && this.documentType !== undefined) {
             repo.documentType = this.documentType;
             repo.documentTypeToDb = true;
@@ -64,7 +59,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
 
         model.shipmentDocumentId = parseInt((repo.shipmentDocumentId ?? model.shipmentDocumentId) as unknown as string);
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
-        model.documentId = parseInt((repo.documentId ?? model.documentId) as unknown as string);
         model.documentType = parseInt((repo.documentType ?? model.documentType) as unknown as string);
         model.shipmentDocumentUrl = repo.shipmentDocumentUrl ?? model.shipmentDocumentUrl;
 
@@ -76,7 +70,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         return {
             shipmentDocumentId: this.shipmentDocumentId,
             shipmentId: this.shipmentId,
-            documentId: this.documentId,
             documentType: this.documentType,
             shipmentDocumentUrl: this.shipmentDocumentUrl,
         };
@@ -91,7 +84,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         
         model.shipmentDocumentId = parseInt(json.shipmentDocumentId ?? model.shipmentDocumentId);
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
-        model.documentId = parseInt(json.documentId ?? model.documentId);
         model.documentType = parseInt(json.documentType ?? model.documentType);
         model.shipmentDocumentUrl = json.shipmentDocumentUrl ?? model.shipmentDocumentUrl;
 
@@ -104,8 +96,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
                 return ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_ID;
             case ShipmentDocumentModelH.P_SHIPMENT_ID:
                 return ShipmentDocumentRepoH.C_SHIPMENT_ID;
-            case ShipmentDocumentModelH.P_DOCUMENT_ID:
-                return ShipmentDocumentRepoH.C_DOCUMENT_ID;
             case ShipmentDocumentModelH.P_DOCUMENT_TYPE:
                 return ShipmentDocumentRepoH.C_DOCUMENT_TYPE;
             case ShipmentDocumentModelH.P_SHIPMENT_DOCUMENT_URL:

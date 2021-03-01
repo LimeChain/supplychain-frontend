@@ -1,15 +1,11 @@
-import SkuModel from "../models/product-module/SkuModel";
-import SkuOriginModel from "../models/product-module/SkuOriginModel";
-import ShipmentDocumentModel from "../models/shipment-module/ShipmentDocumentModel";
-import ShipmentModel from "../models/shipment-module/ShipmentModel";
+import ShipmentDocumentModel from "../../../src/backend/modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel";
 
 export class CreditShipmentRes {
 
     shipmentModel: ShipmentModel;
-    skuOriginModels: SkuOriginModel[]
-    skuModels: SkuModel[]
-    shipmentDocumentModels: ShipmentDocumentModel[]
-
+    skuOriginModels: Array<SkuOriginModel>
+    skuModels: Array<SkuModel>
+    shipmentDocumentModels: Array<ShipmentDocumentModel>
 
     constructor(json) {
 
@@ -17,6 +13,7 @@ export class CreditShipmentRes {
         this.skuOriginModels = json.skuOriginJsons.map((skuOriginJson) => SkuOriginModel.fromJson(skuOriginJson));
         this.skuModels = json.skuJsons.map((skuJson) => SkuModel.fromJson(skuJson));
         this.shipmentDocumentModels = json.shipmentDocumentJsons.map((shipmentDocumentJson) => ShipmentDocumentModel.fromJson(shipmentDocumentJson));
+
     }
 }
 
@@ -29,7 +26,7 @@ export class DeleteShipmentRes {
 }
 
 export class FetchShipmentsByFilterRes {
-    shipmentModels: ShipmentModel[];
+    shipmentModels: Array<ShipmentModel>
 
     constructor(json) {
         this.shipmentModels = [];

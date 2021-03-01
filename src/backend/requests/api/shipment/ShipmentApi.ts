@@ -13,8 +13,8 @@ export default class ShipmentApi extends ShipmentApiH {
 
     async processRequest(context: Context) {
         switch (context.payload.action) {
-            case ShipmentApiH.Actions.EXAMPLE:
-                await this.shipmentController.example(context);
+            case ShipmentApiH.Actions.CREDIT:
+                await this.shipmentController.creditShipment(context);
                 break;
             default:
                 break;

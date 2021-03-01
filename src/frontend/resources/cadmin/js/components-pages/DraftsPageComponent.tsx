@@ -13,28 +13,30 @@ import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import S from '../../../common/js/utilities/Main';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
-import ShipmentStatusModelH from '../../../../../backend/modules/product-group-module/shipment-module/ShipmentStatusModel.h';
+import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
 import { CreditShipmentRes } from '../../../common/js/network-responses/ShipmentApiRes';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
-import CurrencyModelH from '../../../../../backend/modules/product-group-module/product-module/CurrencyModel.h';
+import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
 }
 
-export default class DraftsPageComponent extends ContextPageComponent < Props > {
+export default class DraftsPageComponent extends ContextPageComponent<Props> {
     dataReady: number;
     shipmentsApi: ShipmentApi;
 
-    constructor(props: Props){
+    constructor(props: Props) {
         super(props);
         this.dataReady = S.INT_FALSE;
         this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
     }
 
     static layout() {
-        const MobXComponent = inject('appStore','alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DraftsPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DraftsPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -47,17 +49,17 @@ export default class DraftsPageComponent extends ContextPageComponent < Props > 
         return 'PageDrafts';
     }
 
-    jsonSku = ( skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency) => {
+    jsonSku = (skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency) => {
         return {
             'skuId': skuId,
-            'skuProductId': skuProductId,
-            'skuQuantity': skuQuantity,
-            'skuPricePerUnit': skuPricePerUnit,
-            'skuCurrency': skuCurrency,
+            'productId': skuProductId,
+            'quantity': skuQuantity,
+            'pricePerUnit': skuPricePerUnit,
+            'currency': skuCurrency,
         }
     }
 
-    jsonSkuOrigin = ( skuOriginId, skuId, shipmentId) => {
+    jsonSkuOrigin = (skuOriginId, skuId, shipmentId) => {
         return {
             'skuOriginId': skuOriginId,
             'skuId': skuId,
@@ -80,32 +82,45 @@ export default class DraftsPageComponent extends ContextPageComponent < Props > 
         }
     }
 
+    jsonShipmentDocument = (shipmentDocumentId, shipmentId, documentType, documentUrl) => {
+        return {
+            'shipmentDocumentId': shipmentDocumentId,
+            'shipmentId': shipmentId,
+            'documentType': documentType,
+            'documentUdl': documentUrl,
+        }
+    }
+
     saveShipment = () => {
-        let shipmentModel = 
-            //ShipmentModel.fromJson(this.jsonShipment('1', 'Chairs to Germany but edited', ShipmentStatusModelH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 'First shipment'));
-             ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, 'new shipment test add', ShipmentStatusModelH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS,1,1,S.INT_FALSE));
-        
+        let shipmentModel =
+            //ShipmentModel.fromJson(this.jsonShipment('1', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 'First shipment'));
+            ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+
         let skuModels = [
-            SkuModel.fromJson(this.jsonSku('-1', '1', 23, 41, CurrencyModelH.S_CURRENCY_EUR)),
-            SkuModel.fromJson(this.jsonSku('1', '4', 21241243, 411111, CurrencyModelH.S_CURRENCY_EUR)),
-            SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '2', 2342, 412, CurrencyModelH.S_CURRENCY_EUR)),
-            SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '3', 23445, 413, CurrencyModelH.S_CURRENCY_EUR)),
-        ]
-     
-        let skuOriginModels = [
-            SkuOriginModel.fromJson(this.jsonSkuOrigin(1,1,1)),
-            SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS,'-1','1')),
+            SkuModel.fromJson(this.jsonSku('-1', '1', 23, 41, SkuConstsH.S_CURRENCY_EUR)),
+            SkuModel.fromJson(this.jsonSku('1', '4', 21241243, 411111, SkuConstsH.S_CURRENCY_EUR)),
+            SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '2', 2342, 412, SkuConstsH.S_CURRENCY_EUR)),
+            SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '3', 23445, 413, SkuConstsH.S_CURRENCY_EUR)),
         ]
 
-        this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, (res: CreditShipmentRes) =>{
-            console.log(res);
+        let skuOriginModels = [
+            // SkuOriginModel.fromJson(this.jsonSkuOrigin(1,1,1)),
+            SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
+        ]
+
+        let shipmentDocumentModels = [
+            ShipmentDocumentModel.fromJson(this.jsonShipmentDocument(S.Strings.NOT_EXISTS, S.Strings.NOT_EXISTS, ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK, 'aeraerg/aergaergaerg/aerg/aer/ga/er'))
+        ]
+
+        this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
+            console.log(shipmentModel);
         });
     }
 
     fetchShipments = () => {
         let filter = 'germany';
 
-        this.shipmentApi.fetchShipmentByFilter(filter, 3,1,(shipmentModels) => {
+        this.shipmentApi.fetchShipmentByFilter(filter, 3, 1, (shipmentModels) => {
             console.log(shipmentModels);
         })
 
@@ -117,11 +132,11 @@ export default class DraftsPageComponent extends ContextPageComponent < Props > 
     renderContent() {
         return (
             <>
-                <Header page = { PagesCAdmin.DRAFTS} />
-                <div className = {` PageContent FlexColumn`}>
+                <Header page={PagesCAdmin.DRAFTS} />
+                <div className={` PageContent FlexColumn`}>
                     <Notifications />
-                    <div onClick = { this.saveShipment }>add shipment</div>
-                    <div onClick = { this.fetchShipments }>fetch shipments</div>
+                    <div onClick={this.saveShipment}>add shipment</div>
+                    <div onClick={this.fetchShipments}>fetch shipments</div>
                 </div>
             </>
         )

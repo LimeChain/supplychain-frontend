@@ -14,6 +14,8 @@ import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
+import ProductModelH from '../../../../../backend/modules/ProductModule/Product/Model/ProductModelH';
+import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -30,23 +32,15 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
     }
 
     onClickTest = () => {
-        const api = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
-
-        const shipmentModel = new ShipmentModel();
-        shipmentModel.shipmentName = `Test shipment: ${Date.now()}`;
-        api.example(shipmentModel, () => {
-            console.log('saved id', shipmentModel.shipmentId);
-        });
-
         const productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
         const productModel = new ProductModel();
-        productModel.productName = 'test product name';
+        productModel.productName = 'test product name2';
+        productModel.productUnit = ProductConstsH.S_UNIT_KG;
+        productModel.productDescription = 'test product description';
 
         productApi.creditProduct(productModel, () => {
             console.log('product saved id', productModel.productId);
-
         })
-
     }
 
     renderContent() {

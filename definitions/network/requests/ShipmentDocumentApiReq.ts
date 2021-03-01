@@ -1,8 +1,7 @@
-import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
 
 export class UploadShipmentDocumentReq {
 
-    shipmentDocumentJson: any;
+    shipmentDocumentJson: ShipmentDocumentModel;
 
     constructor(shipmentDocumentModel: ShipmentDocumentModel) {
         this.shipmentDocumentJson = shipmentDocumentModel.toJson();

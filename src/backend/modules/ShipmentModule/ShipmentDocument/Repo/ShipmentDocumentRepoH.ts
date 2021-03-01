@@ -3,7 +3,6 @@ export default class ShipmentDocumentRepoH {
     static TABLE_NAME = 'shipment_documents';
     static C_SHIPMENT_DOCUMENT_ID = 'shipmentDocumentId';
     static C_SHIPMENT_ID = 'shipmentId';
-    static C_DOCUMENT_ID = 'documentId';
     static C_DOCUMENT_TYPE = 'documentType';
     static C_SHIPMENT_DOCUMENT_URL = 'shipmentDocumentUrl';
         
@@ -11,8 +10,6 @@ export default class ShipmentDocumentRepoH {
     shipmentDocumentIdToDb: boolean;
     shipmentId: number | null;
     shipmentIdToDb: boolean;
-    documentId: number | null;
-    documentIdToDb: boolean;
     documentType: number | null;
     documentTypeToDb: boolean;
     shipmentDocumentUrl: string | null;
@@ -23,8 +20,6 @@ export default class ShipmentDocumentRepoH {
         this.shipmentDocumentIdToDb = false;
         this.shipmentId = null;
         this.shipmentIdToDb = false;
-        this.documentId = null;
-        this.documentIdToDb = false;
         this.documentType = null;
         this.documentTypeToDb = false;
         this.shipmentDocumentUrl = null;
@@ -36,7 +31,6 @@ export default class ShipmentDocumentRepoH {
     
         repo.shipmentDocumentId = row[ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_ID] ?? repo.shipmentDocumentId;
         repo.shipmentId = row[ShipmentDocumentRepoH.C_SHIPMENT_ID] ?? repo.shipmentId;
-        repo.documentId = row[ShipmentDocumentRepoH.C_DOCUMENT_ID] ?? repo.documentId;
         repo.documentType = row[ShipmentDocumentRepoH.C_DOCUMENT_TYPE] ?? repo.documentType;
         repo.shipmentDocumentUrl = row[ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_URL] ?? repo.shipmentDocumentUrl;
 
@@ -62,11 +56,6 @@ export default class ShipmentDocumentRepoH {
         if (this.shipmentIdToDb === true) {
             columns.push(ShipmentDocumentRepoH.C_SHIPMENT_ID);
             values.push(this.shipmentId === null ? null : this.shipmentId.toString());
-        }
-
-        if (this.documentIdToDb === true) {
-            columns.push(ShipmentDocumentRepoH.C_DOCUMENT_ID);
-            values.push(this.documentId === null ? null : this.documentId.toString());
         }
 
         if (this.documentTypeToDb === true) {

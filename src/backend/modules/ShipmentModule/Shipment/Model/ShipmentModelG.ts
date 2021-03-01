@@ -2,9 +2,7 @@ import ShipmentModel from './ShipmentModel';
 import ShipmentModelH from './ShipmentModelH';
 import ShipmentRepoH from '../Repo/ShipmentRepoH';
 import SV from '../../../../utilities/SV';
-import ShipmentDocumentModel from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
-import ShipmentDocumentModelG from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelG';
-import ShipmentDocumentModelH from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
+
 
 export default class ShipmentModelG extends ShipmentModelH {
 
@@ -20,11 +18,10 @@ export default class ShipmentModelG extends ShipmentModelH {
         this.shipmentDltAnchored = SV.NOT_EXISTS;
         this.shipmentDltProof = SV.Strings.EMPTY;
         this.shipmentDeleted = SV.NOT_EXISTS;
-        this.test = [];
     }
 
     copyRefProperties(sourceModel: ShipmentModel): void {
-        this.test = sourceModel.test;
+
     }
 
     static asMap(models: ShipmentModel[]): Map < any, ShipmentModel > {
@@ -117,9 +114,6 @@ export default class ShipmentModelG extends ShipmentModelH {
             shipmentDltAnchored: this.shipmentDltAnchored,
             shipmentDltProof: this.shipmentDltProof,
             shipmentDeleted: this.shipmentDeleted,
-            test: this.test.map((m) => {
-                return m.toNetwork();
-            }),
         };
     }
 
@@ -140,9 +134,6 @@ export default class ShipmentModelG extends ShipmentModelH {
         model.shipmentDltAnchored = parseInt(json.shipmentDltAnchored ?? model.shipmentDltAnchored);
         model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
         model.shipmentDeleted = parseInt(json.shipmentDeleted ?? model.shipmentDeleted);
-        (json.test ?? model.test).map((j) => {
-            return ShipmentDocumentModel.fromNetwork(j);
-        });
 
         return model;
     }

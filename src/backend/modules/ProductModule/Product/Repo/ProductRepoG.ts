@@ -5,9 +5,7 @@ import ProductModelH from '../Model/ProductModelH';
 import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
 import Repo from '../../../../utilities/database/Repo';
-import SkuModel from '../../../../modules/ProductModule/Sku/Model/SkuModel';
-import SkuModelG from '../../../../modules/ProductModule/Sku/Model/SkuModelG';
-import SkuModelH from '../../../../modules/ProductModule/Sku/Model/SkuModelH';
+
 
 export default class ProductRepoG extends Repo {
 
@@ -27,16 +25,6 @@ export default class ProductRepoG extends Repo {
     async saveRefProperties(model: ProductModel, props: number[] | null = null): Promise < ProductModel > {
         const map = ProductModel.getPropsAsMap(props);
 
-        if (map.has(ProductModel.P_SKUS) === true) {
-            const skuRepo = this.repoFactory.getSkuRepo();
-            const cache = model.skus;
-            model.skus = [];
-            for (let i = 0;  i < cache.length; ++i) {
-                const m = cache[i]
-                m.productId = model.productId;
-                model.skus.push(await skuRepo.save(m));
-            };
-        }
 
 
         return model;
@@ -77,23 +65,6 @@ export default class ProductRepoG extends Repo {
             return model.productId;
         });
 
-        if (map.has(ProductModel.P_SKUS) === true) {
-            const skuRepo = this.repoFactory.getSkuRepo();
-            databaseWhere = new DatabaseWhere();
-            databaseWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', ids));
-            const refModels = await skuRepo.fetch(databaseWhere);
-
-            const refsMap = new Map();
-            refModels.forEach((refModel) => {
-                const list = refsMap.get(refModel.productId) ?? [];
-                list.push(refModel);
-                refsMap.set(refModel.productId, list);
-            });
-
-            models.forEach((model) => {
-                model.skus = refsMap.get(model.productId) ?? [];
-            });
-        }
 
 
         return models;

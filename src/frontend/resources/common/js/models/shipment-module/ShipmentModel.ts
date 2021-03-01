@@ -4,6 +4,10 @@ import ShipmentStatusModelH from '../../../../../../backend/modules/product-grou
 
 
 export default class ShipmentModel {
+    static S_STATUS_DRAFT: number;
+    static S_STATUS_IN_TRANSIT: number;
+    static S_STATUS_RECEIVED: number;
+
     shipmentId: string
     shipmentName: string
     shipmentStatus: number
@@ -11,11 +15,11 @@ export default class ShipmentModel {
     shipmentDestinationSiteId: string
     shipmentDateOfShipment: number
     shipmentDateOfArrival: number
-	shipmentDltAnchored: number
+    shipmentDltAnchored: number
     shipmentDltProof: string
     shipmentDeleted: number
 
-    constructor(){
+    constructor() {
         this.shipmentId = S.Strings.NOT_EXISTS;
         this.shipmentName = S.Strings.EMPTY;
         this.shipmentStatus = S.NOT_EXISTS;

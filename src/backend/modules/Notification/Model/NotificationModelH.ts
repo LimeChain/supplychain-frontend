@@ -2,7 +2,8 @@
             
 export default class NotificationModelH {
 
-
+    static S_NOTIFICATION_SENT = 1;
+    static S_NOTIFICATION_RECEIVED = 2;
 
     static P_NOTIFICATION_ID = 1;
     static P_SHIPMENT_ID = 2;

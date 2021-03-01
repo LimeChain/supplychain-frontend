@@ -1,7 +1,6 @@
 import React, { RefObject } from 'react';
 import Config from '../../../../../../builds/dev-generated/Config';
 import NotificationModel from '../../../common/js/models/NotificationModel';
-import NotificationStatusModelH from '../../../../../backend/modules/product-group-module/shipment-module/NotificationStatusModel.h';
 
 import SvgNotificationNone from '../../../common/svg/notification-none.svg';
 import SvgNotificationDot from '../../../common/svg/notification-dot.svg';
@@ -15,6 +14,7 @@ import NotificationStore from '../../../common/js/stores/NotificationStore';
 import { inject, observer } from 'mobx-react';
 import GeneralApi from '../../../common/js/api/GeneralApi';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
+import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
 
 interface Props {
     notifications: NotificationModel[];
@@ -31,10 +31,10 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
     let result = '';
 
     switch (status) {
-        case NotificationStatusModelH.S_NOTIFICATION_SENT:
+        case NotificationConstsH.S_NOTIFICATION_SENT:
             result = 'sent';
             break;
-        case NotificationStatusModelH.S_NOTIFICATION_RECEIVED:
+        case NotificationConstsH.S_NOTIFICATION_RECEIVED:
             result = 'received';
             break;
     }

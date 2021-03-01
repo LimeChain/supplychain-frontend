@@ -8,23 +8,31 @@ import SkuOriginModelH from '../../../modules/ProductModule/SkuOrigin/Model/SkuO
 import SkuModel from '../../../modules/ProductModule/Sku/Model/SkuModel';
 import SkuModelG from '../../../modules/ProductModule/Sku/Model/SkuModelG';
 import SkuModelH from '../../../modules/ProductModule/Sku/Model/SkuModelH';
-            
+import ShipmentDocumentModel from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
+import ShipmentDocumentModelG from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelG';
+import ShipmentDocumentModelH from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
+
 export default class CreditShipmentReq {
-    
+
     shipmentModel: ShipmentModel;
     skuOriginModels: SkuOriginModel[];
     skuModels: SkuModel[];
+    shipmentDocumentModels: ShipmentDocumentModel[];
 
     constructor(payload: Payload) {
         const json = payload.params;
-        this.shipmentModel = ShipmentModel.fromNetwork(json.shipmentModel);
+        this.shipmentModel = ShipmentModel.fromNetwork(json.shipmentJson);
         this.skuOriginModels = [];
-        for (let i = 0; i < json.skuOriginModels.length; ++i) {
-            this.skuOriginModels.push(SkuOriginModel.fromNetwork(json.skuOriginModels[i]));
+        for (let i = 0; i < json.skuOriginJsons.length; ++i) {
+            this.skuOriginModels.push(SkuOriginModel.fromNetwork(json.skuOriginJsons[i]));
         }
         this.skuModels = [];
-        for (let i = 0; i < json.skuModels.length; ++i) {
-            this.skuModels.push(SkuModel.fromNetwork(json.skuModels[i]));
+        for (let i = 0; i < json.skuJsons.length; ++i) {
+            this.skuModels.push(SkuModel.fromNetwork(json.skuJsons[i]));
+        }
+        this.shipmentDocumentModels = [];
+        for (let i = 0; i < json.shipmentDocumentJsons.length; ++i) {
+            this.shipmentDocumentModels.push(ShipmentDocumentModel.fromNetwork(json.shipmentDocumentJsons[i]));
         }
     }
 

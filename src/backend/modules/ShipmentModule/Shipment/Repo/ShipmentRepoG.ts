@@ -5,9 +5,7 @@ import ShipmentModelH from '../Model/ShipmentModelH';
 import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
 import Repo from '../../../../utilities/database/Repo';
-import ShipmentDocumentModel from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
-import ShipmentDocumentModelG from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelG';
-import ShipmentDocumentModelH from '../../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
+
 
 export default class ShipmentRepoG extends Repo {
 
@@ -27,16 +25,6 @@ export default class ShipmentRepoG extends Repo {
     async saveRefProperties(model: ShipmentModel, props: number[] | null = null): Promise < ShipmentModel > {
         const map = ShipmentModel.getPropsAsMap(props);
 
-        if (map.has(ShipmentModel.P_TEST) === true) {
-            const shipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
-            const cache = model.test;
-            model.test = [];
-            for (let i = 0;  i < cache.length; ++i) {
-                const m = cache[i]
-                m.shipmentId = model.shipmentId;
-                model.test.push(await shipmentDocumentRepo.save(m));
-            };
-        }
 
 
         return model;
@@ -77,23 +65,6 @@ export default class ShipmentRepoG extends Repo {
             return model.shipmentId;
         });
 
-        if (map.has(ShipmentModel.P_TEST) === true) {
-            const shipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
-            databaseWhere = new DatabaseWhere();
-            databaseWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', ids));
-            const refModels = await shipmentDocumentRepo.fetch(databaseWhere);
-
-            const refsMap = new Map();
-            refModels.forEach((refModel) => {
-                const list = refsMap.get(refModel.shipmentId) ?? [];
-                list.push(refModel);
-                refsMap.set(refModel.shipmentId, list);
-            });
-
-            models.forEach((model) => {
-                model.test = refsMap.get(model.shipmentId) ?? [];
-            });
-        }
 
 
         return models;
