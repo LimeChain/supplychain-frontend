@@ -17,7 +17,7 @@ export default class ShipmentDocumentModel {
         return {
             'shipmentDocumentId': this.shipmentDocumentId,
             'shipmentId': this.shipmentId,
-            'documentyType': this.documentType,
+            'documentType': this.documentType,
             'shipmentDocumentUrl': this.shipmentDocumentUrl,
         }
     }

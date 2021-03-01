@@ -87,7 +87,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
             'shipmentDocumentId': shipmentDocumentId,
             'shipmentId': shipmentId,
             'documentType': documentType,
-            'documentUdl': documentUrl,
+            'shipmentDocumentUrl': documentUrl,
         }
     }
 

@@ -146,8 +146,6 @@ export default class ShipmentApi extends AbsApi {
 
             }
 
-            console.log(json);
-
             const res = new FetchShipmentsByIdRes(json);
 
             callback(res.shipmentModel);

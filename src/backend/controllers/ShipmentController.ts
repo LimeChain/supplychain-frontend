@@ -12,6 +12,7 @@ export default class ShipmentController {
         const req = new CreditShipmentReq(payload);
 
         const shipmentService = servicesFactory.getShipmentService();
+
         const shipmentModel = await shipmentService.creditShipment(req.shipmentModel, req.skuModels, req.skuOriginModels, req.shipmentDocumentModels);
 
         context.res.set(new CreditShipmentRes(shipmentModel, [], [], []));

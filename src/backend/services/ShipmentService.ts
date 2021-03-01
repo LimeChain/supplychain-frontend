@@ -96,6 +96,7 @@ export default class ShipmentService extends Service {
         }
 
         let shipmentDocumentModels = [];
+
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             let reqShipmentDocumentModel = reqShipmentDocumentModels[i];
             let shipmentDocumentModel: ShipmentDocumentModel | null = null;
@@ -103,7 +104,7 @@ export default class ShipmentService extends Service {
             if (reqShipmentDocumentModel.isNew() === true) {
                 shipmentDocumentModel = new ShipmentDocumentModel();
             } else {
-                shipmentDocumentModel = await ShipmentDocumentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentDocumentId);
+                shipmentDocumentModel = await shipmentDocumentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentDocumentId);
                 if (shipmentDocumentModel === null) {
                     throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
                 }
