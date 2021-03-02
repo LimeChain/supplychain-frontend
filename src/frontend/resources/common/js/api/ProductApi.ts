@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditProductReq, DeleteProductReq, FetchAllProductsReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
-import { CreditProductRes, FetchProductByIdRes, FetchAllProductsRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
+import { CreditProductReq, DeleteProductReq, fetchProductsByFilterReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
+import { CreditProductRes, FetchProductByIdRes, fetchProductsByFilterRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -37,88 +37,19 @@ export default class ProductApi extends AbsApi {
         });
     }
 
-    deleteProduct(productId: string, callback: (productModel: ProductModel) => void) {
-        this.disableActions();
+    fetchProductsByFilter(sortBy: number, from: number, to: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
+        const req = new FetchProductsByFilterReq(from, to, sortBy);
 
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new DeleteProductReq(productId);
-
-            const json = {
-                productJson: ProductModel,
-            }
-
-            if (productId === S.Strings.EMPTY) {
-                return;
-            }
-
-            json.productJson = storageHelper.productJsons.get(productId);
-            json.productJson.productDeleted = S.INT_TRUE;
-
-            const res = new FetchProductByIdRes(json);
-
-            callback(res.productModel);
-        }, 100);
-    }
-
-    fetchAllProducts(from: number, to: number, sortBy: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
-        const req = new FetchAllProductsReq(from, to, sortBy);
-
-        this.productApi.req(Actions.PRODUCT.FETCH_ALL_PRODUCTS, req, (json: any) => {
+        this.productApi.req(Actions.PRODUCT.FETCH_PRODUCTS_BY_FILTER, req, (json: any) => {
             if (json.status !== ResponseConsts.S_STATUS_OK) {
                 this.showAlert('Something went wrong');
                 return;
             }
 
-            const res = new FetchAllProductsRes(json.obj);
+            const res = new FetchProductsByFilterRes(json.obj);
 
             callback(res.productModels, res.totalSize);
         });
-
-    }
-
-    fetchProductsByFilter(filter: string, from: number, to: number, callback: (productModels: ProductModel[]) => void) {
-
-        const req = new FetchProductsByFilterReq(filter, from, to);
-
-        const json = {
-            productJsons: [],
-        }
-
-        if (filter === S.Strings.EMPTY) {
-            json.productJsons = storageHelper.productsJson;
-        } else {
-            storageHelper.productsJson.forEach((productJson: ProductModel) => {
-                let occurance = 0;
-
-                if (productJson.productName.includes(filter)) {
-                    occurance++;
-                }
-
-                if (productJson.productDescription.includes(filter)) {
-                    occurance++;
-                }
-
-                if (productJson.productId.includes(filter)) {
-                    occurance++;
-                }
-
-                productJson.occurance = occurance;
-
-                json.productJsons.push(productJson);
-            });
-        }
-
-        const totalSize = json.productJsons.length;
-        // let sliceBegin = totalSize - pageNumber * pageSize;
-        // let sliceEnd = sliceBegin + pageSize;
-
-        // json.productJsons = json.productJsons.slice(sliceBegin < 0 ? 0 : sliceBegin, sliceEnd);
-
-        const res = new FetchProductsByFilterRes(json);
-
-        callback(res.productModels);
 
     }
 

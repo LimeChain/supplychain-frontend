@@ -9,38 +9,18 @@ export class CreditProductReq {
     }
 }
 
-export class DeleteProductReq {
-    productId: string
-
-    constructor(productId: string) {
-        this.productId = productId;
-    }
-}
-
-export class FetchAllProductsReq {
-
-    from: number
-    to: number
-    sortBy: number
-
-    constructor(from: number, to: number, sortBy: number) {
-        this.from = from;
-        this.to = to;
-        this.sortBy = sortBy;
-    }
-
-}
-
 export class FetchProductsByFilterReq {
-    filter: string
+
+    sortBy: number
     from: number
     to: number
 
-    constructor(filter: string, from: number, to: number) {
-        this.filter = filter;
+    constructor(sortBy: number, from: number, to: number) {
+        this.sortBy = sortBy;
         this.from = from;
         this.to = to;
     }
+
 }
 
 export class FetchProductByIdReq {

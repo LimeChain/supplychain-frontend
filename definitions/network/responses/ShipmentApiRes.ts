@@ -1,4 +1,4 @@
-import ShipmentDocumentModel from "../../../src/backend/modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel";
+import ShipmentDocumentModel from '../../../src/backend/modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
 
 export class CreditShipmentRes {
 
@@ -17,15 +17,6 @@ export class CreditShipmentRes {
     }
 }
 
-export class DeleteShipmentRes {
-    shipmentModel: ShipmentModel;
-
-    constructor(json) {
-        this.shipmentModel = ShipmentModel.fromJson(json.shipmentJson);
-    }
-}
-
-
 export class FetchShipmentsByFilterRes {
     shipmentModels: Array<ShipmentModel>;
     titalSize: number;
@@ -34,7 +25,7 @@ export class FetchShipmentsByFilterRes {
         this.shipmentModels = [];
         this.titalSize = json.totalSize;
 
-        for (let shipmentJson of json.shipmentJsons) {
+        for (const shipmentJson of json.shipmentJsons) {
             this.shipmentModels.push(ShipmentModel.fromJson(shipmentJson));
         }
 

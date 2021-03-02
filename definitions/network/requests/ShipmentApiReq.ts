@@ -1,4 +1,3 @@
-
 export class CreditShipmentReq {
 
     shipmentJson: ShipmentModel
@@ -14,14 +13,6 @@ export class CreditShipmentReq {
     }
 }
 
-export class DeleteShipmentReq {
-    shipmentId: number
-
-    constructor(shipmentId: number) {
-        this.shipmentId = shipmentId;
-    }
-}
-
 export class FetchShipmentsByFilterReq {
     filterId: number
     filterName: string
@@ -30,7 +21,7 @@ export class FetchShipmentsByFilterReq {
     filterDestinationSiteId: number
     filterDateOfShipment: number
     filterDateOfArrival: number
-    orderBy: number
+    sortBy: number
     from: number
     to: number
 
@@ -42,9 +33,9 @@ export class FetchShipmentsByFilterReq {
         filterDestinationSiteId: number,
         filterDateOfShipment: number,
         filterDateOfArrival: number,
-        orderBy: number,
+        sortBy: number,
         from: number,
-        to: number
+        to: number,
     ) {
         this.filterId = filterId;
         this.filterName = filterName;
@@ -53,7 +44,7 @@ export class FetchShipmentsByFilterReq {
         this.filterDestinationSiteId = filterDestinationSiteId;
         this.filterDateOfShipment = filterDateOfShipment;
         this.filterDateOfArrival = filterDateOfArrival;
-        this.orderBy = orderBy;
+        this.sortBy = sortBy;
         this.from = from;
         this.to = to;
     }

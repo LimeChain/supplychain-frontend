@@ -40,7 +40,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
     async loadData() {
         await super.loadData();
 
-        this.productApi.fetchProductsByFilter(S.Strings.EMPTY, 3, 1, (productModels: ProductModel[]) => {
+        this.productApi.fetchProductsByFilter(1, 3, 1, (productModels: ProductModel[]) => {
             this.props.productStore.onScreenData(productModels);
             this.dataReady = S.INT_TRUE;
         });
@@ -57,7 +57,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
     }
 
     fetchProducts = () => {
-        this.productApi.fetchAllProducts(0, 7, -1, (productModels, totalSize) => {
+        this.productApi.fetchProductsByFilter(1, 7, -1, (productModels, totalSize) => {
             console.log(productModels);
             console.log(totalSize);
         });

@@ -7,34 +7,16 @@ export class CreditProductRes {
     }
 }
 
-export class DeleteProductRes {
-    productModel: ProductModel;
-
-    constructor(json) {
-        this.productModel = ProductModel.fromJson(json.productJson);
-    }
-}
-
-export class FetchAllProductsRes {
+export class FetchProductsByFilterRes {
 
     productModels: Array<ProductModel>
-    totalSize: number
+    totalSize: number;
 
     constructor(json) {
         this.productModels = json.productJsons.map((v) => ProductModel.fromJson(v));
         this.totalSize = json.totalSize;
-
     }
 }
-
-export class FetchProductsByFilterRes {
-    productModels: Array<ProductModel>
-
-    constructor(json) {
-        this.productModels = json.productJsons.map((v) => ProductModel.fromJson(v));
-    }
-}
-
 
 export class FetchProductByIdRes {
     productModel: ProductModel

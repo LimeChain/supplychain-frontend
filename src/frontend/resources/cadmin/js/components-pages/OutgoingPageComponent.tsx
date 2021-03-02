@@ -50,7 +50,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
 
     fetchProducts = () => {
         // const tableState = this.tableHelper.tableState;
-        // new ProductApi().fetchAllProducts(tableState.from, tableState.to(), tableState.sortKey, 'DESC', (productModels: ProductModel[]) => {
+        // new ProductApi().fetchProductsByFilter(tableState.from, tableState.to(), tableState.sortKey, 'DESC', (productModels: ProductModel[]) => {
         //     this.productModels = productModels;
         //     tableState.total = 11;
         //     this.setState({});

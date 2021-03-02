@@ -1,7 +1,7 @@
 import ShipmentModel from '../../../modules/ShipmentModule/Shipment/Model/ShipmentModel';
 import ShipmentModelG from '../../../modules/ShipmentModule/Shipment/Model/ShipmentModelG';
-import ShipmentModelH from '../../../modules/ShipmentModule/Shipment/Model/ShipmentModelH';            
-            
+import ShipmentModelH from '../../../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
+
 export default class FetchShipmentsByIdRes {
 
     shipmentJson: ShipmentModel;

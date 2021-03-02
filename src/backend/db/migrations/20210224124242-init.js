@@ -44,7 +44,7 @@ module.exports = class Migration20210224124242 {
             ${NotificationRepoH.C_NOTIFICATION_ID} INT AUTO_INCREMENT,
             ${NotificationRepoH.C_SHIPMENT_ID} INT,
             ${NotificationRepoH.C_NOTIFICATION_STATUS} INT,
-            ${NotificationRepoH.C_NOTIFICATION_TIME} INT,
+            ${NotificationRepoH.C_NOTIFICATION_TIME} BIGINT,
             ${NotificationRepoH.C_NOTIFICATION_READ} INT,
             PRIMARY KEY(${NotificationRepoH.C_NOTIFICATION_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);

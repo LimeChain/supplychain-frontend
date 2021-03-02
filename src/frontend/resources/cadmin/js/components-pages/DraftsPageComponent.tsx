@@ -18,8 +18,8 @@ import { CreditShipmentRes } from '../../../common/js/network-responses/Shipment
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -43,7 +43,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     async loadDate() {
         await super.loadData();
     }
-
 
     getPageLayoutComponentCssClassName() {
         return 'PageDrafts';
@@ -93,24 +92,23 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     }
 
     saveShipment = () => {
-        let shipmentModel =
-            ShipmentModel.fromJson(this.jsonShipment('1', 'ererherh', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
-        //ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, '155366', 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+        const shipmentModel = ShipmentModel.fromJson(this.jsonShipment('1', 'ererherh', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_IN_TRANSIT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+        // const shipmentModel = ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, '155366', 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
 
-        let skuModels = [
+        const skuModels = [
             SkuModel.fromJson(this.jsonSku('-1', '1', 23, 41, SkuConstsH.S_CURRENCY_EUR)),
             SkuModel.fromJson(this.jsonSku('1', '4', 21241243, 411111, SkuConstsH.S_CURRENCY_EUR)),
             SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '2', 2342, 412, SkuConstsH.S_CURRENCY_EUR)),
             SkuModel.fromJson(this.jsonSku(S.Strings.NOT_EXISTS, '3', 23445, 413, SkuConstsH.S_CURRENCY_EUR)),
         ]
 
-        let skuOriginModels = [
-            SkuOriginModel.fromJson(this.jsonSkuOrigin(1, 2, 2)),
+        const skuOriginModels = [
+            // SkuOriginModel.fromJson(this.jsonSkuOrigin(1, 2, 2)),
             SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
         ]
 
-        let shipmentDocumentModels = [
-            ShipmentDocumentModel.fromJson(this.jsonShipmentDocument(S.Strings.NOT_EXISTS, S.Strings.NOT_EXISTS, ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK, 'aeraerg/aergaergaerg/aerg/aer/ga/er'))
+        const shipmentDocumentModels = [
+            ShipmentDocumentModel.fromJson(this.jsonShipmentDocument(S.Strings.NOT_EXISTS, S.Strings.NOT_EXISTS, ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK, 'aeraerg/aergaergaerg/aerg/aer/ga/er')),
         ]
 
         this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
@@ -119,7 +117,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     }
 
     fetchShipments = () => {
-        let filter = 'germany';
+        const filter = 'germany';
 
         // this.shipmentApi.fetchShipmentByFilter(
         //     null,
@@ -148,7 +146,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
         return (
             <>
                 <Header page={PagesCAdmin.DRAFTS} />
-                <div className={` PageContent FlexColumn`}>
+                <div className={' PageContent FlexColumn'}>
                     <Notifications />
                     <div onClick={this.saveShipment}>add shipment</div>
                     <div onClick={this.fetchShipments}>fetch shipments</div>

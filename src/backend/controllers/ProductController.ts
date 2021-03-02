@@ -1,10 +1,9 @@
-
 import CreditProductReq from '../requests/network/requests/CreditProductReq';
-import FetchAllProductsReq from '../requests/network/requests/FetchAllProductsReq';
 import FetchProductByIdReq from '../requests/network/requests/FetchProductByIdReq';
+import FetchProductsByFilterReq from '../requests/network/requests/FetchProductsByFilterReq';
 import CreditProductRes from '../requests/network/responses/CreditProductRes';
-import FetchAllProductsRes from '../requests/network/responses/FetchAllProductsRes';
 import FetchProductByIdRes from '../requests/network/responses/FetchProductByIdRes';
+import FetchProductsByFilterRes from '../requests/network/responses/FetchProductsByFilterRes';
 import Context from '../utilities/network/Context';
 
 export default class ProductController {
@@ -23,17 +22,17 @@ export default class ProductController {
 
     }
 
-    async fetchAllProducts(context: Context) {
+    async fetchProductsByFilter(context: Context) {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
 
-        const req = new FetchAllProductsReq(payload);
+        const req = new FetchProductsByFilterReq(payload);
 
         const productService = servicesFactory.getProductService();
-        const { productModels, totalSize } = await productService.fetchAllProducts(req.from, req.to, req.sortBy);
+        const { productModels, totalSize } = await productService.fetchProductsByFilter(req.sortBy, req.from, req.to);
 
-        context.res.set(new FetchAllProductsRes(productModels, totalSize));
+        context.res.set(new FetchProductsByFilterRes(productModels, totalSize));
 
     }
 

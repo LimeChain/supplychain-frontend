@@ -1,6 +1,5 @@
 import Payload from '../../../utilities/network/Payload';
 
-
 export default class FetchShipmentsByFilterReq {
 
     filterId: number;

@@ -40,8 +40,6 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
         productApi.creditProduct(productModel, () => {
             console.log('product saved id', productModel.productId);
         })
-
-        //productApi.deleteProduct(productModel.productId);
     }
 
     renderContent() {

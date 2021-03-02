@@ -18,14 +18,6 @@ export class CreditShipmentReq {
     }
 }
 
-export class DeleteShipmentReq {
-    shipmentId: string
-
-    constructor(shipmentId: string) {
-        this.shipmentId = shipmentId;
-    }
-}
-
 export class FetchShipmentsByFilterReq {
     filterId: string
     filterName: string
@@ -48,7 +40,7 @@ export class FetchShipmentsByFilterReq {
         filterDateOfArrival: number,
         sortBy: number,
         from: number,
-        to: number
+        to: number,
     ) {
         this.filterId = filterId;
         this.filterName = filterName;

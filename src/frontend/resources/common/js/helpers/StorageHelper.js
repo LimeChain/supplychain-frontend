@@ -32,10 +32,10 @@ const shipmentsJson = [
     jsonShipment('1', 'Chairs to Germany', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
     jsonShipment('2', 'Chairs to Germany2', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
     jsonShipment('3', 'Chairs to Germany3', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('4', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now()+1000, 1, 1, S.INT_FALSE),
-    jsonShipment('5', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now()+1000, 1, 1, S.INT_FALSE),
-    jsonShipment('6', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now()+1000, 1, 1, S.INT_FALSE),
-    jsonShipment('7', 'Machines to Greece', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '3', '2', Date.now(), Date.now()+1000, 1, 1, S.INT_FALSE),
+    jsonShipment('4', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('5', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('6', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('7', 'Machines to Greece', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '3', '2', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
     jsonShipment('8', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
     jsonShipment('9', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
     jsonShipment('10', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
@@ -43,11 +43,10 @@ const shipmentsJson = [
     jsonShipment('12', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
     jsonShipment('13', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
 
-
 ]
 
 const shipmentDocumentsJson = [
-    jsonShipmentDocument('1', '1', 'localhost/documents/aaa.pdf')
+    jsonShipmentDocument('1', '1', 'localhost/documents/aaa.pdf'),
 ]
 
 const countriesJson = [
@@ -57,9 +56,9 @@ const countriesJson = [
 ]
 
 const sitesJson = [
-    jsonSite('1','3', 'Berlin'),
-    jsonSite('2','2', 'Thessaloniki'),
-    jsonSite('3','1', 'Valletta'),
+    jsonSite('1', '3', 'Berlin'),
+    jsonSite('2', '2', 'Thessaloniki'),
+    jsonSite('3', '1', 'Valletta'),
 ]
 
 const notificationsJson = [
@@ -117,17 +116,17 @@ function jsonAccount(accountId, email) {
     };
 }
 
-function jsonProduct(productId, productName, productUnit, productDescription, productDeleted){
+function jsonProduct(productId, productName, productUnit, productDescription, productDeleted) {
     return {
-            'productId': productId,
-            'productName': productName,
-            'productUnit': productUnit,
-            'productDescription': productDescription,
-            'productDeleted': productDeleted,
+        'productId': productId,
+        'productName': productName,
+        'productUnit': productUnit,
+        'productDescription': productDescription,
+        'productDeleted': productDeleted,
     }
 }
 
-function jsonSku( skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency) {
+function jsonSku(skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency) {
     return {
         'skuId': skuId,
         'skuProductId': skuProductId,
@@ -137,7 +136,7 @@ function jsonSku( skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency
     }
 }
 
-function jsonSkuOrigin( skuOriginId, skuId, shipmentId){
+function jsonSkuOrigin(skuOriginId, skuId, shipmentId) {
     return {
         'skuOriginId': skuOriginId,
         'skuId': skuId,
@@ -161,15 +160,15 @@ function jsonShipment(shipmentId, name, status, shipmentOriginSiteId, shipmentDe
     }
 }
 
-function jsonShipmentDocument(shipmentDocumentId, shipmentId, documentUrl){
+function jsonShipmentDocument(shipmentDocumentId, shipmentId, documentUrl) {
     return {
         'shipmentDocumentId': shipmentDocumentId,
         'shipmentId': shipmentId,
-        'documentUrl': documentUrl
+        'documentUrl': documentUrl,
     }
 }
 
-function jsonSite(siteId, countryId, siteName){
+function jsonSite(siteId, countryId, siteName) {
     return {
         'siteId': siteId,
         'countryId': countryId,
@@ -185,7 +184,7 @@ function jsonCountry(countryId, countryName, countryVat) {
     }
 }
 
-function jsonNotification(notificationId, shipmentId, notificationStatus, notificationTime, notificationRead){
+function jsonNotification(notificationId, shipmentId, notificationStatus, notificationTime, notificationRead) {
     return {
         'notificationId': notificationId,
         'shipmentId': shipmentId,

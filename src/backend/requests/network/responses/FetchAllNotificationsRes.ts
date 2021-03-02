@@ -1,7 +1,7 @@
 import NotificationModel from '../../../modules/Notification/Model/NotificationModel';
 import NotificationModelG from '../../../modules/Notification/Model/NotificationModelG';
-import NotificationModelH from '../../../modules/Notification/Model/NotificationModelH';            
-            
+import NotificationModelH from '../../../modules/Notification/Model/NotificationModelH';
+
 export default class FetchAllNotificationsRes {
 
     notificationJsons: NotificationModel[];;

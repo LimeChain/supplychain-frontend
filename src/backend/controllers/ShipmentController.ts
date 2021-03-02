@@ -1,4 +1,4 @@
-
+import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import CreditShipmentReq from '../requests/network/requests/CreditShipmentReq';
 import FetchShipmentByIdReq from '../requests/network/requests/FetchShipmentByIdReq';
 import FetchShipmentsByFilterReq from '../requests/network/requests/FetchShipmentsByFilterReq';
@@ -41,7 +41,7 @@ export default class ShipmentController {
             req.filterDateOfArrival,
             req.sortBy,
             req.from,
-            req.to
+            req.to,
         );
 
         context.res.set(new FetchShipmentsByFilterRes(shipmentModels, totalSize));

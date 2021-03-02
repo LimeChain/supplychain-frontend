@@ -7,47 +7,24 @@ export class CreditProductReq {
     }
 }
 
-export class DeleteProductReq {
-    productId: number
+export class FetchProductsByFilterReq {
 
-    constructor(productId: number) {
-        this.productId = productId;
-    }
-}
-
-export class FetchAllProductsReq {
-
+    sortBy: number
     from: number
     to: number
-    sortBy: number
-    order: string
 
-    constructor(from: number, to: number, sortBy: number, order: string) {
+    constructor(from: number, to: number, sortBy: number) {
+        this.sortBy = sortBy;
         this.from = from;
         this.to = to;
-        this.sortBy = sortBy;
-        this.order = order;
     }
 
-}
-
-
-export class FetchProductsByFilterReq {
-    filter: string
-    pageSize: number
-    pageNumber: number
-
-    constructor(filter: string, pageSize: number, pageNumber: number) {
-        this.filter = filter;
-        this.pageSize = pageSize;
-        this.pageNumber = pageNumber;
-    }
 }
 
 export class FetchProductByIdReq {
-    productId: string
+    productId: number
 
-    constructor(productId: string) {
+    constructor(productId: number) {
         this.productId = productId;
     }
 }

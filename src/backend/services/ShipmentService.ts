@@ -1,4 +1,4 @@
-
+import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
 import SkuRepo from '../modules/ProductModule/Sku/Repo/SkuRepo';
 import SkuOriginModel from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModel';
@@ -11,6 +11,7 @@ import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
 import SV from '../utilities/SV';
 import Service from './common/Service';
+import NotificationService from './NotificationService';
 
 export default class ShipmentService extends Service {
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
@@ -34,7 +35,25 @@ export default class ShipmentService extends Service {
             }
         }
 
+        const oldShipmentStatus = shipmentModel.shipmentStatus;
+
+        // create notification if shipment sent or received
+        if (reqShipmentModel.shipmentStatus !== SV.NOT_EXISTS) {
+            shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
+            // create notification
+            console.log(oldShipmentStatus);
+            console.log(shipmentModel.shipmentStatus);
+
+            if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+                console.log('vliza tuk');
+
+                const notificationService = this.servicesFactory.getNotificationService();
+                notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+            }
+        }
+
         shipmentModel.shipmentName = reqShipmentModel.shipmentName;
+        shipmentModel.shipmentConsignmentNumber = reqShipmentModel.shipmentConsignmentNumber;
         shipmentModel.shipmentOriginSiteId = reqShipmentModel.shipmentOriginSiteId;
         shipmentModel.shipmentDestinationSiteId = reqShipmentModel.shipmentDestinationSiteId;
         shipmentModel.shipmentDateOfShipment = reqShipmentModel.shipmentDateOfShipment;
@@ -43,11 +62,11 @@ export default class ShipmentService extends Service {
         shipmentModel.shipmentDltProof = reqShipmentModel.shipmentDltProof;
         shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
 
-        //credit sku models
+        // credit sku models
         const skuModels = []
 
         for (let i = 0; i < reqSkuModels.length; i++) {
-            let reqSkuModel = reqSkuModels[i];
+            const reqSkuModel = reqSkuModels[i];
 
             let skuModel: SkuModel | null = null;
 
@@ -76,10 +95,9 @@ export default class ShipmentService extends Service {
             skuModels.push(skuModel);
         }
 
-
-        let skuOriginModels = [];
+        const skuOriginModels = [];
         for (let i = 0; i < reqSkuOriginModels.length; i++) {
-            let reqSkuOriginModel = reqSkuOriginModels[i];
+            const reqSkuOriginModel = reqSkuOriginModels[i];
             let skuOriginModel: SkuOriginModel | null = null;
 
             if (reqSkuOriginModel.isNew() === true) {
@@ -98,10 +116,10 @@ export default class ShipmentService extends Service {
             skuOriginModels.push(skuOriginModel);
         }
 
-        let shipmentDocumentModels = [];
+        const shipmentDocumentModels = [];
 
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
-            let reqShipmentDocumentModel = reqShipmentDocumentModels[i];
+            const reqShipmentDocumentModel = reqShipmentDocumentModels[i];
             let shipmentDocumentModel: ShipmentDocumentModel | null = null;
 
             if (reqShipmentDocumentModel.isNew() === true) {
@@ -121,7 +139,6 @@ export default class ShipmentService extends Service {
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
 
-
         return shipmentModel;
     }
 
@@ -135,7 +152,7 @@ export default class ShipmentService extends Service {
         filterDateOfArrival: number,
         sortBy: number,
         from: number,
-        to: number
+        to: number,
     ): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
 
         const shipmentFilter = new ShipmentFilter();
@@ -156,7 +173,7 @@ export default class ShipmentService extends Service {
 
         return {
             shipmentModels: shipmentModels.slice(from, to),
-            totalSize: shipmentModels.length
+            totalSize: shipmentModels.length,
         }
     }
 

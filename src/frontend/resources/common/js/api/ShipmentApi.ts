@@ -33,29 +33,13 @@ export default class ShipmentApi extends AbsApi {
             const res = new CreditShipmentRes(json.obj);
 
             shipmentModel.shipmentId = res.shipmentModel.shipmentId;
+
+            // TODO: have to update the values
+            skuModels = res.skuModels;
+            skuOriginModels = res.skuOriginModels;
+
             callback();
         });
-    }
-
-    deleteShipment(shipmentId: string, callback: (shipmentModel: ShipmentModel) => void) {
-        this.disableActions();
-
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new DeleteShipmentReq(shipmentId);
-
-            // Server code
-            const json = {
-                shipmentJson: storageHelper.shipmentsJson.find((shipmentJson) => shipmentJson.shipmentId === shipmentId),
-            }
-
-            json.shipmentJson.shipmentDeleted = S.INT_TRUE;
-
-            const res = new DeleteShipmentRes(json);
-
-            callback(res.shipmentModel);
-        }, 100);
     }
 
     fetchShipmentByFilter(
@@ -69,7 +53,7 @@ export default class ShipmentApi extends AbsApi {
         sortBy: number,
         from: number,
         to: number,
-        callback: (shipmentModels: ShipmentModel[], totalSize) => void
+        callback: (shipmentModels: ShipmentModel[], totalSize) => void,
     ) {
 
         const req = new FetchShipmentsByFilterReq(
@@ -82,7 +66,7 @@ export default class ShipmentApi extends AbsApi {
             filterDateOfArrival,
             sortBy,
             from,
-            to
+            to,
         );
 
         this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENTS_BY_FILTER, req, (json: any) => {
