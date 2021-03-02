@@ -14,4 +14,5 @@ GeneralApiH.URL = `${Config.URL.API}/accounts`;
 GeneralApiH.Actions = {
     LOGIN: 'a',
     GRPCTEST: 't',
+    FETCH_NOTIFICATIONS_BY_FILTER: 'n',
 };

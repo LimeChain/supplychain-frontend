@@ -14,4 +14,8 @@ export default class ShipmentModel extends ShipmentModelG {
                 || this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED)
     }
 
+    isShipmentStatusLocked(newShipmentStatus) {
+        return this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED && newShipmentStatus !== ShipmentConstsH.S_STATUS_RECEIVED;
+    }
+
 }

@@ -19,6 +19,9 @@ export default class GeneralApi extends GeneralApiH {
             case GeneralApiH.Actions.GRPCTEST:
                 await this.grpcController.grpcTest(context);
                 break;
+            case GeneralApi.Actions.FETCH_NOTIFICATIONS_BY_FILTER:
+                await this.generalController.fetchNotificationsByFilter(context);
+                break;
             default:
                 break;
         }

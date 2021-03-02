@@ -1,25 +1,28 @@
+import CountryModel from '../models/CountryModel';
+import NotificationModel from '../models/NotificationModel';
+import SiteModel from '../models/SiteModel';
 
 export class FetchAllSitesRes {
 
     siteModels: Array<SiteModel>
-    countryModels: Array<CountryModel>
+    countryModels: Array<SiteModel>
 
     constructor(json) {
         this.siteModels = [];
         this.countryModels = [];
 
-        for (let siteJson of json.siteJsons) {
+        for (const siteJson of json.siteJsons) {
             this.siteModels.push(SiteModel.fromJson(siteJson));
         }
 
-        for (let countryJson of json.countryJsons) {
+        for (const countryJson of json.countryJsons) {
             this.countryModels.push(CountryModel.fromJson(countryJson));
         }
     }
 
 }
 
-export class FetchAllNotificationsRes {
+export class FetchNotificationsByFilterRes {
 
     notificationModels: Array<NotificationModel>;
     totalSize: number;
@@ -28,7 +31,7 @@ export class FetchAllNotificationsRes {
         this.notificationModels = new Array<NotificationModel>();
         this.totalSize = json.totalSize;
 
-        for (let notificationJson of json.notificationJsons) {
+        for (const notificationJson of json.notificationJsons) {
             this.notificationModels.push(NotificationModel.fromJson(notificationJson));
         }
     }

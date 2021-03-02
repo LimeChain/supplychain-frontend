@@ -25,12 +25,15 @@ export default class ShipmentService extends Service {
         let shipmentModel: ShipmentModel | null = null;
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
-            shipmentModel.shipmentStatus = ShipmentModel.S_STATUS_DRAFT;
             shipmentModel.shipmentDeleted = SV.FALSE;
             // if there is some specific fields that must be set just on creation, e.g. -> creation timestamp
         } else {
             shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
             if (shipmentModel === null) {
+                throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
+            }
+
+            if (shipmentModel.isShipmentStatusLocked(reqShipmentModel.shipmentStatus)) {
                 throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
             }
         }
@@ -41,12 +44,8 @@ export default class ShipmentService extends Service {
         if (reqShipmentModel.shipmentStatus !== SV.NOT_EXISTS) {
             shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
             // create notification
-            console.log(oldShipmentStatus);
-            console.log(shipmentModel.shipmentStatus);
 
             if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
-                console.log('vliza tuk');
-
                 const notificationService = this.servicesFactory.getNotificationService();
                 notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
             }
