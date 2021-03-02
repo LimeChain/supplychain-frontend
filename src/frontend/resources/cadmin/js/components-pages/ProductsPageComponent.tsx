@@ -50,7 +50,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
         return 'PageProducts';
     }
 
-
     renderPopups() {
         return super.renderPopups().concat([
             <ProductPopup key={1} />,
@@ -72,7 +71,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
         return (
             <>
                 <Header page={PagesCAdmin.PRODUCTS} />
-                <div className={` PageContent FlexColumn`}>
+                <div className={' PageContent FlexColumn'}>
                     <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
                     <div onClick={this.props.popupProductStore.show}>show popup</div>
                     <div onClick={this.fetchProducts}>fetch products</div>

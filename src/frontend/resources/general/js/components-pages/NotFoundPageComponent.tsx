@@ -28,16 +28,16 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
     renderContent() {
         return (
             <div style = { { 'width': '1000px', 'height': '500px', 'margin': 'auto' } } className = { 'FlexSingleCenter' } >
-                <LayoutBlock className = {` PageContent `}>
-                    <div className = {` ErrorCodeText `}>
+                <LayoutBlock className = {' PageContent '}>
+                    <div className = {' ErrorCodeText '}>
                         404
                     </div>
-                    <div className = {` ErrorHeader `}>
+                    <div className = {' ErrorHeader '}>
                         OOPS! NOTHING WAS FOUND
                     </div>
-                    <div className = {` ErrorMessage `}>
-                        The page you are looking for might have been removed, had its name changed or is temporary unavailable. 
-                        <a href = {`${Config.URL.ROOT}`}>Return to homepage</a>
+                    <div className = {' ErrorMessage '}>
+                        The page you are looking for might have been removed, had its name changed or is temporary unavailable.
+                        <a href = {`${Config.URL.ROOT}`}> Return to homepage</a>
                     </div>
                 </LayoutBlock>
             </div>

@@ -179,6 +179,10 @@ html.OverflowHidden {
     margin-top:112px;
 }
 
+.PageContent {
+    flex: 1 1 auto;
+}
+
 /* .Page {
     transition-property:filter;
 } */

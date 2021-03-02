@@ -9,7 +9,6 @@ import Apis from '../../../../../../builds/dev-generated/Apis';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 
-
 export default class ProductApi extends AbsApi {
 
     productApi: Api
@@ -64,9 +63,6 @@ export default class ProductApi extends AbsApi {
     }
 
     fetchAllProducts(from: number, to: number, sortBy: number, order: string, callback: (productModels: ProductModel[], totalSize: number) => void) {
-
-        this.disableActions();
-
         const req = new FetchAllProductsReq(from, to, sortBy, order);
 
         this.productApi.req(Actions.PRODUCT.FETCH_ALL_PRODUCTS, req, (json: any) => {
@@ -78,8 +74,6 @@ export default class ProductApi extends AbsApi {
             const res = new FetchAllProductsRes(json.obj);
 
             callback(res.productModels, res.totalSize);
-
-            this.enableActions();
         });
 
     }
@@ -89,7 +83,7 @@ export default class ProductApi extends AbsApi {
         const req = new FetchProductsByFilterReq(filter, from, to);
 
         const json = {
-            productJsons: []
+            productJsons: [],
         }
 
         if (filter === S.Strings.EMPTY) {
@@ -116,7 +110,7 @@ export default class ProductApi extends AbsApi {
             });
         }
 
-        let totalSize = json.productJsons.length;
+        const totalSize = json.productJsons.length;
         // let sliceBegin = totalSize - pageNumber * pageSize;
         // let sliceEnd = sliceBegin + pageSize;
 
