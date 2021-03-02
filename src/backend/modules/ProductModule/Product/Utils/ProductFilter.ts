@@ -1,3 +1,4 @@
+import DatabaseWhere from "../../../../utilities/database/DatabaseWhere"
 import SV from "../../../../utilities/SV"
 import ProductModelH from "../Model/ProductModelH"
 
@@ -8,10 +9,9 @@ export default class ProductFilter {
     static S_SORT_BY_DESCRIPTION: number = 4
 
     sortBy: number = SV.NOT_EXISTS
-    order: string = 'ASC'
 
     getSortColumn(): number | null {
-        switch (this.sortBy) {
+        switch (Math.abs(this.sortBy)) {
             case ProductFilter.S_SORT_BY_ID:
                 return ProductModelH.P_PRODUCT_ID;
             case ProductFilter.S_SORT_BY_NAME:
@@ -23,5 +23,9 @@ export default class ProductFilter {
             default:
                 return null;
         }
+    }
+
+    getSortOrder(): string {
+        return this.sortBy > 0 ? DatabaseWhere.ORDER_DIRECTION_ASC : DatabaseWhere.ORDER_DIRECTION_DESC;
     }
 }

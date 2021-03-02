@@ -57,7 +57,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
     }
 
     fetchProducts = () => {
-        this.productApi.fetchAllProducts(4, 7, 1, 'DESC', (productModels, totalSize) => {
+        this.productApi.fetchAllProducts(0, 7, -1, (productModels, totalSize) => {
             console.log(productModels);
             console.log(totalSize);
         });

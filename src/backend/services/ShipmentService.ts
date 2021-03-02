@@ -3,6 +3,8 @@ import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
 import SkuRepo from '../modules/ProductModule/Sku/Repo/SkuRepo';
 import SkuOriginModel from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModel';
 import ShipmentModel from '../modules/ShipmentModule/Shipment/Model/ShipmentModel';
+import ShipmentRepo from '../modules/ShipmentModule/Shipment/Repo/ShipmentRepo';
+import ShipmentFilter from '../modules/ShipmentModule/Shipment/Utils/ShipmentFilter';
 import ShipmentDocumentModel from '../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
 import ShipmentDocumentRepo from '../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepo';
 import Response from '../utilities/network/Response';
@@ -11,9 +13,10 @@ import SV from '../utilities/SV';
 import Service from './common/Service';
 
 export default class ShipmentService extends Service {
+    shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
 
     async creditShipment(reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise<ShipmentModel> {
-        const shipmentRepo = this.repoFactory.getShipmentRepo();
+
         const skuRepo = this.repoFactory.getSkuRepo();
         const skuOriginRepo = this.repoFactory.getSkuOriginRepo();
         const shipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
@@ -25,7 +28,7 @@ export default class ShipmentService extends Service {
             shipmentModel.shipmentDeleted = SV.FALSE;
             // if there is some specific fields that must be set just on creation, e.g. -> creation timestamp
         } else {
-            shipmentModel = await shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
+            shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
             if (shipmentModel === null) {
                 throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
             }
@@ -38,7 +41,7 @@ export default class ShipmentService extends Service {
         shipmentModel.shipmentDateOfArrival = reqShipmentModel.shipmentDateOfArrival;
         shipmentModel.shipmentDltAnchored = reqShipmentModel.shipmentDltAnchored;
         shipmentModel.shipmentDltProof = reqShipmentModel.shipmentDltProof;
-        shipmentModel.shipmentId = (await shipmentRepo.save(shipmentModel)).shipmentId;
+        shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
 
         //credit sku models
         const skuModels = []
@@ -122,4 +125,48 @@ export default class ShipmentService extends Service {
         return shipmentModel;
     }
 
+    async fetchShipmentsByFilter(
+        filterId: number,
+        filterName: string,
+        filterStatus: number,
+        filterOriginSiteId: number,
+        filterDestinationSiteId: number,
+        filterDateOfShipment: number,
+        filterDateOfArrival: number,
+        sortBy: number,
+        from: number,
+        to: number
+    ): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
+
+        const shipmentFilter = new ShipmentFilter();
+        shipmentFilter.filterId = filterId;
+        shipmentFilter.filterName = filterName;
+        shipmentFilter.filterStatus = filterStatus;
+        shipmentFilter.filterOriginSiteId = filterOriginSiteId;
+        shipmentFilter.filterDestinationSiteId = filterDestinationSiteId;
+        shipmentFilter.filterDateOfShipment = filterDateOfShipment;
+        shipmentFilter.filterDateOfArrival = filterDateOfArrival;
+        shipmentFilter.sortBy = sortBy;
+
+        const shipmentModels = await this.shipmentRepo.fetchByFilter(shipmentFilter);
+
+        if (shipmentModels === null) {
+            throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
+        }
+
+        return {
+            shipmentModels: shipmentModels.slice(from, to),
+            totalSize: shipmentModels.length
+        }
+    }
+
+    async fetchShipmentById(shipmentId: number): Promise<ShipmentModel> {
+
+        const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
+        if (shipmentModel === null) {
+            throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
+        }
+
+        return shipmentModel;
+    }
 }

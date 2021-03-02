@@ -62,8 +62,8 @@ export default class ProductApi extends AbsApi {
         }, 100);
     }
 
-    fetchAllProducts(from: number, to: number, sortBy: number, order: string, callback: (productModels: ProductModel[], totalSize: number) => void) {
-        const req = new FetchAllProductsReq(from, to, sortBy, order);
+    fetchAllProducts(from: number, to: number, sortBy: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
+        const req = new FetchAllProductsReq(from, to, sortBy);
 
         this.productApi.req(Actions.PRODUCT.FETCH_ALL_PRODUCTS, req, (json: any) => {
             if (json.status !== ResponseConsts.S_STATUS_OK) {

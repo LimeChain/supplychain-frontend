@@ -9,6 +9,7 @@ export default class ShipmentModelG extends ShipmentModelH {
     constructor() {
         super();
         this.shipmentId = SV.NOT_EXISTS;
+        this.shipmentConsignmentNumber = SV.Strings.EMPTY;
         this.shipmentName = SV.Strings.EMPTY;
         this.shipmentStatus = SV.NOT_EXISTS;
         this.shipmentOriginSiteId = SV.NOT_EXISTS;
@@ -43,6 +44,10 @@ export default class ShipmentModelG extends ShipmentModelH {
         if (map.has(ShipmentModelH.P_SHIPMENT_ID) === true && this.shipmentId !== undefined) {
             repo.shipmentId = this.shipmentId;
             repo.shipmentIdToDb = true;
+        }
+        if (map.has(ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER) === true && this.shipmentConsignmentNumber !== undefined) {
+            repo.shipmentConsignmentNumber = this.shipmentConsignmentNumber;
+            repo.shipmentConsignmentNumberToDb = true;
         }
         if (map.has(ShipmentModelH.P_SHIPMENT_NAME) === true && this.shipmentName !== undefined) {
             repo.shipmentName = this.shipmentName;
@@ -88,6 +93,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         const model = new ShipmentModel();
 
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
+        model.shipmentConsignmentNumber = repo.shipmentConsignmentNumber ?? model.shipmentConsignmentNumber;
         model.shipmentName = repo.shipmentName ?? model.shipmentName;
         model.shipmentStatus = parseInt((repo.shipmentStatus ?? model.shipmentStatus) as unknown as string);
         model.shipmentOriginSiteId = parseInt((repo.shipmentOriginSiteId ?? model.shipmentOriginSiteId) as unknown as string);
@@ -105,6 +111,7 @@ export default class ShipmentModelG extends ShipmentModelH {
     toNetwork(): any {
         return {
             shipmentId: this.shipmentId,
+            shipmentConsignmentNumber: this.shipmentConsignmentNumber,
             shipmentName: this.shipmentName,
             shipmentStatus: this.shipmentStatus,
             shipmentOriginSiteId: this.shipmentOriginSiteId,
@@ -125,6 +132,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         const model = new ShipmentModel();
         
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
+        model.shipmentConsignmentNumber = json.shipmentConsignmentNumber ?? model.shipmentConsignmentNumber;
         model.shipmentName = json.shipmentName ?? model.shipmentName;
         model.shipmentStatus = parseInt(json.shipmentStatus ?? model.shipmentStatus);
         model.shipmentOriginSiteId = parseInt(json.shipmentOriginSiteId ?? model.shipmentOriginSiteId);
@@ -142,6 +150,8 @@ export default class ShipmentModelG extends ShipmentModelH {
         switch (modelProp) {
             case ShipmentModelH.P_SHIPMENT_ID:
                 return ShipmentRepoH.C_SHIPMENT_ID;
+            case ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER:
+                return ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER;
             case ShipmentModelH.P_SHIPMENT_NAME:
                 return ShipmentRepoH.C_SHIPMENT_NAME;
             case ShipmentModelH.P_SHIPMENT_STATUS:

@@ -19,7 +19,7 @@ import TableHelper from '../../../common/js/helpers/TableHelper';
 interface Props extends ContextPageComponentProps {
 }
 
-export default class OutgoingPageComponent extends ContextPageComponent < Props > {
+export default class OutgoingPageComponent extends ContextPageComponent<Props> {
 
     productModels: ProductModel[];
     tableHelper: TableHelper;
@@ -49,26 +49,26 @@ export default class OutgoingPageComponent extends ContextPageComponent < Props 
     }
 
     fetchProducts = () => {
-        const tableState = this.tableHelper.tableState;
-        new ProductApi().fetchAllProducts(tableState.from, tableState.to(), tableState.sortKey, 'DESC', (productModels: ProductModel[]) => {
-            this.productModels = productModels;
-            tableState.total = 11;
-            this.setState({});
-        });
+        // const tableState = this.tableHelper.tableState;
+        // new ProductApi().fetchAllProducts(tableState.from, tableState.to(), tableState.sortKey, 'DESC', (productModels: ProductModel[]) => {
+        //     this.productModels = productModels;
+        //     tableState.total = 11;
+        //     this.setState({});
+        // });
     }
 
     renderContent() {
         return (
             <>
-                <Header page = { PagesCAdmin.OUTGOING} />
-                <div className = {' PageContent FlexColumn'}>
-                    <Notifications notifications = {this.props.notificationStore.screenNotificationModels}/>
+                <Header page={PagesCAdmin.OUTGOING} />
+                <div className={' PageContent FlexColumn'}>
+                    <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
 
                     <Table
-                        widths = { ['30%', '20%', '50%'] }
-                        legend = { ['Id', 'Unit', 'Name'] }
-                        rows = { this.renderRows() }
-                        helper = { this.tableHelper } />
+                        widths={['30%', '20%', '50%']}
+                        legend={['Id', 'Unit', 'Name']}
+                        rows={this.renderRows()}
+                        helper={this.tableHelper} />
                 </div>
             </>
         )

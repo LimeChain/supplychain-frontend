@@ -2,6 +2,7 @@ export default class ShipmentRepoH {
 
     static TABLE_NAME = 'shipments';
     static C_SHIPMENT_ID = 'shipmentId';
+    static C_SHIPMENT_CONSIGNMENT_NUMBER = 'shipmentConsignmentNumber';
     static C_SHIPMENT_NAME = 'shipmentName';
     static C_SHIPMENT_STATUS = 'shipmentStatus';
     static C_SHIPMENT_ORIGIN_SITE_ID = 'shipmentOriginSiteId';
@@ -14,6 +15,8 @@ export default class ShipmentRepoH {
         
     shipmentId: number | null;
     shipmentIdToDb: boolean;
+    shipmentConsignmentNumber: string | null;
+    shipmentConsignmentNumberToDb: boolean;
     shipmentName: string | null;
     shipmentNameToDb: boolean;
     shipmentStatus: number | null;
@@ -36,6 +39,8 @@ export default class ShipmentRepoH {
     constructor() {
         this.shipmentId = null;
         this.shipmentIdToDb = false;
+        this.shipmentConsignmentNumber = null;
+        this.shipmentConsignmentNumberToDb = false;
         this.shipmentName = null;
         this.shipmentNameToDb = false;
         this.shipmentStatus = null;
@@ -60,6 +65,7 @@ export default class ShipmentRepoH {
         const repo = new ShipmentRepoH();
     
         repo.shipmentId = row[ShipmentRepoH.C_SHIPMENT_ID] ?? repo.shipmentId;
+        repo.shipmentConsignmentNumber = row[ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER] ?? repo.shipmentConsignmentNumber;
         repo.shipmentName = row[ShipmentRepoH.C_SHIPMENT_NAME] ?? repo.shipmentName;
         repo.shipmentStatus = row[ShipmentRepoH.C_SHIPMENT_STATUS] ?? repo.shipmentStatus;
         repo.shipmentOriginSiteId = row[ShipmentRepoH.C_SHIPMENT_ORIGIN_SITE_ID] ?? repo.shipmentOriginSiteId;
@@ -88,6 +94,11 @@ export default class ShipmentRepoH {
     getDbPairs() {
         const columns = [];
         const values = [];
+
+        if (this.shipmentConsignmentNumberToDb === true) {
+            columns.push(ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER);
+            values.push(this.shipmentConsignmentNumber === null ? null : this.shipmentConsignmentNumber.toString());
+        }
 
         if (this.shipmentNameToDb === true) {
             columns.push(ShipmentRepoH.C_SHIPMENT_NAME);

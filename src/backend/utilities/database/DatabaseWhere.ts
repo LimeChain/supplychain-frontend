@@ -69,7 +69,7 @@ export default class DatabaseWhere {
 
         let sqlColumns = sql.join(' AND ');
         if (isWhereClauseExists === true) {
-            sqlColumns = `WHERE ${sqlColumns};`
+            sqlColumns = `WHERE ${sqlColumns}`
         }
 
         let sqlGroup = '';

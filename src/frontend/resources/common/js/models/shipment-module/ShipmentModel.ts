@@ -9,6 +9,7 @@ export default class ShipmentModel {
     static S_STATUS_RECEIVED: number;
 
     shipmentId: string
+    shipmentConsignmentNumber: string
     shipmentName: string
     shipmentStatus: number
     shipmentOriginSiteId: string
@@ -21,6 +22,7 @@ export default class ShipmentModel {
 
     constructor() {
         this.shipmentId = S.Strings.NOT_EXISTS;
+        this.shipmentConsignmentNumber = S.Strings.EMPTY;
         this.shipmentName = S.Strings.EMPTY;
         this.shipmentStatus = S.NOT_EXISTS;
         this.shipmentOriginSiteId = S.Strings.NOT_EXISTS;
@@ -39,6 +41,7 @@ export default class ShipmentModel {
     toJson(): any {
         return {
             'shipmentId': this.shipmentId,
+            'shipmentConsignmentNumber': this.shipmentConsignmentNumber,
             'shipmentName': this.shipmentName,
             'shipmentStatus': this.shipmentStatus,
             'shipmentOriginSiteId': this.shipmentOriginSiteId,
@@ -59,6 +62,7 @@ export default class ShipmentModel {
         const model = new ShipmentModel();
 
         model.shipmentId = (json.shipmentId || model.shipmentId).toString();
+        model.shipmentConsignmentNumber = json.shipmentConsignmentNumber || model.shipmentConsignmentNumber;
         model.shipmentName = json.shipmentName || model.shipmentName;
         model.shipmentStatus = json.shipmentStatus || model.shipmentStatus;
         model.shipmentOriginSiteId = (json.shipmentOriginSiteId || model.shipmentOriginSiteId).toString();

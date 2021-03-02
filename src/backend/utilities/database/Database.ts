@@ -111,6 +111,9 @@ export default class Database {
         const sqlColumns = columns.join(',');
         const sqlwhere = databaseWhere.build();
 
+        // console.log(`SELECT ${sqlColumns} FROM ${tableName} ${sqlwhere}`);
+
+
         const sqlResult = await this.query(`SELECT ${sqlColumns} FROM ${tableName} ${sqlwhere}`);
         sqlResult.forEach((row) => {
             result.push(row);
@@ -124,8 +127,8 @@ export default class Database {
         await this.query(`DELETE FROM ${tableName} ${sqlWhere}`)
     }
 
-    async beginTransaction(): Promise < void > {
-        return new Promise < void >((resolve, reject) => {
+    async beginTransaction(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             this.dbc.beginTransaction((er) => {
                 if (er) {
                     reject(er);
@@ -137,8 +140,8 @@ export default class Database {
         });
     }
 
-    async comminTransaction(): Promise < void > {
-        return new Promise < void >((resolve, reject) => {
+    async comminTransaction(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             this.dbc.commit((er) => {
                 if (er) {
                     reject(er);
@@ -150,8 +153,8 @@ export default class Database {
         });
     }
 
-    async rollbackTransaction(): Promise < void > {
-        return new Promise < void >((resolve, reject) => {
+    async rollbackTransaction(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             this.dbc.rollback((er) => {
                 if (er) {
                     reject(er);
@@ -163,8 +166,8 @@ export default class Database {
         });
     }
 
-    query(query: string): Promise < any > {
-        return new Promise < any >((resolve, reject) => {
+    query(query: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
             this.dbc.query(query, (er: MysqlError, result: any, fields) => {
                 if (er) {
                     reject(er);

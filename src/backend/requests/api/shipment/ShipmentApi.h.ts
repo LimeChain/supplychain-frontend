@@ -12,4 +12,6 @@ export default class ShipmentApiH extends Api {
 ShipmentApiH.URL = `${Config.URL.API}/shipment`;
 ShipmentApiH.Actions = {
     CREDIT: 'a',
+    FETCH_SHIPMENTS_BY_FILTER: 'b',
+    FETCH_SHIPMENT_BY_ID: 'c',
 };

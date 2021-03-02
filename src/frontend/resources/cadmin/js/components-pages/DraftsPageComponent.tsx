@@ -67,9 +67,10 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
         }
     }
 
-    jsonShipment = (shipmentId, name, status, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) => {
+    jsonShipment = (shipmentId, shipmentConsignmentNumber, name, status, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) => {
         return {
             'shipmentId': shipmentId,
+            'shipmentConsignmentNumber': shipmentConsignmentNumber,
             'shipmentName': name,
             'shipmentStatus': status,
             'shipmentOriginSiteId': shipmentOriginSiteId,
@@ -93,8 +94,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
 
     saveShipment = () => {
         let shipmentModel =
-            ShipmentModel.fromJson(this.jsonShipment('1', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
-        //ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+            ShipmentModel.fromJson(this.jsonShipment('1', 'ererherh', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+        //ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, '155366', 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
 
         let skuModels = [
             SkuModel.fromJson(this.jsonSku('-1', '1', 23, 41, SkuConstsH.S_CURRENCY_EUR)),
@@ -105,7 +106,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
 
         let skuOriginModels = [
             SkuOriginModel.fromJson(this.jsonSkuOrigin(1, 2, 2)),
-            //SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
+            SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
         ]
 
         let shipmentDocumentModels = [
@@ -120,9 +121,23 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     fetchShipments = () => {
         let filter = 'germany';
 
-        this.shipmentApi.fetchShipmentByFilter(filter, 3, 1, (shipmentModels) => {
-            console.log(shipmentModels);
-        })
+        // this.shipmentApi.fetchShipmentByFilter(
+        //     null,
+        //     S.Strings.EMPTY,
+        //     ShipmentConstsH.S_STATUS_DRAFT,
+        //     null,
+        //     null,
+        //     null,
+        //     null,
+        //     1,
+        //     0,
+        //     1,
+        //     (shipmentModels, totalSize) => {
+        //         console.log(shipmentModels);
+        //         console.log(totalSize);
+
+        //     }
+        // )
 
         this.shipmentApi.fetchShipmentById('1', (shipmentModel) => {
             console.log(shipmentModel);

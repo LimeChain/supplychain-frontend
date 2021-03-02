@@ -32,11 +32,10 @@ export default class productService extends Service {
         return productModel;
     }
 
-    async fetchAllProducts(from: number, to: number, sortBy: number, order: string): Promise<{ productModels: Array<ProductModel>, totalSize: number }> {
+    async fetchAllProducts(from: number, to: number, sortBy: number): Promise<{ productModels: Array<ProductModel>, totalSize: number }> {
 
         let productFilter = new ProductFilter();
         productFilter.sortBy = sortBy;
-        productFilter.order = order;
 
         const productModels = await this.productRepo.fetchByFilter(productFilter);
         if (productModels === null) {

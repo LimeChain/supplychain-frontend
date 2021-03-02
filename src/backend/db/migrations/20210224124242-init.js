@@ -85,6 +85,7 @@ module.exports = class Migration20210224124242 {
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${ShipmentRepoH.TABLE_NAME}(
             ${ShipmentRepoH.C_SHIPMENT_ID} INT AUTO_INCREMENT,
+            ${ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER} TEXT,
             ${ShipmentRepoH.C_SHIPMENT_NAME} TEXT,
             ${ShipmentRepoH.C_SHIPMENT_STATUS} INT,
             ${ShipmentRepoH.C_SHIPMENT_ORIGIN_SITE_ID} INT,

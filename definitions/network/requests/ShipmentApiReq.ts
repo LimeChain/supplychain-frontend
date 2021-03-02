@@ -15,29 +15,54 @@ export class CreditShipmentReq {
 }
 
 export class DeleteShipmentReq {
-    shipmentId: string
+    shipmentId: number
 
-    constructor(shipmentId: string) {
+    constructor(shipmentId: number) {
         this.shipmentId = shipmentId;
     }
 }
 
 export class FetchShipmentsByFilterReq {
-    filter: string
+    filterId: number
+    filterName: string
+    filterStatus: number
+    filterOriginSiteId: number
+    filterDestinationSiteId: number
+    filterDateOfShipment: number
+    filterDateOfArrival: number
+    orderBy: number
     from: number
     to: number
 
-    constructor(filter: string, from: number, to: number) {
-        this.filter = filter;
+    constructor(
+        filterId: number,
+        filterName: string,
+        filterStatus: number,
+        filterOriginSiteId: number,
+        filterDestinationSiteId: number,
+        filterDateOfShipment: number,
+        filterDateOfArrival: number,
+        orderBy: number,
+        from: number,
+        to: number
+    ) {
+        this.filterId = filterId;
+        this.filterName = filterName;
+        this.filterStatus = filterStatus;
+        this.filterOriginSiteId = filterOriginSiteId;
+        this.filterDestinationSiteId = filterDestinationSiteId;
+        this.filterDateOfShipment = filterDateOfShipment;
+        this.filterDateOfArrival = filterDateOfArrival;
+        this.orderBy = orderBy;
         this.from = from;
         this.to = to;
     }
 }
 
 export class FetchShipmentByIdReq {
-    shipmentId: string
+    shipmentId: number
 
-    constructor(shipmentId: string) {
+    constructor(shipmentId: number) {
         this.shipmentId = shipmentId;
     }
 }

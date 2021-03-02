@@ -22,13 +22,11 @@ export class FetchAllProductsReq {
     from: number
     to: number
     sortBy: number
-    order: string
 
-    constructor(from: number, to: number, sortBy: number, order: string) {
+    constructor(from: number, to: number, sortBy: number) {
         this.from = from;
         this.to = to;
         this.sortBy = sortBy;
-        this.order = order;
     }
 
 }

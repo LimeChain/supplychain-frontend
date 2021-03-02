@@ -25,11 +25,14 @@ export class DeleteShipmentRes {
     }
 }
 
+
 export class FetchShipmentsByFilterRes {
-    shipmentModels: Array<ShipmentModel>
+    shipmentModels: Array<ShipmentModel>;
+    titalSize: number;
 
     constructor(json) {
         this.shipmentModels = [];
+        this.titalSize = json.totalSize;
 
         for (let shipmentJson of json.shipmentJsons) {
             this.shipmentModels.push(ShipmentModel.fromJson(shipmentJson));

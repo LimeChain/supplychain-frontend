@@ -31,7 +31,7 @@ export default class ProductController {
         const req = new FetchAllProductsReq(payload);
 
         const productService = servicesFactory.getProductService();
-        const { productModels, totalSize } = await productService.fetchAllProducts(req.from, req.to, req.sortBy, req.order);
+        const { productModels, totalSize } = await productService.fetchAllProducts(req.from, req.to, req.sortBy);
 
         context.res.set(new FetchAllProductsRes(productModels, totalSize));
 

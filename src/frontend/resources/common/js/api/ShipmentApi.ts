@@ -58,98 +58,59 @@ export default class ShipmentApi extends AbsApi {
         }, 100);
     }
 
+    fetchShipmentByFilter(
+        filterId: string,
+        filterName: string,
+        filterStatus: number,
+        filterOriginSiteId: string,
+        filterDestinationSiteId: string,
+        filterDateOfShipment: number,
+        filterDateOfArrival: number,
+        sortBy: number,
+        from: number,
+        to: number,
+        callback: (shipmentModels: ShipmentModel[], totalSize) => void
+    ) {
 
-    fetchShipmentByFilter(filter: string, pageSize: number, pageNumber: number, callback: (shipmentModels: ShipmentModel[]) => void) {
-        this.disableActions();
+        const req = new FetchShipmentsByFilterReq(
+            filterId,
+            filterName,
+            filterStatus,
+            filterOriginSiteId,
+            filterDestinationSiteId,
+            filterDateOfShipment,
+            filterDateOfArrival,
+            sortBy,
+            from,
+            to
+        );
 
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new FetchShipmentsByFilterReq(filter, pageSize, pageNumber);
-
-            // Server code
-            const json = {
-                shipmentJsons: [],
+        this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENTS_BY_FILTER, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            if (filter !== S.Strings.EMPTY && typeof filter === 'string') {
-                storageHelper.shipmentsJson.forEach((shipmentJson: ShipmentModel) => {
-
-                    let occurance = 0;
-
-                    if (shipmentJson.shipmentId.includes(filter)) {
-                        occurance++;
-                    }
-
-                    if (shipmentJson.shipmentName.includes(filter)) {
-                        occurance++;
-                    }
-
-                    const originSite = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === shipmentJson.shipmentOriginSiteId);
-                    const originCountry = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSite.countryId);
-                    if (originSite.siteName.includes(filter)) {
-                        occurance++;
-                    }
-                    if (originCountry.countryName.includes(filter)) {
-                        occurance++;
-                    }
-
-                    const destinationSite = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === shipmentJson.shipmentDestinationSiteId);
-                    const destinationCountry = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSite.countryId);
-                    if (destinationSite.siteName.includes(filter)) {
-                        occurance++;
-                    }
-                    if (destinationCountry.countryName.includes(filter)) {
-                        occurance++;
-                    }
-
-                    if (new Date(shipmentJson.shipmentDateOfShipment).formatCalendarDateAndTime().includes(filter)) {
-                        occurance++;
-                    }
-
-                    if (new Date(shipmentJson.shipmentDateOfArrival).formatCalendarDateAndTime().includes(filter)) {
-                        occurance++;
-                    }
-
-                    shipmentJson.occurance = occurance;
-
-                    json.shipmentJsons.push(shipmentJson);
-                });
-            }
-
-            json.shipmentJsons.sort((a, b) => (a.occurance > b.occurance ? 1 : -1))
-
-            const totalSize = json.shipmentJsons.length;
-            const sliceBegin = totalSize - pageNumber * pageSize;
-            const sliceEnd = sliceBegin + pageSize;
-
-            json.shipmentJsons = json.shipmentJsons.slice(sliceBegin < 0 ? 0 : sliceBegin, sliceEnd);
-            // end server code
-
-            const res = new FetchShipmentsByFilterRes(json);
-
-            callback(res.shipmentModels);
-        }, 100);
+            const res = new FetchShipmentsByFilterRes(json.obj);
+            callback(res.shipmentModels, res.totalSize);
+        });
     }
 
     fetchShipmentById(shipmentId: string, callback: (shipmentModel: ShipmentModel) => void) {
-        this.disableActions();
+        const req = new FetchShipmentByIdReq(shipmentId);
 
-        setTimeout(() => {
-            this.enableActions();
+        this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENT_BY_ID, req, (json: any) => {
 
-            const req = new FetchShipmentByIdReq(shipmentId);
-
-            // Server code
-            const json = {
-                shipmentJson: storageHelper.shipmentsJson.find((shipmentJson) => shipmentJson.shipmentId === shipmentId),
-
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            const res = new FetchShipmentsByIdRes(json);
-
+            const res = new FetchShipmentsByIdRes(json.obj);
             callback(res.shipmentModel);
-        }, 100);
+
+        })
+
     }
 
 }

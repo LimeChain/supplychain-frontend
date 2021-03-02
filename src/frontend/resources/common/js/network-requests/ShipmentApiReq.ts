@@ -27,12 +27,37 @@ export class DeleteShipmentReq {
 }
 
 export class FetchShipmentsByFilterReq {
-    filter: string
+    filterId: string
+    filterName: string
+    filterStatus: number
+    filterOriginSiteId: string
+    filterDestinationSiteId: string
+    filterDateOfShipment: number
+    filterDateOfArrival: number
+    sortBy: number
     from: number
     to: number
 
-    constructor(filter: string, from: number, to: number) {
-        this.filter = filter;
+    constructor(
+        filterId: string,
+        filterName: string,
+        filterStatus: number,
+        filterOriginSiteId: string,
+        filterDestinationSiteId: string,
+        filterDateOfShipment: number,
+        filterDateOfArrival: number,
+        sortBy: number,
+        from: number,
+        to: number
+    ) {
+        this.filterId = filterId;
+        this.filterName = filterName;
+        this.filterStatus = filterStatus;
+        this.filterOriginSiteId = filterOriginSiteId;
+        this.filterDestinationSiteId = filterDestinationSiteId;
+        this.filterDateOfShipment = filterDateOfShipment;
+        this.filterDateOfArrival = filterDateOfArrival;
+        this.sortBy = sortBy;
         this.from = from;
         this.to = to;
     }
