@@ -16,14 +16,23 @@ const MIGRATIONS = `${__dirname}/../migrations`;
 class ExecuteMigration {
 
     static async migrate() {
-        const dbPool = new DatabasePool();
-        const db = await dbPool.aquireConnection();
-        try {
-            await ExecuteMigration.execute(db, MIGRATIONS);
-        } finally {
-            dbPool.releaseConnection(db);
-            await dbPool.close();
-        }
+        const intervalHandler = setInterval(async () => {
+            const dbPool = new DatabasePool();
+            let db = null;
+            try {
+                db = await dbPool.aquireConnection();
+                clearInterval(intervalHandler);
+                await ExecuteMigration.execute(db, MIGRATIONS);
+            } catch (ex) {
+                console.log('waiting for db to start migrations');
+                // no database, so just wait for next execution
+            } finally {
+                if (db !== null) {
+                    dbPool.releaseConnection(db);
+                }
+                await dbPool.close();
+            }
+        }, 2000);
     }
 
     private static async execute(db: Database, migrationsDir: string, output: boolean = true) {
@@ -50,8 +59,6 @@ class ExecuteMigration {
 
         const files = fs.readdirSync(migrationsDir);
         for (let i = 0; i < files.length; ++i) {
-            console.log(files[i]);
-
             const migrationName = path.basename(files[i]);
             if (oldMigrationsSet.has(migrationName) === true) {
                 continue;

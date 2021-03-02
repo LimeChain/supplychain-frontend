@@ -1,7 +1,7 @@
 {
-  "name": "mycro-hunter-admin-mycroservice",
+  "name": "hedera-pwc-bat-web-service",
   "version": "0.0.1",
-  "description": "MycroHunterAdminMycroService",
+  "description": "HederaPWCBATWebService",
   "author": "RAZORlabs ltd",
   "private": true,
   "license": "ISC",
