@@ -8,12 +8,29 @@ export class CreditProductReq {
 }
 
 export class DeleteProductReq {
-    productId: string
+    productId: number
 
-    constructor(productId: string) {
+    constructor(productId: number) {
         this.productId = productId;
     }
 }
+
+export class FetchAllProductsReq {
+
+    from: number
+    to: number
+    sortBy: number
+    order: string
+
+    constructor(from: number, to: number, sortBy: number, order: string) {
+        this.from = from;
+        this.to = to;
+        this.sortBy = sortBy;
+        this.order = order;
+    }
+
+}
+
 
 export class FetchProductsByFilterReq {
     filter: string

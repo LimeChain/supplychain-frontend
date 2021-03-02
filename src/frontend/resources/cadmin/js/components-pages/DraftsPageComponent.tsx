@@ -93,8 +93,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
 
     saveShipment = () => {
         let shipmentModel =
-            //ShipmentModel.fromJson(this.jsonShipment('1', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 'First shipment'));
-            ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+            ShipmentModel.fromJson(this.jsonShipment('1', 'Chairs to Germany but edited', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
+        //ShipmentModel.fromJson(this.jsonShipment(S.Strings.NOT_EXISTS, 'new shipment test add', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE));
 
         let skuModels = [
             SkuModel.fromJson(this.jsonSku('-1', '1', 23, 41, SkuConstsH.S_CURRENCY_EUR)),
@@ -104,8 +104,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
         ]
 
         let skuOriginModels = [
-            // SkuOriginModel.fromJson(this.jsonSkuOrigin(1,1,1)),
-            SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
+            SkuOriginModel.fromJson(this.jsonSkuOrigin(1, 2, 2)),
+            //SkuOriginModel.fromJson(this.jsonSkuOrigin(S.Strings.NOT_EXISTS, '-1', '1')),
         ]
 
         let shipmentDocumentModels = [

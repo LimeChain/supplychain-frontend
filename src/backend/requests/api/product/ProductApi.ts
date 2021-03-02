@@ -16,6 +16,12 @@ export default class ProductApi extends ProductApiH {
             case ProductApiH.Actions.CREDIT_PRODUCT:
                 await this.productController.creditProduct(context);
                 break;
+            case ProductApiH.Actions.FETCH_ALL_PRODUCTS:
+                await this.productController.fetchAllProducts(context);
+                break;
+            case ProductApiH.Actions.FETCH_PRODUCT_BY_ID:
+                await this.productController.fetchProductById(context);
+                break;
             default:
                 break;
         }

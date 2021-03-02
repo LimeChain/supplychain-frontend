@@ -34,13 +34,14 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
     onClickTest = () => {
         const productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
         const productModel = new ProductModel();
-        productModel.productName = 'test product name2';
-        productModel.productUnit = ProductConstsH.S_UNIT_KG;
-        productModel.productDescription = 'test product description';
-
+        productModel.productName = 'bbbb';
+        productModel.productUnit = ProductConstsH.S_UNIT_PACK;
+        productModel.productDescription = 'test product description but edited';
         productApi.creditProduct(productModel, () => {
             console.log('product saved id', productModel.productId);
         })
+
+        //productApi.deleteProduct(productModel.productId);
     }
 
     renderContent() {

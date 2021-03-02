@@ -12,4 +12,6 @@ export default class ProductApiH extends Api {
 ProductApiH.URL = `${Config.URL.API}/product`;
 ProductApiH.Actions = {
     CREDIT_PRODUCT: 'a',
+    FETCH_ALL_PRODUCTS: 'b',
+    FETCH_PRODUCT_BY_ID: 'c',
 };

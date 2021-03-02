@@ -17,15 +17,31 @@ export class DeleteProductReq {
     }
 }
 
+export class FetchAllProductsReq {
+
+    from: number
+    to: number
+    sortBy: number
+    order: string
+
+    constructor(from: number, to: number, sortBy: number, order: string) {
+        this.from = from;
+        this.to = to;
+        this.sortBy = sortBy;
+        this.order = order;
+    }
+
+}
+
 export class FetchProductsByFilterReq {
     filter: string
-    pageSize: number
-    pageNumber: number
+    from: number
+    to: number
 
-    constructor(filter: string, pageSize: number, pageNumber: number) {
+    constructor(filter: string, from: number, to: number) {
         this.filter = filter;
-        this.pageSize = pageSize;
-        this.pageNumber = pageNumber;
+        this.from = from;
+        this.to = to;
     }
 }
 

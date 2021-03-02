@@ -1,9 +1,9 @@
 import Payload from '../../../utilities/network/Payload';
 
-            
+
 export default class FetchProductByIdReq {
-    
-    productId: string;
+
+    productId: number;
 
     constructor(payload: Payload) {
         const json = payload.params;

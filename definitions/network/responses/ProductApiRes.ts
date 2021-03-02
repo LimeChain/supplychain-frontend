@@ -15,6 +15,18 @@ export class DeleteProductRes {
     }
 }
 
+export class FetchAllProductsRes {
+
+    productModels: Array<ProductModel>
+    totalSize: number
+
+    constructor(json) {
+        this.productModels = json.productJsons.map((v) => ProductModel.fromJson(v));
+        this.totalSize = json.totalSize;
+
+    }
+}
+
 export class FetchProductsByFilterRes {
     productModels: Array<ProductModel>
 

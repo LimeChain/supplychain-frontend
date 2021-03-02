@@ -54,9 +54,9 @@ export default class DatabaseWhere {
     build() {
         const sql = [];
         let isWhereClauseExists = false;
-        for (let i = this.columnsClauses.length;  i-- > 0; ) {
+        for (let i = this.columnsClauses.length; i-- > 0;) {
             const databaseWhereClauses = this.columnsClauses[i];
-            
+
             const sqlColumnClause = [];
             for (let j = databaseWhereClauses.length; j-- > 0;) {
                 const columnClause = databaseWhereClauses[j].build();
@@ -82,7 +82,7 @@ export default class DatabaseWhere {
         }
 
         if (this.orderColumn !== null) {
-            sqlOrder = `ORDER BY ${this.orderColumn}`;
+            sqlOrder = `ORDER BY ${this.orderColumn} ${this.orderType}`;
         }
 
         if (this.limit !== null) {
@@ -100,7 +100,7 @@ export default class DatabaseWhere {
 
     static makeRepoColumns(props: number[] | null, matcherCallback: (i: number) => string | null) {
         let columns;
-        
+
         if (props === null) {
             columns = ['*'];
         } else {

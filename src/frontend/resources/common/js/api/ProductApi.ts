@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditProductReq, DeleteProductReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
-import { CreditProductRes, FetchProductByIdRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
+import { CreditProductReq, DeleteProductReq, FetchAllProductsReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
+import { CreditProductRes, FetchProductByIdRes, FetchAllProductsRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -63,75 +63,87 @@ export default class ProductApi extends AbsApi {
         }, 100);
     }
 
-    fetchProductsByFilter(filter: string, pageSize: number, pageNumber: number, callback: (productModels: ProductModel[]) => void) {
+    fetchAllProducts(from: number, to: number, sortBy: number, order: string, callback: (productModels: ProductModel[], totalSize: number) => void) {
+
         this.disableActions();
 
-        setTimeout(() => {
+        const req = new FetchAllProductsReq(from, to, sortBy, order);
+
+        this.productApi.req(Actions.PRODUCT.FETCH_ALL_PRODUCTS, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
+            }
+
+            const res = new FetchAllProductsRes(json.obj);
+
+            callback(res.productModels, res.totalSize);
+
             this.enableActions();
+        });
 
-            const req = new FetchProductsByFilterReq(filter, pageSize, pageNumber);
+    }
 
-            const json = {
-                productJsons: []
-            }
+    fetchProductsByFilter(filter: string, from: number, to: number, callback: (productModels: ProductModel[]) => void) {
 
-            if (filter === S.Strings.EMPTY) {
-                json.productJsons = storageHelper.productsJson;
-            } else {
-                storageHelper.productsJson.forEach((productJson: ProductModel) => {
-                    let occurance = 0;
+        const req = new FetchProductsByFilterReq(filter, from, to);
 
-                    if (productJson.productName.includes(filter)) {
-                        occurance++;
-                    }
+        const json = {
+            productJsons: []
+        }
 
-                    if (productJson.productDescription.includes(filter)) {
-                        occurance++;
-                    }
+        if (filter === S.Strings.EMPTY) {
+            json.productJsons = storageHelper.productsJson;
+        } else {
+            storageHelper.productsJson.forEach((productJson: ProductModel) => {
+                let occurance = 0;
 
-                    if (productJson.productId.includes(filter)) {
-                        occurance++;
-                    }
+                if (productJson.productName.includes(filter)) {
+                    occurance++;
+                }
 
-                    productJson.occurance = occurance;
+                if (productJson.productDescription.includes(filter)) {
+                    occurance++;
+                }
 
-                    json.productJsons.push(productJson);
-                });
-            }
+                if (productJson.productId.includes(filter)) {
+                    occurance++;
+                }
 
-            let totalSize = json.productJsons.length;
-            let sliceBegin = totalSize - pageNumber * pageSize;
-            let sliceEnd = sliceBegin + pageSize;
+                productJson.occurance = occurance;
 
-            json.productJsons = json.productJsons.slice(sliceBegin < 0 ? 0 : sliceBegin, sliceEnd);
+                json.productJsons.push(productJson);
+            });
+        }
 
-            const res = new FetchProductsByFilterRes(json);
+        let totalSize = json.productJsons.length;
+        // let sliceBegin = totalSize - pageNumber * pageSize;
+        // let sliceEnd = sliceBegin + pageSize;
 
-            callback(res.productModels);
-        }, 100);
+        // json.productJsons = json.productJsons.slice(sliceBegin < 0 ? 0 : sliceBegin, sliceEnd);
+
+        const res = new FetchProductsByFilterRes(json);
+
+        callback(res.productModels);
+
     }
 
     fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
         this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        const req = new FetchProductByIdReq(productId);
 
-            const req = new FetchProductByIdReq(productId);
-
-            const json = {
-                productJson: ProductModel,
-            }
-
-            if (productId === S.Strings.EMPTY) {
+        this.productApi.req(Actions.PRODUCT.FETCH_PRODUCT_BY_ID, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
                 return;
             }
 
-            json.productJson = storageHelper.productJsons.get(productId);
-
-            const res = new FetchProductByIdRes(json);
+            const res = new FetchProductByIdRes(json.obj);
 
             callback(res.productModel);
-        }, 100);
+
+            this.enableActions();
+        });
     }
 }
