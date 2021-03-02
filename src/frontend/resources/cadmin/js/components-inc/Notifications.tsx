@@ -15,6 +15,8 @@ import { inject, observer } from 'mobx-react';
 import GeneralApi from '../../../common/js/api/GeneralApi';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
+import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 
 interface Props {
     notifications: NotificationModel[];
@@ -31,11 +33,14 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
     let result = '';
 
     switch (status) {
-        case NotificationConstsH.S_NOTIFICATION_SENT:
+        case ShipmentConstsH.S_STATUS_IN_TRANSIT:
             result = 'sent';
             break;
-        case NotificationConstsH.S_NOTIFICATION_RECEIVED:
+        case ShipmentConstsH.S_STATUS_RECEIVED:
             result = 'received';
+            break;
+        default:
+            result = 'no info';
             break;
     }
 
