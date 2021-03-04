@@ -14,18 +14,18 @@ export const InputType = {
     PHONE: 4,
 };
 
-export const InputMargin = {
-    NORMAL: 1,
-    DENSE: 2,
-}
+// export const InputMargin = {
+//     NORMAL: 1,
+//     DENSE: 2,
+// }
 
 interface Props extends TextFieldProps {
     className?: string;
     inputType?: InputType.REAL | InputType.TEXT | InputType.PHONE | InputType.INTEGER;
     decimalLength?: number;
-    margin?: InputMargin.NORMAL | InputMargin.DENSE;
+    // margin?: InputMargin.NORMAL | InputMargin.DENSE;
     readOnly?: boolean;
-    onChange?: null | ((e: ChangeEvent < HTMLInputElement | HTMLTextAreaElement >) => boolean | void);
+    onChange?: null | ((value: string) => boolean | void);
     onFocus?: () => void | boolean;
     onBlur?: () => void | boolean;
 }
@@ -35,6 +35,8 @@ interface State {
 }
 
 export default class Input extends React.Component < Props, State > {
+
+    static defaultProps: any;
 
     nodes: any;
     sState: State;
@@ -86,15 +88,15 @@ export default class Input extends React.Component < Props, State > {
         }
     }
 
-    getMargin() {
-        switch (this.props.margin) {
-            default:
-            case InputMargin.NORMAL:
-                return 'normal';
-            case InputMargin.DENSE:
-                return 'dense';
-        }
-    }
+    // getMargin() {
+    //     switch (this.props.margin) {
+    //         default:
+    //         case InputMargin.NORMAL:
+    //             return 'normal';
+    //         case InputMargin.DENSE:
+    //             return 'dense';
+    //     }
+    // }
 
     onFocus() {
         this.sState.focused = true;
@@ -116,17 +118,19 @@ export default class Input extends React.Component < Props, State > {
 
     /* render */
     render() {
-        const margin = this.getMargin();
+        // const margin = this.getMargin();
         const { inputType, decimalLength, ...props } = this.props;
         return (
             <div className = { `Input ${this.props.className}` }>
-                <FormControl variant = 'outlined' margin = { margin }>
+                <FormControl variant = 'standard' >
 
                     <TextField
                         { ...props }
+                        InputLabelProps = {{
+                            shrink: true,
+                        }}
                         onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined }
-                        margin = { margin }
-                        variant = 'outlined' />
+                        variant = 'standard' />
 
                 </FormControl>
             </div>
@@ -139,7 +143,7 @@ Input.defaultProps = {
     'className': S.Strings.EMPTY,
     'inputType': InputType.TEXT,
     'decimalLength': Number.MAX_SAFE_INTEGER,
-    'margin': InputMargin.DENSE,
+    // 'margin': InputMargin.DENSE,
     'readOnly': false,
     'onChange': null,
 };

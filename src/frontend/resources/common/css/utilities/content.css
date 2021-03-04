@@ -1,28 +1,33 @@
 :root {
-    --color-primary: #FF314E;
-    --color-secondary: #262b31;
-    --color-red:#bb0000;
+    --color-primary: #3679E0;
+    --color-primary-light: #3679E026;
+    --color-secondary: #6B45BB;
+    --color-secondary-light: #7D42B833;
+    --color-red:#d40404;
+    --color-red-light:#d4040433;
     --color-green:#2AD791;
-    --color-dark-gray: #425062;
+    --color-gray-dark: #07172F;
+    --color-gray: #8C99AC;
+    --color-gray-light: #f4f7fb;
+    --color-gray-light-plus-01: #FBFBFD;
 
-    --color-body-background:#fff;
+    --color-body-background: var(--color-gray-light);
 
     /* theme */
-    --color-input-text: #000;
-    --color-input-label: var(--color-dark-gray);
-    --color-input-focused: #262b31;
-    --color-input-border: var(--color-dark-gray);
-    --color-input-border-hover: #262b31;
-    --color-select-icon: var(--color-dark-gray);
-    --color-select-icon-focused: #262b31;
-    --color-select-highlight: rgba(0, 0, 0, 0.1);
+    --color-input-text: var(--color-gray-dark);
+    --color-input-label: var(--color-gray);
+    --color-input-label-focused: var(--color-gray);
+    --color-input-background: var(--color-gray-light);
+    --color-input-background-focused: var(--color-primary-light);
+    --color-select-icon: var(--color-primary);
+    --color-select-highlight: var(--color-primary-light);
     --color-select-multi-item-color: #fff;
     --color-select-multi-item-background: #9FB0C5;
     --color-select-multi-delete-icon: #fff;
 
     --color-popover-text: var(--color-dark-gray);
     --color-popover-border: var(--color-dark-gray);
-    --color-popover-background: #fff;
+    --color-popover-background: var(--color-gray-light);
 
     --color-tooltip-text: var(--color-dark-gray);
     --color-tooltip-border: var(--color-dark-gray);
@@ -38,15 +43,16 @@
     --color-datepicker-content-background: #9FB0C5;
     --color-datepicker-selected: var(--color-primary);
 
-    --color-popup-background: #fff;
+    --color-popup-background: var(--color-gray-light);
     /* theme */
     
     --mobile-spacing: 24px;
     --desktop-spacing: 32px;
+    --transition-duration: 0.45s
 }
 
 html {
-	color:#000;
+	color:var(--color-gray-dark);
     font-family:IBMPlexSans, sans-serif; font-weight:400; font-size:16px;
     scroll-behavior: smooth;
     background:var(--color-body-background);

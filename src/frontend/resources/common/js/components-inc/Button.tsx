@@ -11,10 +11,11 @@ import S from '../utilities/Main';
 const theme01 = createMuiTheme({
     palette: {
         primary: {
-            main: '#3C4552',
+            main: '#3679E0',
         },
         secondary: {
-            main: '#959AA1',
+            main: '#3679E026',
+            contrastText: '#3679E0',
         },
     },
 });
@@ -23,7 +24,11 @@ const theme01 = createMuiTheme({
 const theme02 = createMuiTheme({
     palette: {
         primary: {
-            main: '#808080',
+            main: '#6B45BB',
+        },
+        secondary: {
+            main: '#7D42B833',
+            contrastText: '#6B45BB',
         },
     },
 });
@@ -31,7 +36,7 @@ const theme02 = createMuiTheme({
 interface Props {
     className?: string;
     type?: Button.TYPE_ROUNDED | Button.TYPE_TEXT_INLINE;
-    color?: Button.COLOR_SCHEME_1 | Button.COLOR_SCHEME_2;
+    color?: Button.COLOR_SCHEME_1 | Button.COLOR_SCHEME_2 | Button.COLOR_SCHEME_3 | Button.COLOR_SCHEME_4;
     href?: string,
     onClick?: () => void;
     disabled?: boolean;
@@ -40,12 +45,15 @@ interface Props {
 
 export default class Button extends React.Component < Props > {
 
+    static defaultProps: any;
+
     static TYPE_ROUNDED: number = 1;
     static TYPE_TEXT_INLINE: number = 2;
 
     static COLOR_SCHEME_1: number = 1;
     static COLOR_SCHEME_2: number = 2;
     static COLOR_SCHEME_3: number = 3;
+    static COLOR_SCHEME_4: number = 4;
 
     cssMuiClassColor() {
         switch (this.props.color) {
@@ -54,6 +62,7 @@ export default class Button extends React.Component < Props > {
             case Button.COLOR_SCHEME_3:
                 return 'primary';
             case Button.COLOR_SCHEME_2:
+            case Button.COLOR_SCHEME_4:
                 return 'secondary';
         }
     }
@@ -85,6 +94,7 @@ export default class Button extends React.Component < Props > {
             <ThemeProvider theme = { theme01 } >
                 <ThemeProvider theme = { this.muiTheme() } >
                     <MuiButton
+                        disableElevation = { true }
                         disabled = { this.props.disabled }
                         className = { className }
                         onClick = { this.props.onClick }

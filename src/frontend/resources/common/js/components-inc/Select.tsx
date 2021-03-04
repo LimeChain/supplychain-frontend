@@ -4,20 +4,23 @@ import React from 'react';
 
 import MuiSelect, { SelectProps } from '@material-ui/core/Select';
 import { InputLabel, FormControl } from '@material-ui/core';
-import SvgArrowDown from '@material-ui/icons/ArrowDownward'
+import SvgArrowDropDown from '@material-ui/icons/ArrowDropDown'
 import S from '../utilities/Main';
 
-export const SelectMargin = {
-    NORMAL: 1,
-    DENSE: 2,
-}
+// export const SelectMargin = {
+//     NORMAL: 1,
+//     DENSE: 2,
+// }
 
 interface Props extends SelectProps {
     className?: string;
-    margin?: SelectMargin.NORMAL | SelectMargin.DENSE;
+    onChange?: null | ((value: unknown) => boolean | void);
+    // margin?: SelectMargin.NORMAL | SelectMargin.DENSE;
 }
 
 export default class Select extends React.Component < Props > {
+
+    static defaultProps: any;
 
     onChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
         if (this.props.onChange !== undefined) {
@@ -25,15 +28,15 @@ export default class Select extends React.Component < Props > {
         }
     }
 
-    getMargin() {
-        switch (this.props.margin) {
-            default:
-            case SelectMargin.NORMAL:
-                return 'normal';
-            case SelectMargin.DENSE:
-                return 'dense';
-        }
-    }
+    // getMargin() {
+    //     switch (this.props.margin) {
+    //         default:
+    //         case SelectMargin.NORMAL:
+    //             return 'normal';
+    //         case SelectMargin.DENSE:
+    //             return 'dense';
+    //     }
+    // }
 
     /* this is not binded */
     onOpen() {
@@ -49,15 +52,15 @@ export default class Select extends React.Component < Props > {
     }
 
     render() {
-        const margin = this.getMargin();
+        // const margin = this.getMargin();
         return (
             <div className = { `Select ${this.props.className}` }>
-                <FormControl variant = 'outlined' margin = { margin }>
+                <FormControl variant = 'standard'>
 
                     <InputLabel
                         error = { this.props.error }
-                        variant = { 'outlined' }
-                        margin = { margin } >
+                        variant = { 'standard' }
+                        shrink = { true } >
                         { this.props.label }
                     </InputLabel>
                     <MuiSelect
@@ -65,9 +68,8 @@ export default class Select extends React.Component < Props > {
                         onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined }
                         onOpen = { this.onOpen }
                         onClose = { this.onClose }
-                        IconComponent = { SvgArrowDown }
-                        margin = { margin }
-                        variant = { 'outlined' } />
+                        IconComponent = { SvgArrowDropDown }
+                        variant = { 'standard' } />
 
                 </FormControl>
             </div>
@@ -78,5 +80,5 @@ export default class Select extends React.Component < Props > {
 
 Select.defaultProps = {
     'className': S.Strings.EMPTY,
-    'margin': SelectMargin.DENSE,
+    // 'margin': SelectMargin.DENSE,
 };

@@ -28,7 +28,6 @@ import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import ProductStore from '../../../common/js/stores/ProductStore';
 import OriginStore from '../../../common/js/stores/OriginStore';
 import ShipmentDocumentStore from '../../../common/js/stores/ShipmentDocumentStore';
-import { number, string } from 'prop-types';
 import S from '../../../common/js/utilities/Main';
 
 interface Props extends ContextPageComponentProps {
@@ -39,7 +38,6 @@ interface Props extends ContextPageComponentProps {
 }
 
 export default class PageNotFoundComponent extends ContextPageComponent<Props> {
-
 
     static layout() {
         const MobXComponent = inject('appStore', 'alertStore', 'shipmentStore', 'productStore', 'originStore', 'shipmentDocumentStore')(observer(PageNotFoundComponent));
@@ -52,7 +50,7 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
     productsApi: ProductsApi;
     shipmentApi: ShipmentApi;
     shipmentDocumentApi: ShipmentDocumentApi;
-    countryApi: CountryApi;
+    // countryApi: CountryApi;
 
     constructor(props: Props) {
         super(props);
@@ -62,7 +60,7 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
         this.productsApi = new ProductsApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
         this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
         this.shipmentDocumentApi = new ShipmentDocumentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
-        this.countryApi = new CountryApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+        // this.countryApi = new CountryApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
     }
 
     getPageLayoutComponentCssClassName() {
@@ -79,15 +77,14 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
             'unit': 1,
             'pricePerUnit': 1342,
             'originCountryId': 1,
-            'description': 'Stylish oven'
+            'description': 'Stylish oven',
         }
 
-        let productModel = ProductModel.fromJson(productJson);
+        const productModel = ProductModel.fromJson(productJson);
         this.productsApi.creditProduct(productModel, () => {
             console.log(productModel);
         });
     }
-
 
     editProduct = () => {
         const productJson = {
@@ -96,15 +93,14 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
             'unit': 1,
             'pricePerUnit': 1342,
             'originCountryId': 1,
-            'description': 'Stylish chair'
+            'description': 'Stylish chair',
         }
 
-        let productModel = ProductModel.fromJson(productJson);
+        const productModel = ProductModel.fromJson(productJson);
         this.productsApi.creditProduct(productModel, () => {
             console.log(productModel);
         });
     }
-
 
     createShipment = () => {
         const shipmentJson = {
@@ -113,10 +109,10 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
             'destinationCountryId': '3',
             'dateOfShipment': Date.now(),
             'dateOfArrival': Date.now() + 10000,
-            'description': 'new test chipment'
+            'description': 'new test chipment',
         }
 
-        let shipmentModel = ShipmentModel.fromJson(shipmentJson);
+        const shipmentModel = ShipmentModel.fromJson(shipmentJson);
         this.shipmentApi.creditShipment(shipmentModel, () => {
             console.log(shipmentModel);
         });
@@ -125,66 +121,68 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
     uploadShipmentDocument = () => {
         const shipmentDocumentJson = {
             'shipmentId': '1',
-            'shipmentDocumentUrl': 'localhost/newFolder'
+            'shipmentDocumentUrl': 'localhost/newFolder',
         }
 
-        let shipmentDocumentModel = ShipmentDocumentModel.fromJson(shipmentDocumentJson);
+        const shipmentDocumentModel = ShipmentDocumentModel.fromJson(shipmentDocumentJson);
         this.shipmentDocumentApi.uploadDocument(shipmentDocumentModel, () => { });
     }
 
-    editShipment = () => {
-        const shipmentJson = {
-            'shipmentId': '3',
-            'name': 'EditedShipment',
-            'originCountryId': '3',
-            'destinationCountryId': '2',
-            'dateOfShipment': Date.now() + 100,
-            'dateOfArrival': Date.now() + 10000,
-            'description': 'new test edit shipment'
-        }
+    // editShipment = () => {
+    //     const shipmentJson = {
+    //         'shipmentId': '3',
+    //         'name': 'EditedShipment',
+    //         'originCountryId': '3',
+    //         'destinationCountryId': '2',
+    //         'dateOfShipment': Date.now() + 100,
+    //         'dateOfArrival': Date.now() + 10000,
+    //         'description': 'new test edit shipment',
+    //     }
 
-        let shipmentModel = ShipmentModel.fromJson(shipmentJson);
-        this.shipmentApi.creditShipment(shipmentModel, () => {
-            console.log(shipmentModel);
-        });
-    }
+    //     const shipmentModel = ShipmentModel.fromJson(shipmentJson);
+    //     this.shipmentApi.creditShipment(shipmentModel, () => {
+    //         console.log(shipmentModel);
+    //     });
+    // }
 
-    fetchShipmentsByFilter = () => {
-        const nameFilter = 'Chairs';
+    // fetchShipmentsByFilter = () => {
+    //     const nameFilter = 'Chairs';
 
-        this.shipmentApi.fetchShipmentByFilter(
-            nameFilter,
-            S.NOT_EXISTS,
-            S.NOT_EXISTS,
-            S.Strings.EMPTY,
-            (shipmentModels: ShipmentModel[]) => {
-                this.props.shipmentStore.onScreenData(shipmentModels);
-                for (let value of this.props.shipmentStore.shipmentsMap.values()) {
-                    console.log(value.name);
-                }
+    //     this.shipmentApi.fetchShipmentByFilter(
+    //         nameFilter,
+    //         S.NOT_EXISTS,
+    //         S.NOT_EXISTS,
+    //         S.Strings.EMPTY,
+    //         (shipmentModels: ShipmentModel[]) => {
+    //             this.props.shipmentStore.onScreenData(shipmentModels);
+    //             for (const value of this.props.shipmentStore.shipmentsMap.values()) {
+    //                 console.log(value.name);
+    //             }
 
-                this.countryApi.fetchAllOrigins((originModels) => {
-                    this.props.originStore.onScreenData(originModels);
+    //             this.countryApi.fetchAllOrigins((originModels) => {
+    //                 this.props.originStore.onScreenData(originModels);
 
-                    for (let value of this.props.originStore.originsMap.values()) {
-                        console.log(value.name);
-                    }
+    //                 for (const value of this.props.originStore.originsMap.values()) {
+    //                     console.log(value.name);
+    //                 }
 
-                });
-            })
-    }
+    //             });
+    //         },
+    //     )
+    // }
+
     renderContent() {
         return (
-            <div style={{ 'width': '1000px', 'height': '500px', 'margin': 'auto' }} className={'FlexSingleCenter'} >
+            <div style={{ 'width': '1000px', 'height': '500px', 'margin': 'auto', 'background': '#fff' }} className={'FlexSingleCenter'} >
                 <LayoutBlock>
 
                     <LayoutBlock
                         direction={LayoutBlock.DIRECTION_ROW} >
                         <Input
-                            label={'test'} />
+                            label = {'Test'} />
 
                         <Input
-                            label={'test'} error />
+                            label = { 'test' } error />
                     </LayoutBlock>
 
                     <LayoutBlock
@@ -211,7 +209,7 @@ export default class PageNotFoundComponent extends ContextPageComponent<Props> {
                         <Button type={Button.TYPE_ROUNDED} color={Button.COLOR_SCHEME_1} onClick={this.grpcReq}>GRPC Req</Button>
                         <Button type={Button.TYPE_ROUNDED} color={Button.COLOR_SCHEME_2} onClick={this.createProduct}>Create Product</Button>
                         <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_1} onClick={this.editProduct} >Edit Product</Button>
-                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.createShipment} >Create Shipment</Button>
+                        <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_3} onClick={this.createShipment} >Create Shipment</Button>
                         <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.editShipment} >Edit Shipment</Button>
                         <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_2} onClick={this.uploadShipmentDocument} >Upload ShipmentDocument</Button>
                         <Button type={Button.TYPE_TEXT_INLINE} color={Button.COLOR_SCHEME_1} onClick={this.fetchShipmentsByFilter} >Fetch Shipment By Name</Button>

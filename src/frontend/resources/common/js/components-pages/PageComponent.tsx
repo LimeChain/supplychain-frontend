@@ -16,6 +16,7 @@ import PageLayoutComponent from './PageLayoutComponent';
 import NotificationStore from '../stores/NotificationStore';
 import PopupProductStore from '../stores/PopupProductStore';
 import SiteStore from '../stores/SiteStore';
+import OriginStore from '../stores/OriginStore';
 
 export interface PageComponentProps {
     appStore: AppStore,
@@ -32,6 +33,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
         ReactDOM.render((
             <Provider
                 appStore = { appStore }
+                originStore = { new OriginStore() }
                 productStore = { new ProductStore() }
                 shipmentStore = { new ShipmentStore() }
                 siteStore = { new SiteStore() }
