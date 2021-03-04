@@ -1,0 +1,14 @@
+.PageView {
+    flex: 1 1 auto;
+    padding: var(--desktop-spacing);
+}
+
+.PageView .PageHeader {
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--color-gray-dark-minus-05);
+}
+
+.PageView .MarginBottom {
+    margin-bottom: var(--desktop-spacing);
+}

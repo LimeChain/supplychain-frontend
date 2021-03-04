@@ -7,6 +7,7 @@
     --color-red-light:#d4040433;
     --color-green:#2AD791;
     --color-gray-dark: #07172F;
+    --color-gray-dark-minus-05: #323943;
     --color-gray: #8C99AC;
     --color-gray-light: #f4f7fb;
     --color-gray-light-plus-01: #FBFBFD;
@@ -47,7 +48,8 @@
     /* theme */
     
     --mobile-spacing: 24px;
-    --desktop-spacing: 32px;
+    --desktop-spacing: 42px;
+    --desktop-spacing-small: 20px;
     --transition-duration: 0.45s
 }
 
@@ -186,7 +188,14 @@ html.OverflowHidden {
 }
 
 .PageContent {
+    display: flex;
     flex: 1 1 auto;
+}
+
+.WhiteBox {
+    padding: 20px;
+    background: #fff;
+    border-radius: 15px;
 }
 
 /* .Page {
@@ -199,7 +208,7 @@ html.OverflowHidden {
 
 /* Scrolls */
 .Scrolls {
-    scrollbar-color:var(--color-primary) transparent;
+    scrollbar-color:#3679E019 transparent;
     scrollbar-width:thin;
 }
 
@@ -213,7 +222,7 @@ html.OverflowHidden {
  
 .Scrolls::-webkit-scrollbar-thumb {
     border-radius:3px;
-    background:var(--color-primary);
+    background:#3679E019;
 }
 
 /* Mui font fix */

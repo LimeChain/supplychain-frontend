@@ -14,8 +14,9 @@ import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
-import ProductModelH from '../../../../../backend/modules/ProductModule/Product/Model/ProductModelH';
 import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
+import PageView from '../components-inc/PageView';
+import Scrollable from '../../../common/js/components-inc/Scrollable';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -44,34 +45,33 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
 
     renderContent() {
         return (
-            <>
+            <div className = { 'PageContent' } >
+
                 <Header page={PagesCAdmin.DASHBOARD} />
-                <div className={' PageContent FlexColumn'}>
-                    <Notifications />
 
-                    <div className={'PageHeader'} onClick={this.onClickTest} >Request test</div>
-                    <div className={'PageHeader'}>Dashboard</div>
-                    <div className={'ContentHolder FlexRow'}>
-                        <div className={'FlexColumn'}>
-                            <div className={'FlexRow'}>
-                                <div className={'TotalShipmentsBox DashboardBox'}>
-                                    <div className={'DashboardBoxHeader'}>Total Shipments</div>
-                                </div>
-                                <div className={'ProductsInStockBox DashboardBox'}>
-                                    <div className={'DashboardBoxHeader'}>Products In Stock</div>
-                                </div>
-                            </div>
-                            <div className={'RecentShipmentsBox DashboardBox'}>
-                                <div className={'DashboardBoxHeader'}>Recent Shipments</div>
-                            </div>
-                        </div>
-                        <div className={'RightDashboardBox DashboardBox'}>
+                <PageView pageTitle = { 'Dashboard' } >
+                    {/* <div className={'PageHeader'} onClick={this.onClickTest} >Request test</div>
+                    <div className={'PageHeader'}>Dashboard</div> */}
 
-                        </div>
+                    <div className = { 'Stats MarginBottom' } >
+                        <div className = { 'WhiteBox' } ></div>
+                        <div className = { 'WhiteBox' } ></div>
+                        <div className = { 'WhiteBox' } ></div>
+                        <div className = { 'WhiteBox' } ></div>
                     </div>
 
-                </div>
-            </>
+                    <div className = { 'Tables' } >
+                        <Scrollable className = { 'WhiteBox' } >
+                            {'some large content'.repeat(1000)}
+                        </Scrollable>
+                        <Scrollable className = { 'WhiteBox' } >
+                            {'some large content'.repeat(10)}
+                        </Scrollable>
+                    </div>
+
+                </PageView>
+
+            </div>
         )
     }
 }

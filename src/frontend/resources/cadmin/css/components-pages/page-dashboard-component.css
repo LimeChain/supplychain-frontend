@@ -1,49 +1,21 @@
-.PageDashboard .PageContent {
-    margin-left: 45px;
-    margin-top: 88px;
+.PageDashboard .Stats {
+    display: flex;
+    gap: var(--desktop-spacing);
 }
 
-.PageDashboard .PageContent .PageHeader {
-    font-style: normal;
-    font-weight: bold;
-    font-size: 30px;
-    line-height: 39px;
-    color: #323943;
-    margin-left: 15px;
+.PageDashboard .Stats > * {
+    width: 0;
+    flex: 1 1 auto;
 }
 
-
-.PageDashboard .PageContent .DashboardBox {
-    background: #F3F3F3;
-    border-radius: 20px; 
-    margin: 15px;
+.PageDashboard .Tables {
+    display: flex;
+    gap: var(--desktop-spacing);
+    flex: 1 1 auto;
 }
 
-.PageDashboard .PageContent .DashboardBox .DashboardBoxHeader{
-    font-style: normal;
-    font-weight: bold;
-    font-size: 20px;
-    line-height: 26px;
-    color: #000000;
-    margin: 25px;
+.PageDashboard .Tables > * {
+    display: flex;
+    width: 0;
+    flex: 1 1 auto;
 }
-.PageDashboard .PageContent .TotalShipmentsBox { 
-    width: 336px;
-    height: 181px;
-}
-
-.PageDashboard .PageContent .ProductsInStockBox {
-    width: 336px;
-    height: 181px;
-}
-
-.PageDashboard .PageContent .RecentShipmentsBox {
-    width: 702px;
-    height: 461px;
-}
-
-.PageDashboard .PageContent .RightDashboardBox {
-    width: 478px;
-    height: 691px;
-}
-
