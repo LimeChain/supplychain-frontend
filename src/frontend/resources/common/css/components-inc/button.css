@@ -2,11 +2,15 @@
     min-width: 110px !important;
     line-height: normal !important;
     text-transform: none !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     font-size: 12px !important;
     position: relative !important;
     box-sizing: border-box !important;
-    position: absolute;
+}
+
+.Button .ButtonSvg {
+    width: 16px; height: 16px;
+    margin-right: 12px;
 }
 
 .Sidebar .Actions .Active {

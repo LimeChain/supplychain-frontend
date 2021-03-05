@@ -12,6 +12,8 @@ interface Props {
 
 export default class Actions extends React.Component < Props > {
 
+    static defaultProps: any;
+
     static LAYOUT_ROW_LEFT: number = 1;
     static LAYOUT_ROW_CENTER: number = 2;
     static LAYOUT_ROW_RIGHT: number = 3;
@@ -23,19 +25,22 @@ export default class Actions extends React.Component < Props > {
     static HEIGHT_32: number = 1;
     static HEIGHT_36: number = 2;
     static HEIGHT_42: number = 3;
-    static HEIGHT_48: number = 4;
-    static HEIGHT_52: number = 5;
-    static HEIGHT_56: number = 6;
+    static HEIGHT_45: number = 4;
+    static HEIGHT_48: number = 5;
+    static HEIGHT_52: number = 6;
+    static HEIGHT_56: number = 7;
 
     cssClassHeight() {
         switch (this.props.height) {
-            default:
             case Actions.HEIGHT_32:
                 return 'H32';
             case Actions.HEIGHT_36:
                 return 'H36';
             case Actions.HEIGHT_42:
                 return 'H42';
+            default:
+            case Actions.HEIGHT_45:
+                return 'H45';
             case Actions.HEIGHT_48:
                 return 'H48';
             case Actions.HEIGHT_52:
@@ -78,5 +83,5 @@ export default class Actions extends React.Component < Props > {
 Actions.defaultProps = {
     'className': S.Strings.EMPTY,
     'layout': Actions.LAYOUT_ROW_CENTER,
-    'height': Actions.HEIGHT_32,
+    'height': Actions.HEIGHT_45,
 };

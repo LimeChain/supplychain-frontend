@@ -4,7 +4,7 @@ import React from 'react';
 
 import MuiSelect, { SelectProps } from '@material-ui/core/Select';
 import { InputLabel, FormControl } from '@material-ui/core';
-import SvgArrowDropDown from '@material-ui/icons/ArrowDropDown'
+import SvgArrowDropDown from '@material-ui/icons/KeyboardArrowDown'
 import S from '../utilities/Main';
 
 // export const SelectMargin = {
@@ -57,12 +57,14 @@ export default class Select extends React.Component < Props > {
             <div className = { `Select ${this.props.className}` }>
                 <FormControl variant = 'standard'>
 
-                    <InputLabel
-                        error = { this.props.error }
-                        variant = { 'standard' }
-                        shrink = { true } >
-                        { this.props.label }
-                    </InputLabel>
+                    { this.props.label !== undefined && (
+                        <InputLabel
+                            error = { this.props.error }
+                            variant = { 'standard' }
+                            shrink = { true } >
+                            { this.props.label }
+                        </InputLabel>
+                    ) }
                     <MuiSelect
                         { ...this.props }
                         onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined }

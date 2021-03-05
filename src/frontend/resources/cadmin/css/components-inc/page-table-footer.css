@@ -1,0 +1,13 @@
+.PageTableFooter .ItemsCnt {
+    height: var(--default-height);
+    color: var(--color-gray);
+    font-size: 12px;
+    padding: 0 var(--desktop-spacing-small);
+    border-radius: 5px;
+    background: var(--color-gray-light-plus-01);
+}
+
+.PageTableFooter .ItemsCnt span {
+    color: var(--color-gray-dark);
+    margin-left: 6px;
+}
