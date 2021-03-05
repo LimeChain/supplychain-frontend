@@ -4,8 +4,8 @@ import NotificationModel from '../../../common/js/models/NotificationModel';
 
 import SvgNotificationNone from '../../../common/svg/notification-none.svg';
 import SvgNotificationDot from '../../../common/svg/notification-dot.svg';
+import SvgNotification from '../../../common/svg/notification.svg';
 
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import './../../css/components-inc/notifications.css';
 import Popover from '../../../common/js/components-inc/Popover';
 import S from '../../../common/js/utilities/Main';
@@ -98,30 +98,23 @@ class Notifications extends React.Component<Props, State> {
                     <div className={`SVG Dot ActiveVisibilityHidden Transition ${S.CSS.getActiveClassName(this.props.notificationStore.screenNotificationModels.length > 0)}`} dangerouslySetInnerHTML={{ __html: SvgNotificationDot }}></div>
                 </div>
                 <Popover classes={{ root: 'NotificationsPopover' }}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'center' }}
                     onClose={this.onClickNotification}
                     open={this.state.show}
                     anchorEl={this.nodes.root.current}>
                     <div className={'NotificationBox'}>
-                        <div className={'NotificationsHeader'}>
+                        <div className={'NotificationsHeader FlexRow'}>
                             Notifications
-                            <div className={'NotificationsHeaderMenu SVG'}>
-                                <MoreHorizIcon />
-                            </div>
+                            <div className="ReadAllButton">Mark all as read</div>
                         </div>
                         <div className={'NotificationMessageBox FlexColumn'} onScroll={this.notificationScroll}>
                             {this.props.notificationStore.screenNotificationModels.map((notification) => <div className={' NotificationMessage FlexRow '} key={notification.notificationId}>
-                                <div className={' NotificationLogo ImgCoverNode'} style={ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.Common.IMG}/logo.png`)} />
-                                <div className={' NotificationMessageInfo FlexColumnt '}>
-                                    <div className={' NotificationMessageHeader'}>
-                                        Goods {getNotificationStatus(notification.notificationStatus, S.INT_TRUE)}
-                                    </div>
-                                    <div className={' NotificationMessageText '}>
-                                        Shipment # {notification.shipmentId} has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
-                                    </div>
+                                <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotification }}></div>
+                                <div className={'NotificationMessageText '}>
+                                    <p>Shipment # {notification.shipmentId}</p> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
                                 </div>
-                                <div className={' NotificationMessageTime '}>
+                                <div className={'NotificationMessageTime '}>
                                     {new Date(notification.notificationTime).formatCalendarDateAndTime()}
                                 </div>
                             </div>)}

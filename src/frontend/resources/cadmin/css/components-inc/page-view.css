@@ -7,6 +7,7 @@
     font-weight: 700;
     font-size: 30px;
     color: var(--color-gray-dark-minus-05);
+    justify-content: space-between;
 }
 
 .PageView .PageExtend {
@@ -15,4 +16,44 @@
 
 .PageView .MarginBottom {
     margin-bottom: var(--desktop-spacing);
+}
+
+.PageHeader .HeaderRight {
+    margin: 9px;
+}
+
+.PageHeader .HeaderRight .UserTab {
+    background: #fff;
+    border-radius: 5px;
+    justify-content: center;
+    align-content: center;
+    padding: 15px;
+
+}
+
+.PageHeader .HeaderRight .UserTab .Separator {
+    width: 1px;
+    height: 15px;
+    margin-right: 15px;
+    border-left: 1px solid #8C99AC;
+}
+
+.PageHeader .HeaderRight .UserTab .CountryTab {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+    display: flex;
+    align-content: center;
+    margin-right: 15px;
+    color: #07172F
+}
+
+.PageHeader .HeaderRight {
+    fill: var(--color-gray);
+}
+
+.PageHeader .HeaderRight .UserTab .CountryTab .SVG {
+    margin-right: 10px;
 }
