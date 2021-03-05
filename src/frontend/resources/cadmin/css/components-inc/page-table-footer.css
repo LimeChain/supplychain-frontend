@@ -7,7 +7,11 @@
     background: var(--color-gray-light-plus-01);
 }
 
-.PageTableFooter .ItemsCnt span {
+.PageTableFooter .ItemsCnt .Item:not(:first-child) {
+    margin-left: 24px;
+}
+
+.PageTableFooter .ItemsCnt .Item span {
     color: var(--color-gray-dark);
     margin-left: 6px;
 }

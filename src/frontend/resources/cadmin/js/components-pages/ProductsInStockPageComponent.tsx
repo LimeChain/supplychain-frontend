@@ -36,7 +36,7 @@ interface State {
 }
 
 export default class ProductsInStockPageComponent extends ContextPageComponent<Props, State> {
-    showNoEntryPage: boolean = true;
+    showNoEntryPage: boolean = false;
 
     dataReady: number;
     productApi: ProductApi;
@@ -130,6 +130,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
                             footer={(
                                 <PageTableFooter
                                     totalItems={5}
+                                    totalPrice={121341}
                                     actions={(
                                         <Actions>
                                             <Button>
