@@ -186,9 +186,11 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                 <Sidebar page={PagesCAdmin.DRAFTS} />
 
                 <PageView pageTitle={'Drafts'} >
-                    {this.showNoEntryPage
-                        ? <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
-                        : <PageTable
+                    {this.showNoEntryPage === true && (
+                        <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                    )}
+                    {this.showNoEntryPage === false && (
+                        <PageTable
                             className={'WhiteBox PageExtend'}
                             header={(
                                 <PageTableHeader
@@ -209,27 +211,27 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                                             <Button>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Add product
+                                            Add product
                                                 </div>
                                             </Button>
                                         </Actions>
                                     )} />
                             )} >
                             {'some large content'.repeat(10)}
-                        </PageTable>}
-
+                        </PageTable>
+                    )}
                 </PageView>
 
             </div>
 
-            // <>
-            //     <Header page={PagesCAdmin.DRAFTS} />
-            //     <div className={' PageContent FlexColumn'}>
-            //         <Notifications />
-            //         <div onClick={this.saveShipment}>add shipment</div>
-            //         <div onClick={this.fetchShipments}>fetch shipments</div>
-            //     </div>
-            // </>
+        // <>
+        //     <Header page={PagesCAdmin.DRAFTS} />
+        //     <div className={' PageContent FlexColumn'}>
+        //         <Notifications />
+        //         <div onClick={this.saveShipment}>add shipment</div>
+        //         <div onClick={this.fetchShipments}>fetch shipments</div>
+        //     </div>
+        // </>
         )
     }
 }
