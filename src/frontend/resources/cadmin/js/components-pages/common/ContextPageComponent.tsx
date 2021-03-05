@@ -57,11 +57,11 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
                 onRequest();
             });
 
-            ++requiredParallelRequests;
-            this.generalApi.fetchNotificationsByFilter(S.INT_FALSE, 0, NotificationStore.NOTIFICATION_SHOW_COUNT, (notificationModels, totalSize) => {
-                this.props.notificationStore.onScreenData(notificationModels, totalSize);
-                onRequest();
-            })
+            // ++requiredParallelRequests;
+            // this.generalApi.fetchNotificationsByFilter(S.INT_FALSE, 0, NotificationStore.NOTIFICATION_SHOW_COUNT, (notificationModels, totalSize) => {
+            //     this.props.notificationStore.onScreenData(notificationModels, totalSize);
+            //     onRequest();
+            // })
 
             this.generalApi.fetchAllSites((siteModels, countryModels) => {
                 this.props.siteStore.onScreenData(siteModels, countryModels);

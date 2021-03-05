@@ -17,12 +17,16 @@ import LoadingIndicator from '../../../common/js/components-core/LoadingIndicato
 import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
 import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import AppStore from '../../../common/js/stores/AppStore';
+import AlertStore from '../../../common/js/stores/AlertStore';
 
 interface Props {
     notifications: NotificationModel[];
     show: number,
     hasNotifications: number,
     notificationStore: NotificationStore;
+    appStore: AppStore,
+    alertStore: AlertStore,
 }
 
 interface State {
@@ -50,6 +54,7 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
 class Notifications extends React.Component<Props, State> {
 
     generalApi: GeneralApi;
+    notificationFetches: NodeJS.Timeout;
 
     nodes: {
         root: RefObject<HTMLDivElement>,
@@ -67,7 +72,18 @@ class Notifications extends React.Component<Props, State> {
         }
 
         this.generalApi = new GeneralApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+    }
 
+    componentDidMount() {
+        this.props.notificationStore.fetchMoreNotifications(true);
+
+        this.notificationFetches = setInterval(() => {
+            this.props.notificationStore.fetchMoreNotifications(true);
+        }, 15 * 60 * 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.notificationFetches);
     }
 
     onClickNotification = () => {

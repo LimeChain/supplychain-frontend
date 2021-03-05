@@ -109,7 +109,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
                 <Sidebar page={PagesCAdmin.PRODUCTS_IN_STOCK} />
 
-                <PageView pageTitle={'ProductsinStock'} >
+                <PageView pageTitle={'Products In Stock'} >
                     {this.showNoEntryPage
                         ? <NoEntryPage modelName='product' subText='' buttonText='' buttonFunction={null} />
                         : <PageTable

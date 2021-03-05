@@ -3,7 +3,6 @@ import GeneralApi from '../api/GeneralApi';
 import NotificationModel from '../models/NotificationModel';
 import S from '../utilities/Main';
 
-
 export default class NotificationStore {
     generalApi: GeneralApi;
     static NOTIFICATION_SHOW_COUNT: number = 4;
@@ -57,7 +56,7 @@ export default class NotificationStore {
 
             this.hasMore = !(this.screenNotificationModels.length === totalSize)
 
-            if (this.totalSize < totalSize) {
+            if (this.totalSize < totalSize && from > 0) {
                 this.fetchMoreNotifications(true);
                 return;
             }
