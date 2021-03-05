@@ -84,9 +84,11 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 <Sidebar page={PagesCAdmin.OUTGOING} />
 
                 <PageView pageTitle={'Outgoing Shipments'} >
-                    {this.showNoEntryPage
-                        ? <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
-                        : <PageTable
+                    {this.showNoEntryPage === true && (
+                        <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                    )}
+                    {this.showNoEntryPage === false && (
+                        <PageTable
                             className={'WhiteBox PageExtend'}
                             header={(
                                 <PageTableHeader
@@ -114,7 +116,8 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                     )} />
                             )} >
                             {'some large content'.repeat(10)}
-                        </PageTable>}
+                        </PageTable>
+                    )}
                 </PageView>
 
             </div>

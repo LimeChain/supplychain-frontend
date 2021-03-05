@@ -110,9 +110,11 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
                 <Sidebar page={PagesCAdmin.PRODUCTS_IN_STOCK} />
 
                 <PageView pageTitle={'ProductsinStock'} >
-                    {this.showNoEntryPage
-                        ? <NoEntryPage modelName='product' subText='' buttonText='' buttonFunction={null} />
-                        : <PageTable
+                    {this.showNoEntryPage === true && (
+                        <NoEntryPage modelName='product' subText='' buttonText='' buttonFunction={null} />
+                    )}
+                    {this.showNoEntryPage === false && (
+                        <PageTable
                             className={'WhiteBox PageExtend'}
                             header={(
                                 <PageTableHeader
@@ -140,7 +142,8 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
                                     )} />
                             )} >
                             {'some large content'.repeat(10)}
-                        </PageTable>}
+                        </PageTable>
+                    )}
                 </PageView>
 
             </div>
