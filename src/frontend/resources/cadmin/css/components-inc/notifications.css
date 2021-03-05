@@ -1,7 +1,6 @@
 .Notifications {
     width: 45px;
     height: 45px;
-    border-radius: 5px;
     cursor: pointer;
     background: #fff;
     margin: 0 auto;
@@ -9,6 +8,10 @@
     display: flex;
     justify-content: center;
     align-content: center;
+}
+
+.NotificationsPopover .NotificationBox {
+    border-radius: 5px;
 }
 
 .Notifications .NotificationsIcon {
@@ -47,7 +50,7 @@
 }
 
 .NotificationsPopover .NotificationBox .NotificationsHeader {
-    padding: 14px 20px;
+    padding: 15px 20px;
     font-style: normal;
     font-weight: bold;
     font-size: 16px;
@@ -78,7 +81,7 @@
     box-sizing: border-box;
     margin: 0 10px;
     padding: 18px;
-    border-radius: 0 0 10px 10px;
+    border-radius: 3px;
     font-size: 12px;
 }
 
