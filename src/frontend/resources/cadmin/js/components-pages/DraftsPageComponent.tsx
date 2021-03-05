@@ -5,7 +5,7 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
-import Header from '../components-inc/header';
+import Sidebar from '../components-inc/Sidebar';
 
 import './../../css/components-pages/page-drafts-component.css';
 import Notifications from '../components-inc/Notifications';
@@ -145,7 +145,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     renderContent() {
         return (
             <>
-                <Header page={PagesCAdmin.DRAFTS} />
+                <Sidebar page={PagesCAdmin.DRAFTS} />
                 <div className={' PageContent FlexColumn'}>
                     <Notifications />
                     <div onClick={this.saveShipment}>add shipment</div>

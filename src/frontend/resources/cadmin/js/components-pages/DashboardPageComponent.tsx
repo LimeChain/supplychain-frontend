@@ -5,13 +5,9 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
-import Header from '../components-inc/header';
+import Sidebar from '../components-inc/Sidebar';
 
 import './../../css/components-pages/page-dashboard-component.css';
-import Notifications from '../components-inc/Notifications';
-import Chart from '../../../common/js/components-inc/Chart';
-import ShipmentApi from '../../../common/js/api/ShipmentApi';
-import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
@@ -45,26 +41,26 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
 
     renderContent() {
         return (
-            <div className = { 'PageContent' } >
+            <div className={'PageContent'} >
 
-                <Header page={PagesCAdmin.DASHBOARD} />
+                <Sidebar page={PagesCAdmin.DASHBOARD} />
 
-                <PageView pageTitle = { 'Dashboard' } >
+                <PageView pageTitle={'Dashboard'} >
                     {/* <div className={'PageHeader'} onClick={this.onClickTest} >Request test</div>
                     <div className={'PageHeader'}>Dashboard</div> */}
 
-                    <div className = { 'Stats MarginBottom' } >
-                        <div className = { 'WhiteBox' } ></div>
-                        <div className = { 'WhiteBox' } ></div>
-                        <div className = { 'WhiteBox' } ></div>
-                        <div className = { 'WhiteBox' } ></div>
+                    <div className={'Stats MarginBottom'} >
+                        <div className={'WhiteBox'} ></div>
+                        <div className={'WhiteBox'} ></div>
+                        <div className={'WhiteBox'} ></div>
+                        <div className={'WhiteBox'} ></div>
                     </div>
 
-                    <div className = { 'Tables' } >
-                        <Scrollable className = { 'WhiteBox' } >
+                    <div className={'Tables'} >
+                        <Scrollable className={'WhiteBox'} >
                             {'some large content'.repeat(1000)}
                         </Scrollable>
-                        <Scrollable className = { 'WhiteBox' } >
+                        <Scrollable className={'WhiteBox'} >
                             {'some large content'.repeat(10)}
                         </Scrollable>
                     </div>

@@ -5,7 +5,7 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
-import Header from '../components-inc/header';
+import Sidebar from '../components-inc/Sidebar';
 
 import './../../css/components-pages/page-products-component.css';
 import Notifications from '../components-inc/Notifications';
@@ -70,7 +70,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
     renderContent() {
         return (
             <>
-                <Header page={PagesCAdmin.PRODUCTS} />
+                <Sidebar page={PagesCAdmin.PRODUCTS} />
                 <div className={' PageContent FlexColumn'}>
                     <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
                     <div onClick={this.props.popupProductStore.show}>show popup</div>

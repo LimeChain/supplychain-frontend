@@ -1,0 +1,81 @@
+:root {
+    --sidebar-width: 195px;
+    --sidebar-padding: 16px;
+}
+
+.Sidebar {
+    width: var(--sidebar-width);
+    box-sizing: border-box;
+    left: 0;
+    top: 0;
+    justify-content: center;
+    background: #fff;
+    line-height: 21px;
+    padding: 15px;
+}
+
+.Sidebar .SidebarHeader {
+    font-family: IBM Plex Sans;
+    font-weight: bold;
+    margin-top: 17px;
+    margin-bottom: 33px;
+    padding: 6px;
+}
+
+.Sidebar .SidebarButton {
+    width: calc(--sidebar-width - 30px);
+    border-radius: 10px;
+    justify-content: left;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 5px;
+    fill: var(--color-gray);
+    color: var(--color-gray);
+    cursor: pointer;
+}
+
+.Sidebar .SidebarButton .SVG {
+    margin: 12px 15px;
+}
+
+.Sidebar .MuiAccordion-root {
+    box-shadow: none;
+}
+
+.Sidebar .SidebarButton .MuiButtonBase-root {
+    margin: 0;
+    fill: var(--color-gray);
+    color: var(--color-gray);
+}
+
+.Sidebar .SidebarButton.Active {
+    fill: var(--color-primary);
+    color: var(--color-primary);
+    background: rgba(54, 121, 224, 0.1);
+}
+
+.Sidebar .SidebarButton ul {
+    margin: 0;
+    padding: 0;
+}
+
+.Sidebar .Mui-Expanded {
+    margin: 0;
+}
+
+.Sidebar .MuiAccordionSummary-content.Mui-expanded {
+    margin: 0;
+}
+
+.Sidebar .SidebarSubmenu {
+    margin-top: 0 18px;
+}
+
+.Sidebar .MuiAccordionSummary-root {
+    padding: 0;
+}
+
+.SidebarButton .MuiAccordionSummary-content {
+    margin: 0;
+}

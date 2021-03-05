@@ -9,7 +9,7 @@ import ProductModel from '../../../common/js/models/product-module/ProductModel'
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
-import Header from '../components-inc/header';
+import Sidebar from '../components-inc/Sidebar';
 import Notifications from '../components-inc/Notifications';
 
 import './../../css/components-pages/page-outgoing-component.css';
@@ -60,7 +60,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
     renderContent() {
         return (
             <>
-                <Header page={PagesCAdmin.OUTGOING} />
+                <Sidebar page={PagesCAdmin.OUTGOING} />
                 <div className={' PageContent FlexColumn'}>
                     <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
 
