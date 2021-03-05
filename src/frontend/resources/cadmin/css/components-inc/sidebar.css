@@ -54,6 +54,10 @@
     background: rgba(54, 121, 224, 0.1);
 }
 
+.Sidebar .SidebarButton.Active .MuiSvgIcon-root {
+    fill: var(--color-primary);
+}
+
 .Sidebar .SidebarButton ul {
     margin: 0;
     padding: 0;
@@ -62,6 +66,43 @@
 .Sidebar .Mui-Expanded {
     margin: 0;
 }
+
+.Sidebar .Actions .Button .SVG {
+    margin-bottom: 8px;
+}
+
+.Sidebar .SidebarSubmenu .SubmenuLink {
+    justify-content: left;
+    font-size: 14px;
+}
+
+.Sidebar .SidebarSubmenu .SubmenuLink.Active {
+    color: var(--color-primary);
+}
+
+.Sidebar .SidebarSubmenu .SubmenuLink .ListDot {
+    background: var(--color-gray);
+    border-radius: 5px;
+    width: 5px;
+    height: 5px;
+    margin-right: 21px;
+    margin-left: 5px;
+}
+
+.Sidebar .SidebarSubmenu .SubmenuLink.Active .ListDot {
+    background: var(--color-primary);
+}
+
+.Sidebar .SidebarSubmenu .LinkSeparator {
+    width: 7px;
+    height: 20px;
+    border-right: 1px solid #F0F1F3;
+}
+
+.Sidebar .SidebarSubmenu .FirstLinkSeparator {
+    height: 12px;
+}
+
 
 .Sidebar .MuiAccordionSummary-content.Mui-expanded {
     margin: 0;
@@ -72,12 +113,15 @@
 }
 
 .Sidebar .SidebarSubmenu {
-    padding-left: 38px;
     color: var(--color-gray);
     text-align: left;
 }
 
 .Sidebar .MuiAccordionSummary-root {
+    padding: 0;
+}
+
+.SideBar .MuiAccordionDetails-root {
     padding: 0;
 }
 

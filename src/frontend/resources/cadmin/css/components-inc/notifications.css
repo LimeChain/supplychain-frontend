@@ -1,19 +1,45 @@
 .Notifications {
-    position: absolute;
-    right: 60px;
-    top: 35px;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
     cursor: pointer;
+    background: #fff;
+    margin: 0 auto;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.Notifications .NotificationsIcon {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    position: relative;
+}
+
+.Notifications .NotificationsIcon .Icon {
+    margin: 0 auto;
 }
 
 .Notifications .SVG.Dot {
     position: absolute;
-    right: 1px;
-    top: 2px;
+    right: -1px;
+    top: 12px;
 }
 
 .NotificationsPopover .NotificationBox .NotificationMessageBox {
     max-height: 259px;
     overflow: auto;
+    color: var(--color-gray);
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.NotificationsPopover .NotificationBox .NotificationMessageBox .Icon {
+    margin-right: 9px;
 }
 
 .NotificationsPopover .NotificationBox .NotificationMessageBox .LoadingIndicator {
@@ -26,6 +52,16 @@
     font-weight: bold;
     font-size: 16px;
     line-height: 21px;
+    justify-content: space-between;
+}
+
+.NotificationsPopover .NotificationBox .NotificationsHeader .ReadAllButton {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 15px;
+    color: var(--color-primary);
 }
 
 .NotificationsPopover .NotificationBox .NotificationsHeaderMenu {
@@ -35,37 +71,26 @@
 .NotificationsPopover .NotificationBox .NotificationMessage {
     box-sizing: border-box;
     justify-content: space-between;
-}
-
-.NotificationsPopover .NotificationMessage {
+    fill: var(--color-primary);
     height: 65px;
     background: #F9F9F9;
-    border-top: 1px solid #C4C4C4;
+    border-top: 1px solid rgba(54, 121, 224, 0.1);
     box-sizing: border-box;
+    margin: 0 10px;
     padding: 18px;
     border-radius: 0 0 10px 10px;
+    font-size: 12px;
 }
 
-.NotificationsPopover .NotificationLogo {
-    width: 29px;
-    height: 29px;
-    border-radius: 30px;
-    flex: 0 0 auto;
+.NotificationsPopover .NotificationBox .NotificationMessage:hover {
+    background: rgba(54, 121, 224, 0.05);
 }
 
-.NotificationsPopover .NotificationMessage .NotificationMessageInfo {
-    margin: 0 9px;
-    width: 0px;
-    flex: 1 1 auto;
+.NotificationsPopover .NotificationBox .NotificationMessage p {
+    display: inline;
+    color: #07172F;
 }
 
-.NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageHeader {
-    font-style: normal;
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 18px;
-    box-sizing: border-box;
-}
 
 .NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageText {
     margin-top: 3px;
