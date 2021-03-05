@@ -36,6 +36,8 @@ export default class Sidebar extends React.Component<Props, State> {
     }
 
     render() {
+        console.log(this.props.page);
+
         return (
             <div className={'Sidebar'} >
                 <div className={'FlexColumn'} >
@@ -46,19 +48,25 @@ export default class Sidebar extends React.Component<Props, State> {
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgDashboard }}></div>
                             Dashboard
                         </a>
-                        <div className={'SidebarButton'} >
-                            <Accordion >
-                                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                                    <div className={`SidebarButton FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)} ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}>
+                        <div>
+                            <Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK}>
+                                <AccordionSummary className={`SidebarButton ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)} ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`} expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                                    <div className={'FlexRow'}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }}></div>
                                         Products
                                     </div>
                                 </AccordionSummary>
-                                <AccordionDetails className={'SidebarSubmenu'}>
-                                    <ul>
-                                        <li><a href={PagesCAdmin.PRODUCTS} className={`${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_LIST)}`} >Product List</a></li>
-                                        <li><a href={PagesCAdmin.PRODUCTS_IN_STOCK} className={`${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`} >In Stock</a></li>
-                                    </ul>
+                                <AccordionDetails className={'SidebarSubmenu FlexColumn'}>
+                                    <div className="FirstLinkSeparator LinkSeparator"></div>
+                                    <div className={`FlexRow SubmenuLink ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)}`}>
+                                        <div className='ListDot'></div>
+                                        <a href={PagesCAdmin.PRODUCTS} >Product List</a>
+                                    </div>
+                                    <div className="LinkSeparator"></div>
+                                    <div className={`FlexRow SubmenuLink ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}>
+                                        <div className='ListDot'></div>
+                                        <a href={PagesCAdmin.PRODUCTS_IN_STOCK}>In Stock</a>
+                                    </div>
                                 </AccordionDetails>
                             </Accordion>
                         </div>

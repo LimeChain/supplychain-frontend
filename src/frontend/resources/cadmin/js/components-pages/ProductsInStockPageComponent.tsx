@@ -34,7 +34,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
     }
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'productStore', 'popupProductStore', 'notificationStore', 'siteStore')(observer(ProductsPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'productStore', 'popupProductStore', 'notificationStore', 'siteStore')(observer(ProductsInStockPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -72,7 +72,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
         return (
             <div className={'PageContent'} >
 
-                <Sidebar page={PagesCAdmin.PRODUCTS} />
+                <Sidebar page={PagesCAdmin.PRODUCTS_IN_STOCK} />
 
                 <PageView pageTitle={'ProductsinStock'} >
                     <div className={'WhiteBox PageExtend'} />
