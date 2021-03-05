@@ -68,8 +68,14 @@
     margin: 0;
 }
 
+.Sidebar .MuiAccordionSummary-root.Mui-expanded {
+    min-height: auto;
+}
+
 .Sidebar .SidebarSubmenu {
-    margin-top: 0 18px;
+    padding-left: 38px;
+    color: var(--color-gray);
+    text-align: left;
 }
 
 .Sidebar .MuiAccordionSummary-root {

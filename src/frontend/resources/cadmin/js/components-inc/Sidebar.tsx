@@ -49,15 +49,15 @@ export default class Sidebar extends React.Component<Props, State> {
                         <div className={'SidebarButton'} >
                             <Accordion >
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                                    <div className={`SidebarButton FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)}`}>
+                                    <div className={`SidebarButton FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)} ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }}></div>
                                         Products
                                     </div>
                                 </AccordionSummary>
                                 <AccordionDetails className={'SidebarSubmenu'}>
                                     <ul>
-                                        <li><a href={PagesCAdmin.PRODUCTS_LIST} />Product List</li>
-                                        <li><a href={PagesCAdmin.PRODUCTS_IN_STOCK} />In Stock</li>
+                                        <li><a href={PagesCAdmin.PRODUCTS} className={`${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_LIST)}`} >Product List</a></li>
+                                        <li><a href={PagesCAdmin.PRODUCTS_IN_STOCK} className={`${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`} >In Stock</a></li>
                                     </ul>
                                 </AccordionDetails>
                             </Accordion>
