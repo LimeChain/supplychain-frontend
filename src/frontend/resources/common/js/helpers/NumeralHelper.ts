@@ -19,6 +19,6 @@ numeral.register('locale', 'us', {
     },
 });
 
-numeral.locale('us');
+numeral.defaultFormat('€0,0.00');
 
 export default numeral;
