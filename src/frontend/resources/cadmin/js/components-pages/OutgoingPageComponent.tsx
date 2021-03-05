@@ -26,7 +26,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
     tableHelper: TableHelper;
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(OutgoingPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(OutgoingPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -74,13 +74,13 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
             //     <div className={' PageContent FlexColumn'}>
             //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
 
-            //         <Table
-            //             widths={['30%', '20%', '50%']}
-            //             legend={['Id', 'Unit', 'Name']}
-            //             rows={this.renderRows()}
-            //             helper={this.tableHelper} />
-            //     </div>
-            // </>
+        //         <Table
+        //             widths={['30%', '20%', '50%']}
+        //             legend={['Id', 'Unit', 'Name']}
+        //             rows={this.renderRows()}
+        //             helper={this.tableHelper} />
+        //     </div>
+        // </>
         )
     }
 

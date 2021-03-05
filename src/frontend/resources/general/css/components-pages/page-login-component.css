@@ -1,22 +1,26 @@
-.PageLogin .PageContent {
-    display: flex; flex-direction: column;
-    align-items: center;
-    flex-grow: 1;
+.PageLogin {
+    background: var(--color-primary);
 }
 
 .PageLogin .LoginBox {
-    width: 380px;
-    display: flex; flex-direction: column;
     align-items: center;
-    box-sizing: border-box;
-    padding: 32px;
-    border-radius: 24px;
-    margin: 90px 0;
-    background: #f8f8f8;
-    box-shadow: 0px 7px 8px #BCBCBC29;
+    padding: 60px 94px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 6px 50px 20px rgba(11, 68, 156, 0.3);
 }
 
-.PageLogin .Logo {
-    width: 106px;
-    margin-bottom: 48px;
+.PageLogin .Title {
+    font-size: 30px; font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.PageLogin .Subtitle {
+    color: #BFC3CA;
+    font-size: 14px; font-weight: 500;
+    margin-bottom: 32px;
+}
+
+.PageLogin .LoginForm {
+    width: 262px;
 }

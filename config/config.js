@@ -168,13 +168,14 @@ const Config = {
 
         RESOURCES: `${URL_ROOT}/resources`,
         Resources: {
-			COMMON: `${URL_ROOT}/resources/common`,
+            COMMON: `${URL_ROOT}/resources/common`,
             Common: {
                 IMG: `${URL_ROOT}/resources/common/img`,
                 FONTS: `${URL_ROOT}/resources/common/fonts`,
             },
             General: {
                 VIEW: `${URL_ROOT}/resources/general/view`,
+                IMG: `${URL_ROOT}/resources/general/img`,
             },
             CAdmin: {
                 VIEW: `${URL_ROOT}/resources/cadmin/view`,

@@ -29,7 +29,7 @@ interface State {
 export default class IncommingPageComponent extends ContextPageComponent<Props, State> {
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(IncommingPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(IncommingPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 

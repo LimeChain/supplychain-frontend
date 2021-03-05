@@ -5,7 +5,7 @@ import PageDrafts from '../pages/cadmin/drafts/PageDrafts';
 import PageOutgoing from '../pages/cadmin/outgoing/PageOutgoing';
 import PageIncomming from '../pages/cadmin/incomming/PageIncomming';
 import Context from '../../utilities/network/Context';
-import PageProductsInStock from '../pages/cadmin/productsInStock/PageProductsInStock';
+import PageProductsInStock from '../pages/cadmin/products-in-stock/PageProductsInStock';
 
 const Config = require('./../../../../config/config');
 
@@ -14,9 +14,10 @@ export default class CAdminFilter {
     static map: Map<string, Page>;
 
     static init() {
+        const pageDashboard = new PageDashboard();
         CAdminFilter.map = new Map();
-        CAdminFilter.map.set(Config.URL.ROOT, new PageDashboard());
-        CAdminFilter.map.set(PageDashboard.URL, new PageDashboard());
+        CAdminFilter.map.set(Config.URL.CADMIN, pageDashboard);
+        CAdminFilter.map.set(PageDashboard.URL, pageDashboard);
         CAdminFilter.map.set(PageProducts.URL, new PageProducts());
         CAdminFilter.map.set(PageProductsInStock.URL, new PageProductsInStock());
         CAdminFilter.map.set(PageDrafts.URL, new PageDrafts());

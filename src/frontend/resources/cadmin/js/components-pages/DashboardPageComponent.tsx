@@ -20,7 +20,7 @@ interface Props extends ContextPageComponentProps {
 export default class DashboardPageComponent extends ContextPageComponent<Props> {
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DashboardPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DashboardPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 

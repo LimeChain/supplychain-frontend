@@ -17,6 +17,7 @@ import NotificationStore from '../stores/NotificationStore';
 import PopupProductStore from '../stores/PopupProductStore';
 import SiteStore from '../stores/SiteStore';
 import OriginStore from '../stores/OriginStore';
+import AccountSessionStore from '../stores/AccountSessionStore';
 
 export interface PageComponentProps {
     appStore: AppStore,
@@ -40,6 +41,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
                 notificationStore = { new NotificationStore(appStore, alertStore) }
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
+                accountSessionStore = { new AccountSessionStore() }
                 alertStore = { alertStore }>
 
                 { componentNode }

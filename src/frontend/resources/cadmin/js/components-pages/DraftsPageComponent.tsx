@@ -36,7 +36,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
     }
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DraftsPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(DraftsPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -154,14 +154,14 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
 
             </div>
 
-            // <>
-            //     <Header page={PagesCAdmin.DRAFTS} />
-            //     <div className={' PageContent FlexColumn'}>
-            //         <Notifications />
-            //         <div onClick={this.saveShipment}>add shipment</div>
-            //         <div onClick={this.fetchShipments}>fetch shipments</div>
-            //     </div>
-            // </>
+        // <>
+        //     <Header page={PagesCAdmin.DRAFTS} />
+        //     <div className={' PageContent FlexColumn'}>
+        //         <Notifications />
+        //         <div onClick={this.saveShipment}>add shipment</div>
+        //         <div onClick={this.fetchShipments}>fetch shipments</div>
+        //     </div>
+        // </>
         )
     }
 }

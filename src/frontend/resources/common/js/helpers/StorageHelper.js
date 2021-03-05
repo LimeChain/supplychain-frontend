@@ -5,7 +5,7 @@ import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/Ship
 import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 32;
+const VERSION = 34;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -49,11 +49,10 @@ const shipmentDocumentsJson = [
     jsonShipmentDocument('1', '1', 'localhost/documents/aaa.pdf'),
 ]
 
-const countriesJson = [
-    jsonCountry('1', 'Malta', 0.18),
-    jsonCountry('2', 'Greece', 0.23),
-    jsonCountry('3', 'Germany', 0.19),
-]
+// const countriesJson = [
+//     jsonCountry('1', 'Germany', 0.19),
+//     jsonCountry('2', 'Netherlands', 0.18),
+// ]
 
 const sitesJson = [
     jsonSite('1', '3', 'Berlin'),
@@ -72,6 +71,11 @@ const notificationsJson = [
     jsonNotification('8', '4', NotificationConstsH.S_NOTIFICATION_RECEIVED, Date.now() - 422000, S.INT_FALSE),
 ]
 
+const accountsJson = [
+    jsonAccount('1', 'germany@pwc.com', 'Germany'),
+    jsonAccount('2', 'netherlands@pwc.com', 'Netherlands'),
+];
+
 class StorageHelper {
 
     constructor() {
@@ -79,11 +83,12 @@ class StorageHelper {
         this.productsJson = productsJson;
         this.shipmentsJson = shipmentsJson;
         this.shipmentDocumentsJson = shipmentDocumentsJson;
-        this.countriesJson = countriesJson;
+        // this.countriesJson = countriesJson;
         this.notificationsJson = notificationsJson;
         this.sitesJson = sitesJson;
         this.skuOriginsJson = skuOriginsJson;
         this.skusJson = skusJson;
+        this.accountsJson = accountsJson;
     }
 
     static open() {
@@ -108,13 +113,6 @@ class StorageHelper {
 
 const storageHelper = StorageHelper.open();
 export default storageHelper;
-
-function jsonAccount(accountId, email) {
-    return {
-        'accountId': accountId,
-        'email': email,
-    };
-}
 
 function jsonProduct(productId, productName, productUnit, productDescription, productDeleted) {
     return {
@@ -176,13 +174,13 @@ function jsonSite(siteId, countryId, siteName) {
     }
 }
 
-function jsonCountry(countryId, countryName, countryVat) {
-    return {
-        'countryId': countryId,
-        'countryName': countryName,
-        'countryVat': countryVat,
-    }
-}
+// function jsonCountry(countryId, countryName, countryVat) {
+//     return {
+//         'countryId': countryId,
+//         'countryName': countryName,
+//         'countryVat': countryVat,
+//     }
+// }
 
 function jsonNotification(notificationId, shipmentId, notificationStatus, notificationTime, notificationRead) {
     return {
@@ -191,5 +189,18 @@ function jsonNotification(notificationId, shipmentId, notificationStatus, notifi
         'notificationStatus': notificationStatus,
         'notificationTime': notificationTime,
         'notificationRead': notificationRead,
+    }
+}
+
+function jsonAccount(accountId, email, name) {
+    return {
+        'accountId': accountId,
+        'email': email,
+        'name': name,
+        'role': S.NOT_EXISTS,
+        'active': S.INT_TRUE,
+        'invitation': S.INT_FALSE,
+        'registerTimestamp': Date.now(),
+        'lastLoginTimestamp': Date.now(),
     }
 }

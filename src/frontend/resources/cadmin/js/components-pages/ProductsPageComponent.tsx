@@ -34,7 +34,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
     }
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'productStore', 'popupProductStore', 'notificationStore', 'siteStore')(observer(ProductsPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'productStore', 'popupProductStore', 'notificationStore', 'siteStore')(observer(ProductsPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 

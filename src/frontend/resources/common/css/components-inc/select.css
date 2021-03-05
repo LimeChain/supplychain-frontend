@@ -7,6 +7,10 @@
     margin: 0 !important;
 }
 
+.Select .MuiFormControl-root label + .MuiInput-formControl {
+    margin-top: 20px;
+}
+
 .Select .MuiInputBase-root {
     height: var(--default-height);
     color: var(--color-input-text);
