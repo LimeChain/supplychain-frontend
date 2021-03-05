@@ -6,6 +6,7 @@ import Config from '../../../../../../builds/dev-generated/Config';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 
+import SvgGermany from '../../../common/svg/flags/germany.svg';
 import './../../css/components-pages/page-login-component.css';
 import Button from '../../../common/js/components-inc/Button';
 import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
@@ -107,7 +108,11 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
                             onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >
                             { this.countries.map((countryModel, i) => {
                                 return (
-                                    <MenuItem key = { i } value = { countryModel.countryId }> { countryModel.countryName } </MenuItem>
+                                    <MenuItem key = { i } value = { countryModel.countryId }>
+                                        <div className ={ 'FlexRow' }>
+                                            <div className = { 'SVG' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryName) }} /> { countryModel.countryName }
+                                        </div>
+                                    </MenuItem>
                                 )
                             })}
                         </Select>

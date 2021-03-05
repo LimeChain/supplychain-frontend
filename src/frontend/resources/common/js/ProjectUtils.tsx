@@ -1,4 +1,7 @@
+import CountryModel from './models/CountryModel';
 import S from './utilities/Main';
+
+import SvgGermany from '../svg/flags/germany.svg';
 
 const QUERY_PATTERN = '?p=';
 
@@ -135,6 +138,17 @@ export default class ProjectUtils {
         requestAnimationFrame(() => {
             requestAnimationFrame(callback);
         });
+    }
+
+    static getCountrySvg(countryId) {
+        switch (countryId) {
+            default:
+            case CountryModel.ID_GERMANY:
+                return SvgGermany;
+            case CountryModel.ID_NETHERLANDS:
+                return SvgGermany;
+        }
+
     }
 
 }
