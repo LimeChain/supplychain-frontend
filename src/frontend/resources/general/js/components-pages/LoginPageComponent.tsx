@@ -110,7 +110,7 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
                                 return (
                                     <MenuItem key = { i } value = { countryModel.countryId }>
                                         <div className ={ 'FlexRow' }>
-                                            <div className = { 'SVG' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryName) }} /> { countryModel.countryName }
+                                            <div className = { 'SVG LoginPageIconFlag' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }} /> { countryModel.countryName }
                                         </div>
                                     </MenuItem>
                                 )

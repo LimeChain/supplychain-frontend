@@ -2,6 +2,7 @@ import CountryModel from './models/CountryModel';
 import S from './utilities/Main';
 
 import SvgGermany from '../svg/flags/germany.svg';
+import SvgNetherlands from '../svg/flags/netherlands.svg';
 
 const QUERY_PATTERN = '?p=';
 
@@ -146,7 +147,7 @@ export default class ProjectUtils {
             case CountryModel.ID_GERMANY:
                 return SvgGermany;
             case CountryModel.ID_NETHERLANDS:
-                return SvgGermany;
+                return SvgNetherlands;
         }
 
     }

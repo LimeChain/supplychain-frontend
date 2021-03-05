@@ -57,7 +57,7 @@ export default class AccountApi extends AbsApi {
         setTimeout(() => {
             this.enableActions();
 
-            CookieHelper.saveUser(null);
+            CookieHelper.saveAccounts(null);
             window.location.href = PagesGeneral.LOGIN;
         }, 100);
     }

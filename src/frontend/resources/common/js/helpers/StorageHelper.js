@@ -3,9 +3,10 @@ import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule
 import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
 import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
 import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
+import CountryModel from '../models/CountryModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 34;
+const VERSION = 35;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -72,8 +73,8 @@ const notificationsJson = [
 ]
 
 const accountsJson = [
-    jsonAccount('1', 'germany@pwc.com', 'Germany'),
-    jsonAccount('2', 'netherlands@pwc.com', 'Netherlands'),
+    jsonAccount('1', CountryModel.ID_GERMANY, 'germany@pwc.com', 'Germany'),
+    jsonAccount('2', CountryModel.ID_NETHERLANDS, 'netherlands@pwc.com', 'Netherlands'),
 ];
 
 class StorageHelper {
@@ -192,9 +193,10 @@ function jsonNotification(notificationId, shipmentId, notificationStatus, notifi
     }
 }
 
-function jsonAccount(accountId, email, name) {
+function jsonAccount(accountId, countryId, email, name) {
     return {
         'accountId': accountId,
+        'countryId': countryId,
         'email': email,
         'name': name,
         'role': S.NOT_EXISTS,

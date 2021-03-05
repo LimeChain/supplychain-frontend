@@ -3,6 +3,7 @@ import S from '../utilities/Main';
 export default class AccountModel {
 
     accountId: string;
+    countryId: string;
     email: string;
     name: string;
     role: number;
@@ -13,6 +14,7 @@ export default class AccountModel {
 
     constructor() {
         this.accountId = S.Strings.NOT_EXISTS;
+        this.countryId = S.Strings.NOT_EXISTS;
         this.email = S.Strings.EMPTY;
         this.name = S.Strings.EMPTY;
         this.active = S.INT_TRUE;
@@ -32,6 +34,7 @@ export default class AccountModel {
     toJSON(): any {
         return {
             'accountId': this.accountId,
+            'countryId': this.countryId,
             'email': this.email,
             'name': this.name,
             'role': this.role,
@@ -50,6 +53,7 @@ export default class AccountModel {
         const model = new AccountModel();
 
         model.accountId = (json.accountId || model.accountId).toString();
+        model.countryId = (json.countryId || model.countryId).toString();
         model.email = json.email || model.email;
         model.name = json.name || model.name;
         model.role = parseInt(json.role || model.role);

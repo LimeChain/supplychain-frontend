@@ -1,6 +1,6 @@
 import AccountModel from '../models/AccountModel';
 
-const COOKIE_STORAGE = 'mogul_cookies';
+const COOKIE_STORAGE = 'hedera_cookies';
 
 export default class CookieHelper {
 

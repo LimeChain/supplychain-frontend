@@ -30,6 +30,12 @@ export default class CountryModel {
         ]
     }
 
+    static getCountryById(countryId) {
+        return CountryModel.getAllCountries().find((countryModel) => {
+            return countryModel.countryId === countryId;
+        });
+    }
+
     toJson(): any {
         return {
             'countryId': this.countryId,
