@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import Config from '../../../../../../builds/dev-generated/Config';
+import moment from 'moment';
 import NotificationModel from '../../../common/js/models/NotificationModel';
 
 import SvgNotificationNone from '../../../common/svg/notification-none.svg';
@@ -131,7 +131,7 @@ class Notifications extends React.Component<Props, State> {
                                     <p>Shipment # {notification.shipmentId}</p> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
                                 </div>
                                 <div className={'NotificationMessageTime '}>
-                                    {new Date(notification.notificationTime).formatCalendarDateAndTime()}
+                                    {moment(notification.notificationTime).fromNow(true)}
                                 </div>
                             </div>)}
                             {this.props.notificationStore.hasMore

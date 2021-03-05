@@ -1,6 +1,6 @@
 import numeral from 'numeral';
 
-numeral.register('locale', 'us', {
+numeral.register('locale', 'en-us', {
     delimiters: {
         thousands: ',',
         decimal: '.',
@@ -12,13 +12,18 @@ numeral.register('locale', 'us', {
         trillion: 't',
     },
     ordinal(number) {
-        return number === 1 ? 'er' : 'ème';
+        const b = number % 10;
+        return (~~(number % 100 / 10) === 1) ? 'th'
+            : (b === 1) ? 'st'
+                : (b === 2) ? 'nd'
+                    : (b === 3) ? 'rd' : 'th';
     },
     currency: {
         symbol: '€',
     },
 });
 
-numeral.defaultFormat('€0,0.00');
+numeral.locale('en-us');
+numeral.defaultFormat('$0,0');
 
 export default numeral;
