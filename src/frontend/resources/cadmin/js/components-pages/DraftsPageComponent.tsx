@@ -8,7 +8,6 @@ import ContextPageComponent, { ContextPageComponentProps } from './common/Contex
 import Header from '../components-inc/header';
 
 import './../../css/components-pages/page-drafts-component.css';
-import Notifications from '../components-inc/Notifications';
 import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import S from '../../../common/js/utilities/Main';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
@@ -20,6 +19,7 @@ import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import PageView from '../components-inc/PageView';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -144,14 +144,24 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
 
     renderContent() {
         return (
-            <>
+            <div className = { 'PageContent' } >
+
                 <Header page={PagesCAdmin.DRAFTS} />
-                <div className={' PageContent FlexColumn'}>
-                    <Notifications />
-                    <div onClick={this.saveShipment}>add shipment</div>
-                    <div onClick={this.fetchShipments}>fetch shipments</div>
-                </div>
-            </>
+
+                <PageView pageTitle = { 'Drafts' } >
+                    <div className = { 'WhiteBox PageExtend' } />
+                </PageView>
+
+            </div>
+
+        // <>
+        //     <Header page={PagesCAdmin.DRAFTS} />
+        //     <div className={' PageContent FlexColumn'}>
+        //         <Notifications />
+        //         <div onClick={this.saveShipment}>add shipment</div>
+        //         <div onClick={this.fetchShipments}>fetch shipments</div>
+        //     </div>
+        // </>
         )
     }
 }

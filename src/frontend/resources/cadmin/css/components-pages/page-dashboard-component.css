@@ -11,7 +11,6 @@
 .PageDashboard .Tables {
     display: flex;
     gap: var(--desktop-spacing);
-    flex: 1 1 auto;
 }
 
 .PageDashboard .Tables > * {
