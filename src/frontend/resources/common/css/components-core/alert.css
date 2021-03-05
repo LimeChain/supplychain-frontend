@@ -36,7 +36,7 @@
 }
 
 .Alert .TextButton {
-	color:#FF314E;
+	color:var(--color-primary);
     text-transform:uppercase;
     font-weight:700; font-size: 12px;
     border-radius:4px;
