@@ -15,6 +15,7 @@
 }
 
 .Sidebar .SidebarHeader {
+    text-align: center;
     font-weight: 700;
     margin-top: 17px;
     margin-bottom: 33px;
@@ -22,7 +23,6 @@
 }
 
 .Sidebar .SidebarButton {
-    width: calc(--sidebar-width - 30px);
     border-radius: 10px;
     justify-content: left;
     text-align: center;
@@ -32,6 +32,7 @@
     fill: var(--color-gray);
     color: var(--color-gray);
     cursor: pointer;
+    transition-property: background, fill, color;
 }
 
 .Sidebar .SidebarButton .SVG {
@@ -48,7 +49,7 @@
     color: var(--color-gray);
 }
 
-.Sidebar .SidebarButton.Active {
+.Sidebar .SidebarButton.Active, .Sidebar .SidebarButton:hover {
     fill: var(--color-primary);
     color: var(--color-primary);
     background: rgba(54, 121, 224, 0.1);
@@ -58,38 +59,31 @@
     fill: var(--color-primary);
 }
 
-.Sidebar .SidebarButton ul {
-    margin: 0;
-    padding: 0;
-}
-
 .Sidebar .Mui-Expanded {
     margin: 0;
-}
-
-.Sidebar .Actions .Button .SVG {
-    margin-bottom: 8px;
 }
 
 .Sidebar .SidebarSubmenu .SubmenuLink {
     justify-content: left;
     font-size: 14px;
+    transition-property: color;
 }
 
-.Sidebar .SidebarSubmenu .SubmenuLink.Active {
+.Sidebar .SidebarSubmenu .SubmenuLink.Active, .Sidebar .SidebarSubmenu .SubmenuLink:hover {
     color: var(--color-primary);
 }
 
-.Sidebar .SidebarSubmenu .SubmenuLink .ListDot {
+.Sidebar .SidebarSubmenu .SubmenuLink:before {
+    content: '';
     background: var(--color-gray);
-    border-radius: 5px;
+    border-radius: 50%;
     width: 5px;
     height: 5px;
     margin-right: 21px;
     margin-left: 5px;
 }
 
-.Sidebar .SidebarSubmenu .SubmenuLink.Active .ListDot {
+.Sidebar .SidebarSubmenu .SubmenuLink.Active:before {
     background: var(--color-primary);
 }
 
