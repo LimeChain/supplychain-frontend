@@ -51,7 +51,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
     constructor(props: Pr) {
         super(props);
 
-        this.props.appStore.incrementLoading();
+        // this.props.appStore.incrementLoading();
         initHover();
         initOnBeforeUnload();
     }
@@ -62,17 +62,16 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
     }
 
     loadData() {
-        return new Promise((resolve, reject) => {
-            const ajax = new Ajax();
+        // return new Promise((resolve, reject) => {
+        //     const ajax = new Ajax();
 
-            ajax.open(Ajax.GET, `${Config.URL.RESOURCES}/common/fonts/IBMPlexSans-Regular.woff2`, true);
-            ajax.onResponse = () => {
-                this.props.appStore.decrementLoading();
-                resolve();
-            };
-            ajax.send();
-
-        });
+        //     ajax.open(Ajax.GET, `${Config.URL.RESOURCES}/common/fonts/IBMPlexSans-Regular.woff2`, true);
+        //     ajax.onResponse = () => {
+        //         this.props.appStore.decrementLoading();
+        //         resolve();
+        //     };
+        //     ajax.send();
+        // });
     }
 
     removeInitalPageLoading() {
