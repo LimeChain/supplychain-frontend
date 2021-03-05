@@ -1,0 +1,35 @@
+.NoEntryPage {
+    justify-content: center;
+    align-items: center;
+}
+
+.NoEntryPage .Icon {
+    fill: var(--color-primary);
+    margin-bottom: 74px;
+}
+
+.NoEntryPage .EmptyListHeader {
+    /* Big Heading */
+
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 45px;
+    /* identical to box height */
+    color: #07172F;
+    margin-bottom: 8px;
+}
+
+.NoEntryPage .EmptyListText {
+    /* Small Heading */
+
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    /* identical to box height */
+    color: var(--color-gray);
+    margin-bottom: 50px;
+}

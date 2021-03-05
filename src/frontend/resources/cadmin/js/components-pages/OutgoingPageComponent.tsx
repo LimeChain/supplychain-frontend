@@ -12,18 +12,31 @@ import ContextPageComponent, { ContextPageComponentProps } from './common/Contex
 import Sidebar from '../components-inc/Sidebar';
 import Notifications from '../components-inc/Notifications';
 
+import SvgAdd from '@material-ui/icons/Add';
+import './../../css/components-pages/page-incomming-component.css';
+import PageTable from '../components-inc/PageTable';
+import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
+import PageTableFooter from '../components-inc/PageTableFooter';
+
 import './../../css/components-pages/page-outgoing-component.css';
 import Table from '../../../common/js/components-inc/Table';
 import TableHelper from '../../../common/js/helpers/TableHelper';
 import PageView from '../components-inc/PageView';
+import NoEntryPage from '../components-inc/NoEntryPage';
+import Actions from '../../../common/js/components-inc/Actions';
+import Button from '../../../common/js/components-inc/Button';
+import S from '../../../common/js/utilities/Main';
 
 interface Props extends ContextPageComponentProps {
 }
 
-export default class OutgoingPageComponent extends ContextPageComponent<Props> {
+interface State {
+    searchWord: string;
+    sortBy: number;
+}
 
-    productModels: ProductModel[];
-    tableHelper: TableHelper;
+export default class OutgoingPageComponent extends ContextPageComponent<Props, State> {
+    showNoEntryPage: boolean = true;
 
     static layout() {
         const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(OutgoingPageComponent));
@@ -33,11 +46,10 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.productModels = [];
-        this.tableHelper = new TableHelper(ProductFilterConsts.S_SORT_BY_ID, [
-            [ProductFilterConsts.S_SORT_BY_ID, 0],
-            [ProductFilterConsts.S_SORT_BY_NAME, 2],
-        ], this.fetchProducts, this, 2);
+        this.state = {
+            searchWord: S.Strings.EMPTY,
+            sortBy: S.NOT_EXISTS,
+        };
     }
 
     getPageLayoutComponentCssClassName() {
@@ -46,16 +58,23 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
 
     async loadData() {
         await super.loadData();
-        this.fetchProducts();
+        // TODO: fetch shipments
+    }
+    onChangeSearchWord = (searchWord) => {
+        this.setState({
+            searchWord,
+        });
     }
 
-    fetchProducts = () => {
-        // const tableState = this.tableHelper.tableState;
-        // new ProductApi().fetchProductsByFilter(tableState.from, tableState.to(), tableState.sortKey, 'DESC', (productModels: ProductModel[]) => {
-        //     this.productModels = productModels;
-        //     tableState.total = 11;
-        //     this.setState({});
-        // });
+    onChangeSortBy = (sortBy) => {
+        this.setState({
+            sortBy,
+        });
+    }
+
+    newShipmentPopup = () => {
+        // TODO: open new shipment popup
+
     }
 
     renderContent() {
@@ -65,32 +84,40 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
                 <Sidebar page={PagesCAdmin.OUTGOING} />
 
                 <PageView pageTitle={'Outgoing Shipments'} >
-                    <div className={'WhiteBox PageExtend'} />
+                    {this.showNoEntryPage
+                        ? <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                        : <PageTable
+                            className={'WhiteBox PageExtend'}
+                            header={(
+                                <PageTableHeader
+                                    searchPlaceHolder={'Search outgoing shipments'}
+                                    selectedSortBy={this.state.sortBy}
+                                    options={[
+                                        new PageTableHeaderSortByStruct(5, 'Name'),
+                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                    ]}
+                                    onChangeSearchWord={this.onChangeSearchWord}
+                                    onChangeSortBy={this.onChangeSortBy} />
+                            )}
+                            footer={(
+                                <PageTableFooter
+                                    totalItems={5}
+                                    actions={(
+                                        <Actions>
+                                            <Button>
+                                                <div className={'FlexRow'}>
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                                Add product
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    )} />
+                            )} >
+                            {'some large content'.repeat(10)}
+                        </PageTable>}
                 </PageView>
 
             </div>
-            // <>
-            //     <Header page={PagesCAdmin.OUTGOING} />
-            //     <div className={' PageContent FlexColumn'}>
-            //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
-
-        //         <Table
-        //             widths={['30%', '20%', '50%']}
-        //             legend={['Id', 'Unit', 'Name']}
-        //             rows={this.renderRows()}
-        //             helper={this.tableHelper} />
-        //     </div>
-        // </>
         )
-    }
-
-    renderRows() {
-        return this.productModels.map((productModel) => {
-            return [
-                Table.cellString(productModel.productId),
-                Table.cellString(productModel.productUnit.toString()),
-                Table.cellString(productModel.productName),
-            ]
-        });
     }
 }

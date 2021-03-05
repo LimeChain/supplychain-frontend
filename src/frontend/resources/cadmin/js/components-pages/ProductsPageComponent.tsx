@@ -8,6 +8,11 @@ import ContextPageComponent, { ContextPageComponentProps } from './common/Contex
 import Sidebar from '../components-inc/Sidebar';
 
 import './../../css/components-pages/page-products-component.css';
+
+import SvgAdd from '@material-ui/icons/Add';
+import './../../css/components-pages/page-incomming-component.css';
+import PageTable from '../components-inc/PageTable';
+import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
 import Notifications from '../components-inc/Notifications';
 import ProductPopup from '../components-popups/ProductPopup';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
@@ -18,12 +23,26 @@ import S from '../../../common/js/utilities/Main';
 import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 import PageView from '../components-inc/PageView';
 
+import Header from '../components-inc/header';
+
+import PageTableFooter from '../components-inc/PageTableFooter';
+import Actions from '../../../common/js/components-inc/Actions';
+import Button from '../../../common/js/components-inc/Button';
+import NoEntryPage from '../components-inc/NoEntryPage';
+
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
     productStore: ProductStore;
 }
 
-export default class ProductsPageComponent extends ContextPageComponent<Props> {
+interface State {
+    searchWord: string;
+    sortBy: number;
+}
+
+export default class ProductsPageComponent extends ContextPageComponent<Props, State> {
+    showNoEntryPage: boolean = false;
+
     dataReady: number;
     productApi: ProductApi;
 
@@ -31,6 +50,11 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
         super(props);
         this.dataReady = S.INT_FALSE;
         this.productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+
+        this.state = {
+            searchWord: S.Strings.EMPTY,
+            sortBy: S.NOT_EXISTS,
+        };
     }
 
     static layout() {
@@ -68,6 +92,23 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
         })
     }
 
+    onChangeSearchWord = (searchWord) => {
+        this.setState({
+            searchWord,
+        });
+    }
+
+    onChangeSortBy = (sortBy) => {
+        this.setState({
+            sortBy,
+        });
+    }
+
+    addProductPopup = () => {
+        // TODO: open new shipment popup
+
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -75,7 +116,37 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
                 <Sidebar page={PagesCAdmin.PRODUCTS} />
 
                 <PageView pageTitle={'Products'} >
-                    <div className={'WhiteBox PageExtend'} />
+                    {this.showNoEntryPage
+                        ? <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.addProductPopup} />
+                        : <PageTable
+                            className={'WhiteBox PageExtend'}
+                            header={(
+                                <PageTableHeader
+                                    searchPlaceHolder={'Search products'}
+                                    selectedSortBy={this.state.sortBy}
+                                    options={[
+                                        new PageTableHeaderSortByStruct(5, 'Name'),
+                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                    ]}
+                                    onChangeSearchWord={this.onChangeSearchWord}
+                                    onChangeSortBy={this.onChangeSortBy} />
+                            )}
+                            footer={(
+                                <PageTableFooter
+                                    totalItems={5}
+                                    actions={(
+                                        <Actions>
+                                            <Button>
+                                                <div className={'FlexRow'}>
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                                Add product
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    )} />
+                            )} >
+                            {'some large content'.repeat(10)}
+                        </PageTable>}
                 </PageView>
 
             </div>

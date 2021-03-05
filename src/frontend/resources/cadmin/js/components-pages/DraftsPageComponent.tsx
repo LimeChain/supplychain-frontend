@@ -20,19 +20,39 @@ import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginMo
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import PageView from '../components-inc/PageView';
+import SvgAdd from '@material-ui/icons/Add';
+import './../../css/components-pages/page-incomming-component.css';
+import PageTable from '../components-inc/PageTable';
+import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
+
+import PageTableFooter from '../components-inc/PageTableFooter';
+import Actions from '../../../common/js/components-inc/Actions';
+import Button from '../../../common/js/components-inc/Button';
+import NoEntryPage from '../components-inc/NoEntryPage';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
 }
 
-export default class DraftsPageComponent extends ContextPageComponent<Props> {
+interface State {
+    searchWord: string;
+    sortBy: number;
+}
+
+export default class DraftsPageComponent extends ContextPageComponent<Props, State> {
     dataReady: number;
     shipmentsApi: ShipmentApi;
+    showNoEntryPage: boolean = false;
 
     constructor(props: Props) {
         super(props);
         this.dataReady = S.INT_FALSE;
         this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+
+        this.state = {
+            searchWord: S.Strings.EMPTY,
+            sortBy: S.NOT_EXISTS,
+        };
     }
 
     static layout() {
@@ -142,6 +162,23 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
         })
     }
 
+    onChangeSearchWord = (searchWord) => {
+        this.setState({
+            searchWord,
+        });
+    }
+
+    onChangeSortBy = (sortBy) => {
+        this.setState({
+            sortBy,
+        });
+    }
+
+    newShipmentPopup = () => {
+        // TODO: open new shipment popup
+
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -149,19 +186,50 @@ export default class DraftsPageComponent extends ContextPageComponent<Props> {
                 <Sidebar page={PagesCAdmin.DRAFTS} />
 
                 <PageView pageTitle={'Drafts'} >
-                    <div className={'WhiteBox PageExtend'} />
+                    {this.showNoEntryPage
+                        ? <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                        : <PageTable
+                            className={'WhiteBox PageExtend'}
+                            header={(
+                                <PageTableHeader
+                                    searchPlaceHolder={'Search drafts'}
+                                    selectedSortBy={this.state.sortBy}
+                                    options={[
+                                        new PageTableHeaderSortByStruct(5, 'Name'),
+                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                    ]}
+                                    onChangeSearchWord={this.onChangeSearchWord}
+                                    onChangeSortBy={this.onChangeSortBy} />
+                            )}
+                            footer={(
+                                <PageTableFooter
+                                    totalItems={5}
+                                    actions={(
+                                        <Actions>
+                                            <Button>
+                                                <div className={'FlexRow'}>
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                                Add product
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    )} />
+                            )} >
+                            {'some large content'.repeat(10)}
+                        </PageTable>}
+
                 </PageView>
 
             </div>
 
-        // <>
-        //     <Header page={PagesCAdmin.DRAFTS} />
-        //     <div className={' PageContent FlexColumn'}>
-        //         <Notifications />
-        //         <div onClick={this.saveShipment}>add shipment</div>
-        //         <div onClick={this.fetchShipments}>fetch shipments</div>
-        //     </div>
-        // </>
+            // <>
+            //     <Header page={PagesCAdmin.DRAFTS} />
+            //     <div className={' PageContent FlexColumn'}>
+            //         <Notifications />
+            //         <div onClick={this.saveShipment}>add shipment</div>
+            //         <div onClick={this.fetchShipments}>fetch shipments</div>
+            //     </div>
+            // </>
         )
     }
 }

@@ -17,6 +17,7 @@ import S from '../../../common/js/utilities/Main';
 import PageTableFooter from '../components-inc/PageTableFooter';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
+import NoEntryPage from '../components-inc/NoEntryPage';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -27,6 +28,8 @@ interface State {
 }
 
 export default class IncommingPageComponent extends ContextPageComponent<Props, State> {
+
+    showNoEntryPage: boolean = true;
 
     static layout() {
         const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(IncommingPageComponent));
@@ -58,6 +61,11 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         });
     }
 
+    newShipmentPopup = () => {
+        // TODO: open new shipment popup
+
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -65,38 +73,40 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 <Sidebar page={PagesCAdmin.INCOMMING} />
 
                 <PageView pageTitle={'Incoming Shipments'} >
-                    <PageTable
-                        className={'WhiteBox PageExtend'}
-                        header={(
-                            <PageTableHeader
-                                searchPlaceHolder={'Search incoming shipments'}
-                                selectedSortBy={this.state.sortBy}
-                                options={[
-                                    new PageTableHeaderSortByStruct(5, 'Name'),
-                                    new PageTableHeaderSortByStruct(10, 'Site'),
-                                ]}
-                                onChangeSearchWord={this.onChangeSearchWord}
-                                onChangeSortBy={this.onChangeSortBy} />
-                        )}
-                        footer={(
-                            <PageTableFooter
-                                totalItems={5}
-                                actions={(
-                                    <Actions>
-                                        <Button>
-                                            <div className={'FlexRow'}>
-                                                <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                    {this.showNoEntryPage
+                        ? <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                        : <PageTable
+                            className={'WhiteBox PageExtend'}
+                            header={(
+                                <PageTableHeader
+                                    searchPlaceHolder={'Search incoming shipments'}
+                                    selectedSortBy={this.state.sortBy}
+                                    options={[
+                                        new PageTableHeaderSortByStruct(5, 'Name'),
+                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                    ]}
+                                    onChangeSearchWord={this.onChangeSearchWord}
+                                    onChangeSortBy={this.onChangeSortBy} />
+                            )}
+                            footer={(
+                                <PageTableFooter
+                                    totalItems={5}
+                                    actions={(
+                                        <Actions>
+                                            <Button>
+                                                <div className={'FlexRow'}>
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
-                                            </div>
-                                        </Button>
-                                    </Actions>
-                                )} />
-                        )} >
-                        {'some large content'.repeat(10)}
-                    </PageTable>
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    )} />
+                            )} >
+                            {'some large content'.repeat(10)}
+                        </PageTable>}
                 </PageView>
 
-            </div>
+            </div >
             // <>
             //     <Header page = { PagesCAdmin.INCOMMING} />
             //     <div className = {` PageContent FlexColumn`}>
