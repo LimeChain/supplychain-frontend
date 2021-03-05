@@ -8,7 +8,7 @@
 }
 
 .Input .MuiInputBase-root {
-    height: 45px;
+    height: var(--default-height);
     color: var(--color-input-text);
     padding: 0 15px;
     border-radius: 5px;

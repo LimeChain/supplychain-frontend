@@ -15,6 +15,7 @@ import Notifications from '../components-inc/Notifications';
 import './../../css/components-pages/page-outgoing-component.css';
 import Table from '../../../common/js/components-inc/Table';
 import TableHelper from '../../../common/js/helpers/TableHelper';
+import PageView from '../components-inc/PageView';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -59,18 +60,27 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props> {
 
     renderContent() {
         return (
-            <>
-                <Sidebar page={PagesCAdmin.OUTGOING} />
-                <div className={' PageContent FlexColumn'}>
-                    <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
+            <div className={'PageContent'} >
 
-                    <Table
-                        widths={['30%', '20%', '50%']}
-                        legend={['Id', 'Unit', 'Name']}
-                        rows={this.renderRows()}
-                        helper={this.tableHelper} />
-                </div>
-            </>
+                <Sidebar page={PagesCAdmin.OUTGOING} />
+
+                <PageView pageTitle={'Outgoing Shipments'} >
+                    <div className={'WhiteBox PageExtend'} />
+                </PageView>
+
+            </div>
+            // <>
+            //     <Header page={PagesCAdmin.OUTGOING} />
+            //     <div className={' PageContent FlexColumn'}>
+            //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
+
+            //         <Table
+            //             widths={['30%', '20%', '50%']}
+            //             legend={['Id', 'Unit', 'Name']}
+            //             rows={this.renderRows()}
+            //             helper={this.tableHelper} />
+            //     </div>
+            // </>
         )
     }
 

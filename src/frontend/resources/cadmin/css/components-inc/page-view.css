@@ -9,6 +9,10 @@
     color: var(--color-gray-dark-minus-05);
 }
 
+.PageView .PageExtend {
+    flex: 1 1 auto;
+}
+
 .PageView .MarginBottom {
     margin-bottom: var(--desktop-spacing);
 }

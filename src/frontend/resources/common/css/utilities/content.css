@@ -20,7 +20,7 @@
     --color-input-label-focused: var(--color-gray);
     --color-input-background: var(--color-gray-light);
     --color-input-background-focused: var(--color-primary-light);
-    --color-select-icon: var(--color-primary);
+    --color-select-icon: var(--color-gray);
     --color-select-highlight: var(--color-primary-light);
     --color-select-multi-item-color: #fff;
     --color-select-multi-item-background: #9FB0C5;
@@ -50,7 +50,8 @@
     --mobile-spacing: 24px;
     --desktop-spacing: 42px;
     --desktop-spacing-small: 20px;
-    --transition-duration: 0.45s
+    --transition-duration: 0.45s;
+    --default-height: 45px;
 }
 
 html {

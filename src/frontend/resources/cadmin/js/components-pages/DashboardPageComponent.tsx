@@ -56,7 +56,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                         <div className={'WhiteBox'} ></div>
                     </div>
 
-                    <div className={'Tables'} >
+                    <div className={'Tables PageExtend'} >
                         <Scrollable className={'WhiteBox'} >
                             {'some large content'.repeat(1000)}
                         </Scrollable>

@@ -16,6 +16,7 @@ import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import S from '../../../common/js/utilities/Main';
 import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
+import PageView from '../components-inc/PageView';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
@@ -69,14 +70,23 @@ export default class ProductsPageComponent extends ContextPageComponent<Props> {
 
     renderContent() {
         return (
-            <>
+            <div className={'PageContent'} >
+
                 <Sidebar page={PagesCAdmin.PRODUCTS} />
-                <div className={' PageContent FlexColumn'}>
-                    <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
-                    <div onClick={this.props.popupProductStore.show}>show popup</div>
-                    <div onClick={this.fetchProducts}>fetch products</div>
-                </div>
-            </>
+
+                <PageView pageTitle={'Products'} >
+                    <div className={'WhiteBox PageExtend'} />
+                </PageView>
+
+            </div>
+            // <>
+            //     <Header page={PagesCAdmin.PRODUCTS} />
+            //     <div className={' PageContent FlexColumn'}>
+            //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
+            //         <div onClick={this.props.popupProductStore.show}>show popup</div>
+            //         <div onClick={this.fetchProducts}>fetch products</div>
+            //     </div>
+            // </>
         )
     }
 }

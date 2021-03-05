@@ -36,6 +36,10 @@
     height:42px;
 }
 
+.Actions.Row.H45 {
+    height:45px;
+}
+
 .Actions.Row.H48 {
     height:48px;
 }
@@ -75,6 +79,10 @@
 
 .Actions.Column.H42 > .Button, .Actions.Column.H42 .InheritActions > .Button {
     height:42px;
+}
+
+.Actions.Column.H45 > .Button, .Actions.Column.H45 .InheritActions > .Button {
+    height:45px;
 }
 
 .Actions.Column.H48 > .Button, .Actions.Column.H48 .InheritActions > .Button {
