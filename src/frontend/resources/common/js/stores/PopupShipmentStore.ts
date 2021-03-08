@@ -22,15 +22,7 @@ export default class PopupShipmentStore extends PopupStore {
     signalShow(shipmentModel: ShipmentModel) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.shipmentModel = shipmentModel;
-        this.productTableHelper = new TableHelper(-2, [
-            [0, 0],
-            [1, 1],
-            [2, 2],
-            [3, 3],
-            [4, 4],
-            [5, 5],
-            [6, 6],
-        ]);
+        this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => {});
         this.show();
     }
 

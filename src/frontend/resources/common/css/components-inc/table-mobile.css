@@ -6,8 +6,8 @@
 
 .TableMobile .Empty {
     height:128px;
-    color:#fff;
-    background: #262b310f;
+    color:var(--color-gray);
+    font-size: 16px; font-weight: 500;
 }
 
 .TableMobile .TableRow {

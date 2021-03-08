@@ -149,7 +149,8 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                             legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY] }
                             aligns = { [TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT] }
                             rows = { this.renderProductRows() }
-                            helper = { this.props.popupStore.productTableHelper } />
+                            helper = { this.props.popupStore.productTableHelper }
+                            emptyLabel = { 'Product list is still empty' } />
                     </div>
                     <div className = { `ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}` } >
                         Documnets
@@ -184,20 +185,20 @@ class ShipmentPopup extends PopupWindow < Props, State > {
     renderProductRows() {
         const result = [];
 
-        for (let i = 0; i < 4; ++i) {
-            result.push([
-                Table.cellString((i * 10 + 1).toString()),
-                Table.cellString((i * 10 + 2).toString()),
-                Table.cellString((i * 10 + 3).toString()),
-                Table.cellString((i * 10 + 4).toString()),
-                Table.cellString((i * 10 + 5).toString()),
-                Table.cellString((i * 10 + 6).toString()),
-                Table.cellString((i * 10 + 7).toString()),
-                Table.cell((
-                    <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} />
-                )),
-            ]);
-        }
+        // for (let i = 0; i < 4; ++i) {
+        //     result.push([
+        //         Table.cellString((i * 10 + 1).toString()),
+        //         Table.cellString((i * 10 + 2).toString()),
+        //         Table.cellString((i * 10 + 3).toString()),
+        //         Table.cellString((i * 10 + 4).toString()),
+        //         Table.cellString((i * 10 + 5).toString()),
+        //         Table.cellString((i * 10 + 6).toString()),
+        //         Table.cellString((i * 10 + 7).toString()),
+        //         Table.cell((
+        //             <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} />
+        //         )),
+        //     ]);
+        // }
 
         return result;
     }

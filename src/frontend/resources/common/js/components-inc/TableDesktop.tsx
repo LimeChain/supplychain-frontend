@@ -19,6 +19,7 @@ export interface TableDesktopProps {
     rows: any[];
     onClickRow?: () => void;
     showPaging?: boolean;
+    emptyLabel?: string,
 }
 
 class TableDesktop extends React.Component < TableDesktopProps > {
@@ -125,7 +126,7 @@ class TableDesktop extends React.Component < TableDesktopProps > {
         const rows = this.props.rows;
         if (rows.length === 0) {
             return (
-                <div className = { 'Empty FlexSingleCenter' } > No results found </div>
+                <div className = { 'Empty FlexSingleCenter' } > { this.props.emptyLabel } </div>
             );
         }
 
@@ -156,6 +157,7 @@ TableDesktop.defaultProps = {
     'aligns': null,
     'onClickRow': null,
     'showPaging': true,
+    'emptyLabel': 'No results found',
 };
 
 export default observer(TableDesktop);

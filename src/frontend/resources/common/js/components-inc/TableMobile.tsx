@@ -23,6 +23,7 @@ export interface TableMobileProps {
     lastRowActionIndex?: number,
     itemsSize?: number,
     showPaging?: boolean,
+    emptyLabel?: string,
 }
 
 interface State {
@@ -167,7 +168,7 @@ class TableMobile extends React.Component < TableMobileProps, State > {
         const rows = this.props.rows;
         if (rows.length === 0) {
             return (
-                <div className = { 'Empty FlexSingleCenter' } > No results found </div>
+                <div className = { 'Empty FlexSingleCenter' } > { this.props.emptyLabel } </div>
             );
         }
 
@@ -227,6 +228,7 @@ TableMobile.defaultProps = {
     'lastRowActionIndex': S.NOT_EXISTS,
     'itemsSize': S.NOT_EXISTS,
     'showPaging': true,
+    'emptyLabel': 'No results found',
 };
 
 export default observer(TableMobile);

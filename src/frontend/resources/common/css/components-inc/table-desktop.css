@@ -6,8 +6,9 @@
 }
 
 .TableDesktop .Empty {
-    height: 128px;
-    background: #262b310f;
+    height:128px;
+    color:var(--color-gray);
+    font-size: 16px; font-weight: 500;
 }
 
 .TableDesktop .TableRow {

@@ -39,7 +39,8 @@ export default class Table extends React.Component < Props > {
                     helper = { this.props.helper }
                     onClickRow = { this.props.onClickRow }
                     rows = { this.props.rows }
-                    showPaging = { this.props.showPaging } />
+                    showPaging = { this.props.showPaging }
+                    emptyLabel = { this.props.emptyLabel } />
                 <TableMobile
                     legend = { this.props.legend }
                     helper = { this.props.helper }
@@ -48,7 +49,8 @@ export default class Table extends React.Component < Props > {
                     firstRowActionIndex = { this.props.firstRowActionIndex }
                     lastRowActionIndex = { this.props.lastRowActionIndex }
                     itemsSize = { this.props.itemsSize }
-                    showPaging = { this.props.showPaging } />
+                    showPaging = { this.props.showPaging }
+                    emptyLabel = { this.props.emptyLabel } />
             </>
         )
     }
