@@ -34,7 +34,7 @@ interface State {
     focused: boolean,
 }
 
-export default class Input extends React.Component < Props, State > {
+export default class Input extends React.Component<Props, State> {
 
     static defaultProps: any;
 
@@ -62,7 +62,7 @@ export default class Input extends React.Component < Props, State > {
     }
 
     /* listeners */
-    onChange = (event: ChangeEvent < HTMLInputElement | HTMLTextAreaElement >) => {
+    onChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         switch (this.props.inputType) {
             case InputType.INTEGER:
                 if (filterInteger(event.target.value) === false) {
@@ -121,16 +121,16 @@ export default class Input extends React.Component < Props, State > {
         // const margin = this.getMargin();
         const { inputType, decimalLength, ...props } = this.props;
         return (
-            <div className = { `Input ${this.props.className}` }>
-                <FormControl variant = 'standard' >
+            <div className={`Input ${this.props.className}`}>
+                <FormControl variant='standard' >
 
                     <TextField
-                        { ...props }
-                        InputLabelProps = {{
+                        {...props}
+                        InputLabelProps={{
                             shrink: true,
                         }}
-                        onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined }
-                        variant = 'standard' />
+                        onChange={this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined}
+                        variant='standard' />
 
                 </FormControl>
             </div>

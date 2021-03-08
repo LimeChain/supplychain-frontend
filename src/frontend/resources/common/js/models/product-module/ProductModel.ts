@@ -20,6 +20,10 @@ export default class ProductModel {
         return this.productId === S.Strings.NOT_EXISTS;
     }
 
+    clone(): ProductModel {
+        return Object.assign(new ProductModel(), this);
+    }
+
     toJson(): any {
         return {
             'productId': this.productId,
@@ -46,8 +50,8 @@ export default class ProductModel {
         return model;
     }
 
-    getUnitName(): string {
-        switch (this.productUnit) {
+    static getUnitName(productUnit: number): string {
+        switch (productUnit) {
             case ProductModelH.S_UNIT_KG:
                 return 'Kg';
             case ProductModelH.S_UNIT_PACK:

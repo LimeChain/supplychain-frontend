@@ -27,8 +27,8 @@ import NoEntryPage from '../components-inc/NoEntryPage';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import Table from '../../../common/js/components-inc/Table';
 import TableHelper from '../../../common/js/helpers/TableHelper';
-import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
-import ProductModelH from '../../../../../backend/modules/ProductModule/Product/Model/ProductModelH';
+import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
+import ProductRowMenu from '../components-inc/ProductRowMenu';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
@@ -37,7 +37,6 @@ interface Props extends ContextPageComponentProps {
 
 interface State {
     searchWord: string;
-    sortBy: number;
 }
 
 export default class ProductsPageComponent extends ContextPageComponent<Props, State> {
@@ -45,6 +44,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
     dataReady: number;
     productApi: ProductApi;
+    tableHelper: TableHelper;
 
     constructor(props: Props) {
         super(props);
@@ -53,8 +53,19 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
         this.state = {
             searchWord: S.Strings.EMPTY,
-            sortBy: S.NOT_EXISTS,
         };
+
+        this.tableHelper = new TableHelper(
+            ProductFilter.S_SORT_BY_ID,
+            [
+                [ProductFilter.S_SORT_BY_ID, 0],
+                [ProductFilter.S_SORT_BY_NAME, 1],
+                [ProductFilter.S_SORT_BY_DESCRIPTION, 2],
+                [ProductFilter.S_SORT_BY_UNIT, 3],
+            ],
+            this.fetchProducts,
+        )
+
     }
 
     static layout() {
@@ -65,16 +76,20 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     async loadData() {
         await super.loadData();
 
-        this.fetchProducts(1, 0, 10);
+        this.fetchProducts();
     }
 
     getPageLayoutComponentCssClassName() {
         return 'PageProducts';
     }
 
-    fetchProducts = (filterBy: number, from: number, to: number) => {
-        this.productApi.fetchProductsByFilter(filterBy, from, to, (productModels: ProductModel[]) => {
+    fetchProducts = () => {
+        this.productApi.fetchProductsByFilter(this.tableHelper.tableState.sortKey, this.tableHelper.tableState.from, this.tableHelper.tableState.to(), (productModels: ProductModel[], totalSize: number) => {
             this.props.productStore.onScreenData(productModels);
+
+            console.log(this.tableHelper.tableState.sortKey);
+
+            this.tableHelper.tableState.total = totalSize;
             this.dataReady = S.INT_TRUE;
         });
     }
@@ -86,13 +101,8 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSortBy = (sortBy) => {
-        this.setState({
-            sortBy,
-        });
-    }
-
-    addProductPopup = () => {
-        // TODO: open new shipment popup
+        this.tableHelper.tableState.sortKey = sortBy;
+        this.fetchProducts();
     }
 
     renderContent() {
@@ -111,20 +121,21 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                             header={(
                                 <PageTableHeader
                                     searchPlaceHolder={'Search products'}
-                                    selectedSortBy={this.state.sortBy}
+                                    selectedSortBy={this.tableHelper.tableState.sortKey}
                                     options={[
-                                        new PageTableHeaderSortByStruct(5, 'Name'),
-                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_ID, 'ID'),
+                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_NAME, 'Name'),
+                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_DESCRIPTION, 'Description'),
                                     ]}
                                     onChangeSearchWord={this.onChangeSearchWord}
                                     onChangeSortBy={this.onChangeSortBy} />
                             )}
                             footer={(
                                 <PageTableFooter
-                                    totalItems={5}
+                                    totalItems={this.tableHelper.tableState.total}
                                     actions={(
                                         <Actions>
-                                            <Button>
+                                            <Button onClick={this.addProductPopup}>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
@@ -135,12 +146,12 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                             )} >
                             <TableDesktop
                                 className={'ProductsTable'}
-                                legend={ProductStore.PRODUCT_TABLE_LEGEND}
+                                legend={this.getTableLegend()}
                                 widths={this.getTableWidths()}
                                 aligns={this.getTableAligns()}
-                                helper={new TableHelper(ProductModelHConsts.P_)}
+                                helper={this.tableHelper}
                                 rows={this.renderRows()}
-
+                                showPaging={true}
                             >
                             </TableDesktop>
                         </PageTable>
@@ -159,6 +170,18 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         )
     }
 
+    addProductPopup = () => {
+        this.props.popupProductStore.signalShow(new ProductModel());
+    }
+
+    renderEditProductPopup = (rowId) => {
+        this.props.popupProductStore.signalShow(this.props.productStore.screenProductModels[rowId]);
+    }
+
+    getTableLegend = () => {
+        return ['ID', 'Product Name', 'Description', 'Measurement', 'Action'];
+    }
+
     renderRows = () => {
         const result = [];
 
@@ -167,8 +190,10 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(productModel.productId),
                 Table.cellString(productModel.productName),
                 Table.cellString(productModel.productDescription, 'ProductDescriptionCell'),
-                Table.cellString(productModel.getUnitName()),
-                Table.cell((<div>...</div>)),
+                Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
+                Table.cell(
+                    <ProductRowMenu productId={productModel.productId} />,
+                ),
             ])
         })
 

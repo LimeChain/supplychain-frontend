@@ -84,8 +84,8 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
 
     renderPopups() {
         return super.renderPopups().concat([
-            <ProductPopup key = { 100 } />,
-            <ShipmentPopup key = { 200 } />,
+            <ProductPopup key={100} />,
+            <ShipmentPopup key={200} />,
         ]);
     }
 
