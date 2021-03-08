@@ -13,13 +13,14 @@ import Button from '../../../common/js/components-inc/Button';
 import Input from '../../../common/js/components-inc/Input';
 import Select from '../../../common/js/components-inc/Select';
 import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
-
-import SvgAdd from '@material-ui/icons/Add';
-import SvgSave from '../../../common/svg/save.svg';
-import '../../css/components-popups/shipment-popup.css';
 import Table from '../../../common/js/components-inc/Table';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import Expandable from '../components-inc/Expandable';
+
+import SvgAdd from '@material-ui/icons/Add';
+import SvgDelete from '../../../common/svg/delete.svg';
+import SvgSave from '../../../common/svg/save.svg';
+import '../../css/components-popups/shipment-popup.css';
 
 interface Props extends PopupWindowProps {
     popupStore: PopupShipmentStore;
@@ -47,6 +48,10 @@ class ShipmentPopup extends PopupWindow < Props, State > {
 
     getCssClassName() {
         return 'ShipmentPopup PopupPadding PopupBox';
+    }
+
+    isRemovable() {
+        return false;
     }
 
     onClickTabProducts = () => {
@@ -139,9 +144,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                         <hr className = { 'MarginBottomOnly' } />
                         <div className = { 'BlockLabel' } >Product list</div>
                         <Table
-                            widths = { ['7%', '33%', '12%', '12%', '12%', '12%', '12%'] }
-                            legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value'] }
-                            aligns = { [TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT] }
+                            widths = { ['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%'] }
+                            legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY] }
+                            aligns = { [TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT] }
                             rows = { this.renderProductRows() }
                             helper = { this.props.popupStore.productTableHelper } />
                     </div>
@@ -187,6 +192,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 Table.cellString((i * 10 + 5).toString()),
                 Table.cellString((i * 10 + 6).toString()),
                 Table.cellString((i * 10 + 7).toString()),
+                Table.cell((
+                    <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} />
+                )),
             ]);
         }
 

@@ -132,6 +132,10 @@
     font-size: 12px;
 }
 
+.ShipmentPopup .IconDelete {
+    fill: #CAD0DB;
+}
+
 /* footer */
 .ShipmentPopup .PopupFooter .FooterLeft {
     color: var(--color-gray);
