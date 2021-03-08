@@ -6,8 +6,9 @@ export default class TableHelper {
     tableSortKeyToIndex: Map < number, number >;
     tableSortIndexToKey: Map < number, number >;
     tableState: TableState;
+    onUpdateTable: () => void;
 
-    constructor(defaultSortKey: number, keys: Array < Array < number > >, itemsPerPage: number = 10) {
+    constructor(defaultSortKey: number, keys: Array < Array < number > >, callback: () => void, itemsPerPage: number = 10) {
         this.tableSortKeyToIndex = new Map();
         this.tableSortIndexToKey = new Map();
 
@@ -17,6 +18,7 @@ export default class TableHelper {
         })
 
         this.tableState = new TableState(defaultSortKey, itemsPerPage);
+        this.onUpdateTable = callback;
 
         makeAutoObservable(this);
     }
@@ -35,14 +37,17 @@ export default class TableHelper {
 
     updateTableSortDirection() {
         this.tableState.sortKey *= -1;
+        this.onUpdateTable();
     }
 
     updateTableSort(sortKey: number) {
         this.tableState.sortKey = sortKey;
+        this.onUpdateTable();
     }
 
     updateTablePage(from: number) {
         this.tableState.from = from;
+        this.onUpdateTable();
     }
 
     resetTablePaging() {

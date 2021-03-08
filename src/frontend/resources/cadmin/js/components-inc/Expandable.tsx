@@ -18,7 +18,7 @@ interface Props {
 export default class Expandable extends React.Component<Props> {
     render() {
         return (
-            < Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK} >
+            <Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK} >
                 <AccordionSummary className={this.props.accordionSummaryClasses} expandIcon={<ExpandMoreIcon />}>
                     {this.props.accordionSummary}
                 </AccordionSummary>

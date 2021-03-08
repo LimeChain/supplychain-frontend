@@ -19,6 +19,7 @@ import SvgSave from '../../../common/svg/save.svg';
 import '../../css/components-popups/shipment-popup.css';
 import Table from '../../../common/js/components-inc/Table';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
+import Expandable from '../components-inc/Expandable';
 
 interface Props extends PopupWindowProps {
     popupStore: PopupShipmentStore;
@@ -90,44 +91,52 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 </div>
                 <div className = { 'TabsContent' } >
                     <div className = { `TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}` } >
-                        <div className = { 'SelectProductLabel' } > Select product </div>
-                        <div className = { 'ProductManufactureQuestion' } >Is the product locally manufactured?</div>
-                        <div className = { 'FlexRow' } >
-                            <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_TRUE)}` } onClick = { this.onClickLocallyManufactured } > Yes </div>
-                            <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_FALSE)}` } onClick = { this.onClickFromShipment } > No </div>
-                        </div>
-                        <div className = { 'AddProductCnt FlexSplit' } >
-                            <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
-                                <Select
-                                    className = { 'SelectProduct' }
-                                    label = { 'Product' }>
-                                    <MenuItem value = { 1 } >#34 Product name</MenuItem>
-                                </Select>
-                                <Input
-                                    className = { 'InputSku' }
-                                    label = { 'SKU value' }
-                                    placeholder = { '0' }
-                                    InputProps = {{
-                                        startAdornment: <span className = { 'StartAdornment' }>€</span>,
-                                    }} />
-                                <Input
-                                    className = { 'InputQuantity' }
-                                    label = { 'Quantity' }
-                                    placeholder = { '0' }
-                                    InputProps = {{
-                                        endAdornment: <span className = { 'EndAdornment' }>max</span>,
-                                    }} />
-                            </LayoutBlock>
-                            <Actions className = { 'StartRight' } >
-                                <Button>
+                        <Expandable
+                            expanded = { true }
+                            accordionSummary = {
+                                <div className = { 'SelectProductLabel' } > Select product </div>
+                            }
+                            accordionDetails = {
+                                <>
+                                    <div className = { 'ProductManufactureQuestion' } >Is the product locally manufactured?</div>
                                     <div className = { 'FlexRow' } >
-                                        <div className = { 'SVG Size ButtonSvg' } ><SvgAdd /></div>
-                                        Add
+                                        <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_TRUE)}` } onClick = { this.onClickLocallyManufactured } > Yes </div>
+                                        <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_FALSE)}` } onClick = { this.onClickFromShipment } > No </div>
                                     </div>
-                                </Button>
-                            </Actions>
-                        </div>
-                        <hr />
+                                    <div className = { 'AddProductCnt FlexSplit' } >
+                                        <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
+                                            <Select
+                                                className = { 'SelectProduct' }
+                                                label = { 'Product' }>
+                                                <MenuItem value = { 1 } >#34 Product name</MenuItem>
+                                            </Select>
+                                            <Input
+                                                className = { 'InputSku' }
+                                                label = { 'SKU value' }
+                                                placeholder = { '0' }
+                                                InputProps = {{
+                                                    startAdornment: <span className = { 'StartAdornment' }>€</span>,
+                                                }} />
+                                            <Input
+                                                className = { 'InputQuantity' }
+                                                label = { 'Quantity' }
+                                                placeholder = { '0' }
+                                                InputProps = {{
+                                                    endAdornment: <span className = { 'EndAdornment' }>max</span>,
+                                                }} />
+                                        </LayoutBlock>
+                                        <Actions className = { 'StartRight' } >
+                                            <Button>
+                                                <div className = { 'FlexRow' } >
+                                                    <div className = { 'SVG Size ButtonSvg' } ><SvgAdd /></div>
+                                        Add
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    </div>
+                                    <hr />
+                                </>
+                            } />
                         <div className = { 'ProductListLabel' } >Product list</div>
                         <Table
                             widths = { ['7%', '33%', '12%', '12%', '12%', '12%', '12%'] }
