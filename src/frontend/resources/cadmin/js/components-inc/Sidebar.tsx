@@ -20,20 +20,7 @@ interface Props {
     page: string;
 }
 
-interface State {
-    expanded: boolean;
-}
-
-export default class Sidebar extends React.Component<Props, State> {
-
-    constructor(props) {
-        super(props);
-        this.state = { expanded: true };
-    }
-
-    controlAccordion = () => {
-        this.setState({ expanded: !this.state.expanded })
-    }
+export default class Sidebar extends React.Component < Props > {
 
     render() {
         return (
@@ -49,7 +36,6 @@ export default class Sidebar extends React.Component<Props, State> {
                         </a>
                         <div>
                             <Expandable
-                                expanded={this.state.expanded}
                                 accordionSummary={
                                     <div className={'FlexRow'}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }} />

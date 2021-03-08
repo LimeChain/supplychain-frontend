@@ -1,19 +1,27 @@
-.Sidebar .MuiAccordionSummary-root {
+.Expandable.MuiAccordion-root {
+    box-shadow: none;
+}
+
+.Expandable.Mui-expanded, .Expandable .Mui-expanded {
+    margin: 0 !important;
+}
+
+.Expandable .MuiAccordionSummary-root {
     padding: 0;
 }
 
-.SideBar .MuiAccordionDetails-root {
+.Expandable .MuiAccordionDetails-root {
     padding: 0;
 }
 
-.SidebarButton .MuiAccordionSummary-content {
+.Expandable .MuiAccordionSummary-content {
     margin: 0;
 }
 
-.Sidebar .MuiAccordionSummary-content.Mui-expanded {
+.Expandable .MuiAccordionSummary-content.Mui-expanded {
     margin: 0;
 }
 
-.Sidebar .MuiAccordionSummary-root.Mui-expanded {
+.Expandable .MuiAccordionSummary-root.Mui-expanded {
     min-height: auto;
 }

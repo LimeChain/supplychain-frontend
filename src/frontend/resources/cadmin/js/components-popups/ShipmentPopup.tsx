@@ -92,10 +92,10 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 <div className = { 'TabsContent' } >
                     <div className = { `TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}` } >
                         <Expandable
-                            expanded = { true }
                             accordionSummary = {
-                                <div className = { 'SelectProductLabel' } > Select product </div>
+                                <div className = { 'BlockLabel' } > Select product </div>
                             }
+                            accordionDetailsClasses = { 'FlexColumn' }
                             accordionDetails = {
                                 <>
                                     <div className = { 'ProductManufactureQuestion' } >Is the product locally manufactured?</div>
@@ -134,10 +134,10 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                             </Button>
                                         </Actions>
                                     </div>
-                                    <hr />
                                 </>
                             } />
-                        <div className = { 'ProductListLabel' } >Product list</div>
+                        <hr className = { 'MarginBottomOnly' } />
+                        <div className = { 'BlockLabel' } >Product list</div>
                         <Table
                             widths = { ['7%', '33%', '12%', '12%', '12%', '12%', '12%'] }
                             legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value'] }
