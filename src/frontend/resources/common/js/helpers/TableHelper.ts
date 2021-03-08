@@ -1,13 +1,13 @@
+import { makeAutoObservable } from 'mobx';
+
 /* eslint-disable max-classes-per-file */
 export default class TableHelper {
 
     tableSortKeyToIndex: Map < number, number >;
     tableSortIndexToKey: Map < number, number >;
     tableState: TableState;
-    onUpdateTable: () => void;
-    component: any;
 
-    constructor(defaultSortKey: number, keys: Array < Array < number > >, callback: () => void, component, itemsPerPage: number = 10) {
+    constructor(defaultSortKey: number, keys: Array < Array < number > >, itemsPerPage: number = 10) {
         this.tableSortKeyToIndex = new Map();
         this.tableSortIndexToKey = new Map();
 
@@ -18,8 +18,7 @@ export default class TableHelper {
 
         this.tableState = new TableState(defaultSortKey, itemsPerPage);
 
-        this.onUpdateTable = callback;
-        this.component = component;
+        makeAutoObservable(this);
     }
 
     getTableSortKey(index: number) {
@@ -36,19 +35,14 @@ export default class TableHelper {
 
     updateTableSortDirection() {
         this.tableState.sortKey *= -1;
-        this.onUpdateTable();
-        this.component.setState({});
     }
 
     updateTableSort(sortKey: number) {
         this.tableState.sortKey = sortKey;
-        this.onUpdateTable();
-        this.component.setState({});
     }
 
     updateTablePage(from: number) {
         this.tableState.from = from;
-        this.onUpdateTable();
     }
 
     resetTablePaging() {
@@ -69,6 +63,8 @@ export class TableState {
         this.itemsPerPage = itemsPerPage;
         this.from = 0;
         this.total = 0;
+
+        makeAutoObservable(this);
     }
 
     pageZero() {

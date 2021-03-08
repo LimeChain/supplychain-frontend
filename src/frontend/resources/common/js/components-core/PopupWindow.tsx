@@ -14,7 +14,7 @@ export interface PopupWindowProps {
     popupStore: PopupStore;
 }
 
-export default class PopupWindowComponent < Pr extends PopupWindowProps = PopupWindowProps > extends React.Component < Pr > {
+export default class PopupWindowComponent < Pr extends PopupWindowProps = PopupWindowProps, St = {}, SS = any > extends React.Component < Pr, St, SS > {
 
     visibleFlag: boolean = false;
     nodes: {
