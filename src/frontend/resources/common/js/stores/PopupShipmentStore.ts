@@ -13,6 +13,7 @@ export default class PopupShipmentStore extends PopupStore {
     static POPUP_TAB_PRODUCTS: number = 1;
     static POPUP_TAB_DOCUMENTS: number = 2;
 
+    static FIELDS_SHIPMENT = ['toSite'];
     static FIELDS_LOCALLY_PRODUCED = ['name', 'price', 'quantity'];
     static FIELDS_FROM_SHIPMENT = ['name', 'fromShipment', 'price', 'quantity'];
 
@@ -25,12 +26,23 @@ export default class PopupShipmentStore extends PopupStore {
     @observable buildSkuModel: SkuModel;
     @observable buildSkuOriginModel: SkuOriginModel;
 
-    inputStateHelperLocallyProduced: InputStateHelper;
-    skuGenId: -1;
+    shipmentInputStateHelper: InputStateHelper;
+    buildSkuInputStateHelper: InputStateHelper;
+    genSkuId: 0;
 
     constructor() {
         super();
-        this.inputStateHelperLocallyProduced = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
+
+        this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
+            switch (key) {
+                case PopupShipmentStore.FIELDS_SHIPMENT[0]:
+                    this.shipmentModel.shipmentDestinationSiteId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
+                    break;
+                default:
+                    break;
+            }
+        });
+        this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
             switch (key) {
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[0]:
                     this.buildSkuModel.productId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
@@ -47,7 +59,8 @@ export default class PopupShipmentStore extends PopupStore {
                 default:
                     break;
             }
-        })
+        });
+
         makeObservable(this);
     }
 
@@ -59,7 +72,7 @@ export default class PopupShipmentStore extends PopupStore {
         this.skuOriginModels = skuOriginModels;
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
-        this.skuGenId = -1;
+        this.genSkuId = 0;
         this.show();
     }
 
@@ -77,6 +90,21 @@ export default class PopupShipmentStore extends PopupStore {
 
     isActiveTabDocuments() {
         return this.popupActiveTab === PopupShipmentStore.POPUP_TAB_DOCUMENTS;
+    }
+
+    addSkuFromBuild() {
+        this.buildSkuModel.skuId = (--this.genSkuId).toString();
+        this.buildSkuOriginModel.skuId = this.buildSkuModel.skuId;
+
+        this.skuModels.push(this.buildSkuModel);
+        this.skuOriginModels.push(this.buildSkuOriginModel);
+
+        this.buildSkuModel = new SkuModel();
+        this.buildSkuOriginModel = new SkuOriginModel();
+    }
+
+    deleteSkuByIndex(i: number) {
+        this.skuModels.splice(i, 1);
     }
 
 }

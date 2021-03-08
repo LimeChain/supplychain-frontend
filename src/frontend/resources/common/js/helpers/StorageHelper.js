@@ -55,11 +55,11 @@ const shipmentDocumentsJson = [
 //     jsonCountry('2', 'Netherlands', 0.18),
 // ]
 
-const sitesJson = [
-    jsonSite('1', '3', 'Berlin'),
-    jsonSite('2', '2', 'Thessaloniki'),
-    jsonSite('3', '1', 'Valletta'),
-]
+// const sitesJson = [
+//     jsonSite('1', '3', 'Berlin'),
+//     jsonSite('2', '2', 'Thessaloniki'),
+//     jsonSite('3', '1', 'Valletta'),
+// ]
 
 const notificationsJson = [
     jsonNotification('1', '1', NotificationConstsH.S_NOTIFICATION_SENT, Date.now() - 500000, S.INT_FALSE),
@@ -86,7 +86,7 @@ class StorageHelper {
         this.shipmentDocumentsJson = shipmentDocumentsJson;
         // this.countriesJson = countriesJson;
         this.notificationsJson = notificationsJson;
-        this.sitesJson = sitesJson;
+        // this.sitesJson = sitesJson;
         this.skuOriginsJson = skuOriginsJson;
         this.skusJson = skusJson;
         this.accountsJson = accountsJson;
@@ -167,13 +167,13 @@ function jsonShipmentDocument(shipmentDocumentId, shipmentId, documentUrl) {
     }
 }
 
-function jsonSite(siteId, countryId, siteName) {
-    return {
-        'siteId': siteId,
-        'countryId': countryId,
-        'siteName': siteName,
-    }
-}
+// function jsonSite(siteId, countryId, siteName) {
+//     return {
+//         'siteId': siteId,
+//         'countryId': countryId,
+//         'siteName': siteName,
+//     }
+// }
 
 // function jsonCountry(countryId, countryName, countryVat) {
 //     return {

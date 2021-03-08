@@ -34,7 +34,7 @@ export default class SiteStore {
     }
 
     updateCountryModels(countryModels: CountryModel[]) {
-        const cacheMap = this.sitesMap;
+        const cacheMap = this.countriesMap;
         this.countriesMap = null;
 
         countryModels.forEach((countryModel) => {
@@ -57,4 +57,13 @@ export default class SiteStore {
 
         return countryModel.countryVat;
     }
+
+    getCountryModel(countryId: string): CountryModel | null {
+        return this.countriesMap.get(countryId) ?? null;
+    }
+
+    getFirstSiteModelByCountryId(countryId: string): SiteModel | null {
+        return this.screenSiteModels.find((t) => t.countryId === countryId) ?? null;
+    }
+
 }

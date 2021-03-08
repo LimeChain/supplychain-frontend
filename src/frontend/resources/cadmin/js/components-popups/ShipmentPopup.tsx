@@ -5,9 +5,12 @@ import { MenuItem } from '@material-ui/core';
 
 import S from '../../../common/js/utilities/Main';
 import NumralHelper from '../../../common/js/helpers/NumeralHelper';
+import AlertStore from '../../../common/js/stores/AlertStore';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import SiteStore from '../../../common/js/stores/SiteStore';
+import AccountSessionStore from '../../../common/js/stores/AccountSessionStore';
 
 import PopupWindow, { PopupWindowProps } from '../../../common/js/components-core/PopupWindow';
-import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
 import Input, { InputType } from '../../../common/js/components-inc/Input';
@@ -21,9 +24,13 @@ import SvgAdd from '@material-ui/icons/Add';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import '../../css/components-popups/shipment-popup.css';
-import { runInAction } from 'mobx';
+import SiteModel from '../../../common/js/models/SiteModel';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
 
 interface Props extends PopupWindowProps {
+    alertStore: AlertStore;
+    siteStore: SiteStore;
+    accountSessionStore: AccountSessionStore;
     popupStore: PopupShipmentStore;
 }
 
@@ -77,23 +84,49 @@ class ShipmentPopup extends PopupWindow < Props, State > {
 
     onClickAddSku = () => {
         const popupStore = this.props.popupStore;
+        const FIELDS = this.state.manufacturedPlace === S.INT_TRUE ? PopupShipmentStore.FIELDS_LOCALLY_PRODUCED : PopupShipmentStore.FIELDS_FROM_SHIPMENT;
+        if (popupStore.buildSkuInputStateHelper.getValues(FIELDS) === null) {
+            return;
+        }
+
+        popupStore.addSkuFromBuild();
+    }
+
+    onClickDeleteSku(i: number) {
+        this.props.alertStore.show('You are about to delete the SKU.', () => {
+            const popupStore = this.props.popupStore;
+            popupStore.deleteSkuByIndex(i);
+        }, () => {});
+
+    }
+
+    onClickSubmitShipment = () => {
+        const popupStore = this.props.popupStore;
+        if (popupStore.shipmentInputStateHelper.getValues() === null) {
+            return;
+        }
+
+        console.log('submitted');
+    }
+
+    onClickSaveAsDraft = () => {
+        console.log('saved as draft');
     }
 
     renderContent() {
         const popupStore = this.props.popupStore;
+        const shipmentModel = popupStore.shipmentModel;
         const buildSkuModel = popupStore.buildSkuModel;
         const buildSkuOriginModel = popupStore.buildSkuOriginModel;
-        const inputStateHelperLocallyProduced = this.props.popupStore.inputStateHelperLocallyProduced;
+        const buildSkuInputStateHelper = this.props.popupStore.buildSkuInputStateHelper;
         const FIELDS = PopupShipmentStore.FIELDS_FROM_SHIPMENT;
 
-        runInAction(() => {
-            inputStateHelperLocallyProduced.updateValues([
-                buildSkuModel.productId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.productId,
-                buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuOriginModel.shipmentId,
-                buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
-                buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
-            ]);
-        });
+        buildSkuInputStateHelper.updateValues([
+            buildSkuModel.productId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.productId,
+            buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuOriginModel.shipmentId,
+            buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
+            buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
+        ]);
 
         return (
             <div className = { 'PopupWindowContent LargeContent' } >
@@ -102,19 +135,10 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                     <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
                         <Input
                             placeholder = { 'Enter consigment ID' }
-                            value = { this.props.popupStore.shipmentModel.shipmentConsignmentNumber }
+                            value = { shipmentModel.shipmentConsignmentNumber }
                             onChange = { this.onChangeConsigmentId } />
-                        <Select
-                            label = { 'From' }
-                            value = { 1 }
-                            readOnly = { true } >
-                            <MenuItem value = { 1 } >Berlin, Germany</MenuItem>
-                        </Select>
-                        <Select
-                            label = { 'To' } >
-                            <MenuItem value = { 1 } >Berlin, Germany</MenuItem>
-                            <MenuItem value = { 2 }>Rotherdam, Netherlands</MenuItem>
-                        </Select>
+                        { this.renderFromSite() }
+                        { this.renderToSite() }
                     </LayoutBlock>
                 </div>
                 <hr />
@@ -142,19 +166,19 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                             <Select
                                                 className = { 'SelectProduct' }
                                                 label = { 'Product' }
-                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[0]) }
-                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[0]) }
-                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[0]) } >
-                                                <MenuItem value = { 1 } >#34 Product name</MenuItem>
+                                                value = { buildSkuInputStateHelper.values.get(FIELDS[0]) }
+                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[0]) }
+                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[0]) } >
+                                                <MenuItem value = { '1' } >#34 Product name</MenuItem>
                                             </Select>
                                             { this.state.manufacturedPlace === S.INT_FALSE && (
                                                 <Select
                                                     className = { 'SelectFromShipment' }
                                                     label = { 'From Shipment' }
-                                                    value = { inputStateHelperLocallyProduced.values.get(FIELDS[1]) }
-                                                    error = { inputStateHelperLocallyProduced.errors.get(FIELDS[1]) }
-                                                    onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[1]) }>
-                                                    <MenuItem value = { 1 } >#34 Shipment</MenuItem>
+                                                    value = { buildSkuInputStateHelper.values.get(FIELDS[1]) }
+                                                    error = { buildSkuInputStateHelper.errors.get(FIELDS[1]) }
+                                                    onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[1]) }>
+                                                    <MenuItem value = { '1' } >#34 Shipment</MenuItem>
                                                 </Select>
                                             ) }
                                             <Input
@@ -165,9 +189,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                                     startAdornment: <span className = { 'StartAdornment' }>€</span>,
                                                 }}
                                                 inputType = { InputType.INTEGER }
-                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[2]) }
-                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[2]) }
-                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[2]) } />
+                                                value = { buildSkuInputStateHelper.values.get(FIELDS[2]) }
+                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[2]) }
+                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[2]) } />
                                             <Input
                                                 className = { 'InputQuantity' }
                                                 label = { 'Quantity' }
@@ -176,12 +200,12 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                                     endAdornment: <span className = { 'EndAdornment' }>max</span>,
                                                 }}
                                                 inputType = { InputType.INTEGER }
-                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[3]) }
-                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[3]) }
-                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[3]) } />
+                                                value = { buildSkuInputStateHelper.values.get(FIELDS[3]) }
+                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[3]) }
+                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[3]) } />
                                         </LayoutBlock>
                                         <Actions className = { 'StartRight' } >
-                                            <Button>
+                                            <Button onClick = { this.onClickAddSku }>
                                                 <div className = { 'FlexRow' } >
                                                     <div className = { 'SVG Size ButtonSvg' } ><SvgAdd /></div>
                                                     Add
@@ -209,7 +233,7 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 <div className = { 'PopupFooter FlexSplit' } >
                     <div className = { 'FooterLeft FlexRow' } >
                         <div className = { 'ItemCnt' } >
-                            Items: <span>3</span>
+                            Items: <span>{popupStore.skuModels.length}</span>
                         </div>
                         <div className = { 'ItemCnt' } >
                             Price: <span>{NumralHelper(1431).format()}</span>
@@ -217,13 +241,13 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                     </div>
                     <div className = { 'FooterRight StartRight' } >
                         <Actions>
-                            <Button type = { Button.TYPE_OUTLINE } >
+                            <Button type = { Button.TYPE_OUTLINE } onClick = { this.onClickSaveAsDraft } >
                                 <div className={'FlexRow'}>
                                     <div className = { 'SVG Size ButtonSvg' } dangerouslySetInnerHTML = {{ __html: SvgSave }} />
                                     Save as draft
                                 </div>
                             </Button>
-                            <Button>Submit shipment</Button>
+                            <Button onClick = { this.onClickSubmitShipment }>Submit shipment</Button>
                         </Actions>
                     </div>
                 </div>
@@ -231,23 +255,77 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         )
     }
 
-    renderProductRows() {
-        const result = [];
+    renderFromSite() {
+        const accountModel = this.props.accountSessionStore.accountModel;
+        const countryModel = this.props.siteStore.getCountryModel(accountModel.countryId);
+        if (countryModel === null) {
+            return null;
+        }
 
-        // for (let i = 0; i < 4; ++i) {
-        //     result.push([
-        //         Table.cellString((i * 10 + 1).toString()),
-        //         Table.cellString((i * 10 + 2).toString()),
-        //         Table.cellString((i * 10 + 3).toString()),
-        //         Table.cellString((i * 10 + 4).toString()),
-        //         Table.cellString((i * 10 + 5).toString()),
-        //         Table.cellString((i * 10 + 6).toString()),
-        //         Table.cellString((i * 10 + 7).toString()),
-        //         Table.cell((
-        //             <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} />
-        //         )),
-        //     ]);
-        // }
+        const siteModel = this.props.siteStore.getFirstSiteModelByCountryId(countryModel.countryId);
+        return (
+            <Select
+                label = { 'From' }
+                value = { siteModel.siteId }
+                readOnly = { true } >
+                <MenuItem value = { siteModel.siteId } >{ siteModel.siteName }, { countryModel.countryName }</MenuItem>
+            </Select>
+        )
+    }
+
+    renderToSite() {
+        const shipmentModel = this.props.popupStore.shipmentModel;
+        const shipmentInputStateHelper = this.props.popupStore.shipmentInputStateHelper;
+        const FIELDS = PopupShipmentStore.FIELDS_SHIPMENT;
+
+        shipmentInputStateHelper.updateValues([
+            shipmentModel.shipmentDestinationSiteId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : shipmentModel.shipmentDestinationSiteId,
+        ]);
+
+        const siteStore = this.props.siteStore;
+        const accountModel = this.props.accountSessionStore.accountModel;
+        const ownCountryModel = siteStore.getCountryModel(accountModel.countryId);
+        if (ownCountryModel === null) {
+            return null;
+        }
+
+        const ownSiteModel = this.props.siteStore.getFirstSiteModelByCountryId(ownCountryModel.countryId);
+        return (
+            <Select
+                label = { 'To' }
+                value = { shipmentInputStateHelper.values.get(FIELDS[0]) }
+                error = { shipmentInputStateHelper.errors.get(FIELDS[0]) }
+                onChange = { shipmentInputStateHelper.onChanges.get(FIELDS[0]) } >
+                { siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
+                    if (ownSiteModel.siteId === siteModel.siteId) {
+                        return null;
+                    }
+
+                    const countryModel = siteStore.getCountryModel(siteModel.countryId);
+                    return (
+                        <MenuItem key = { i } value = { countryModel.countryId } >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
+                    )
+                }) }
+            </Select>
+        )
+    }
+
+    renderProductRows() {
+        const popupStore = this.props.popupStore;
+        const result = popupStore.skuModels.map((skuModel: SkuModel, i: number) => {
+            return [
+                Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
+                Table.cellString('Product name'),
+                Table.cellString('from shipment'),
+                Table.cellString(skuModel.quantity.toString()),
+                Table.cellString('Measurement'),
+                Table.cellString(skuModel.pricePerUnit.toString()),
+                Table.cellString('total price'),
+                Table.cell((
+                    <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} onClick = { this.onClickDeleteSku.bind(this, i) } />
+                )),
+            ];
+        });
 
         return result;
     }
@@ -258,6 +336,8 @@ export default inject((stores) => {
     return {
         alertStore: stores.alertStore,
         appStore: stores.appStore,
+        siteStore: stores.siteStore,
+        accountSessionStore: stores.accountSessionStore,
         popupStore: stores.popupShipmentStore,
     }
 })(observer(ShipmentPopup));

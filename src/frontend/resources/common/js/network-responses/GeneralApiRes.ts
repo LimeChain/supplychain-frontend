@@ -8,16 +8,8 @@ export class FetchAllSitesRes {
     countryModels: CountryModel[]
 
     constructor(json) {
-        this.siteModels = [];
-        this.countryModels = [];
-
-        for (const siteJson of json.siteJsons) {
-            this.siteModels.push(SiteModel.fromJson(siteJson));
-        }
-
-        for (const countryJson of json.countryJsons) {
-            this.countryModels.push(CountryModel.fromJson(countryJson));
-        }
+        this.siteModels = json.siteJsons.map((j) => SiteModel.fromJson(j));
+        this.countryModels = json.countryJsons.map((j) => CountryModel.fromJson(j));
     }
 
 }
@@ -28,12 +20,8 @@ export class FetchNotificationsByFilterRes {
     totalSize: number;
 
     constructor(json) {
-        this.notificationModels = new Array<NotificationModel>();
+        this.notificationModels = json.notificationJsons.map((j) => NotificationModel.fromJson(j));
         this.totalSize = json.totalSize;
-
-        for (const notificationJson of json.notificationJsons) {
-            this.notificationModels.push(NotificationModel.fromJson(notificationJson));
-        }
     }
 
 }
