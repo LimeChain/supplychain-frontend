@@ -14,7 +14,7 @@ export default class InputStateHelper {
         this.keys = keys;
         this.parentChange = parentChange;
 
-        this.values = observable.map(new Map());
+        this.values = new Map();
         this.errors = observable.map(new Map());
         this.onChanges = new Map();
 

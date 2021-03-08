@@ -15,7 +15,7 @@ export default class CountryModel {
         this.countryVat = S.NOT_EXISTS;
     }
 
-    static newInstance(countryId: string, countryName: string, countryVat: number) {
+    static newInstance(countryId: string, countryName: string, countryVat: number): CountryModel {
         const model = new CountryModel();
         model.countryId = countryId;
         model.countryName = countryName;
@@ -28,12 +28,6 @@ export default class CountryModel {
             CountryModel.newInstance(CountryModel.ID_GERMANY, 'Germany', 0.18),
             CountryModel.newInstance(CountryModel.ID_NETHERLANDS, 'Netherlands', 0.19),
         ]
-    }
-
-    static getCountryById(countryId) {
-        return CountryModel.getAllCountries().find((countryModel) => {
-            return countryModel.countryId === countryId;
-        });
     }
 
     toJson(): any {

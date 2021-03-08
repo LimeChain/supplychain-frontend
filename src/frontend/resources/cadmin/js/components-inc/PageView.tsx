@@ -1,23 +1,25 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 
+import CountryModel from '../../../common/js/models/CountryModel';
+import AccountApi from '../../../common/js/api/AccountApi';
+import ProjectUtils from '../../../common/js/ProjectUtils';
+import AccountSessionStore from '../../../common/js/stores/AccountSessionStore';
+import AlertStore from '../../../common/js/stores/AlertStore';
+import AppStore from '../../../common/js/stores/AppStore';
+import SiteStore from '../../../common/js/stores/SiteStore';
+
 import Notifications from './Notifications';
 
 import SvgLogout from '../../../common/svg/logout.svg';
-
 import '../../css/components-inc/page-view.css';
-import AccountSessionStore from '../../../common/js/stores/AccountSessionStore';
-import CountryModel from '../../../common/js/models/CountryModel';
-import ProjectUtils from '../../../common/js/ProjectUtils';
-import AccountApi from '../../../common/js/api/AccountApi';
-import AlertStore from '../../../common/js/stores/AlertStore';
-import AppStore from '../../../common/js/stores/AppStore';
 
 interface Props {
     pageTitle: string;
     accountSessionStore: AccountSessionStore;
     appStore: AppStore;
     alertStore: AlertStore;
+    siteStore: SiteStore;
 }
 
 class PageView extends React.Component<Props> {
@@ -58,7 +60,11 @@ class PageView extends React.Component<Props> {
             return null;
         }
 
-        const countryModel = CountryModel.getCountryById(accountModel.countryId);
+        const countryModel = this.props.siteStore.getCountryModel(accountModel.countryId);
+        if (countryModel === null) {
+            return null;
+        }
+
         return (
             <div className="CountryTab">
                 <div className={'SVG'} dangerouslySetInnerHTML={{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }}></div>
@@ -69,4 +75,4 @@ class PageView extends React.Component<Props> {
 
 }
 
-export default inject('appStore', 'alertStore', 'accountSessionStore')(observer(PageView));
+export default inject('appStore', 'alertStore', 'accountSessionStore', 'siteStore')(observer(PageView));
