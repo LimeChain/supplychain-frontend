@@ -75,7 +75,6 @@ class TableDesktop extends React.Component < TableDesktopProps > {
     }
 
     render() {
-        console.log('render Table Desktop');
         return (
             <div className = { `Table TableDesktop ${this.props.className}` } >
                 { this.renderLegend() }

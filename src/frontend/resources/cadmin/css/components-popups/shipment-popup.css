@@ -112,9 +112,20 @@
     flex: 0 0 auto;
 }
 
+.ShipmentPopup .AddProductCnt .InputSku .StartAdornment {
+    font-size: 12px;
+    margin-right: 5px;
+}
+
 .ShipmentPopup .AddProductCnt .InputQuantity {
     width: 128px;
     flex: 0 0 auto;
+}
+
+.ShipmentPopup .AddProductCnt .InputQuantity .EndAdornment {
+    color: var(--color-gray);
+    text-transform: uppercase;
+    font-size: 12px;
 }
 
 .ShipmentPopup .ProductListLabel {

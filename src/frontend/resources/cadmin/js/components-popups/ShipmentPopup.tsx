@@ -18,6 +18,7 @@ import SvgAdd from '@material-ui/icons/Add';
 import SvgSave from '../../../common/svg/save.svg';
 import '../../css/components-popups/shipment-popup.css';
 import Table from '../../../common/js/components-inc/Table';
+import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 
 interface Props extends PopupWindowProps {
     popupStore: PopupShipmentStore;
@@ -107,14 +108,14 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                     label = { 'SKU value' }
                                     placeholder = { '0' }
                                     InputProps = {{
-                                        startAdornment: '$',
+                                        startAdornment: <span className = { 'StartAdornment' }>€</span>,
                                     }} />
                                 <Input
                                     className = { 'InputQuantity' }
                                     label = { 'Quantity' }
                                     placeholder = { '0' }
                                     InputProps = {{
-                                        endAdornment: 'MAX',
+                                        endAdornment: <span className = { 'EndAdornment' }>max</span>,
                                     }} />
                             </LayoutBlock>
                             <Actions className = { 'StartRight' } >
@@ -129,8 +130,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                         <hr />
                         <div className = { 'ProductListLabel' } >Product list</div>
                         <Table
-                            widths = { ['10%', '40%', '10%', '10%', '10%', '10%', '10%'] }
+                            widths = { ['7%', '33%', '12%', '12%', '12%', '12%', '12%'] }
                             legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value'] }
+                            aligns = { [TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT] }
                             rows = { this.renderProductRows() }
                             helper = { this.props.popupStore.productTableHelper } />
                     </div>
