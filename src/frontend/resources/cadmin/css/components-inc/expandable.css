@@ -1,0 +1,19 @@
+.Sidebar .MuiAccordionSummary-root {
+    padding: 0;
+}
+
+.SideBar .MuiAccordionDetails-root {
+    padding: 0;
+}
+
+.SidebarButton .MuiAccordionSummary-content {
+    margin: 0;
+}
+
+.Sidebar .MuiAccordionSummary-content.Mui-expanded {
+    margin: 0;
+}
+
+.Sidebar .MuiAccordionSummary-root.Mui-expanded {
+    min-height: auto;
+}

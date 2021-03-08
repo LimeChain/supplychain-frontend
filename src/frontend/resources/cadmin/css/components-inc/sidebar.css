@@ -49,7 +49,8 @@
     color: var(--color-gray);
 }
 
-.Sidebar .SidebarButton.Active, .Sidebar .SidebarButton:hover {
+.Sidebar .SidebarButton.Active,
+.Sidebar .SidebarButton:hover {
     fill: var(--color-primary);
     color: var(--color-primary);
     background: rgba(54, 121, 224, 0.1);
@@ -69,7 +70,8 @@
     transition-property: color;
 }
 
-.Sidebar .SidebarSubmenu .SubmenuLink.Active, .Sidebar .SidebarSubmenu .SubmenuLink:hover {
+.Sidebar .SidebarSubmenu .SubmenuLink.Active,
+.Sidebar .SidebarSubmenu .SubmenuLink:hover {
     color: var(--color-primary);
 }
 
@@ -98,27 +100,7 @@
 }
 
 
-.Sidebar .MuiAccordionSummary-content.Mui-expanded {
-    margin: 0;
-}
-
-.Sidebar .MuiAccordionSummary-root.Mui-expanded {
-    min-height: auto;
-}
-
 .Sidebar .SidebarSubmenu {
     color: var(--color-gray);
     text-align: left;
-}
-
-.Sidebar .MuiAccordionSummary-root {
-    padding: 0;
-}
-
-.SideBar .MuiAccordionDetails-root {
-    padding: 0;
-}
-
-.SidebarButton .MuiAccordionSummary-content {
-    margin: 0;
 }

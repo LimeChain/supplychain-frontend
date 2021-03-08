@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import Config from '../../../../../../builds/dev-generated/Config';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
@@ -14,6 +14,7 @@ import SvgIncomming from '../../../common/svg/incomming.svg';
 import SvgArrowDown from '../../../common/svg/arrow-down.svg';
 import '../../css/components-inc/sidebar.css';
 import S from '../../../common/js/utilities/Main';
+import Expandable from './Expandable';
 
 interface Props {
     page: string;
@@ -47,12 +48,32 @@ export default class Sidebar extends React.Component<Props, State> {
                             Dashboard
                         </a>
                         <div>
-                            <Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK}>
-                                <AccordionSummary className={`SidebarButton ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`} expandIcon={<ExpandMoreIcon />}>
+                            <Expandable
+                                expanded={this.state.expanded}
+                                accordionSummary={
                                     <div className={'FlexRow'}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }} />
                                         Products
                                     </div>
+                                }
+                                accordionSummaryClasses={`SidebarButton ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}
+                                accordionDetails={
+                                    <Fragment>
+                                        <div className="FirstLinkSeparator LinkSeparator" />
+                                        <div className={`FlexRow SubmenuLink Transition ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)}`}>
+                                            <a href={PagesCAdmin.PRODUCTS} >Product List</a>
+                                        </div>
+                                        <div className="LinkSeparator" />
+                                        <div className={`FlexRow SubmenuLink Transition ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}>
+                                            <a href={PagesCAdmin.PRODUCTS_IN_STOCK}>In Stock</a>
+                                        </div>
+                                    </Fragment>
+                                }
+                                accordionDetailsClasses={'SidebarSubmenu FlexColumn'} />
+
+                            {/* <Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK}>
+                                <AccordionSummary className={ } expandIcon={<ExpandMoreIcon />}>
+
                                 </AccordionSummary>
                                 <AccordionDetails className={'SidebarSubmenu FlexColumn'}>
                                     <div className="FirstLinkSeparator LinkSeparator" />
@@ -64,7 +85,7 @@ export default class Sidebar extends React.Component<Props, State> {
                                         <a href={PagesCAdmin.PRODUCTS_IN_STOCK}>In Stock</a>
                                     </div>
                                 </AccordionDetails>
-                            </Accordion>
+                            </Accordion> */}
                         </div>
                         <a
                             href={PagesCAdmin.DRAFTS}

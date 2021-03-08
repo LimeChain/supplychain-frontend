@@ -13,22 +13,22 @@ import SvgAdd from '@material-ui/icons/Add';
 import './../../css/components-pages/page-incomming-component.css';
 import PageTable from '../components-inc/PageTable';
 import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
-import Notifications from '../components-inc/Notifications';
-import ProductPopup from '../components-popups/ProductPopup';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
 import ProductStore from '../../../common/js/stores/ProductStore';
 import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import S from '../../../common/js/utilities/Main';
-import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 import PageView from '../components-inc/PageView';
-
-import Header from '../components-inc/header';
 
 import PageTableFooter from '../components-inc/PageTableFooter';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
 import NoEntryPage from '../components-inc/NoEntryPage';
+import TableDesktop from '../../../common/js/components-inc/TableDesktop';
+import Table from '../../../common/js/components-inc/Table';
+import TableHelper from '../../../common/js/helpers/TableHelper';
+import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
+import ProductModelH from '../../../../../backend/modules/ProductModule/Product/Model/ProductModelH';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
@@ -65,25 +65,18 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     async loadData() {
         await super.loadData();
 
-        this.productApi.fetchProductsByFilter(1, 3, 1, (productModels: ProductModel[]) => {
-            this.props.productStore.onScreenData(productModels);
-            this.dataReady = S.INT_TRUE;
-        });
+        this.fetchProducts(1, 0, 10);
     }
 
     getPageLayoutComponentCssClassName() {
         return 'PageProducts';
     }
 
-    fetchProducts = () => {
-        this.productApi.fetchProductsByFilter(1, 7, -1, (productModels, totalSize) => {
-            console.log(productModels);
-            console.log(totalSize);
+    fetchProducts = (filterBy: number, from: number, to: number) => {
+        this.productApi.fetchProductsByFilter(filterBy, from, to, (productModels: ProductModel[]) => {
+            this.props.productStore.onScreenData(productModels);
+            this.dataReady = S.INT_TRUE;
         });
-
-        this.productApi.fetchProductById('7', (productModel) => {
-            console.log(productModel);
-        })
     }
 
     onChangeSearchWord = (searchWord) => {
@@ -100,7 +93,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
     addProductPopup = () => {
         // TODO: open new shipment popup
-
     }
 
     renderContent() {
@@ -141,12 +133,21 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                                         </Actions>
                                     )} />
                             )} >
-                            {'some large content'.repeat(10)}
+                            <TableDesktop
+                                className={'ProductsTable'}
+                                legend={ProductStore.PRODUCT_TABLE_LEGEND}
+                                widths={this.getTableWidths()}
+                                aligns={this.getTableAligns()}
+                                helper={new TableHelper(ProductModelHConsts.P_)}
+                                rows={this.renderRows()}
+
+                            >
+                            </TableDesktop>
                         </PageTable>
                     )}
                 </PageView>
 
-            </div>
+            </div >
             // <>
             //     <Header page={PagesCAdmin.PRODUCTS} />
             //     <div className={' PageContent FlexColumn'}>
@@ -156,5 +157,35 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
             //     </div>
             // </>
         )
+    }
+
+    renderRows = () => {
+        const result = [];
+
+        this.props.productStore.screenProductModels.forEach((productModel: ProductModel) => {
+            result.push([
+                Table.cellString(productModel.productId),
+                Table.cellString(productModel.productName),
+                Table.cellString(productModel.productDescription, 'ProductDescriptionCell'),
+                Table.cellString(productModel.getUnitName()),
+                Table.cell((<div>...</div>)),
+            ])
+        })
+
+        return result;
+    }
+
+    getTableAligns = () => {
+        return [
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
+        ]
+    }
+
+    getTableWidths = () => {
+        return [];
     }
 }
