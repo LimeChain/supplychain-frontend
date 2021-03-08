@@ -11,6 +11,7 @@ import Popover from './Popover';
 
 import '../../css/components-inc/table-mobile.css';
 import S from '../utilities/Main';
+import { observer } from 'mobx-react';
 
 export interface TableMobileProps {
     className?: string;
@@ -29,7 +30,9 @@ interface State {
     sortDropDownAnchor: any;
 }
 
-export default class TableMobile extends React.Component < TableMobileProps, State > {
+class TableMobile extends React.Component < TableMobileProps, State > {
+
+    static defaultProps: any;
 
     sState: State;
 
@@ -225,3 +228,5 @@ TableMobile.defaultProps = {
     'itemsSize': S.NOT_EXISTS,
     'showPaging': true,
 };
+
+export default observer(TableMobile);

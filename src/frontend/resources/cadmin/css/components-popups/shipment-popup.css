@@ -48,6 +48,80 @@
     border-bottom: 2px solid var(--color-gray-dark);
 }
 
+/* tab products */
+.ShipmentPopup .TabProducts .SelectProductLabel {
+    font-weight: 700;
+    margin: var(--desktop-spacing-small) 0;
+}
+
+.ShipmentPopup .TabProducts .ProductManufactureQuestion {
+    color: var(--color-gray);
+    font-size: 12px; font-weight: 500;
+    margin-bottom: 14px;
+}
+
+.ShipmentPopup .TabProducts .Radio {
+    position: relative;
+    color: var(--color-gray-dark);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+}
+
+.ShipmentPopup .TabProducts .Radio:not(:first-child) {
+    margin-left: 14px;
+}
+
+.ShipmentPopup .TabProducts .Radio:before {
+    content: '';
+    width: 14px; height: 14px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 2px solid var(--color-gray-light-minus-05);
+    margin-right: 5px;
+}
+
+.ShipmentPopup .TabProducts .Radio:after {
+    content: '';
+    width: 6px; height: 6px;
+    position: absolute;
+    left: 4px; top: 0; bottom: 0;
+    border-radius: 50%;
+    margin: auto;
+    background: var(--color-primary);
+
+    transition-property: opacity;
+    transition-duration: var(--transition-duration);
+}
+
+.ShipmentPopup .TabProducts .Radio:not(.Active):after {
+    opacity: 0;
+}
+
+.ShipmentPopup .AddProductCnt {
+    margin-top: var(--desktop-spacing-small);
+    align-items: flex-end;
+}
+
+.ShipmentPopup .AddProductCnt .SelectProduct {
+    width: 260px;
+    flex: 0 0 auto;
+}
+
+.ShipmentPopup .AddProductCnt .InputSku {
+    width: 128px;
+    flex: 0 0 auto;
+}
+
+.ShipmentPopup .AddProductCnt .InputQuantity {
+    width: 128px;
+    flex: 0 0 auto;
+}
+
+.ShipmentPopup .ProductListLabel {
+    font-weight: 700;
+    margin: var(--desktop-spacing-small) 0;
+}
+
 /* footer */
 .ShipmentPopup .PopupFooter .FooterLeft {
     color: var(--color-gray);

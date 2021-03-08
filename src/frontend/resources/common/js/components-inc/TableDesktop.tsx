@@ -8,6 +8,7 @@ import TableHelper from '../helpers/TableHelper';
 import Paging from './Paging';
 
 import '../../css/components-inc/table-desktop.css';
+import { observer } from 'mobx-react';
 
 export interface TableDesktopProps {
     className?: string;
@@ -20,7 +21,9 @@ export interface TableDesktopProps {
     showPaging?: boolean;
 }
 
-export default class TableDesktop extends React.Component < TableDesktopProps > {
+class TableDesktop extends React.Component < TableDesktopProps > {
+
+    static defaultProps: any;
 
     static ALIGN_LEFT: number = 1;
     static ALIGN_CENTER: number = 2;
@@ -72,6 +75,7 @@ export default class TableDesktop extends React.Component < TableDesktopProps > 
     }
 
     render() {
+        console.log('render Table Desktop');
         return (
             <div className = { `Table TableDesktop ${this.props.className}` } >
                 { this.renderLegend() }
@@ -154,3 +158,5 @@ TableDesktop.defaultProps = {
     'onClickRow': null,
     'showPaging': true,
 };
+
+export default observer(TableDesktop);
