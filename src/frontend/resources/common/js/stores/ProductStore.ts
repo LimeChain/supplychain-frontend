@@ -3,8 +3,9 @@ import { makeAutoObservable } from 'mobx';
 import ProductModel from '../models/product-module/ProductModel';
 
 export default class ProductStore {
+    static PRODUCT_TABLE_LEGEND = ['ID', 'Shipped From', 'Destination', 'Status', 'Action'];
 
-    productsMap: Map < string, ProductModel > = new Map();
+    productsMap: Map<string, ProductModel> = new Map();
 
     screenProductModels: ProductModel[];
 

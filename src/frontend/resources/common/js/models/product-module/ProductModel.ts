@@ -1,3 +1,4 @@
+import ProductModelH from '../../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
 import S from '../../utilities/Main';
 
 export default class ProductModel {
@@ -43,5 +44,16 @@ export default class ProductModel {
         model.productDeleted = json.productDeleted ?? model.productDeleted;
 
         return model;
+    }
+
+    getUnitName(): string {
+        switch (this.productUnit) {
+            case ProductModelH.S_UNIT_KG:
+                return 'Kg';
+            case ProductModelH.S_UNIT_PACK:
+                return 'Pack';
+            default:
+                return 'Unit';
+        }
     }
 }
