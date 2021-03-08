@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx';
 import S from '../../utilities/Main';
 
 export default class ShipmentModel {
@@ -29,6 +30,8 @@ export default class ShipmentModel {
         this.shipmentDltAnchored = S.INT_FALSE;
         this.shipmentDltProof = S.Strings.EMPTY;
         this.shipmentDeleted = S.NOT_EXISTS;
+
+        makeAutoObservable(this);
     }
 
     isNew(): boolean {

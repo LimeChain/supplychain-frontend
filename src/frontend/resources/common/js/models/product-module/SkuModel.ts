@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx';
 import S from '../../utilities/Main';
 
 export default class SkuModel {
@@ -14,6 +15,8 @@ export default class SkuModel {
         this.quantity = S.NOT_EXISTS;
         this.pricePerUnit = S.NOT_EXISTS;
         this.currency = S.NOT_EXISTS;
+
+        makeAutoObservable(this);
     }
 
     isNew(): boolean {

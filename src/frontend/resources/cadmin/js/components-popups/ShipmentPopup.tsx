@@ -10,7 +10,7 @@ import PopupWindow, { PopupWindowProps } from '../../../common/js/components-cor
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
-import Input from '../../../common/js/components-inc/Input';
+import Input, { InputType } from '../../../common/js/components-inc/Input';
 import Select from '../../../common/js/components-inc/Select';
 import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
 import Table from '../../../common/js/components-inc/Table';
@@ -21,6 +21,7 @@ import SvgAdd from '@material-ui/icons/Add';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import '../../css/components-popups/shipment-popup.css';
+import { runInAction } from 'mobx';
 
 interface Props extends PopupWindowProps {
     popupStore: PopupShipmentStore;
@@ -63,19 +64,46 @@ class ShipmentPopup extends PopupWindow < Props, State > {
     }
 
     onClickChangeManufacturedPlace(value) {
+        this.props.popupStore.buildSkuOriginModel.setLocallyProcuded();
+
         this.setState({
             manufacturedPlace: value,
         });
     }
 
+    onChangeConsigmentId = (value) => {
+        this.props.popupStore.shipmentModel.shipmentConsignmentNumber = value;
+    }
+
+    onClickAddSku = () => {
+        const popupStore = this.props.popupStore;
+    }
+
     renderContent() {
+        const popupStore = this.props.popupStore;
+        const buildSkuModel = popupStore.buildSkuModel;
+        const buildSkuOriginModel = popupStore.buildSkuOriginModel;
+        const inputStateHelperLocallyProduced = this.props.popupStore.inputStateHelperLocallyProduced;
+        const FIELDS = PopupShipmentStore.FIELDS_FROM_SHIPMENT;
+
+        runInAction(() => {
+            inputStateHelperLocallyProduced.updateValues([
+                buildSkuModel.productId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.productId,
+                buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuOriginModel.shipmentId,
+                buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
+                buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
+            ]);
+        });
+
         return (
             <div className = { 'PopupWindowContent LargeContent' } >
                 <div className = { 'PopupHeader FlexRow' } >
                     <div className = { 'PopupTitle' }>New shipment</div>
                     <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
                         <Input
-                            placeholder = { 'Enter consigment ID' } />
+                            placeholder = { 'Enter consigment ID' }
+                            value = { this.props.popupStore.shipmentModel.shipmentConsignmentNumber }
+                            onChange = { this.onChangeConsigmentId } />
                         <Select
                             label = { 'From' }
                             value = { 1 }
@@ -113,29 +141,50 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                         <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
                                             <Select
                                                 className = { 'SelectProduct' }
-                                                label = { 'Product' }>
+                                                label = { 'Product' }
+                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[0]) }
+                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[0]) }
+                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[0]) } >
                                                 <MenuItem value = { 1 } >#34 Product name</MenuItem>
                                             </Select>
+                                            { this.state.manufacturedPlace === S.INT_FALSE && (
+                                                <Select
+                                                    className = { 'SelectFromShipment' }
+                                                    label = { 'From Shipment' }
+                                                    value = { inputStateHelperLocallyProduced.values.get(FIELDS[1]) }
+                                                    error = { inputStateHelperLocallyProduced.errors.get(FIELDS[1]) }
+                                                    onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[1]) }>
+                                                    <MenuItem value = { 1 } >#34 Shipment</MenuItem>
+                                                </Select>
+                                            ) }
                                             <Input
                                                 className = { 'InputSku' }
-                                                label = { 'SKU value' }
+                                                label = { 'SKU Value' }
                                                 placeholder = { '0' }
                                                 InputProps = {{
                                                     startAdornment: <span className = { 'StartAdornment' }>€</span>,
-                                                }} />
+                                                }}
+                                                inputType = { InputType.INTEGER }
+                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[2]) }
+                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[2]) }
+                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[2]) } />
                                             <Input
                                                 className = { 'InputQuantity' }
                                                 label = { 'Quantity' }
                                                 placeholder = { '0' }
                                                 InputProps = {{
                                                     endAdornment: <span className = { 'EndAdornment' }>max</span>,
-                                                }} />
+                                                }}
+                                                inputType = { InputType.INTEGER }
+                                                value = { inputStateHelperLocallyProduced.values.get(FIELDS[3]) }
+                                                error = { inputStateHelperLocallyProduced.errors.get(FIELDS[3]) }
+                                                onChange = { inputStateHelperLocallyProduced.onChanges.get(FIELDS[3]) } />
                                         </LayoutBlock>
                                         <Actions className = { 'StartRight' } >
                                             <Button>
                                                 <div className = { 'FlexRow' } >
                                                     <div className = { 'SVG Size ButtonSvg' } ><SvgAdd /></div>
-                                        Add
+                                                    Add
                                                 </div>
                                             </Button>
                                         </Actions>

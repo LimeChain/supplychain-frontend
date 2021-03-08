@@ -75,7 +75,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     newShipmentPopup = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel());
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], []);
     }
 
     renderContent() {

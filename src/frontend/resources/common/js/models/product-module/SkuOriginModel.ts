@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx';
 import S from '../../utilities/Main';
 
 export default class SkuOriginModel {
@@ -10,12 +11,22 @@ export default class SkuOriginModel {
         this.skuOriginId = S.Strings.NOT_EXISTS;
         this.skuId = S.Strings.NOT_EXISTS;
         this.shipmentId = S.Strings.NOT_EXISTS;
+
+        makeAutoObservable(this);
     }
 
     isNew(): boolean {
         const skuOriginParseInt = parseInt(this.skuOriginId)
 
         return this.skuOriginId === S.Strings.NOT_EXISTS || (!Number.isNaN(skuOriginParseInt) && skuOriginParseInt < 0);
+    }
+
+    isLocallyProduced() {
+        return this.shipmentId === S.Strings.NOT_EXISTS;
+    }
+
+    setLocallyProcuded() {
+        this.shipmentId = S.Strings.NOT_EXISTS;
     }
 
     toJson(): any {

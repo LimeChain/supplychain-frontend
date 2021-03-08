@@ -106,7 +106,7 @@
     align-items: flex-end;
 }
 
-.ShipmentPopup .AddProductCnt .SelectProduct {
+.ShipmentPopup .AddProductCnt .SelectProduct, .ShipmentPopup .AddProductCnt .SelectFromShipment { 
     width: 260px;
     flex: 0 0 auto;
 }

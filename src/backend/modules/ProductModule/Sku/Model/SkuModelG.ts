@@ -3,7 +3,6 @@ import SkuModelH from './SkuModelH';
 import SkuRepoH from '../Repo/SkuRepoH';
 import SV from '../../../../utilities/SV';
 
-
 export default class SkuModelG extends SkuModelH {
 
     constructor() {
@@ -29,7 +28,6 @@ export default class SkuModelG extends SkuModelH {
 
         return map;
     }
-
 
     toRepo(props: number[] | null = null): SkuRepoH {
         const map = SkuModelG.getPropsAsMap(props);
@@ -76,7 +74,6 @@ export default class SkuModelG extends SkuModelH {
 
         return model;
     }
-        
 
     toNetwork(): any {
         return {
@@ -95,7 +92,7 @@ export default class SkuModelG extends SkuModelH {
         }
 
         const model = new SkuModel();
-        
+
         model.skuId = parseInt(json.skuId ?? model.skuId);
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
         model.productId = parseInt(json.productId ?? model.productId);
