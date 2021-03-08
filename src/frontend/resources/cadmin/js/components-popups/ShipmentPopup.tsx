@@ -97,6 +97,7 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 <div className = { 'TabsContent' } >
                     <div className = { `TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}` } >
                         <Expandable
+                            defaultExpanded = { true }
                             accordionSummary = {
                                 <div className = { 'BlockLabel' } > Select product </div>
                             }

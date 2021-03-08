@@ -25,3 +25,9 @@
 .Expandable .MuiAccordionSummary-root.Mui-expanded {
     min-height: auto;
 }
+
+.Expandable .MuiIconButton-edgeEnd {
+    position: relative;
+    left: 12px;
+    margin: 0;
+}
