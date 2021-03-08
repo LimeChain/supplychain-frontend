@@ -70,12 +70,20 @@ export default class Select extends React.Component < Props > {
                         onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : undefined }
                         onOpen = { this.onOpen }
                         onClose = { this.onClose }
-                        IconComponent = { SvgArrowDropDown }
+                        IconComponent = { this.props.readOnly === true ? EmptyArrowComponent : SvgArrowDropDown }
                         variant = { 'standard' } />
 
                 </FormControl>
             </div>
         )
+    }
+
+}
+
+class EmptyArrowComponent extends React.Component {
+
+    render() {
+        return null;
     }
 
 }

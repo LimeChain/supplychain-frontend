@@ -75,12 +75,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         return 'PageProducts';
     }
 
-    renderPopups() {
-        return super.renderPopups().concat([
-            <ProductPopup key={1} />,
-        ])
-    }
-
     fetchProducts = () => {
         this.productApi.fetchProductsByFilter(1, 7, -1, (productModels, totalSize) => {
             console.log(productModels);

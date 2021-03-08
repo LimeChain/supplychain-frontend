@@ -35,7 +35,7 @@ interface State {
     sortBy: number;
 }
 
-export default class ProductsInStockPageComponent extends ContextPageComponent<Props, State> {
+export default class ProductsInStockPageComponent extends ContextPageComponent < Props, State > {
     showNoEntryPage: boolean = false;
 
     dataReady: number;
@@ -70,12 +70,6 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
         return 'PageProductsInStock';
     }
 
-    renderPopups() {
-        return super.renderPopups().concat([
-            <ProductPopup key={1} />,
-        ])
-    }
-
     fetchProducts = () => {
         this.productApi.fetchProductsByFilter(1, 7, -1, (productModels, totalSize) => {
             console.log(productModels);
@@ -101,8 +95,8 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
     addProductPopup = () => {
         // TODO: open new shipment popup
-
     }
+
     renderContent() {
         return (
             <div className={'PageContent'} >

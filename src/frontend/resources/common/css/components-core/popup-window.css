@@ -11,28 +11,29 @@
 
 .PopupWindowWrapper > .PopupWindow {
     max-height:90%; line-height:normal;
+    display: flex;
     position:relative;
     background:#fff;
     box-shadow:0px 0px 17px 0px #bbb;
-    overflow-x:hidden;
-    overflow-y:auto;
 }
 
-.PopupWindowWrapper > .PopupWindow > .Close {
+.PopupWindowWrapper > .PopupWindow > .ScrollableContent {
+    position: relative;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
+.PopupWindowWrapper > .PopupWindow .Close {
     width:16px; height:16px; line-height:16px;
-    position:absolute;
-    right:0; top:0;
-    text-align:center;
-    font-size:24px;
-    padding:8px;
-    transform:rotate(45deg);
+    position: absolute;
+    right:4px; top:4px;
+    color: var(--color-gray-dark);
     z-index:1;
-    cursor:pointer;
 }
 
 /* project specific */
 .PopupWindowWrapper > .PopupWindow {
-    max-width: calc(100% - 32px); max-height: 70%;
+    max-width: calc(100% - 32px);
     background:transparent;
     box-shadow:none;
 }
@@ -43,6 +44,10 @@
 
 .PopupWindowWrapper > .PopupWindow .PopupWindowContent.SmallContent {
     width: 310px;
+}
+
+.PopupWindowWrapper > .PopupWindow .PopupWindowContent.LargeContent {
+    width: 1200px;
 }
 
 .PopupWindowWrapper.PopupFullScreen .PopupWindow {
@@ -59,19 +64,18 @@
     background: #000;
 }
 
-.PopupWindowWrapper.PopupPadding > .PopupWindow .PopupWindowContent {
+.PopupWindowWrapper.PopupPadding > .PopupWindow {
     box-sizing: border-box;
     padding: 32px;
 }
 
-.PopupWindowWrapper.PopupBox > .PopupWindow .PopupWindowContent {
-    border-radius: 4px;
+.PopupWindowWrapper.PopupBox > .PopupWindow {
+    border-radius: 30px;
     background: var(--color-popup-background);
-    box-shadow: 0 2px 0 0 rgba(0,0,0,0.5);
+    box-shadow: 0px 4px 70px 10px rgba(0, 0, 0, 0.08);
 }
 
-
-.PopupWindowWrapper > .Close {
+/* .PopupWindowWrapper > .Close {
     position:absolute;
     right:42px; top:42px;
 }
@@ -87,4 +91,4 @@
 
 .PopupWindowWrapper .PopupSubtitle {
     text-align:center;
-}
+} */

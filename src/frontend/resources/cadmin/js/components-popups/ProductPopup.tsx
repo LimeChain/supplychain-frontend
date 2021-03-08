@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import PopupWindow, { PopupWindowProps } from '../../../common/js/components-core/PopupWindow';
 import { inject, observer } from 'mobx-react';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
@@ -23,10 +22,7 @@ class ProductPopup extends PopupWindow < Props > {
         )
     }
 
-
 }
-
-
 
 export default inject((stores) => {
     return {

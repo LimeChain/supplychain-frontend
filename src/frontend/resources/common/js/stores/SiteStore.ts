@@ -1,28 +1,28 @@
 import { makeAutoObservable } from 'mobx';
+
 import CountryModel from '../models/CountryModel';
-import NotificationModel from '../models/NotificationModel';
 import SiteModel from '../models/SiteModel';
 
 export default class SiteStore {
+
     sitesMap: Map < string, SiteModel > = new Map();
     countriesMap: Map < string, CountryModel > = new Map();
-    
+
     screenSiteModels: SiteModel[] = [];
     screenCountryModels: CountryModel[] = [];
-
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    onScreenData(siteModels: SiteModel[], countryModels: CountryModel[]){
+    onScreenData(siteModels: SiteModel[], countryModels: CountryModel[]) {
         this.screenSiteModels = siteModels;
         this.screenCountryModels = countryModels;
         this.updateSiteModels(siteModels);
         this.updateCountryModels(countryModels);
     }
 
-    updateSiteModels(siteModels: SiteModel[]){
+    updateSiteModels(siteModels: SiteModel[]) {
         const cacheMap = this.sitesMap;
         this.sitesMap = null;
 
@@ -33,7 +33,7 @@ export default class SiteStore {
         this.sitesMap = cacheMap;
     }
 
-    updateCountryModels(countryModels: CountryModel[]){
+    updateCountryModels(countryModels: CountryModel[]) {
         const cacheMap = this.sitesMap;
         this.countriesMap = null;
 
@@ -44,17 +44,16 @@ export default class SiteStore {
         this.countriesMap = cacheMap;
     }
 
-    getFullSiteName(siteId: string): string{
-        let siteModel = this.sitesMap.get(siteId);
-        let countryModel = this.countriesMap.get(siteModel.siteId);
+    getFullSiteName(siteId: string): string {
+        const siteModel = this.sitesMap.get(siteId);
+        const countryModel = this.countriesMap.get(siteModel.siteId);
 
         return `${siteModel.siteName}, ${countryModel.countryName}`;
     }
 
-
-    getSiteVat(siteId: string): number{
-        let siteModel = this.sitesMap.get(siteId);
-        let countryModel = this.countriesMap.get(siteModel.siteId);
+    getSiteVat(siteId: string): number {
+        const siteModel = this.sitesMap.get(siteId);
+        const countryModel = this.countriesMap.get(siteModel.siteId);
 
         return countryModel.countryVat;
     }

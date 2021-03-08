@@ -5,7 +5,7 @@ import S from '../utilities/Main';
 
 import PopupStore from '../stores/PopupStore';
 
-import SvgClose from '../../svg/close-btn.svg';
+import SvgClose from '@material-ui/icons/Clear';
 import '../../css/components-core/popup-window.css';
 
 let popupCounter = 0;
@@ -75,16 +75,22 @@ export default class PopupWindowComponent < Pr extends PopupWindowProps = PopupW
                 onClick = { this.isRemovable() === true ? popupStore.hide : undefined }
                 onWheel = { this.onWheel } >
 
-                { this.hasClose() === true && (
-                    <div
-                        className = { 'Close SVG Clickable' }
-                        onClick = { this.onClickClose }
-                        dangerouslySetInnerHTML = {{ __html: SvgClose }} />
-                ) }
+                <div ref = { this.nodes.popupWindow } className = { 'PopupWindow' } onClick = { S.stopPropagation } onWheel = { S.stopPropagation } >
 
-                <div ref = { this.nodes.popupWindow } className = { 'PopupWindow Scrolls' } onClick = { S.stopPropagation } onWheel = { S.stopPropagation } >
-
-                    { popupStore.visible === true && this.renderContent() }
+                    { popupStore.visible === true && (
+                        <>
+                            <div className = { 'ScrollableContent Scrolls' } >
+                                { this.hasClose() === true && (
+                                    <div
+                                        className = { 'Close SVG Size Clickable' }
+                                        onClick = { this.onClickClose } >
+                                        <SvgClose />
+                                    </div>
+                                ) }
+                                { this.renderContent() }
+                            </div>
+                        </>
+                    ) }
 
                 </div>
 

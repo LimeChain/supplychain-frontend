@@ -36,11 +36,11 @@ export default class ProductModel {
 
         const model = new ProductModel();
 
-        model.productId = (json.productId || model.productId).toString();
-        model.productName = json.productName || model.productName;
-        model.productUnit = json.productUnit || model.productUnit;
-        model.productDescription = json.productDescription || model.productDescription;
-        model.productDeleted = json.productDeleted || model.productDeleted;
+        model.productId = (json.productId ?? model.productId).toString();
+        model.productName = json.productName ?? model.productName;
+        model.productUnit = json.productUnit ?? model.productUnit;
+        model.productDescription = json.productDescription ?? model.productDescription;
+        model.productDeleted = json.productDeleted ?? model.productDeleted;
 
         return model;
     }

@@ -9,7 +9,7 @@ export default class PopupStore {
         this.hide = this.hide.bind(this);
     }
 
-    hide(){
+    hide() {
         this.visible = false;
     }
 

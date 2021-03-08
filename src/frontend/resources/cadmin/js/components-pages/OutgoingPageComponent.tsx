@@ -4,30 +4,31 @@ import { inject, observer } from 'mobx-react';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import ProductFilterConsts from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 
+import S from '../../../common/js/utilities/Main';
 import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
+import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
+import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import Sidebar from '../components-inc/Sidebar';
 import Notifications from '../components-inc/Notifications';
-
-import SvgAdd from '@material-ui/icons/Add';
-import './../../css/components-pages/page-incomming-component.css';
 import PageTable from '../components-inc/PageTable';
 import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
 import PageTableFooter from '../components-inc/PageTableFooter';
-
-import './../../css/components-pages/page-outgoing-component.css';
 import Table from '../../../common/js/components-inc/Table';
 import TableHelper from '../../../common/js/helpers/TableHelper';
 import PageView from '../components-inc/PageView';
 import NoEntryPage from '../components-inc/NoEntryPage';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
-import S from '../../../common/js/utilities/Main';
+
+import SvgAdd from '@material-ui/icons/Add';
+import './../../css/components-pages/page-outgoing-component.css';
 
 interface Props extends ContextPageComponentProps {
+    shipmentStore: ShipmentStore;
 }
 
 interface State {
@@ -39,7 +40,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     showNoEntryPage: boolean = true;
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'accountSessionStore', 'notificationStore', 'shipmentStore', 'siteStore')(observer(OutgoingPageComponent));
+        const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore'])(observer(OutgoingPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -60,6 +61,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         await super.loadData();
         // TODO: fetch shipments
     }
+
     onChangeSearchWord = (searchWord) => {
         this.setState({
             searchWord,
@@ -73,8 +75,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     newShipmentPopup = () => {
-        // TODO: open new shipment popup
-
+        this.props.popupShipmentStore.signalShow(new ShipmentModel());
     }
 
     renderContent() {

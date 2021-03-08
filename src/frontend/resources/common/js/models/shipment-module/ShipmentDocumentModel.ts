@@ -1,6 +1,7 @@
 import S from '../../utilities/Main';
 
 export default class ShipmentDocumentModel {
+
     shipmentDocumentId: string
     shipmentId: string
     documentType: number
@@ -29,13 +30,12 @@ export default class ShipmentDocumentModel {
 
         const model = new ShipmentDocumentModel();
 
-        model.shipmentDocumentId = (json.shipmentDocumentId || model.shipmentDocumentId).toString();
-        model.shipmentId = (json.shipmentId || model.shipmentId).toString();
-        model.documentType = json.documentType || model.documentType;
-        model.shipmentDocumentUrl = (json.shipmentDocumentUrl || model.shipmentDocumentUrl).toString();
+        model.shipmentDocumentId = (json.shipmentDocumentId ?? model.shipmentDocumentId).toString();
+        model.shipmentId = (json.shipmentId ?? model.shipmentId).toString();
+        model.documentType = json.documentType ?? model.documentType;
+        model.shipmentDocumentUrl = (json.shipmentDocumentUrl ?? model.shipmentDocumentUrl).toString();
 
         return model;
     }
-
 
 }

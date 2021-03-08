@@ -1,28 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'mobx-react';
+import { configure } from 'mobx';
 
-import Config from '../../../../../../builds/dev-generated/Config';
-
+import S from '../utilities/Main';
 import AppStore from '../stores/AppStore';
 import AlertStore from '../stores/AlertStore';
 import ProductStore from '../stores/ProductStore';
 import ShipmentStore from '../stores/ShipmentStore';
 import ShipmentDocumentStore from '../stores/ShipmentDocumentStore';
-import Ajax from '../utilities/Ajax';
-import S from '../utilities/Main';
-
-import PageLayoutComponent from './PageLayoutComponent';
 import NotificationStore from '../stores/NotificationStore';
 import PopupProductStore from '../stores/PopupProductStore';
 import SiteStore from '../stores/SiteStore';
 import OriginStore from '../stores/OriginStore';
 import AccountSessionStore from '../stores/AccountSessionStore';
+import PopupShipmentStore from '../stores/PopupShipmentStore';
+
+import PageLayoutComponent from './PageLayoutComponent';
+
+configure({
+    'enforceActions': 'never',
+});
 
 export interface PageComponentProps {
     appStore: AppStore,
     alertStore: AlertStore,
-    popupProductStore: PopupProductStore,
 }
 
 export default class PageComponent < Pr extends PageComponentProps, St = {}, SS = any > extends React.Component < Pr, St, SS > {
@@ -41,6 +43,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
                 notificationStore = { new NotificationStore(appStore, alertStore) }
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
+                popupShipmentStore = { new PopupShipmentStore() }
                 accountSessionStore = { new AccountSessionStore() }
                 alertStore = { alertStore }>
 
@@ -48,6 +51,10 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
 
             </Provider>
         ), document.querySelector('.ReactEntryPoint'));
+    }
+
+    static getStores() {
+        return ['appStore', 'alertStore'];
     }
 
     constructor(props: Pr) {

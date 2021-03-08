@@ -17,10 +17,8 @@ export default class SkuModel {
     }
 
     isNew(): boolean {
-        let skuIdParseInt = parseInt(this.skuId);
-
-        return this.skuId === S.Strings.NOT_EXISTS ||
-            (!isNaN(skuIdParseInt) && skuIdParseInt < 0);
+        const skuIdParseInt = parseInt(this.skuId);
+        return this.skuId === S.Strings.NOT_EXISTS || (!Number.isNaN(skuIdParseInt) && skuIdParseInt < 0);
     }
 
     toJson(): any {
@@ -40,11 +38,11 @@ export default class SkuModel {
 
         const model = new SkuModel();
 
-        model.skuId = (json.skuId || model.skuId).toString();
-        model.productId = (json.productId || model.productId).toString();
-        model.quantity = json.quantity || model.quantity;
-        model.pricePerUnit = json.pricePerUnit || model.pricePerUnit;
-        model.currency = json.currency || model.currency;
+        model.skuId = (json.skuId ?? model.skuId).toString();
+        model.productId = (json.productId ?? model.productId).toString();
+        model.quantity = json.quantity ?? model.quantity;
+        model.pricePerUnit = json.pricePerUnit ?? model.pricePerUnit;
+        model.currency = json.currency ?? model.currency;
 
         return model;
     }

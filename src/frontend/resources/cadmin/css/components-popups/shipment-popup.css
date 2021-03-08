@@ -1,0 +1,66 @@
+/* popup global */
+.ShipmentPopup hr {
+    height: 1px;
+    border: 0;
+    margin: var(--desktop-spacing-small) 0;
+    background: var(--color-gray-light-plus-01);
+}
+
+/* header */
+.ShipmentPopup .PopupHeader .PopupTitle {
+    flex: 0 0 auto;
+    font-size: 20px; font-weight: 700;
+    margin-right: 25px;
+}
+
+.ShipmentPopup .PopupHeader .Input, .ShipmentPopup .PopupHeader .Select {
+    width: 160px;
+    flex: 0 0 auto;
+}
+
+.ShipmentPopup .PopupHeader .Select .MuiInputBase-root {
+    height: 25px;
+    padding: 0;
+    background: transparent;
+}
+
+.ShipmentPopup .PopupHeader .Select .MuiInputBase-root .MuiSelect-root {
+    font-size: 14px; font-weight: 700;
+}
+
+/* tabs header */
+.ShipmentPopup .TabsHeader {
+    border-bottom: 1px solid var(--color-gray-light-plus-01);
+}
+
+.ShipmentPopup .TabsHeader .Tab {
+    color: var(--color-gray);
+    font-size: 14px; font-weight: 700;
+    padding: 0 var(--desktop-spacing-small);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+
+    transition-property: color, border-color;
+}
+
+.ShipmentPopup .TabsHeader .Tab.Active {
+    color: var(--color-gray-dark);
+    border-bottom: 2px solid var(--color-gray-dark);
+}
+
+/* footer */
+.ShipmentPopup .PopupFooter .FooterLeft {
+    color: var(--color-gray);
+    font-size: 12px; font-weight: 600;
+    border-radius: 5px;
+    padding: 0 var(--desktop-spacing-small);
+    background: var(--color-gray-light-plus-01);
+}
+
+.ShipmentPopup .PopupFooter .FooterLeft .ItemCnt:not(:first-child) {
+    margin-left: var(--desktop-spacing-small);
+}
+
+.ShipmentPopup .PopupFooter .FooterLeft .ItemCnt span {
+    color: var(--color-gray-dark);
+}

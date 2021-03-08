@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+
 import SiteModel from '../models/SiteModel';
 
 export default class OriginStore {
@@ -10,19 +11,19 @@ export default class OriginStore {
         makeAutoObservable(this);
     }
 
-    onScreenData(siteModels: SiteModel[]){
+    onScreenData(siteModels: SiteModel[]) {
         this.screenSiteModels = siteModels;
         this.updateSiteModels(siteModels);
     }
 
-    updateSiteModels(siteModels: SiteModel[]){
-        const cacheMap = this.sitesMap;
-        this.sitesMap = null;
+    updateSiteModels(siteModels: SiteModel[]) {
+        const cacheMap = this.originsMap;
+        this.originsMap = null;
 
         siteModels.forEach((siteModel) => {
             cacheMap.set(siteModel.siteId, siteModel);
         });
 
-        this.sitesMap = cacheMap;
+        this.originsMap = cacheMap;
     }
 }

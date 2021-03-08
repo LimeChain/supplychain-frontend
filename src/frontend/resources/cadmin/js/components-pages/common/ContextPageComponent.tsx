@@ -1,19 +1,27 @@
+import React from 'react';
+
 import PagesGeneral from '../../../../../../../builds/dev-generated/PagesGeneral';
+
 import AccountApi from '../../../../common/js/api/AccountApi';
 import GeneralApi from '../../../../common/js/api/GeneralApi';
 import ShipmentApi from '../../../../common/js/api/ShipmentApi';
-import PageComponent, { PageComponentProps } from '../../../../common/js/components-pages/PageComponent';
 import AccountSessionStore from '../../../../common/js/stores/AccountSessionStore';
 import NotificationStore from '../../../../common/js/stores/NotificationStore';
+import PopupProductStore from '../../../../common/js/stores/PopupProductStore';
+import PopupShipmentStore from '../../../../common/js/stores/PopupShipmentStore';
 import ShipmentStore from '../../../../common/js/stores/ShipmentStore';
 import SiteStore from '../../../../common/js/stores/SiteStore';
-import S from '../../../../common/js/utilities/Main';
+import ProductPopup from '../../components-popups/ProductPopup';
+import ShipmentPopup from '../../components-popups/ShipmentPopup';
+
+import PageComponent, { PageComponentProps } from '../../../../common/js/components-pages/PageComponent';
 
 export interface ContextPageComponentProps extends PageComponentProps {
-    siteStore: SiteStore;
-    notificationStore: NotificationStore;
-    shipmentStore: ShipmentStore;
     accountSessionStore: AccountSessionStore;
+    notificationStore: NotificationStore;
+    siteStore: SiteStore;
+    popupProductStore: PopupProductStore,
+    popupShipmentStore: PopupShipmentStore,
 }
 
 export default class ContextPageComponent<Pr extends ContextPageComponentProps, St = {}, SS = any> extends PageComponent<Pr, St, SS> {
@@ -21,6 +29,10 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
     accountApi: AccountApi;
     shipmentApi: ShipmentApi;
     generalApi: GeneralApi;
+
+    static getStores() {
+        return ['accountSessionStore', 'notificationStore', 'siteStore', 'popupProductStore', 'popupShipmentStore'];
+    }
 
     constructor(props: Pr) {
         super(props);
@@ -68,6 +80,13 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
             })
         });
 
+    }
+
+    renderPopups() {
+        return super.renderPopups().concat([
+            <ProductPopup key = { 100 } />,
+            <ShipmentPopup key = { 200 } />,
+        ]);
     }
 
 }

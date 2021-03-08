@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx';
+
 import ProductModel from '../models/product-module/ProductModel';
 
 export default class ProductStore {
+
     productsMap: Map < string, ProductModel > = new Map();
 
     screenProductModels: ProductModel[];
@@ -10,12 +12,12 @@ export default class ProductStore {
         makeAutoObservable(this);
     }
 
-    onScreenData(productModels: ProductModel[]){
+    onScreenData(productModels: ProductModel[]) {
         this.screenProductModels = productModels;
         this.updateProductModels(productModels);
     }
 
-    updateProductModels(productModels: ProductModel[]){
+    updateProductModels(productModels: ProductModel[]) {
         const cacheMap = this.productsMap;
         this.productsMap = null;
 

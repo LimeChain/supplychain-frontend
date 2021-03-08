@@ -49,6 +49,7 @@ export default class Button extends React.Component < Props > {
 
     static TYPE_ROUNDED: number = 1;
     static TYPE_TEXT_INLINE: number = 2;
+    static TYPE_OUTLINE: number = 3;
 
     static COLOR_SCHEME_1: number = 1;
     static COLOR_SCHEME_2: number = 2;
@@ -74,6 +75,8 @@ export default class Button extends React.Component < Props > {
                 return 'contained';
             case Button.TYPE_TEXT_INLINE:
                 return 'text';
+            case Button.TYPE_OUTLINE:
+                return 'outlined';
         }
     }
 

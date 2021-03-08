@@ -1,8 +1,5 @@
 import S from '../../utilities/Main';
 
-import ShipmentStatusModelH from '../../../../../../backend/modules/product-group-module/shipment-module/ShipmentStatusModel.h';
-
-
 export default class ShipmentModel {
     static S_STATUS_DRAFT: number;
     static S_STATUS_IN_TRANSIT: number;
@@ -61,17 +58,17 @@ export default class ShipmentModel {
 
         const model = new ShipmentModel();
 
-        model.shipmentId = (json.shipmentId || model.shipmentId).toString();
-        model.shipmentConsignmentNumber = json.shipmentConsignmentNumber || model.shipmentConsignmentNumber;
-        model.shipmentName = json.shipmentName || model.shipmentName;
-        model.shipmentStatus = json.shipmentStatus || model.shipmentStatus;
-        model.shipmentOriginSiteId = (json.shipmentOriginSiteId || model.shipmentOriginSiteId).toString();
-        model.shipmentDestinationSiteId = (json.shipmentDestinationSiteId || model.shipmentDestinationSiteId).toString();
-        model.shipmentDateOfShipment = json.shipmentDateOfShipment || model.shipmentDateOfShipment;
-        model.shipmentDateOfArrival = json.shipmentDateOfArrival || model.shipmentDateOfArrival;
-        model.shipmentDltAnchored = json.shipmentDltAnchored || model.shipmentDltAnchored;
-        model.shipmentDltProof = json.shipmentDltProof || model.shipmentDltProof;
-        model.shipmentDeleted = json.shipmentDeleted || model.shipmentDeleted;
+        model.shipmentId = (json.shipmentId ?? model.shipmentId).toString();
+        model.shipmentConsignmentNumber = json.shipmentConsignmentNumber ?? model.shipmentConsignmentNumber;
+        model.shipmentName = json.shipmentName ?? model.shipmentName;
+        model.shipmentStatus = json.shipmentStatus ?? model.shipmentStatus;
+        model.shipmentOriginSiteId = (json.shipmentOriginSiteId ?? model.shipmentOriginSiteId).toString();
+        model.shipmentDestinationSiteId = (json.shipmentDestinationSiteId ?? model.shipmentDestinationSiteId).toString();
+        model.shipmentDateOfShipment = json.shipmentDateOfShipment ?? model.shipmentDateOfShipment;
+        model.shipmentDateOfArrival = json.shipmentDateOfArrival ?? model.shipmentDateOfArrival;
+        model.shipmentDltAnchored = json.shipmentDltAnchored ?? model.shipmentDltAnchored;
+        model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
+        model.shipmentDeleted = json.shipmentDeleted ?? model.shipmentDeleted;
 
         return model;
     }
