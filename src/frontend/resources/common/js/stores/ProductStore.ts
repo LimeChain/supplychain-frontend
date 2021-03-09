@@ -7,6 +7,7 @@ export default class ProductStore {
     productsMap: Map<string, ProductModel> = new Map();
 
     screenProductModels: ProductModel[] = [];
+    listProductModels: ProductModel[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -14,6 +15,11 @@ export default class ProductStore {
 
     onScreenData(productModels: ProductModel[]) {
         this.screenProductModels = productModels;
+        this.updateProductModels(productModels);
+    }
+
+    onListData(productModels: ProductModel[]) {
+        this.listProductModels = productModels;
         this.updateProductModels(productModels);
     }
 
@@ -27,4 +33,13 @@ export default class ProductStore {
 
         this.productsMap = cacheMap;
     }
+
+    getProduct(productId: string): ProductModel | null {
+        return this.productsMap.get(productId) ?? null;
+    }
+
+    fetchProductsList() {
+
+    }
+
 }

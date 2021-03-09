@@ -108,8 +108,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSortBy = (sortBy) => {
-        console.log(sortBy);
-
         this.tableHelper.tableState.sortKey = sortBy;
 
         this.fetchShipments();
@@ -164,10 +162,10 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                     totalItems={this.tableHelper.tableState.total}
                                     actions={(
                                         <Actions>
-                                            <Button>
+                                            <Button onClick = { this.newShipmentPopup }>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Create Shipment
+                                                    Create Shipment
                                                 </div>
                                             </Button>
                                         </Actions>
@@ -179,10 +177,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                 widths={this.getTableWidths()}
                                 aligns={this.getTableAligns()}
                                 helper={this.tableHelper}
-                                rows={this.renderRows()}
-                                showPaging={true}
-                            >
-                            </TableDesktop>
+                                rows={this.renderRows()}/>
                         </PageTable>
                     )}
                 </PageView>

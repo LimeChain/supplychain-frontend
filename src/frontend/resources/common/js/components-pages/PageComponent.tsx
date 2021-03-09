@@ -43,7 +43,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
                 notificationStore = { new NotificationStore(appStore, alertStore) }
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
-                popupShipmentStore = { new PopupShipmentStore() }
+                popupShipmentStore = { new PopupShipmentStore(appStore, alertStore) }
                 accountSessionStore = { new AccountSessionStore() }
                 alertStore = { alertStore }>
 

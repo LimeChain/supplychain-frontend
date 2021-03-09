@@ -7,6 +7,9 @@ import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import S from '../utilities/Main';
 import PopupStore from './PopupStore';
 import InputStateHelper from '../helpers/InputStateHelper';
+import ProductApi from '../api/ProductApi';
+import AppStore from './AppStore';
+import AlertStore from './AlertStore';
 
 export default class PopupShipmentStore extends PopupStore {
 
@@ -30,7 +33,9 @@ export default class PopupShipmentStore extends PopupStore {
     buildSkuInputStateHelper: InputStateHelper;
     genSkuId: 0;
 
-    constructor() {
+    productApi: ProductApi;
+
+    constructor(appStore: AppStore, alertStore: AlertStore) {
         super();
 
         this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
@@ -61,6 +66,8 @@ export default class PopupShipmentStore extends PopupStore {
             }
         });
 
+        this.productApi = new ProductApi(appStore.enableActions, appStore.disableActions, alertStore.show);
+
         makeObservable(this);
     }
 
@@ -73,6 +80,11 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.genSkuId = 0;
+
+        this.productApi.fetchProductsByFilter(S.NOT_EXISTS, 0, 100000, (productModels: ProductModel[], totalSize: number) => {
+
+        });
+
         this.show();
     }
 
