@@ -29,6 +29,7 @@ export default class PopupShipmentStore extends PopupStore {
 
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
+    productIdsInSkuModels: Set < string >;
     genSkuId: 0;
 
     productStore: ProductStore;
@@ -88,11 +89,14 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.genSkuId = 0;
+        this.productIdsInSkuModels = new Set();
+        skuModels.forEach((skuModel: SkuModel) => {
+            this.productIdsInSkuModels.add(skuModel.productId);
+        });
 
         this.productStore.fetchProductsList(() => {
             this.show();
         })
-
     }
 
     setTabProducts() {
@@ -115,6 +119,8 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel.skuId = (--this.genSkuId).toString();
         this.buildSkuOriginModel.skuId = this.buildSkuModel.skuId;
 
+        this.productIdsInSkuModels.add(this.buildSkuModel.productId);
+
         this.skuModels.push(this.buildSkuModel);
         this.skuOriginModels.push(this.buildSkuOriginModel);
 
@@ -127,7 +133,13 @@ export default class PopupShipmentStore extends PopupStore {
     }
 
     deleteSkuByIndex(i: number) {
+        const skuModel = this.skuModels[i];
         this.skuModels.splice(i, 1);
+        this.productIdsInSkuModels.delete(skuModel.productId);
+    }
+
+    canAddProductById(productId: string) {
+        return this.productIdsInSkuModels.has(productId) === false;
     }
 
 }

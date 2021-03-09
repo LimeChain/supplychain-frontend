@@ -236,7 +236,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                 error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[0])}
                                                 onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[0])}
                                                 options={
-                                                    this.props.productStore.listProductModels.map((productModel) => {
+                                                    productStore.listProductModels.filter((productModel) => {
+                                                        return popupStore.canAddProductById(productModel.productId);
+                                                    }).map((productModel) => {
                                                         return SelectSearchable.option(productModel.productId, productModel.productName);
                                                     })
                                                 } />
@@ -248,7 +250,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                     value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[1])}
                                                     error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[1])}
                                                     onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[1])}
-                                                    options={this.props.shipmentStore.sourceShipmentModels.map((sModel) => {
+                                                    options={shipmentStore.sourceShipmentModels.map((sModel) => {
                                                         return SelectSearchable.option(sModel.shipmentId, sModel.shipmentConsignmentNumber);
                                                     })} />
                                             )}
