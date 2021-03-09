@@ -150,9 +150,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     creditShipment = () => {
-        const { countryModel, siteModel } = this.getFromSite();
-
-        this.props.popupStore.shipmentModel.shipmentOriginSiteId = siteModel.siteId;
+        const accountModel = this.props.accountSessionStore.accountModel;
+        this.props.popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
 
         this.shipmentApi.creditShipment(
             this.props.popupStore.shipmentModel,
@@ -323,20 +322,13 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         )
     }
 
-    getFromSite = (): { countryModel: CountryModel, siteModel: SiteModel } => {
+    renderFromSite() {
         const accountModel = this.props.accountSessionStore.accountModel;
         const countryModel = this.props.siteStore.getCountryModel(accountModel.countryId);
-        if (countryModel === null) {
+        const siteModel = this.props.siteStore.getSiteModel(accountModel.siteId);
+        if (siteModel === null || countryModel === null) {
             return null;
         }
-
-        const siteModel = this.props.siteStore.getFirstSiteModelByCountryId(countryModel.countryId);
-
-        return { countryModel, siteModel };
-    }
-
-    renderFromSite() {
-        const { countryModel, siteModel } = this.getFromSite();
 
         return (
             <Select

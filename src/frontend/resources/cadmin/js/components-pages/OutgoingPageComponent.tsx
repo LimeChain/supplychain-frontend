@@ -138,7 +138,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             totalItems={this.tableHelper.tableState.total}
                                             actions={(
                                                 <Actions>
-                                                    <Button>
+                                                    <Button onClick = {this.newShipmentPopup}>
                                                         <div className={'FlexRow'}>
                                                             <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Create Shipment
