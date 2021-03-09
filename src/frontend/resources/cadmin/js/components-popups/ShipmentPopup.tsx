@@ -146,18 +146,15 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     creditShipment = () => {
+        const popupStore = this.props.popupStore;
+        const shipmentModel = popupStore.shipmentModel;
+        const onFinish = popupStore.onFinish;
         const accountModel = this.props.accountSessionStore.accountModel;
-        this.props.popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
+        popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
 
-        this.shipmentApi.creditShipment(
-            this.props.popupStore.shipmentModel,
-            this.props.popupStore.skuModels,
-            this.props.popupStore.skuOriginModels,
-            [],
-            () => {
-                console.log('submitted');
-            },
-        )
+        this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, [], () => {
+            onFinish(shipmentModel);
+        })
     }
 
     getTotalPrice() {
