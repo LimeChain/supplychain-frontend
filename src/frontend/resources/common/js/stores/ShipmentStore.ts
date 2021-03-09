@@ -8,9 +8,9 @@ import AppStore from './AppStore';
 
 export default class ShipmentStore {
 
-    shipmentsMap: Map < string, ShipmentModel > = new Map< string, ShipmentModel >();
+    shipmentsMap: Map<string, ShipmentModel> = new Map<string, ShipmentModel>();
 
-    screenShipmentModels: ShipmentModel[];
+    screenShipmentModels: ShipmentModel[] = null;
     sourceShipmentModels: ShipmentModel[] = [];
     sourceMaxAvailableQuantitiesMap: Map < string, number > = new Map();
 

@@ -10,8 +10,7 @@ export default class ProductStore {
 
     productsMap: Map<string, ProductModel> = new Map();
 
-    screenProductModels: ProductModel[] = [];
-    listProductModels: ProductModel[] = [];
+    screenProductModels: ProductModel[] = null;
 
     productApi: ProductApi;
 

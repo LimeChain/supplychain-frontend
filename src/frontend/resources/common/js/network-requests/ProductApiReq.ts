@@ -11,11 +11,13 @@ export class CreditProductReq {
 
 export class FetchProductsByFilterReq {
 
+    searchBy: string
     sortBy: number
     from: number
     to: number
 
-    constructor(sortBy: number, from: number, to: number) {
+    constructor(searchBy, sortBy: number, from: number, to: number) {
+        this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
         this.to = to;

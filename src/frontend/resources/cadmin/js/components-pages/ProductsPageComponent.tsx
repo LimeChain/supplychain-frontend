@@ -36,15 +36,14 @@ interface Props extends ContextPageComponentProps {
 }
 
 interface State {
-    searchWord: string;
 }
 
 export default class ProductsPageComponent extends ContextPageComponent<Props, State> {
-    showNoEntryPage: boolean = false;
 
     dataReady: number;
     productApi: ProductApi;
     tableHelper: TableHelper;
+    searchWord: string = S.Strings.EMPTY;
 
     constructor(props: Props) {
         super(props);
@@ -83,7 +82,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
     fetchProducts = () => {
         const tableState = this.tableHelper.tableState;
-        this.productApi.fetchProductsByFilter(tableState.sortKey, tableState.from, tableState.to(), (productModels: ProductModel[], totalSize: number) => {
+        this.productApi.fetchProductsByFilter(this.searchWord, tableState.sortKey, tableState.from, tableState.to(), (productModels: ProductModel[], totalSize: number) => {
             if (productModels.length === 0 && tableState.from > 0) {
                 tableState.pageBack();
                 this.fetchProducts();
@@ -97,9 +96,8 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSearchWord = (searchWord) => {
-        this.setState({
-            searchWord,
-        });
+        this.searchWord = searchWord;
+        this.fetchProducts();
     }
 
     onChangeSortBy = (sortBy) => {
@@ -122,47 +120,54 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 <Sidebar page={PagesCAdmin.PRODUCTS} />
 
                 <PageView pageTitle={'Products'} >
-                    {this.showNoEntryPage === true && (
-                        <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.onClickAddProduct} />
+                    {this.props.productStore.screenProductModels === null && (
+                        'Loading'
                     )}
-                    {this.showNoEntryPage === false && (
-                        <PageTable
-                            className={'WhiteBox PageExtend'}
-                            header={(
-                                <PageTableHeader
-                                    searchPlaceHolder={'Search products'}
-                                    selectedSortBy={this.tableHelper.tableState.sortKey}
-                                    options={[
-                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_NAME, 'Name'),
-                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_DESCRIPTION, 'Description'),
-                                    ]}
-                                    onChangeSearchWord={this.onChangeSearchWord}
-                                    onChangeSortBy={this.onChangeSortBy} />
+                    {this.props.productStore.screenProductModels !== null && (
+                        <>
+                            {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
+                                <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.onClickAddProduct} />
                             )}
-                            footer={(
-                                <PageTableFooter
-                                    totalItems={this.tableHelper.tableState.total}
-                                    actions={(
-                                        <Actions>
-                                            <Button onClick={this.onClickAddProduct}>
-                                                <div className={'FlexRow'}>
-                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                            {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
+                                <PageTable
+                                    className={'WhiteBox PageExtend'}
+                                    header={(
+                                        <PageTableHeader
+                                            searchPlaceHolder={'Search products'}
+                                            selectedSortBy={this.tableHelper.tableState.sortKey}
+                                            options={[
+                                                new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_NAME, 'Name'),
+                                                new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_DESCRIPTION, 'Description'),
+                                            ]}
+                                            onChangeSearchWord={this.onChangeSearchWord}
+                                            onChangeSortBy={this.onChangeSortBy} />
+                                    )}
+                                    footer={(
+                                        <PageTableFooter
+                                            totalItems={this.tableHelper.tableState.total}
+                                            actions={(
+                                                <Actions>
+                                                    <Button onClick={this.onClickAddProduct}>
+                                                        <div className={'FlexRow'}>
+                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
-                                                </div>
-                                            </Button>
-                                        </Actions>
-                                    )} />
-                            )} >
-                            <TableDesktop
-                                className={'ProductsTable'}
-                                legend={this.getTableLegend()}
-                                widths={this.getTableWidths()}
-                                aligns={this.getTableAligns()}
-                                helper={this.tableHelper}
-                                rows={this.renderRows()}
-                                showPaging={true} >
-                            </TableDesktop>
-                        </PageTable>
+                                                        </div>
+                                                    </Button>
+                                                </Actions>
+                                            )} />
+                                    )} >
+                                    <TableDesktop
+                                        className={'ProductsTable'}
+                                        legend={this.getTableLegend()}
+                                        widths={this.getTableWidths()}
+                                        aligns={this.getTableAligns()}
+                                        helper={this.tableHelper}
+                                        rows={this.renderRows()}
+                                        showPaging={true} >
+                                    </TableDesktop>
+                                </PageTable>
+                            )}
+                        </>
                     )}
                 </PageView>
 
@@ -181,8 +186,8 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cell(
                     <ProductRowMenu
-                        productModel = { productModel }
-                        onFinishDelete = { this.fetchProducts } />,
+                        productModel={productModel}
+                        onFinishDelete={this.fetchProducts} />,
                 ),
             ])
         })
