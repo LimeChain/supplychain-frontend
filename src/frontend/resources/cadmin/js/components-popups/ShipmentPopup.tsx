@@ -26,6 +26,7 @@ import SvgSave from '../../../common/svg/save.svg';
 import '../../css/components-popups/shipment-popup.css';
 import SiteModel from '../../../common/js/models/SiteModel';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SelectSearchable from '../../../common/js/components-inc/SelectSearchable';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -122,8 +123,8 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         const FIELDS = PopupShipmentStore.FIELDS_FROM_SHIPMENT;
 
         buildSkuInputStateHelper.updateValues([
-            buildSkuModel.productId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.productId,
-            buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : buildSkuOriginModel.shipmentId,
+            buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : buildSkuModel.productId,
+            buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? null : buildSkuOriginModel.shipmentId,
             buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
             buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
         ]);
@@ -163,23 +164,25 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                     </div>
                                     <div className = { 'AddProductCnt FlexSplit' } >
                                         <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
-                                            <Select
+                                            <SelectSearchable
                                                 className = { 'SelectProduct' }
                                                 label = { 'Product' }
                                                 value = { buildSkuInputStateHelper.values.get(FIELDS[0]) }
                                                 error = { buildSkuInputStateHelper.errors.get(FIELDS[0]) }
-                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[0]) } >
-                                                <MenuItem value = { '1' } >#34 Product name</MenuItem>
-                                            </Select>
+                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[0]) }
+                                                options = {[
+                                                    SelectSearchable.option('1', '#35 Product name'),
+                                                ]} />
                                             { this.state.manufacturedPlace === S.INT_FALSE && (
-                                                <Select
+                                                <SelectSearchable
                                                     className = { 'SelectFromShipment' }
                                                     label = { 'From Shipment' }
                                                     value = { buildSkuInputStateHelper.values.get(FIELDS[1]) }
                                                     error = { buildSkuInputStateHelper.errors.get(FIELDS[1]) }
-                                                    onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[1]) }>
-                                                    <MenuItem value = { '1' } >#34 Shipment</MenuItem>
-                                                </Select>
+                                                    onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[1]) }
+                                                    options = {[
+                                                        SelectSearchable.option('1', '#34 Shipment'),
+                                                    ]} />
                                             ) }
                                             <Input
                                                 className = { 'InputSku' }

@@ -1,17 +1,15 @@
 import React from 'react';
 
 import { FormControl } from '@material-ui/core';
-import Input from './Input';
 import Popper from '@material-ui/core/Popper';
 import MuiAutocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
 
-import '../../css/components-inc/select-searchable.css';
 import S from '../utilities/Main';
 
-export const SelectSearchableMargin = {
-    NORMAL: 1,
-    DENSE: 2,
-}
+import Input from './Input';
+
+import SvgArrowDropDown from '@material-ui/icons/KeyboardArrowDown'
+import '../../css/components-inc/select-searchable.css';
 
 interface Option {
     value: any,
@@ -19,12 +17,17 @@ interface Option {
 }
 
 interface Props extends AutocompleteProps < Option, true, true, false > {
-    margin?: SelectSearchableMargin.NORMAL | SelectSearchableMargin.DENSE;
+    onChange: (value: any) => void;
+    label?: string;
+    error?: boolean;
+    readOnly?: boolean;
 }
 
 export default class SelectSearchable extends React.Component < Props > {
 
-    static option(value: any, label: any = null) {
+    static defaultProps: any;
+
+    static option(value: any, label: any = null): Option {
         if (label === null) {
             label = value;
         }
@@ -39,18 +42,8 @@ export default class SelectSearchable extends React.Component < Props > {
         this.props.onChange(value);
     }
 
-    getMargin() {
-        switch (this.props.margin) {
-            default:
-            case SelectSearchableMargin.NORMAL:
-                return 'normal';
-            case SelectSearchableMargin.DENSE:
-                return 'dense';
-        }
-    }
-
     getOptionLabel = (option: Option) => {
-        return option.label;
+        return option.label === undefined ? S.Strings.EMPTY : option.label;
     }
 
     getOptionSelected = (option: Option, value: Option) => {
@@ -58,27 +51,24 @@ export default class SelectSearchable extends React.Component < Props > {
     }
 
     render() {
-        const margin = this.getMargin();
-        const { error, ...props } = this.props;
+        const { error, label, onChange, readOnly, className, ...props } = this.props;
         return (
-            <div className = { `SelectSearchable ${this.props.className}` }>
-                <FormControl variant = { 'outlined' } margin = { margin } >
+            <div className = { `SelectSearchable ${className}` }>
+                <FormControl variant = { 'standard' } >
                     <MuiAutocomplete
-                        {...props}
+                        { ...props }
                         PopperComponent = { SelectSearchablePopper }
-                        onChange = { this.props.onChange !== null && this.props.readOnly !== true ? this.onChange : null }
+                        onChange = { this.props.onChange !== null && readOnly !== true ? this.onChange : null }
                         getOptionLabel = { this.getOptionLabel }
                         getOptionSelected = { this.getOptionSelected }
-                        filterSelectedOptions
+                        filterSelectedOptions = { true }
+                        popupIcon = { <SvgArrowDropDown /> }
                         renderInput = { (params) => (
                             <Input
                                 { ...params }
-                                variant = { 'outlined' }
-                                label = { this.props.label }
-                                error = { this.props.error }
-                                margin = { this.props.margin }
-                                fullWidth
-                            />
+                                label = { label }
+                                error = { error }
+                                fullWidth />
                         )} />
                 </FormControl>
             </div>
@@ -98,5 +88,4 @@ class SelectSearchablePopper extends React.Component {
 
 SelectSearchable.defaultProps = {
     'className': S.Strings.EMPTY,
-    'margin': SelectSearchableMargin.DENSE,
 };

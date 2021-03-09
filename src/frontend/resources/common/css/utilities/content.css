@@ -23,6 +23,7 @@
     --color-input-background: var(--color-gray-light);
     --color-input-background-focused: var(--color-primary-light);
     --color-select-icon: var(--color-gray);
+    --color-select-icon-focused: var(--color-primary);
     --color-select-highlight: var(--color-primary-light);
     --color-select-multi-item-color: #fff;
     --color-select-multi-item-background: #9FB0C5;

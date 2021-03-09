@@ -45,10 +45,10 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
             switch (key) {
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[0]:
-                    this.buildSkuModel.productId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
+                    this.buildSkuModel.productId = value === null ? S.Strings.NOT_EXISTS : value;
                     break;
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[1]:
-                    this.buildSkuOriginModel.shipmentId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
+                    this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value;
                     break;
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[2]:
                     this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);

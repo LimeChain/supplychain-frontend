@@ -6,7 +6,7 @@ export default class InputStateHelper {
     keys: string[];
     parentChange: (key: string, value: any) => void;
 
-    values: Map < string, string >;
+    values: Map < string, any >;
     errors: Map < string, boolean >;
     onChanges: Map < string, () => void >;
 
@@ -25,13 +25,17 @@ export default class InputStateHelper {
         })
     }
 
+    static isValidValue(value) {
+        return value !== S.Strings.EMPTY && value !== null
+    }
+
     setParentCallbacks(parentChange = null) {
         this.parentChange = parentChange;
     }
 
     onChange(key: string, value: any) {
         this.values.set(key, value);
-        this.errors.set(key, value === S.Strings.EMPTY);
+        this.errors.set(key, InputStateHelper.isValidValue(value) === false);
         if (this.parentChange !== null) {
             this.parentChange(key, value)
         }
@@ -59,8 +63,8 @@ export default class InputStateHelper {
                 return;
             }
 
-            valid = valid && value !== S.Strings.EMPTY;
-            this.errors.set(key, value === S.Strings.EMPTY);
+            valid = valid && InputStateHelper.isValidValue(value);
+            this.errors.set(key, InputStateHelper.isValidValue(value) === false);
         });
 
         if (valid === false) {
@@ -80,8 +84,8 @@ export default class InputStateHelper {
 
     getValue(key: string) {
         const value = this.values.get(key);
-        const valid = value !== S.Strings.EMPTY;
-        this.errors.set(key, value === S.Strings.EMPTY);
+        const valid = InputStateHelper.isValidValue(value)
+        this.errors.set(key, InputStateHelper.isValidValue(value) === false);
 
         if (valid === false) {
             return null;

@@ -10,6 +10,7 @@ interface Props extends AccordionProps {
     accordionSummaryClasses?: string;
     accordionDetails: any;
     accordionDetailsClasses?: string;
+    children?: React.ReactNode;
 }
 
 export default class Expandable extends React.Component < Props > {
