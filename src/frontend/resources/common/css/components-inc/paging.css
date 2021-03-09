@@ -1,7 +1,7 @@
 .Paging {
     display: flex;
     align-items: center; justify-content: center;
-    color: var(--color-secondary);
+    color: var(--color-gray);
     font-size: 14px;
     padding: 32px;
 }

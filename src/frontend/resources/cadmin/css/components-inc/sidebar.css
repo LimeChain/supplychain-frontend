@@ -22,13 +22,16 @@
     padding: 6px;
 }
 
+.Sidebar .SidebarButton.SidebarButtonMarginTop {
+    margin-top: 5px;
+}
+
 .Sidebar .SidebarButton {
     border-radius: 10px;
     justify-content: left;
     text-align: center;
     font-weight: 500;
     font-size: 14px;
-    margin-top: 5px;
     fill: var(--color-gray);
     color: var(--color-gray);
     cursor: pointer;

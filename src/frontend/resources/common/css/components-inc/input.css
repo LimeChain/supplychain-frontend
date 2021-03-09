@@ -12,9 +12,10 @@
 }
 
 .Input .MuiInputBase-root {
-    height: var(--default-height);
+    min-height: var(--default-height);
+    box-sizing: border-box;
     color: var(--color-input-text);
-    padding: 0 15px;
+    padding: 8px 15px;
     border-radius: 5px;
     background: var(--color-input-background);
     transition: background-color var(--transition-duration);
@@ -24,7 +25,7 @@
     display: none; /* hide border */
 }
 
-.Input .MuiInputBase-root input {
+.Input .MuiInputBase-root input, .Input .MuiInputBase-root textarea {
     height: auto;
     font-size: 12px; font-weight: 600;
     padding: 0;

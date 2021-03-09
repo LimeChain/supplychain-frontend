@@ -14,6 +14,7 @@ import S from '../utilities/Main';
 
 interface Props extends SelectProps {
     className?: string;
+    placeholder?: string;
     onChange?: null | ((value: unknown) => boolean | void);
     // margin?: SelectMargin.NORMAL | SelectMargin.DENSE;
 }
@@ -71,11 +72,22 @@ export default class Select extends React.Component < Props > {
                         onOpen = { this.onOpen }
                         onClose = { this.onClose }
                         IconComponent = { this.props.readOnly === true ? EmptyArrowComponent : SvgArrowDropDown }
+                        renderValue = { this.props.value === S.Strings.EMPTY ? this.renderSelectValue : undefined }
                         variant = { 'standard' } />
 
                 </FormControl>
             </div>
         )
+    }
+
+    renderSelectValue = (value: any) => {
+        if (this.props.displayEmpty !== true) {
+            return value;
+        }
+
+        return (
+            <span className = { 'Placeholder' } >{this.props.placeholder}</span>
+        );
     }
 
 }

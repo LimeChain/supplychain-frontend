@@ -46,8 +46,8 @@ export default class PageTableHeader extends React.Component < Props, State > {
         this.props.onChangeSearchWord(this.state.searchWord);
     }
 
-    sortByRenderValue = (value: any) => {
-        return value !== S.NOT_EXISTS ? this.props.options.find((struct) => struct.key === value)?.value || S.Strings.EMPTY : 'Sort by';
+    onChangeSortBy = (value: any) => {
+        this.props.onChangeSortBy(value === S.Strings.EMPTY ? S.NOT_EXISTS : value);
     }
 
     render() {
@@ -61,10 +61,10 @@ export default class PageTableHeader extends React.Component < Props, State > {
                     onChange = { this.onChangeSearchWord } />
                 <Select
                     className = { 'SelectSortBy StartRight' }
-                    value = { this.props.selectedSortBy }
-                    onChange = { this.props.onChangeSortBy }
-                    displayEmpty = { true }
-                    renderValue = { this.sortByRenderValue} >
+                    placeholder = { 'Sort by' }
+                    value = { this.props.selectedSortBy === S.NOT_EXISTS ? S.Strings.EMPTY : Math.abs(this.props.selectedSortBy) }
+                    onChange = { this.onChangeSortBy }
+                    displayEmpty = { true }>
                     { this.props.options.map((item, i: number) => {
                         return (
                             <MenuItem key = { i } value = { item.key }> { item.value } </MenuItem>

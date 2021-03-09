@@ -1,0 +1,14 @@
+.ProductPopup .PopupHeader {
+    text-align: center;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 50px;
+}
+
+.ProductPopup .ProductPopupInputs {
+    width: 400px;
+    margin: auto;
+}
+
+.ProductPopup .Actions {
+    margin-top: 30px !important;
+}
