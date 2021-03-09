@@ -62,6 +62,10 @@ export default class SiteStore {
         return this.countriesMap.get(countryId) ?? null;
     }
 
+    getSiteModel(siteId: string): SiteModel | null {
+        return this.sitesMap.get(siteId) ?? null;
+    }
+
     getFirstSiteModelByCountryId(countryId: string): SiteModel | null {
         return this.screenSiteModels.find((t) => t.countryId === countryId) ?? null;
     }

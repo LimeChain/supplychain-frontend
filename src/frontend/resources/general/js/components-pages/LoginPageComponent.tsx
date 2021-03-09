@@ -6,12 +6,12 @@ import Config from '../../../../../../builds/dev-generated/Config';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 
-import SvgGermany from '../../../common/svg/flags/germany.svg';
 import './../../css/components-pages/page-login-component.css';
 import Button from '../../../common/js/components-inc/Button';
 import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
 import Input from '../../../common/js/components-inc/Input';
 import CountryModel from '../../../common/js/models/CountryModel';
+import SiteModel from '../../../common/js/models/SiteModel';
 import { MenuItem } from '@material-ui/core';
 import Select from '../../../common/js/components-inc/Select';
 import Actions from '../../../common/js/components-inc/Actions';
@@ -20,20 +20,23 @@ import AccountApi from '../../../common/js/api/AccountApi';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import S from '../../../common/js/utilities/Main';
 import ProjectUtils from '../../../common/js/ProjectUtils';
+import SiteStore from '../../../common/js/stores/SiteStore';
+import GeneralApi from '../../../common/js/api/GeneralApi';
 
 interface Props extends ContextPageComponentProps {
+    siteStore: SiteStore;
 }
 
 const FIELDS = ['country', 'pass'];
 
 export default class PageNotFoundComponent extends ContextPageComponent < Props > {
 
-    countries: CountryModel[];
     inputStateHelper: InputStateHelper;
     accountApi: AccountApi;
+    generalApi: GeneralApi;
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore')(observer(PageNotFoundComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'siteStore')(observer(PageNotFoundComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -41,14 +44,22 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
         super(props);
 
         this.accountApi = new AccountApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
-        this.countries = CountryModel.getAllCountries();
+        this.generalApi = new GeneralApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+
         this.inputStateHelper = new InputStateHelper(FIELDS, () => {
             this.setState({})
         });
         this.inputStateHelper.updateValues([
-            CountryModel.ID_GERMANY,
+            `${SiteModel.ID_BERLIN},${CountryModel.ID_GERMANY}`,
             S.Strings.EMPTY,
         ]);
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        this.generalApi.fetchAllSites((siteModels, countryModels) => {
+            this.props.siteStore.onScreenData(siteModels, countryModels);
+        });
     }
 
     getPageLayoutComponentCssClassName() {
@@ -67,7 +78,9 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             return;
         }
 
-        const countryId = values.get(FIELDS[0]);
+        const combinedId = values.get(FIELDS[0]).split(',');
+        const siteId = combinedId[0];
+        const countryId = combinedId[1];
         const pass = values.get(FIELDS[1]);
 
         let email = S.Strings.EMPTY;
@@ -92,6 +105,8 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
     }
 
     renderContent() {
+        const siteStore = this.props.siteStore;
+
         return (
             <div className = { 'PageContent FlexSingleCenter' } style = { ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.General.IMG}/login-bg.png`) } >
 
@@ -102,15 +117,16 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
 
                     <LayoutBlock className = { 'LoginForm' } >
                         <Select
-                            label = { 'Choose country' }
+                            label = { 'Choose site and country' }
                             value = { this.inputStateHelper.values.get(FIELDS[0]) }
                             error = { this.inputStateHelper.errors.get(FIELDS[0]) }
                             onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >
-                            { this.countries.map((countryModel, i) => {
+                            { siteStore.screenSiteModels.map((siteModel, i) => {
+                                const countryModel = siteStore.getCountryModel(siteModel.countryId);
                                 return (
-                                    <MenuItem key = { i } value = { countryModel.countryId }>
+                                    <MenuItem key = { i } value = { `${siteModel.siteId},${countryModel.countryId}` } >
                                         <div className ={ 'FlexRow' }>
-                                            <div className = { 'SVG LoginPageIconFlag' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }} /> { countryModel.countryName }
+                                            <div className = { 'SVG LoginPageIconFlag' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }} /> { siteModel.siteName }, { countryModel.countryName }
                                         </div>
                                     </MenuItem>
                                 )

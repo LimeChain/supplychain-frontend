@@ -11,6 +11,7 @@ export default class ProductStore {
     productsMap: Map<string, ProductModel> = new Map();
 
     screenProductModels: ProductModel[] = null;
+    listProductModels: ProductModel[] = [];
 
     productApi: ProductApi;
 
@@ -49,7 +50,7 @@ export default class ProductStore {
     }
 
     fetchProductsList(callback: () => void) {
-        this.productApi.fetchProductsByFilter(S.NOT_EXISTS, 0, 100000, (productModels: ProductModel[], totalSize: number) => {
+        this.productApi.fetchProductsByFilter(S.Strings.EMPTY, S.NOT_EXISTS, 0, 100000, (productModels: ProductModel[], totalSize: number) => {
             this.onListData(productModels);
             callback();
         });

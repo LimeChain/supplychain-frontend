@@ -30,7 +30,6 @@ import './../../css/components-pages/page-outgoing-component.css';
 import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
-import CookieHelper from '../helpers/CookieHelper';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -155,7 +154,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             totalItems={this.tableHelper.tableState.total}
                                             actions={(
                                                 <Actions>
-                                                    <Button>
+                                                    <Button onClick = {this.newShipmentPopup}>
                                                         <div className={'FlexRow'}>
                                                             <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Create Shipment

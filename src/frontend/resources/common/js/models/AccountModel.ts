@@ -4,6 +4,7 @@ export default class AccountModel {
 
     accountId: string;
     countryId: string;
+    siteId: string;
     email: string;
     name: string;
     role: number;
@@ -15,6 +16,7 @@ export default class AccountModel {
     constructor() {
         this.accountId = S.Strings.NOT_EXISTS;
         this.countryId = S.Strings.NOT_EXISTS;
+        this.siteId = S.Strings.NOT_EXISTS;
         this.email = S.Strings.EMPTY;
         this.name = S.Strings.EMPTY;
         this.active = S.INT_TRUE;
@@ -35,6 +37,7 @@ export default class AccountModel {
         return {
             'accountId': this.accountId,
             'countryId': this.countryId,
+            'siteId': this.siteId,
             'email': this.email,
             'name': this.name,
             'role': this.role,
@@ -54,6 +57,7 @@ export default class AccountModel {
 
         model.accountId = (json.accountId || model.accountId).toString();
         model.countryId = (json.countryId || model.countryId).toString();
+        model.siteId = (json.siteId || model.siteId).toString();
         model.email = json.email || model.email;
         model.name = json.name || model.name;
         model.role = parseInt(json.role || model.role);
