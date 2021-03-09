@@ -83,7 +83,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
     fetchProducts = () => {
         const tableState = this.tableHelper.tableState;
-        this.productApi.fetchProductsByFilter(tableState.sortKey, tableState.from, tableState.to(), (productModels: ProductModel[], totalSize: number) => {
+        this.productApi.fetchProductsByFilter(this.state.searchWord, tableState.sortKey, tableState.from, tableState.to(), (productModels: ProductModel[], totalSize: number) => {
             if (productModels.length === 0 && tableState.from > 0) {
                 tableState.pageBack();
                 this.fetchProducts();
@@ -100,6 +100,8 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         this.setState({
             searchWord,
         });
+
+        this.fetchProducts();
     }
 
     onChangeSortBy = (sortBy) => {
@@ -181,8 +183,8 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cell(
                     <ProductRowMenu
-                        productModel = { productModel }
-                        onFinishDelete = { this.fetchProducts } />,
+                        productModel={productModel}
+                        onFinishDelete={this.fetchProducts} />,
                 ),
             ])
         })

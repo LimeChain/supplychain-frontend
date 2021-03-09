@@ -90,7 +90,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 this.props.shipmentStore.onScreenData(shipmentModels);
                 this.tableHelper.tableState.total = totalSize;
 
-                if (totalSize > 0) {
+                if (totalSize > 0 || this.state.searchWord !== S.Strings.EMPTY) {
                     this.setState({ showNoEntryPage: false })
                 } else {
                     this.setState({ showNoEntryPage: true })
@@ -142,10 +142,10 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 <Sidebar page={PagesCAdmin.OUTGOING} />
 
                 <PageView pageTitle={'Outgoing Shipments'} >
-                    {this.state.showNoEntryPage === true && this.state.searchWord === S.Strings.EMPTY && (
+                    {this.state.showNoEntryPage === true && (
                         <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
                     )}
-                    {(this.state.showNoEntryPage === false || this.state.searchWord !== S.Strings.EMPTY) && (
+                    {this.state.showNoEntryPage === false && (
                         <PageTable
                             className={'WhiteBox PageExtend'}
                             header={(

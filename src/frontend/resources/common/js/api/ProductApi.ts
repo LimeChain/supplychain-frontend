@@ -83,7 +83,7 @@ export default class ProductApi extends AbsApi {
         // });
     }
 
-    fetchProductsByFilter(sortBy: number, from: number, to: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
+    fetchProductsByFilter(searchBy, sortBy: number, from: number, to: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
         // const req = new FetchProductsByFilterReq(from, to, sortBy);
 
         // this.productApi.req(Actions.PRODUCT.FETCH_PRODUCTS_BY_FILTER, req, (json: any) => {
@@ -99,12 +99,10 @@ export default class ProductApi extends AbsApi {
 
         this.disableActions();
 
-        const filter = S.Strings.EMPTY;
-
         setTimeout(() => {
             this.enableActions();
 
-            const req = new FetchProductsByFilterReq(sortBy, from, to);
+            const req = new FetchProductsByFilterReq(searchBy, sortBy, from, to);
 
             const json = {
                 productJsons: [],
@@ -112,20 +110,21 @@ export default class ProductApi extends AbsApi {
             }
 
             const productsJson = storageHelper.productsJson.filter((productJson) => productJson.productDeleted === S.INT_FALSE);
+
             json.productJsons = productsJson.filter((productJson: ProductModel) => {
-                if (filter === S.Strings.EMPTY) {
+                if (searchBy === S.Strings.EMPTY) {
                     return true;
                 }
 
-                if (productJson.productName.includes(filter)) {
+                if (productJson.productName.toLowerCase().includes(searchBy.toLowerCase())) {
                     return true;
                 }
 
-                if (productJson.productDescription.includes(filter)) {
+                if (productJson.productDescription.toLowerCase().includes(searchBy.toLowerCase())) {
                     return true;
                 }
 
-                if (productJson.productId.includes(filter)) {
+                if (productJson.productId.toLowerCase().includes(searchBy.toLowerCase())) {
                     return true;
                 }
 
@@ -136,14 +135,12 @@ export default class ProductApi extends AbsApi {
 
             json.productJsons = json.productJsons.sort((a: ProductModel, b: ProductModel): number => {
                 const sign = sortBy / Math.abs(sortBy);
-                const returnTrue = -1 * sign;
-                const returnFalse = 1 * sign;
 
                 switch (Math.abs(sortBy)) {
                     case ProductFilter.S_SORT_BY_NAME:
-                        return a.productName > b.productName ? returnTrue : returnFalse
+                        return a.productName.localeCompare(b.productName) * sign;
                     case ProductFilter.S_SORT_BY_DESCRIPTION:
-                        return a.productDescription > b.productDescription ? returnTrue : returnFalse
+                        return a.productDescription.localeCompare(b.productDescription) * sign;
                     default:
                         return parseInt(b.productId) - parseInt(a.productId);
                 }
