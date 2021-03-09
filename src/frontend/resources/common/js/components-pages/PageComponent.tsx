@@ -32,18 +32,19 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
     static layout(componentNode: React.ReactNode) {
         const appStore = new AppStore();
         const alertStore = new AlertStore();
+        const prodcutStore = new ProductStore(appStore, alertStore);
 
         ReactDOM.render((
             <Provider
                 appStore = { appStore }
                 originStore = { new OriginStore() }
-                productStore = { new ProductStore() }
+                productStore = { prodcutStore }
                 shipmentStore = { new ShipmentStore() }
                 siteStore = { new SiteStore() }
                 notificationStore = { new NotificationStore(appStore, alertStore) }
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
-                popupShipmentStore = { new PopupShipmentStore(appStore, alertStore) }
+                popupShipmentStore = { new PopupShipmentStore(prodcutStore) }
                 accountSessionStore = { new AccountSessionStore() }
                 alertStore = { alertStore }>
 

@@ -24,6 +24,10 @@ export default class SkuModel {
         return this.skuId === S.Strings.NOT_EXISTS || (!Number.isNaN(skuIdParseInt) && skuIdParseInt < 0);
     }
 
+    getTotalPrice(): number {
+        return this.pricePerUnit * this.quantity;
+    }
+
     toJson(): any {
         return {
             'skuId': this.skuId,
