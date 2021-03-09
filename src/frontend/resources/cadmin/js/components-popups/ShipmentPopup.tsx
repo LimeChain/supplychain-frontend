@@ -27,9 +27,14 @@ import '../../css/components-popups/shipment-popup.css';
 import SiteModel from '../../../common/js/models/SiteModel';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SelectSearchable from '../../../common/js/components-inc/SelectSearchable';
+import ShipmentApi from '../../../common/js/api/ShipmentApi';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import AppStore from '../../../common/js/stores/AppStore';
+import CountryModel from '../../../common/js/models/CountryModel';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
+    appStore: AppStore;
     siteStore: SiteStore;
     accountSessionStore: AccountSessionStore;
     popupStore: PopupShipmentStore;
@@ -39,10 +44,12 @@ interface State {
     manufacturedPlace: number
 }
 
-class ShipmentPopup extends PopupWindow < Props, State > {
+class ShipmentPopup extends PopupWindow<Props, State> {
 
-    onClickLocallyManufactured: (_: number, e: MouseEventHandler < HTMLDivElement >) => void;
-    onClickFromShipment: (_: number, e: MouseEventHandler < HTMLDivElement >) => void;
+    onClickLocallyManufactured: (_: number, e: MouseEventHandler<HTMLDivElement>) => void;
+    onClickFromShipment: (_: number, e: MouseEventHandler<HTMLDivElement>) => void;
+
+    shipmentApi: ShipmentApi
 
     constructor(props: Props) {
         super(props);
@@ -53,6 +60,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
 
         this.onClickLocallyManufactured = this.onClickChangeManufacturedPlace.bind(this, S.INT_TRUE);
         this.onClickFromShipment = this.onClickChangeManufacturedPlace.bind(this, S.INT_FALSE);
+
+        this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+
     }
 
     getCssClassName() {
@@ -97,7 +107,7 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         this.props.alertStore.show('You are about to delete the SKU.', () => {
             const popupStore = this.props.popupStore;
             popupStore.deleteSkuByIndex(i);
-        }, () => {});
+        }, () => { });
 
     }
 
@@ -107,11 +117,32 @@ class ShipmentPopup extends PopupWindow < Props, State > {
             return;
         }
 
-        console.log('submitted');
+        this.props.popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+        this.props.popupStore.shipmentModel.shipmentDateOfShipment = Date.now();
+        this.creditShipment();
+        this.props.popupStore.hide();
     }
 
     onClickSaveAsDraft = () => {
-        console.log('saved as draft');
+        this.props.popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
+        this.creditShipment();
+        this.props.popupStore.hide();
+    }
+
+    creditShipment = () => {
+        const { countryModel, siteModel } = this.getFromSite();
+
+        this.props.popupStore.shipmentModel.shipmentOriginSiteId = siteModel.siteId;
+
+        this.shipmentApi.creditShipment(
+            this.props.popupStore.shipmentModel,
+            this.props.popupStore.skuModels,
+            this.props.popupStore.skuOriginModels,
+            [],
+            () => {
+                console.log('submitted');
+            },
+        )
     }
 
     renderContent() {
@@ -130,87 +161,87 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         ]);
 
         return (
-            <div className = { 'PopupWindowContent LargeContent' } >
-                <div className = { 'PopupHeader FlexRow' } >
-                    <div className = { 'PopupTitle' }>New shipment</div>
-                    <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
+            <div className={'PopupWindowContent LargeContent'} >
+                <div className={'PopupHeader FlexRow'} >
+                    <div className={'PopupTitle'}>New shipment</div>
+                    <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
                         <Input
-                            placeholder = { 'Enter consigment ID' }
-                            value = { shipmentModel.shipmentConsignmentNumber }
-                            onChange = { this.onChangeConsigmentId } />
-                        { this.renderFromSite() }
-                        { this.renderToSite() }
+                            placeholder={'Enter consigment ID'}
+                            value={shipmentModel.shipmentConsignmentNumber}
+                            onChange={this.onChangeConsigmentId} />
+                        {this.renderFromSite()}
+                        {this.renderToSite()}
                     </LayoutBlock>
                 </div>
                 <hr />
-                <div className = { 'TabsHeader FlexRow' } >
-                    <div className = { `Tab ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}` } onClick = { this.onClickTabProducts } >Products</div>
-                    <div className = { `Tab ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}` } onClick = { this.onClickTabDocuments } >Documents</div>
+                <div className={'TabsHeader FlexRow'} >
+                    <div className={`Tab ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} onClick={this.onClickTabProducts} >Products</div>
+                    <div className={`Tab ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} onClick={this.onClickTabDocuments} >Documents</div>
                 </div>
-                <div className = { 'TabsContent' } >
-                    <div className = { `TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}` } >
+                <div className={'TabsContent'} >
+                    <div className={`TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} >
                         <Expandable
-                            defaultExpanded = { true }
-                            accordionSummary = {
-                                <div className = { 'BlockLabel' } > Select product </div>
+                            defaultExpanded={true}
+                            accordionSummary={
+                                <div className={'BlockLabel'} > Select product </div>
                             }
-                            accordionDetailsClasses = { 'FlexColumn' }
-                            accordionDetails = {
+                            accordionDetailsClasses={'FlexColumn'}
+                            accordionDetails={
                                 <>
-                                    <div className = { 'ProductManufactureQuestion' } >Is the product locally manufactured?</div>
-                                    <div className = { 'FlexRow' } >
-                                        <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_TRUE)}` } onClick = { this.onClickLocallyManufactured } > Yes </div>
-                                        <div className = { `Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_FALSE)}` } onClick = { this.onClickFromShipment } > No </div>
+                                    <div className={'ProductManufactureQuestion'} >Is the product locally manufactured?</div>
+                                    <div className={'FlexRow'} >
+                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_TRUE)}`} onClick={this.onClickLocallyManufactured} > Yes </div>
+                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_FALSE)}`} onClick={this.onClickFromShipment} > No </div>
                                     </div>
-                                    <div className = { 'AddProductCnt FlexSplit' } >
-                                        <LayoutBlock direction = { LayoutBlock.DIRECTION_ROW } >
+                                    <div className={'AddProductCnt FlexSplit'} >
+                                        <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
                                             <SelectSearchable
-                                                className = { 'SelectProduct' }
-                                                label = { 'Product' }
-                                                value = { buildSkuInputStateHelper.values.get(FIELDS[0]) }
-                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[0]) }
-                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[0]) }
-                                                options = {[
+                                                className={'SelectProduct'}
+                                                label={'Product'}
+                                                value={buildSkuInputStateHelper.values.get(FIELDS[0])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS[0])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[0])}
+                                                options={[
                                                     SelectSearchable.option('1', '#35 Product name'),
                                                 ]} />
-                                            { this.state.manufacturedPlace === S.INT_FALSE && (
+                                            {this.state.manufacturedPlace === S.INT_FALSE && (
                                                 <SelectSearchable
-                                                    className = { 'SelectFromShipment' }
-                                                    label = { 'From Shipment' }
-                                                    value = { buildSkuInputStateHelper.values.get(FIELDS[1]) }
-                                                    error = { buildSkuInputStateHelper.errors.get(FIELDS[1]) }
-                                                    onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[1]) }
-                                                    options = {[
+                                                    className={'SelectFromShipment'}
+                                                    label={'From Shipment'}
+                                                    value={buildSkuInputStateHelper.values.get(FIELDS[1])}
+                                                    error={buildSkuInputStateHelper.errors.get(FIELDS[1])}
+                                                    onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[1])}
+                                                    options={[
                                                         SelectSearchable.option('1', '#34 Shipment'),
                                                     ]} />
-                                            ) }
+                                            )}
                                             <Input
-                                                className = { 'InputSku' }
-                                                label = { 'SKU Value' }
-                                                placeholder = { '0' }
-                                                InputProps = {{
-                                                    startAdornment: <span className = { 'StartAdornment' }>€</span>,
+                                                className={'InputSku'}
+                                                label={'SKU Value'}
+                                                placeholder={'0'}
+                                                InputProps={{
+                                                    startAdornment: <span className={'StartAdornment'}>€</span>,
                                                 }}
-                                                inputType = { InputType.INTEGER }
-                                                value = { buildSkuInputStateHelper.values.get(FIELDS[2]) }
-                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[2]) }
-                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[2]) } />
+                                                inputType={InputType.INTEGER}
+                                                value={buildSkuInputStateHelper.values.get(FIELDS[2])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS[2])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[2])} />
                                             <Input
-                                                className = { 'InputQuantity' }
-                                                label = { 'Quantity' }
-                                                placeholder = { '0' }
-                                                InputProps = {{
-                                                    endAdornment: <span className = { 'EndAdornment' }>max</span>,
+                                                className={'InputQuantity'}
+                                                label={'Quantity'}
+                                                placeholder={'0'}
+                                                InputProps={{
+                                                    endAdornment: <span className={'EndAdornment'}>max</span>,
                                                 }}
-                                                inputType = { InputType.INTEGER }
-                                                value = { buildSkuInputStateHelper.values.get(FIELDS[3]) }
-                                                error = { buildSkuInputStateHelper.errors.get(FIELDS[3]) }
-                                                onChange = { buildSkuInputStateHelper.onChanges.get(FIELDS[3]) } />
+                                                inputType={InputType.INTEGER}
+                                                value={buildSkuInputStateHelper.values.get(FIELDS[3])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS[3])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[3])} />
                                         </LayoutBlock>
-                                        <Actions className = { 'StartRight' } >
-                                            <Button onClick = { this.onClickAddSku }>
-                                                <div className = { 'FlexRow' } >
-                                                    <div className = { 'SVG Size ButtonSvg' } ><SvgAdd /></div>
+                                        <Actions className={'StartRight'} >
+                                            <Button onClick={this.onClickAddSku}>
+                                                <div className={'FlexRow'} >
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                     Add
                                                 </div>
                                             </Button>
@@ -218,39 +249,39 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                                     </div>
                                 </>
                             } />
-                        <hr className = { 'MarginBottomOnly' } />
-                        <div className = { 'BlockLabel' } >Product list</div>
+                        <hr className={'MarginBottomOnly'} />
+                        <div className={'BlockLabel'} >Product list</div>
                         <Table
-                            widths = { ['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%'] }
-                            legend = { ['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY] }
-                            aligns = { [TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT] }
-                            rows = { this.renderProductRows() }
-                            helper = { this.props.popupStore.productTableHelper }
-                            emptyLabel = { 'Product list is still empty' } />
+                            widths={['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%']}
+                            legend={['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY]}
+                            aligns={[TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT]}
+                            rows={this.renderProductRows()}
+                            helper={this.props.popupStore.productTableHelper}
+                            emptyLabel={'Product list is still empty'} />
                     </div>
-                    <div className = { `ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}` } >
+                    <div className={`ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
                         Documnets
                     </div>
                 </div>
                 <hr />
-                <div className = { 'PopupFooter FlexSplit' } >
-                    <div className = { 'FooterLeft FlexRow' } >
-                        <div className = { 'ItemCnt' } >
+                <div className={'PopupFooter FlexSplit'} >
+                    <div className={'FooterLeft FlexRow'} >
+                        <div className={'ItemCnt'} >
                             Items: <span>{popupStore.skuModels.length}</span>
                         </div>
-                        <div className = { 'ItemCnt' } >
+                        <div className={'ItemCnt'} >
                             Price: <span>{NumralHelper(1431).format()}</span>
                         </div>
                     </div>
-                    <div className = { 'FooterRight StartRight' } >
+                    <div className={'FooterRight StartRight'} >
                         <Actions>
-                            <Button type = { Button.TYPE_OUTLINE } onClick = { this.onClickSaveAsDraft } >
+                            <Button type={Button.TYPE_OUTLINE} onClick={this.onClickSaveAsDraft} >
                                 <div className={'FlexRow'}>
-                                    <div className = { 'SVG Size ButtonSvg' } dangerouslySetInnerHTML = {{ __html: SvgSave }} />
+                                    <div className={'SVG Size ButtonSvg'} dangerouslySetInnerHTML={{ __html: SvgSave }} />
                                     Save as draft
                                 </div>
                             </Button>
-                            <Button onClick = { this.onClickSubmitShipment }>Submit shipment</Button>
+                            <Button onClick={this.onClickSubmitShipment}>Submit shipment</Button>
                         </Actions>
                     </div>
                 </div>
@@ -258,7 +289,7 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         )
     }
 
-    renderFromSite() {
+    getFromSite = (): { countryModel: CountryModel, siteModel: SiteModel } => {
         const accountModel = this.props.accountSessionStore.accountModel;
         const countryModel = this.props.siteStore.getCountryModel(accountModel.countryId);
         if (countryModel === null) {
@@ -266,12 +297,20 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         }
 
         const siteModel = this.props.siteStore.getFirstSiteModelByCountryId(countryModel.countryId);
+
+        return { countryModel, siteModel };
+    }
+
+    renderFromSite() {
+
+        const { countryModel, siteModel } = this.getFromSite();
+
         return (
             <Select
-                label = { 'From' }
-                value = { siteModel.siteId }
-                readOnly = { true } >
-                <MenuItem value = { siteModel.siteId } >{ siteModel.siteName }, { countryModel.countryName }</MenuItem>
+                label={'From'}
+                value={siteModel.siteId}
+                readOnly={true} >
+                <MenuItem value={siteModel.siteId} >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
             </Select>
         )
     }
@@ -295,10 +334,10 @@ class ShipmentPopup extends PopupWindow < Props, State > {
         const ownSiteModel = this.props.siteStore.getFirstSiteModelByCountryId(ownCountryModel.countryId);
         return (
             <Select
-                label = { 'To' }
-                value = { shipmentInputStateHelper.values.get(FIELDS[0]) }
-                error = { shipmentInputStateHelper.errors.get(FIELDS[0]) }
-                onChange = { shipmentInputStateHelper.onChanges.get(FIELDS[0]) } >
+                label={'To'}
+                value={shipmentInputStateHelper.values.get(FIELDS[0])}
+                error={shipmentInputStateHelper.errors.get(FIELDS[0])}
+                onChange={shipmentInputStateHelper.onChanges.get(FIELDS[0])} >
                 { siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
                     if (ownSiteModel.siteId === siteModel.siteId) {
                         return null;
@@ -306,9 +345,9 @@ class ShipmentPopup extends PopupWindow < Props, State > {
 
                     const countryModel = siteStore.getCountryModel(siteModel.countryId);
                     return (
-                        <MenuItem key = { i } value = { countryModel.countryId } >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
+                        <MenuItem key={i} value={countryModel.countryId} >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
                     )
-                }) }
+                })}
             </Select>
         )
     }
@@ -325,7 +364,7 @@ class ShipmentPopup extends PopupWindow < Props, State > {
                 Table.cellString(skuModel.pricePerUnit.toString()),
                 Table.cellString('total price'),
                 Table.cell((
-                    <div className = { 'SVG IconDelete' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} onClick = { this.onClickDeleteSku.bind(this, i) } />
+                    <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />
                 )),
             ];
         });

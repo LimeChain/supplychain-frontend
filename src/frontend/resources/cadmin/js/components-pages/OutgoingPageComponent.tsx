@@ -25,7 +25,12 @@ import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
 
 import SvgAdd from '@material-ui/icons/Add';
+import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import './../../css/components-pages/page-outgoing-component.css';
+import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
+import TableDesktop from '../../../common/js/components-inc/TableDesktop';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import CookieHelper from '../helpers/CookieHelper';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -34,10 +39,11 @@ interface Props extends ContextPageComponentProps {
 interface State {
     searchWord: string;
     sortBy: number;
+    showNoEntryPage: boolean;
 }
 
 export default class OutgoingPageComponent extends ContextPageComponent<Props, State> {
-    showNoEntryPage: boolean = true;
+    tableHelper: TableHelper;
 
     static layout() {
         const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore'])(observer(OutgoingPageComponent));
@@ -50,7 +56,17 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         this.state = {
             searchWord: S.Strings.EMPTY,
             sortBy: S.NOT_EXISTS,
+            showNoEntryPage: true,
         };
+
+        this.tableHelper = new TableHelper(
+            ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID,
+            [
+                [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 1],
+                [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 2],
+            ],
+            this.fetchShipments,
+        )
     }
 
     getPageLayoutComponentCssClassName() {
@@ -59,23 +75,64 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
     async loadData() {
         await super.loadData();
-        // TODO: fetch shipments
+
+        this.fetchShipments();
+    }
+
+    fetchShipments = () => {
+        this.shipmentApi.fetchShipmentByFilter(
+            PagesCAdmin.OUTGOING,
+            this.state.searchWord,
+            this.tableHelper.tableState.sortKey,
+            this.tableHelper.tableState.from,
+            this.tableHelper.tableState.to(),
+            (shipmentModels, totalSize) => {
+                this.props.shipmentStore.onScreenData(shipmentModels);
+                this.tableHelper.tableState.total = totalSize;
+
+                if (totalSize > 0) {
+                    this.setState({ showNoEntryPage: false })
+                } else {
+                    this.setState({ showNoEntryPage: true })
+                }
+            },
+        )
     }
 
     onChangeSearchWord = (searchWord) => {
         this.setState({
             searchWord,
         });
+
+        this.fetchShipments();
     }
 
     onChangeSortBy = (sortBy) => {
-        this.setState({
-            sortBy,
-        });
+        console.log(sortBy);
+
+        this.tableHelper.tableState.sortKey = sortBy;
+
+        this.fetchShipments();
     }
 
     newShipmentPopup = () => {
         this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], []);
+    }
+
+    submitShipmentRowAction = (shipmentId) => {
+        const shipmentModelClone = this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).clone();
+
+        shipmentModelClone.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+
+        this.shipmentApi.creditShipment(
+            shipmentModelClone,
+            [],
+            [],
+            [],
+            () => {
+                this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
+            },
+        )
     }
 
     renderContent() {
@@ -85,43 +142,105 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 <Sidebar page={PagesCAdmin.OUTGOING} />
 
                 <PageView pageTitle={'Outgoing Shipments'} >
-                    {this.showNoEntryPage === true && (
+                    {this.state.showNoEntryPage === true && this.state.searchWord === S.Strings.EMPTY && (
                         <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
                     )}
-                    {this.showNoEntryPage === false && (
+                    {(this.state.showNoEntryPage === false || this.state.searchWord !== S.Strings.EMPTY) && (
                         <PageTable
                             className={'WhiteBox PageExtend'}
                             header={(
                                 <PageTableHeader
                                     searchPlaceHolder={'Search outgoing shipments'}
-                                    selectedSortBy={this.state.sortBy}
+                                    selectedSortBy={this.tableHelper.tableState.sortKey}
                                     options={[
-                                        new PageTableHeaderSortByStruct(5, 'Name'),
-                                        new PageTableHeaderSortByStruct(10, 'Site'),
+                                        new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
+                                        new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
                                     ]}
                                     onChangeSearchWord={this.onChangeSearchWord}
                                     onChangeSortBy={this.onChangeSortBy} />
                             )}
                             footer={(
                                 <PageTableFooter
-                                    totalItems={5}
+                                    totalItems={this.tableHelper.tableState.total}
                                     actions={(
                                         <Actions>
                                             <Button>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Add product
+                                                Create Shipment
                                                 </div>
                                             </Button>
                                         </Actions>
                                     )} />
                             )} >
-                            {'some large content'.repeat(10)}
+                            <TableDesktop
+                                className={'ShipmentsTable'}
+                                legend={this.getTableLegend()}
+                                widths={this.getTableWidths()}
+                                aligns={this.getTableAligns()}
+                                helper={this.tableHelper}
+                                rows={this.renderRows()}
+                                showPaging={true}
+                            >
+                            </TableDesktop>
                         </PageTable>
                     )}
                 </PageView>
 
             </div>
         )
+    }
+
+    getTableLegend = () => {
+        return ['ID', 'Shipped From', 'Destination', 'Status', 'Action'];
+    }
+
+    renderRows = () => {
+        const result = [];
+
+        this.props.shipmentStore.screenShipmentModels.forEach((shipmentModel: ShipmentModel) => {
+            const originSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentOriginSiteId);
+            const originCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === originSiteModel.countryId);
+
+            const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
+            const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
+
+            result.push([
+                Table.cellString(`#${shipmentModel.shipmentId}`),
+                Table.cell(
+                    <div className="FlexRpw ShipmentOriginCells">
+                        {originCountryModel.countryName}
+                        <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>
+                    </div>,
+                ),
+                Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
+                Table.cell(
+                    <div className={'ShipmentStatusCell'} >In Preparation</div>,
+                ),
+                Table.cell(
+                    <Actions>
+                        <Button onClick={() => this.submitShipmentRowAction(shipmentModel.shipmentId)}>
+                            Submit
+                        </Button>
+                    </Actions>,
+                ),
+            ])
+        })
+
+        return result;
+    }
+
+    getTableAligns = () => {
+        return [
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
+        ]
+    }
+
+    getTableWidths = () => {
+        return ['10%', '20%', '20%', '30%', '30%'];
     }
 }

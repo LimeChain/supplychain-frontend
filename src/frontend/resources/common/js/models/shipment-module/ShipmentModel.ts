@@ -38,6 +38,10 @@ export default class ShipmentModel {
         return this.shipmentId === S.Strings.NOT_EXISTS
     }
 
+    clone(): ShipmentModel {
+        return Object.assign(new ShipmentModel(), this);
+    }
+
     toJson(): any {
         return {
             'shipmentId': this.shipmentId,

@@ -12,6 +12,10 @@ import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
+import GeneralApi from './GeneralApi';
+import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
+import CookieHelper from '../helpers/CookieHelper';
 
 export default class ShipmentApi extends AbsApi {
 
@@ -19,7 +23,6 @@ export default class ShipmentApi extends AbsApi {
 
     constructor(enableActions: null | (() => void) = null, disableActions: null | (() => void) = null, showAlert: null | ((msg: string, positiveListener?: null | (() => boolean | void), negativeListener?: null | (() => boolean | void)) => void) = null) {
         super(enableActions, disableActions, showAlert);
-        this.shipmentApi = new Api(Apis.SHIPMENT, this.enableActions, this.disableActions);
     }
 
     creditShipment(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[], callback: () => void) {
@@ -34,6 +37,7 @@ export default class ShipmentApi extends AbsApi {
                 shipmentJson: null,
                 skuOriginJsons: [],
                 skuJsons: [],
+                shipmentDocumentJsons: [],
             }
 
             // if not specified set shipment to not sent
@@ -150,10 +154,12 @@ export default class ShipmentApi extends AbsApi {
                 json.skuOriginJsons.push(skuOriginJson);
             })
 
+            // documents
+            json.shipmentDocumentJsons = shipmentDocumentModels.map((shipmentDocumentModel) => shipmentDocumentModel.toJson())
             const res = new CreditShipmentRes(json);
 
             storageHelper.save();
-            callback(res);
+            callback();
         }, 100);
 
         // const req = new CreditShipmentReq(shipmentModel, skuOriginModels, skuModels, shipmentDocumentModels);
@@ -177,41 +183,147 @@ export default class ShipmentApi extends AbsApi {
     }
 
     fetchShipmentByFilter(
-        filterId: string,
-        filterName: string,
-        filterStatus: number,
-        filterOriginSiteId: string,
-        filterDestinationSiteId: string,
-        filterDateOfShipment: number,
-        filterDateOfArrival: number,
+        page: string,
+        searchBy: string,
         sortBy: number,
         from: number,
         to: number,
         callback: (shipmentModels: ShipmentModel[], totalSize) => void,
     ) {
 
-        const req = new FetchShipmentsByFilterReq(
-            filterId,
-            filterName,
-            filterStatus,
-            filterOriginSiteId,
-            filterDestinationSiteId,
-            filterDateOfShipment,
-            filterDateOfArrival,
-            sortBy,
-            from,
-            to,
-        );
+        this.disableActions();
 
-        this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENTS_BY_FILTER, req, (json: any) => {
-            if (json.status !== ResponseConsts.S_STATUS_OK) {
-                this.showAlert('Something went wrong');
-                return;
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new FetchShipmentsByFilterReq(
+                searchBy,
+                sortBy,
+                from,
+                to,
+            );
+
+            // Server code
+            const json = {
+                shipmentJsons: [],
+                totalSize: 0,
             }
 
-            const res = new FetchShipmentsByFilterRes(json.obj);
+            if (searchBy !== S.Strings.EMPTY) {
+                storageHelper.shipmentsJson.forEach((shipmentJson: ShipmentModel) => {
+
+                    let occurance = 0;
+
+                    if (shipmentJson.shipmentId.includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    if (shipmentJson.shipmentName.includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    const originSite = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === shipmentJson.shipmentOriginSiteId);
+                    const originCountry = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSite.countryId);
+
+                    if (originSite.siteName.toLowerCase().includes(searchBy)) {
+                        occurance++;
+                    }
+                    if (originCountry.countryName.toLowerCase().includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    const destinationSite = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === shipmentJson.shipmentDestinationSiteId);
+                    const destinationCountry = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSite.countryId);
+                    if (destinationSite.siteName.includes(searchBy)) {
+                        occurance++;
+                    }
+                    if (destinationCountry.countryName.includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    if (new Date(shipmentJson.shipmentDateOfShipment).formatCalendarDateAndTime().includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    if (new Date(shipmentJson.shipmentDateOfArrival).formatCalendarDateAndTime().includes(searchBy)) {
+                        occurance++;
+                    }
+
+                    shipmentJson.occurance = occurance;
+
+                    if (occurance > 0) {
+                        json.shipmentJsons.push(shipmentJson);
+                    }
+
+                });
+
+            } else {
+                json.shipmentJsons = storageHelper.shipmentsJson;
+            }
+
+            const currentSite = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId);
+
+            // filter by page
+            if (page === PagesCAdmin.DRAFTS) {
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT)
+            } else if (page === PagesCAdmin.INCOMMING) {
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId)
+            } else if (page === PagesCAdmin.OUTGOING) {
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId)
+            }
+            json.totalSize = json.shipmentJsons.length;
+
+            json.shipmentJsons = json.shipmentJsons.sort((a: ShipmentModel, b: ShipmentModel): number => {
+                const sign = sortBy / Math.abs(sortBy);
+
+                const originSiteA = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === a.shipmentOriginSiteId);
+                const originSiteB = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === b.shipmentOriginSiteId);
+
+                const originCountryNameA = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSiteA.countryId).countryName;
+                const originCountryNameB = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSiteB.countryId).countryName;
+
+                const destinationSiteA = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === a.shipmentDestinationSiteId);
+                const destinationSiteB = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === b.shipmentDestinationSiteId);
+
+                const destinationCountryNameA = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteA.countryId).countryName;
+                const destinationCountryNameB = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteB.countryId).countryName;
+
+                const destinationCompareStringA = `${destinationSiteA.siteName}, ${destinationCountryNameA}`
+                const destinationCompareStringB = `${destinationSiteB.siteName}, ${destinationCountryNameB}`
+
+                switch (Math.abs(sortBy)) {
+                    case ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID:
+                        return originCountryNameA.localeCompare(originCountryNameB) * sign;
+                    case ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID:
+                        return destinationCompareStringA.localeCompare(destinationCompareStringB) * sign
+                    default:
+                        return a.shipmentId.localeCompare(b.shipmentId);
+                }
+
+            }).slice(from, to);
+            // end server code
+
+            const res = new FetchShipmentsByFilterRes(json);
+
             callback(res.shipmentModels, res.totalSize);
-        });
+        }, 100);
+
+        // const req = new FetchShipmentsByFilterReq(
+        //     searchBy,
+        //     sortBy,
+        //     from,
+        //     to,
+        // );
+
+        // this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENTS_BY_FILTER, req, (json: any) => {
+        //     if (json.status !== ResponseConsts.S_STATUS_OK) {
+        //         this.showAlert('Something went wrong');
+        //         return;
+        //     }
+
+        //     const res = new FetchShipmentsByFilterRes(json.obj);
+        //     callback(res.shipmentModels, res.totalSize);
+        // });
     }
 
     fetchShipmentById(shipmentId: string, callback: (shipmentModel: ShipmentModel) => void) {

@@ -19,36 +19,18 @@ export class CreditShipmentReq {
 }
 
 export class FetchShipmentsByFilterReq {
-    filterId: string
-    filterName: string
-    filterStatus: number
-    filterOriginSiteId: string
-    filterDestinationSiteId: string
-    filterDateOfShipment: number
-    filterDateOfArrival: number
+    searchBy: string
     sortBy: number
     from: number
     to: number
 
     constructor(
-        filterId: string,
-        filterName: string,
-        filterStatus: number,
-        filterOriginSiteId: string,
-        filterDestinationSiteId: string,
-        filterDateOfShipment: number,
-        filterDateOfArrival: number,
+        searchBy: string,
         sortBy: number,
         from: number,
         to: number,
     ) {
-        this.filterId = filterId;
-        this.filterName = filterName;
-        this.filterStatus = filterStatus;
-        this.filterOriginSiteId = filterOriginSiteId;
-        this.filterDestinationSiteId = filterDestinationSiteId;
-        this.filterDateOfShipment = filterDateOfShipment;
-        this.filterDateOfArrival = filterDateOfArrival;
+        this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
         this.to = to;

@@ -69,8 +69,8 @@ export default class GeneralApi extends AbsApi {
             const req = new FetchAllSitesReq();
 
             const json = {
-                siteJsons: SiteModel.getAllSites(),
-                countryJsons: CountryModel.getAllCountries(),
+                siteJsons: storageHelper.sitesJson,
+                countryJsons: storageHelper.countriesJson,
             }
 
             const res = new FetchAllSitesRes(json);

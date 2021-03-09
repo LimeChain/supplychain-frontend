@@ -6,7 +6,7 @@ import NotificationConstsH from '../../../../../../builds/dev-generated/Notifica
 import CountryModel from '../models/CountryModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 35;
+const VERSION = 37;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -50,16 +50,16 @@ const shipmentDocumentsJson = [
     jsonShipmentDocument('1', '1', 'localhost/documents/aaa.pdf'),
 ]
 
-// const countriesJson = [
-//     jsonCountry('1', 'Germany', 0.19),
-//     jsonCountry('2', 'Netherlands', 0.18),
-// ]
+const countriesJson = [
+    jsonCountry('1', 'Germany', 0.19),
+    jsonCountry('2', 'Netherlands', 0.18),
+]
 
-// const sitesJson = [
-//     jsonSite('1', '3', 'Berlin'),
-//     jsonSite('2', '2', 'Thessaloniki'),
-//     jsonSite('3', '1', 'Valletta'),
-// ]
+const sitesJson = [
+    jsonSite('1', '1', 'Berlin'),
+    jsonSite('2', '2', 'Thessaloniki'),
+    jsonSite('3', '1', 'Valletta'),
+]
 
 const notificationsJson = [
     jsonNotification('1', '1', NotificationConstsH.S_NOTIFICATION_SENT, Date.now() - 500000, S.INT_FALSE),
@@ -84,9 +84,9 @@ class StorageHelper {
         this.productsJson = productsJson;
         this.shipmentsJson = shipmentsJson;
         this.shipmentDocumentsJson = shipmentDocumentsJson;
-        // this.countriesJson = countriesJson;
+        this.countriesJson = countriesJson;
         this.notificationsJson = notificationsJson;
-        // this.sitesJson = sitesJson;
+        this.sitesJson = sitesJson;
         this.skuOriginsJson = skuOriginsJson;
         this.skusJson = skusJson;
         this.accountsJson = accountsJson;
@@ -167,21 +167,21 @@ function jsonShipmentDocument(shipmentDocumentId, shipmentId, documentUrl) {
     }
 }
 
-// function jsonSite(siteId, countryId, siteName) {
-//     return {
-//         'siteId': siteId,
-//         'countryId': countryId,
-//         'siteName': siteName,
-//     }
-// }
+function jsonSite(siteId, countryId, siteName) {
+    return {
+        'siteId': siteId,
+        'countryId': countryId,
+        'siteName': siteName,
+    }
+}
 
-// function jsonCountry(countryId, countryName, countryVat) {
-//     return {
-//         'countryId': countryId,
-//         'countryName': countryName,
-//         'countryVat': countryVat,
-//     }
-// }
+function jsonCountry(countryId, countryName, countryVat) {
+    return {
+        'countryId': countryId,
+        'countryName': countryName,
+        'countryVat': countryVat,
+    }
+}
 
 function jsonNotification(notificationId, shipmentId, notificationStatus, notificationTime, notificationRead) {
     return {
