@@ -14,9 +14,9 @@ export default class PopupShipmentStore extends PopupStore {
     static POPUP_TAB_PRODUCTS: number = 1;
     static POPUP_TAB_DOCUMENTS: number = 2;
 
-    static FIELDS_SHIPMENT = ['toSite'];
-    static FIELDS_LOCALLY_PRODUCED = ['name', 'price', 'quantity'];
-    static FIELDS_FROM_SHIPMENT = ['name', 'fromShipment', 'price', 'quantity'];
+    static FIELDS_SHIPMENT = ['consignmentNumber', 'toSite'];
+    static FIELDS_ADD_SKU_LOCALLY_PRODUCED_SUBSET = ['name', 'price', 'quantity'];
+    static FIELDS_ADD_SKU = ['name', 'fromShipment', 'price', 'quantity'];
 
     @observable popupActiveTab: number = PopupShipmentStore.POPUP_TAB_PRODUCTS;
     @observable productTableHelper: TableHelper;
@@ -29,6 +29,7 @@ export default class PopupShipmentStore extends PopupStore {
 
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
+    productIdsInSkuModels: Set < string >;
     genSkuId: 0;
 
     productStore: ProductStore;
@@ -40,15 +41,18 @@ export default class PopupShipmentStore extends PopupStore {
         this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
             switch (key) {
                 case PopupShipmentStore.FIELDS_SHIPMENT[0]:
+                    this.shipmentModel.shipmentConsignmentNumber = value;
+                    break;
+                case PopupShipmentStore.FIELDS_SHIPMENT[1]:
                     this.shipmentModel.shipmentDestinationSiteId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
                     break;
                 default:
                     break;
             }
         });
-        this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
+        this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_ADD_SKU, (key, value) => {
             switch (key) {
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[0]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[0]:
                     this.buildSkuModel.productId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     if (this.buildSkuModel.productId === S.Strings.NOT_EXISTS) {
                         this.buildSkuOriginModel.shipmentId = S.Strings.NOT_EXISTS;
@@ -56,13 +60,13 @@ export default class PopupShipmentStore extends PopupStore {
                     this.shipmentStore.fetchSourceShipmentsByProductId(this.buildSkuModel.productId, () => {
                     });
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[1]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[1]:
                     this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[2]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[2]:
                     this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[3]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[3]:
                     this.buildSkuModel.quantity = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
                     break;
                 default:
@@ -85,11 +89,14 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.genSkuId = 0;
+        this.productIdsInSkuModels = new Set();
+        skuModels.forEach((skuModel: SkuModel) => {
+            this.productIdsInSkuModels.add(skuModel.productId);
+        });
 
         this.productStore.fetchProductsList(() => {
             this.show();
         })
-
     }
 
     setTabProducts() {
@@ -112,6 +119,8 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel.skuId = (--this.genSkuId).toString();
         this.buildSkuOriginModel.skuId = this.buildSkuModel.skuId;
 
+        this.productIdsInSkuModels.add(this.buildSkuModel.productId);
+
         this.skuModels.push(this.buildSkuModel);
         this.skuOriginModels.push(this.buildSkuOriginModel);
 
@@ -124,7 +133,13 @@ export default class PopupShipmentStore extends PopupStore {
     }
 
     deleteSkuByIndex(i: number) {
+        const skuModel = this.skuModels[i];
         this.skuModels.splice(i, 1);
+        this.productIdsInSkuModels.delete(skuModel.productId);
+    }
+
+    canAddProductById(productId: string) {
+        return this.productIdsInSkuModels.has(productId) === false;
     }
 
 }

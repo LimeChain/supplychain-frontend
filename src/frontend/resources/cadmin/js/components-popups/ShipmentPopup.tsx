@@ -102,10 +102,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         });
     }
 
-    onChangeConsigmentId = (value) => {
-        this.props.popupStore.shipmentModel.shipmentConsignmentNumber = value;
-    }
-
     onClickMaxQuantity = () => {
         const popupStore = this.props.popupStore;
         const shipmentStore = this.props.shipmentStore;
@@ -115,7 +111,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     onClickAddSku = () => {
         const popupStore = this.props.popupStore;
-        const FIELDS = this.isManufacturePlaceLocal() === true ? PopupShipmentStore.FIELDS_LOCALLY_PRODUCED : PopupShipmentStore.FIELDS_FROM_SHIPMENT;
+        const FIELDS = this.isManufacturePlaceLocal() === true ? PopupShipmentStore.FIELDS_ADD_SKU_LOCALLY_PRODUCED_SUBSET : PopupShipmentStore.FIELDS_ADD_SKU;
         if (popupStore.buildSkuInputStateHelper.getValues(FIELDS) === null) {
             return;
         }
@@ -180,13 +176,20 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const buildSkuOriginModel = popupStore.buildSkuOriginModel;
 
         const buildSkuInputStateHelper = this.props.popupStore.buildSkuInputStateHelper;
-        const FIELDS = PopupShipmentStore.FIELDS_FROM_SHIPMENT;
+        const shipmentInputStateHelper = this.props.popupStore.shipmentInputStateHelper;
+        const FIELDS_ADD_SKU = PopupShipmentStore.FIELDS_ADD_SKU;
+        const FIELDS_SHIPMENT = PopupShipmentStore.FIELDS_SHIPMENT;
 
         buildSkuInputStateHelper.updateValues([
             buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuModel.productId, productStore.getProductName(buildSkuModel.productId)),
             buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuOriginModel.shipmentId, shipmentStore.getShipmentConsignmentNumber(buildSkuOriginModel.shipmentId)),
             buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
             buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
+        ]);
+
+        shipmentInputStateHelper.updateValues([
+            shipmentModel.shipmentConsignmentNumber,
+            shipmentModel.shipmentDestinationSiteId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : shipmentModel.shipmentDestinationSiteId,
         ]);
 
         return (
@@ -196,8 +199,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                     <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
                         <Input
                             placeholder={'Enter consigment ID'}
-                            value={shipmentModel.shipmentConsignmentNumber}
-                            onChange={this.onChangeConsigmentId} />
+                            value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[0])}
+                            error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[0])}
+                            onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[0])} />
                         {this.renderFromSite()}
                         {this.renderToSite()}
                     </LayoutBlock>
@@ -228,11 +232,13 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                 className={'SelectProduct'}
                                                 label={'Product'}
                                                 placeholder = { 'Select a product' }
-                                                value={buildSkuInputStateHelper.values.get(FIELDS[0])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS[0])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[0])}
+                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[0])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[0])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[0])}
                                                 options={
-                                                    this.props.productStore.listProductModels.map((productModel) => {
+                                                    productStore.listProductModels.filter((productModel) => {
+                                                        return popupStore.canAddProductById(productModel.productId);
+                                                    }).map((productModel) => {
                                                         return SelectSearchable.option(productModel.productId, productModel.productName);
                                                     })
                                                 } />
@@ -241,10 +247,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                     className={'SelectFromShipment'}
                                                     label={'From Shipment'}
                                                     placeholder={buildSkuModel.isProductSelected() === false ? 'Select a product first' : 'Select a shipment'}
-                                                    value={buildSkuInputStateHelper.values.get(FIELDS[1])}
-                                                    error={buildSkuInputStateHelper.errors.get(FIELDS[1])}
-                                                    onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[1])}
-                                                    options={this.props.shipmentStore.sourceShipmentModels.map((sModel) => {
+                                                    value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[1])}
+                                                    error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[1])}
+                                                    onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[1])}
+                                                    options={shipmentStore.sourceShipmentModels.map((sModel) => {
                                                         return SelectSearchable.option(sModel.shipmentId, sModel.shipmentConsignmentNumber);
                                                     })} />
                                             )}
@@ -256,9 +262,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                     startAdornment: <span className={'StartAdornment'}>€</span>,
                                                 }}
                                                 inputType={InputType.INTEGER}
-                                                value={buildSkuInputStateHelper.values.get(FIELDS[2])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS[2])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[2])} />
+                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])} />
                                             <Input
                                                 className={'InputQuantity'}
                                                 label={'Quantity'}
@@ -267,9 +273,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                     endAdornment: <span className={'EndAdornment'} onClick = { this.onClickMaxQuantity }>max</span>,
                                                 }}
                                                 inputType={InputType.INTEGER}
-                                                value={buildSkuInputStateHelper.values.get(FIELDS[3])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS[3])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[3])} />
+                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[3])}
+                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[3])}
+                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[3])} />
                                         </LayoutBlock>
                                         <Actions className={'StartRight'} >
                                             <Button onClick={this.onClickAddSku}>
@@ -341,13 +347,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     renderToSite() {
-        const shipmentModel = this.props.popupStore.shipmentModel;
         const shipmentInputStateHelper = this.props.popupStore.shipmentInputStateHelper;
-        const FIELDS = PopupShipmentStore.FIELDS_SHIPMENT;
-
-        shipmentInputStateHelper.updateValues([
-            shipmentModel.shipmentDestinationSiteId === S.Strings.NOT_EXISTS ? S.Strings.EMPTY : shipmentModel.shipmentDestinationSiteId,
-        ]);
+        const FIELDS_SHIPMENT = PopupShipmentStore.FIELDS_SHIPMENT;
 
         const siteStore = this.props.siteStore;
         const accountModel = this.props.accountSessionStore.accountModel;
@@ -360,9 +361,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return (
             <Select
                 label={'To'}
-                value={shipmentInputStateHelper.values.get(FIELDS[0])}
-                error={shipmentInputStateHelper.errors.get(FIELDS[0])}
-                onChange={shipmentInputStateHelper.onChanges.get(FIELDS[0])} >
+                value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[1])}
+                error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[1])}
+                onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[1])} >
                 { siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
                     if (ownSiteModel.siteId === siteModel.siteId) {
                         return null;
