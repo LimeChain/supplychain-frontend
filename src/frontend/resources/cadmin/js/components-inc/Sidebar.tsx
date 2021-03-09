@@ -30,12 +30,14 @@ export default class Sidebar extends React.Component < Props > {
                         <div className={'SidebarHeader'}>VAT Check</div>
                         <a
                             href={PagesCAdmin.DASHBOARD}
-                            className={`SidebarButton Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.DASHBOARD)}`}>
+                            className={`SidebarButton SidebarButtonMarginTop Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.DASHBOARD)}`}>
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgDashboard }} />
                             Dashboard
                         </a>
-                        <div>
+                        <div className = { 'SidebarButtonMarginTop' } >
                             <Expandable
+                                arrowOffset = { false }
+                                defaultExpanded = { this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK }
                                 accordionSummary={
                                     <div className={'FlexRow'}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }} />
@@ -56,38 +58,22 @@ export default class Sidebar extends React.Component < Props > {
                                     </Fragment>
                                 }
                                 accordionDetailsClasses={'SidebarSubmenu FlexColumn'} />
-
-                            {/* <Accordion defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK}>
-                                <AccordionSummary className={ } expandIcon={<ExpandMoreIcon />}>
-
-                                </AccordionSummary>
-                                <AccordionDetails className={'SidebarSubmenu FlexColumn'}>
-                                    <div className="FirstLinkSeparator LinkSeparator" />
-                                    <div className={`FlexRow SubmenuLink Transition ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS)}`}>
-                                        <a href={PagesCAdmin.PRODUCTS} >Product List</a>
-                                    </div>
-                                    <div className="LinkSeparator" />
-                                    <div className={`FlexRow SubmenuLink Transition ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK)}`}>
-                                        <a href={PagesCAdmin.PRODUCTS_IN_STOCK}>In Stock</a>
-                                    </div>
-                                </AccordionDetails>
-                            </Accordion> */}
                         </div>
                         <a
                             href={PagesCAdmin.DRAFTS}
-                            className={`SidebarButton Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.DRAFTS)}`}>
+                            className={`SidebarButton SidebarButtonMarginTop Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.DRAFTS)}`}>
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgDrafts }} />
                             Drafts
                         </a>
                         <a
                             href={PagesCAdmin.OUTGOING}
-                            className={`SidebarButton Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.OUTGOING)}`}>
+                            className={`SidebarButton SidebarButtonMarginTop Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.OUTGOING)}`}>
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} />
                             Outgoing
                         </a>
                         <a
                             href={PagesCAdmin.INCOMMING}
-                            className={`SidebarButton Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.INCOMMING)}`}>
+                            className={`SidebarButton SidebarButtonMarginTop Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.INCOMMING)}`}>
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} />
                             Incomming
                         </a>

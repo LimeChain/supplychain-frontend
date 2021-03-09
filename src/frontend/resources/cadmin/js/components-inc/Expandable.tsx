@@ -4,6 +4,7 @@ import { Accordion, AccordionDetails, AccordionProps, AccordionSummary } from '@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import '../../css/components-inc/expandable.css';
+import S from '../../../common/js/utilities/Main';
 
 interface Props extends AccordionProps {
     accordionSummary: any;
@@ -11,14 +12,17 @@ interface Props extends AccordionProps {
     accordionDetails: any;
     accordionDetailsClasses?: string;
     children?: React.ReactNode;
+    arrowOffset?: boolean;
 }
 
 export default class Expandable extends React.Component < Props > {
 
+    static defaultProps: any;
+
     render() {
         const { accordionSummary, accordionSummaryClasses, accordionDetails, accordionDetailsClasses, className, ...props } = this.props;
         return (
-            <Accordion {...props} className = { `Expandable ${className}` } >
+            <Accordion {...props} className = { `Expandable ${S.CSS.getClassName(this.props.arrowOffset, 'ExpandableArrowOffset')} ${className}` } >
                 <AccordionSummary className={accordionSummaryClasses} expandIcon={<ExpandMoreIcon />}>
                     {accordionSummary}
                 </AccordionSummary>
@@ -29,4 +33,10 @@ export default class Expandable extends React.Component < Props > {
         )
     }
 
+}
+
+Expandable.defaultProps = {
+    accordionSummaryClasses: S.Strings.EMPTY,
+    accordionDetailsClasses: S.Strings.EMPTY,
+    arrowOffset: true,
 }
