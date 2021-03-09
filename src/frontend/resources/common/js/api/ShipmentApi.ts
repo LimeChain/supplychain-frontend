@@ -370,7 +370,10 @@ export default class ShipmentApi extends AbsApi {
 
             const req = FetchProductsInStockReq();
 
-            const productDataMap = new Map<string, ProductData>();
+            const json = {
+                skujsons: [],
+                productJsons: [],
+            }
 
             const currentSiteId = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId).siteId;
 
@@ -383,8 +386,12 @@ export default class ShipmentApi extends AbsApi {
                     let skuQuantity = skuJson.quantity;
 
                     storageHelper.skuoriginsJson.filter((skuOriginJson: SkuOriginModel) => skuOriginJson.shipmentId === shipmentJson.shipmentId)
-                        .filter((skuOriginJson: SkuOriginModel) => {
-                            const skuInThisOrigin = storageHelper.skusJson.find((skuJson: SkuModel) => skuJson.skuId = )
+                        .forEach((skuOriginJson: SkuOriginModel) => {
+                            const skuInThisOrigin = storageHelper.skusJson.find((skuJsonTemp: SkuModel) => skuJsonTemp.skuId === skuOriginJson.skuId);
+
+                            if (skuJson.productId === skuInThisOrigin.productId) {
+                                skuQuantity -= skuInThisOrigin.quantity;
+                            }
                         })
 
                 })
