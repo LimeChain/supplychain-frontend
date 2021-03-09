@@ -20,9 +20,9 @@ export default class Expandable extends React.Component < Props > {
     static defaultProps: any;
 
     render() {
-        const { accordionSummary, accordionSummaryClasses, accordionDetails, accordionDetailsClasses, className, ...props } = this.props;
+        const { accordionSummary, accordionSummaryClasses, accordionDetails, accordionDetailsClasses, className, arrowOffset, ...props } = this.props;
         return (
-            <Accordion {...props} className = { `Expandable ${S.CSS.getClassName(this.props.arrowOffset, 'ExpandableArrowOffset')} ${className}` } >
+            <Accordion {...props} className = { `Expandable ${S.CSS.getClassName(arrowOffset, 'ExpandableArrowOffset')} ${className}` } >
                 <AccordionSummary className={accordionSummaryClasses} expandIcon={<ExpandMoreIcon />}>
                     {accordionSummary}
                 </AccordionSummary>
