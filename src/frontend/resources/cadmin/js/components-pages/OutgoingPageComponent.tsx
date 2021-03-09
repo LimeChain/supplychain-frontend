@@ -2,11 +2,9 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
-import ProductFilterConsts from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 
+import moment from 'moment';
 import S from '../../../common/js/utilities/Main';
-import ProductApi from '../../../common/js/api/ProductApi';
-import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 
@@ -58,8 +56,9 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         this.tableHelper = new TableHelper(
             ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID,
             [
-                [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 1],
-                [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 2],
+                [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 2],
+                [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 4],
+                [ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 6],
             ],
             this.fetchShipments,
         )
@@ -95,29 +94,13 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSortBy = (sortBy) => {
-        this.tableHelper.tableState.sortKey = sortBy;
+        this.tableHelper.tableState.sortKey = sortBy; Destination
 
         this.fetchShipments();
     }
 
     newShipmentPopup = () => {
         this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], []);
-    }
-
-    submitShipmentRowAction = (shipmentId) => {
-        const shipmentModelClone = this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).clone();
-
-        shipmentModelClone.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
-
-        this.shipmentApi.creditShipment(
-            shipmentModelClone,
-            [],
-            [],
-            [],
-            () => {
-                this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
-            },
-        )
     }
 
     renderContent() {
@@ -145,6 +128,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             options={[
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
+                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 'Date'),
                                             ]}
                                             onChangeSearchWord={this.onChangeSearchWord}
                                             onChangeSortBy={this.onChangeSortBy} />
@@ -184,7 +168,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     getTableLegend = () => {
-        return ['ID', 'Shipped From', 'Destination', 'Status', 'Action'];
+        return ['ID', 'Consignment ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
     }
 
     renderRows = () => {
@@ -199,23 +183,21 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
-                Table.cell(
-                    <div className="FlexRpw ShipmentOriginCells">
-                        {originCountryModel.countryName}
-                        <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>
-                    </div>,
-                ),
+                Table.cellString(shipmentModel.shipmentConsignmentNumber),
+                Table.cellString(originCountryModel.countryName),
+                Table.cell(<div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <div className={'ShipmentStatusCell'} >In Preparation</div>,
+                    <div className={'ShipmentStatusCell FlexColumn'} >In Preparation</div>,
                 ),
-                Table.cell(
-                    <Actions>
-                        <Button onClick={() => this.submitShipmentRowAction(shipmentModel.shipmentId)}>
-                            Submit
-                        </Button>
-                    </Actions>,
-                ),
+                Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
+                // Table.cell(
+                //     <Actions>
+                //         <Button onClick={() => this.submitShipmentRowAction(shipmentModel.shipmentId)}>
+                //             Submit
+                //         </Button>
+                //     </Actions>,
+                // ),
             ])
         })
 
@@ -227,12 +209,14 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
-            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_LEFT,
         ]
     }
 
     getTableWidths = () => {
-        return ['10%', '20%', '20%', '30%', '5%'];
+        return ['5%', '10%', '8%', '5%', '47%', '15%', '10%'];
     }
 }
