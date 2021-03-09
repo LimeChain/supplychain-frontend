@@ -15,7 +15,7 @@
     min-height: var(--default-height);
     box-sizing: border-box;
     color: var(--color-input-text);
-    padding: 8px 15px;
+    padding: 8px 15px !important;
     border-radius: 5px;
     background: var(--color-input-background);
     transition: background-color var(--transition-duration);

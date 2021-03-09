@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import S from '../../utilities/Main';
 
 export default class SkuModel {
+
     skuId: string;
     shipmentId: string;
     productId: string;
@@ -11,6 +12,7 @@ export default class SkuModel {
 
     constructor() {
         this.skuId = S.Strings.NOT_EXISTS;
+        this.shipmentId = S.Strings.NOT_EXISTS;
         this.productId = S.Strings.NOT_EXISTS;
         this.quantity = S.NOT_EXISTS;
         this.pricePerUnit = S.NOT_EXISTS;
@@ -24,6 +26,10 @@ export default class SkuModel {
         return this.skuId === S.Strings.NOT_EXISTS || (!Number.isNaN(skuIdParseInt) && skuIdParseInt < 0);
     }
 
+    isProductSelected(): boolean {
+        return this.productId !== S.Strings.NOT_EXISTS;
+    }
+
     getTotalPrice(): number {
         return this.pricePerUnit * this.quantity;
     }
@@ -31,6 +37,7 @@ export default class SkuModel {
     toJson(): any {
         return {
             'skuId': this.skuId,
+            'shipmentId': this.shipmentId,
             'productId': this.productId,
             'quantity': this.quantity,
             'pricePerUnit': this.pricePerUnit,
@@ -46,6 +53,7 @@ export default class SkuModel {
         const model = new SkuModel();
 
         model.skuId = (json.skuId ?? model.skuId).toString();
+        model.shipmentId = (json.shipmentId ?? model.shipmentId).toString();
         model.productId = (json.productId ?? model.productId).toString();
         model.quantity = json.quantity ?? model.quantity;
         model.pricePerUnit = json.pricePerUnit ?? model.pricePerUnit;

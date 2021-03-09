@@ -4,7 +4,7 @@ import { inject, observer } from 'mobx-react';
 import { MenuItem } from '@material-ui/core';
 
 import S from '../../../common/js/utilities/Main';
-import NumralHelper from '../../../common/js/helpers/NumeralHelper';
+import { formatNumber, formatPrice } from '../../../common/js/helpers/NumeralHelper';
 import AlertStore from '../../../common/js/stores/AlertStore';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import SiteStore from '../../../common/js/stores/SiteStore';
@@ -31,7 +31,9 @@ import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import AppStore from '../../../common/js/stores/AppStore';
 import CountryModel from '../../../common/js/models/CountryModel';
+import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import ProductStore from '../../../common/js/stores/ProductStore';
+import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -40,6 +42,7 @@ interface Props extends PopupWindowProps {
     accountSessionStore: AccountSessionStore;
     popupStore: PopupShipmentStore;
     productStore: ProductStore;
+    shipmentStore: ShipmentStore;
 }
 
 interface State {
@@ -75,6 +78,14 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return false;
     }
 
+    isManufacturePlaceLocal() {
+        return this.state.manufacturedPlace === S.INT_TRUE;
+    }
+
+    isManufactureFromShipment() {
+        return this.state.manufacturedPlace === S.INT_FALSE;
+    }
+
     onClickTabProducts = () => {
         this.props.popupStore.setTabProducts();
     }
@@ -95,9 +106,16 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         this.props.popupStore.shipmentModel.shipmentConsignmentNumber = value;
     }
 
+    onClickMaxQuantity = () => {
+        const popupStore = this.props.popupStore;
+        const shipmentStore = this.props.shipmentStore;
+        const buildSkuOriginModel = popupStore.buildSkuOriginModel;
+        popupStore.buildSkuModel.quantity = shipmentStore.getSourceMaxAvailableQuantity(buildSkuOriginModel.shipmentId);
+    }
+
     onClickAddSku = () => {
         const popupStore = this.props.popupStore;
-        const FIELDS = this.state.manufacturedPlace === S.INT_TRUE ? PopupShipmentStore.FIELDS_LOCALLY_PRODUCED : PopupShipmentStore.FIELDS_FROM_SHIPMENT;
+        const FIELDS = this.isManufacturePlaceLocal() === true ? PopupShipmentStore.FIELDS_LOCALLY_PRODUCED : PopupShipmentStore.FIELDS_FROM_SHIPMENT;
         if (popupStore.buildSkuInputStateHelper.getValues(FIELDS) === null) {
             return;
         }
@@ -147,22 +165,31 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         )
     }
 
+    getTotalPrice() {
+        return this.props.popupStore.skuModels.reduce((acc, skuModel) => {
+            return acc + skuModel.getTotalPrice();
+        }, 0);
+    }
+
     renderContent() {
         const popupStore = this.props.popupStore;
+        const productStore = this.props.productStore;
+        const shipmentStore = this.props.shipmentStore;
+
         const shipmentModel = popupStore.shipmentModel;
         const buildSkuModel = popupStore.buildSkuModel;
         const buildSkuOriginModel = popupStore.buildSkuOriginModel;
+
         const buildSkuInputStateHelper = this.props.popupStore.buildSkuInputStateHelper;
         const FIELDS = PopupShipmentStore.FIELDS_FROM_SHIPMENT;
 
         buildSkuInputStateHelper.updateValues([
-            buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : buildSkuModel.productId,
-            buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? null : buildSkuOriginModel.shipmentId,
+            buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuModel.productId, productStore.getProductName(buildSkuModel.productId)),
+            buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuOriginModel.shipmentId, shipmentStore.getShipmentConsignmentNumber(buildSkuOriginModel.shipmentId)),
             buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
             buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
         ]);
 
-        console.log('value', buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : buildSkuModel.productId);
         return (
             <div className={'PopupWindowContent LargeContent'} >
                 <div className={'PopupHeader FlexRow'} >
@@ -193,32 +220,34 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                 <>
                                     <div className={'ProductManufactureQuestion'} >Is the product locally manufactured?</div>
                                     <div className={'FlexRow'} >
-                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_TRUE)}`} onClick={this.onClickLocallyManufactured} > Yes </div>
-                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.state.manufacturedPlace === S.INT_FALSE)}`} onClick={this.onClickFromShipment} > No </div>
+                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufacturePlaceLocal())}`} onClick={this.onClickLocallyManufactured} > Yes </div>
+                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufactureFromShipment())}`} onClick={this.onClickFromShipment} > No </div>
                                     </div>
                                     <div className={'AddProductCnt FlexSplit'} >
                                         <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
                                             <SelectSearchable
                                                 className={'SelectProduct'}
                                                 label={'Product'}
+                                                placeholder = { 'Select a product' }
                                                 value={buildSkuInputStateHelper.values.get(FIELDS[0])}
                                                 error={buildSkuInputStateHelper.errors.get(FIELDS[0])}
                                                 onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[0])}
                                                 options={
-                                                    this.props.productStore.listProductModels.map((productModel, i: number) => {
+                                                    this.props.productStore.listProductModels.map((productModel) => {
                                                         return SelectSearchable.option(productModel.productId, productModel.productName);
                                                     })
                                                 } />
-                                            {this.state.manufacturedPlace === S.INT_FALSE && (
+                                            {this.isManufactureFromShipment() === true && (
                                                 <SelectSearchable
                                                     className={'SelectFromShipment'}
                                                     label={'From Shipment'}
+                                                    placeholder={buildSkuModel.isProductSelected() === false ? 'Select a product first' : 'Select a shipment'}
                                                     value={buildSkuInputStateHelper.values.get(FIELDS[1])}
                                                     error={buildSkuInputStateHelper.errors.get(FIELDS[1])}
                                                     onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[1])}
-                                                    options={[
-                                                        SelectSearchable.option('1', '#34 Shipment'),
-                                                    ]} />
+                                                    options={this.props.shipmentStore.sourceShipmentModels.map((sModel) => {
+                                                        return SelectSearchable.option(sModel.shipmentId, sModel.shipmentConsignmentNumber);
+                                                    })} />
                                             )}
                                             <Input
                                                 className={'InputSku'}
@@ -235,8 +264,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                 className={'InputQuantity'}
                                                 label={'Quantity'}
                                                 placeholder={'0'}
-                                                InputProps={{
-                                                    endAdornment: <span className={'EndAdornment'}>max</span>,
+                                                InputProps={ this.isManufacturePlaceLocal() === true || buildSkuOriginModel.hasShipment() === false ? undefined : {
+                                                    endAdornment: <span className={'EndAdornment'} onClick = { this.onClickMaxQuantity }>max</span>,
                                                 }}
                                                 inputType={InputType.INTEGER}
                                                 value={buildSkuInputStateHelper.values.get(FIELDS[3])}
@@ -275,7 +304,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                             Items: <span>{popupStore.skuModels.length}</span>
                         </div>
                         <div className={'ItemCnt'} >
-                            Price: <span>{NumralHelper(1431).format()}</span>
+                            Price: <span>{formatPrice(this.getTotalPrice())}</span>
                         </div>
                     </div>
                     <div className={'FooterRight StartRight'} >
@@ -307,7 +336,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     renderFromSite() {
-
         const { countryModel, siteModel } = this.getFromSite();
 
         return (
@@ -362,15 +390,15 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const productStore = this.props.productStore;
         const result = popupStore.skuModels.map((skuModel: SkuModel, i: number) => {
             const productModel = productStore.getProduct(skuModel.productId);
-            console.log(productModel, skuModel.productId);
+            const skuOriginModel = popupStore.getSkuOriginModel(skuModel.skuId);
             return [
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
-                Table.cellString('Product name'),
-                Table.cellString('from shipment'),
+                Table.cellString(productModel.productName),
+                Table.cellString(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : `#${skuOriginModel.shipmentId}`),
                 Table.cellString(skuModel.quantity.toString()),
-                Table.cellString('Measurement'),
+                Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cellString(skuModel.pricePerUnit.toString()),
-                Table.cellString(NumralHelper(skuModel.getTotalPrice()).format()),
+                Table.cellString(formatPrice(skuModel.getTotalPrice())),
                 Table.cell((
                     <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />
                 )),
@@ -390,5 +418,6 @@ export default inject((stores) => {
         accountSessionStore: stores.accountSessionStore,
         popupStore: stores.popupShipmentStore,
         productStore: stores.productStore,
+        shipmentStore: stores.shipmentStore,
     }
 })(observer(ShipmentPopup));

@@ -24,6 +24,14 @@ numeral.register('locale', 'en-us', {
 });
 
 numeral.locale('en-us');
-numeral.defaultFormat('$0,0');
+// numeral.defaultFormat('$0,0');
 
 export default numeral;
+
+export const formatNumber = (value): string => {
+    return numeral(value).format('0,0');
+}
+
+export const formatPrice = (value): string => {
+    return numeral(value).format('$0,0');
+}

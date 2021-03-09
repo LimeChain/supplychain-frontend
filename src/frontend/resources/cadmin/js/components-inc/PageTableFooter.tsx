@@ -1,6 +1,6 @@
 import React from 'react';
 import S from '../../../common/js/utilities/Main';
-import numeral from '../../../common/js/helpers/NumeralHelper';
+import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
 
 import '../../css/components-inc/page-table-footer.css';
 
@@ -21,7 +21,7 @@ export default class PageTableFooter extends React.Component<Props> {
                     <div className={'Item'}>Items: <span>{this.props.totalItems}</span></div>
                     {this.props.totalPrice !== S.NOT_EXISTS && (
                         <div className={'Item'}>
-                            Total Price: <span>{numeral(this.props.totalPrice).format()}</span>
+                            Total Price: <span>{formatPrice(this.props.totalPrice)}</span>
                         </div>
                     )}
                 </div>

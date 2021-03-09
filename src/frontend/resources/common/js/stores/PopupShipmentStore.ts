@@ -7,6 +7,7 @@ import S from '../utilities/Main';
 import PopupStore from './PopupStore';
 import InputStateHelper from '../helpers/InputStateHelper';
 import ProductStore from './ProductStore';
+import ShipmentStore from './ShipmentStore';
 
 export default class PopupShipmentStore extends PopupStore {
 
@@ -31,8 +32,9 @@ export default class PopupShipmentStore extends PopupStore {
     genSkuId: 0;
 
     productStore: ProductStore;
+    shipmentStore: ShipmentStore;
 
-    constructor(productStore: ProductStore) {
+    constructor(productStore: ProductStore, shipmentStore: ShipmentStore) {
         super();
 
         this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
@@ -47,10 +49,15 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
             switch (key) {
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[0]:
-                    this.buildSkuModel.productId = value === null ? S.Strings.NOT_EXISTS : value;
+                    this.buildSkuModel.productId = value === null ? S.Strings.NOT_EXISTS : value.value;
+                    if (this.buildSkuModel.productId === S.Strings.NOT_EXISTS) {
+                        this.buildSkuOriginModel.shipmentId = S.Strings.NOT_EXISTS;
+                    }
+                    this.shipmentStore.fetchSourceShipmentsByProductId(this.buildSkuModel.productId, () => {
+                    });
                     break;
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[1]:
-                    this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value;
+                    this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     break;
                 case PopupShipmentStore.FIELDS_FROM_SHIPMENT[2]:
                     this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
@@ -64,6 +71,7 @@ export default class PopupShipmentStore extends PopupStore {
         });
 
         this.productStore = productStore;
+        this.shipmentStore = shipmentStore;
 
         makeObservable(this);
     }
@@ -109,6 +117,10 @@ export default class PopupShipmentStore extends PopupStore {
 
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
+    }
+
+    getSkuOriginModel(skuId: string): SkuOriginModel | null {
+        return this.skuOriginModels.find((t) => t.skuId === skuId) ?? null;
     }
 
     deleteSkuByIndex(i: number) {

@@ -45,6 +45,10 @@ export default class ProductStore {
         return this.productsMap.get(productId) ?? null;
     }
 
+    getProductName(productId: string): string {
+        return this.getProduct(productId)?.productName ?? S.Strings.EMPTY;
+    }
+
     fetchProductsList(callback: () => void) {
         this.productApi.fetchProductsByFilter(S.NOT_EXISTS, 0, 100000, (productModels: ProductModel[], totalSize: number) => {
             this.onListData(productModels);

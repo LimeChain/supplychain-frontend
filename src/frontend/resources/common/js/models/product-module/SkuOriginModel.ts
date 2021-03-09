@@ -29,6 +29,10 @@ export default class SkuOriginModel {
         this.shipmentId = S.Strings.NOT_EXISTS;
     }
 
+    hasShipment(): boolean {
+        return this.shipmentId !== S.Strings.NOT_EXISTS;
+    }
+
     toJson(): any {
         return {
             'skuOriginId': this.skuOriginId,

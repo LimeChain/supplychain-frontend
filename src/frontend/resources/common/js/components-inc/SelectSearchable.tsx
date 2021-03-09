@@ -51,7 +51,7 @@ export default class SelectSearchable extends React.Component < Props > {
     }
 
     render() {
-        const { error, label, onChange, readOnly, className, ...props } = this.props;
+        const { error, label, onChange, readOnly, className, placeholder, ...props } = this.props;
         return (
             <div className = { `SelectSearchable ${className}` }>
                 <FormControl variant = { 'standard' } >
@@ -68,6 +68,7 @@ export default class SelectSearchable extends React.Component < Props > {
                                 { ...params }
                                 label = { label }
                                 error = { error }
+                                placeholder = { placeholder }
                                 fullWidth />
                         )} />
                 </FormControl>
