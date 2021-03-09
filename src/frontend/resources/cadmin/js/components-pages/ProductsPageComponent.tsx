@@ -108,7 +108,11 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     onClickAddProduct = () => {
-        this.props.popupProductStore.signalShow(new ProductModel());
+        this.props.popupProductStore.signalShow(new ProductModel(), () => {
+            const tableState = this.tableHelper.tableState;
+            tableState.pageZero();
+            this.fetchProducts();
+        });
     }
 
     renderContent() {
