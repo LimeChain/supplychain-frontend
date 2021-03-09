@@ -1,19 +1,20 @@
 import React, { RefObject } from 'react';
-import moment from 'moment';
-
-import './../../css/components-inc/product-row-menu.css';
-import Popover from '../../../common/js/components-inc/Popover';
-import S from '../../../common/js/utilities/Main';
 import { inject, observer } from 'mobx-react';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import SvgProductEdit from '../../../common/svg/product-edit.svg';
-import SvgProductDelete from '../../../common/svg/product-delete.svg';
+
+import S from '../../../common/js/utilities/Main';
 import AppStore from '../../../common/js/stores/AppStore';
 import AlertStore from '../../../common/js/stores/AlertStore';
 import ProductApi from '../../../common/js/api/ProductApi';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
 import ProductStore from '../../../common/js/stores/ProductStore';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
+
+import Popover from '../../../common/js/components-inc/Popover';
+
+import SvgProductEdit from '../../../common/svg/product-edit.svg';
+import SvgProductDelete from '../../../common/svg/product-delete.svg';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import './../../css/components-inc/product-row-menu.css';
 
 interface Props {
     show: number
@@ -28,11 +29,12 @@ interface State {
     show: boolean
 }
 
-class ProductRowMenu extends React.Component<Props, State> {
+class ProductRowMenu extends React.Component < Props, State > {
+
     productApi: ProductApi;
 
     nodes: {
-        root: RefObject<HTMLDivElement>,
+        root: RefObject < HTMLDivElement >,
     };
 
     constructor(props) {
@@ -49,43 +51,52 @@ class ProductRowMenu extends React.Component<Props, State> {
         this.productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
     }
 
-    editProduct = () => {
+    onClickEditProduct = () => {
         this.props.popupProductStore.signalShow(this.props.productStore.screenProductModels.find((productModel: ProductModel) => productModel.productId === this.props.productId).clone())
+        this.toggleOpenState();
     }
 
-    deleteProduct = () => {
-        // TODO: delete product
+    onClickDeleteProduct = () => {
+        this.props.alertStore.show('You are about to delete a product', () => {
+
+        }, () => {});
+        this.toggleOpenState();
+    }
+
+    toggleOpenState = () => {
+        this.setState({
+            show: !this.state.show,
+        })
     }
 
     render() {
         return (
             <div className={'ProductRowMenu'} ref={this.nodes.root}>
-                <MoreHorizIcon onClick={() => { this.setState({ show: true }) }} />
+
+                <MoreHorizIcon onClick={this.toggleOpenState} />
+
                 <Popover classes={{ root: 'ProductRowMenuPopover' }}
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                     transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    onClose={() => {
-                        this.setState({
-                            show: !this.state.show,
-                        })
-                    }}
+                    onClose={this.toggleOpenState}
                     open={this.state.show}
                     anchorEl={this.nodes.root.current}>
-                    <div className={'MenuBox FlexColumn'}>
-                        <div className={'MenuItem FlexRow'} onClick={this.editProduct}>
+                    <div className = { 'MenuBox' }>
+                        <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickEditProduct}>
                             <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductEdit }}></div>
                             Edit
                         </div>
-                        <div className={'MenuItem FlexRow'} onClick={this.deleteProduct}>
+                        <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickDeleteProduct}>
                             <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductDelete }}></div>
                             Delete
                         </div>
                     </div>
                 </Popover>
+
             </div>
         );
     }
 
 }
 
-export default inject('productStore', 'popupProductStore', 'appStore', 'alertStore', 'notificationStore')(observer(ProductRowMenu));
+export default inject('productStore', 'popupProductStore', 'appStore', 'alertStore')(observer(ProductRowMenu));

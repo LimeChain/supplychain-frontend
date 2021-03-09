@@ -1,12 +1,14 @@
 import React from 'react';
 
-import MuiPopover from '@material-ui/core/Popover';
+import MuiPopover, { PopoverProps } from '@material-ui/core/Popover';
 
 import S from '../utilities/Main';
 
 import '../../css/components-inc/popover.css';
 
-export default class Popover extends React.Component {
+export default class Popover extends React.Component < PopoverProps > {
+
+    static defaultProps: any;
 
     /* this is not binded */
     onEnter() {

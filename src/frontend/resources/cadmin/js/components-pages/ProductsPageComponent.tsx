@@ -151,22 +151,13 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                                 aligns={this.getTableAligns()}
                                 helper={this.tableHelper}
                                 rows={this.renderRows()}
-                                showPaging={true}
-                            >
+                                showPaging={true} >
                             </TableDesktop>
                         </PageTable>
                     )}
                 </PageView>
 
-            </div >
-            // <>
-            //     <Header page={PagesCAdmin.PRODUCTS} />
-            //     <div className={' PageContent FlexColumn'}>
-            //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
-            //         <div onClick={this.props.popupProductStore.show}>show popup</div>
-            //         <div onClick={this.fetchProducts}>fetch products</div>
-            //     </div>
-            // </>
+            </div>
         )
     }
 
@@ -176,10 +167,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
     renderEditProductPopup = (rowId) => {
         this.props.popupProductStore.signalShow(this.props.productStore.screenProductModels[rowId]);
-    }
-
-    getTableLegend = () => {
-        return ['ID', 'Product Name', 'Description', 'Measurement', 'Action'];
     }
 
     renderRows = () => {
@@ -200,6 +187,10 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         return result;
     }
 
+    getTableLegend() {
+        return ['ID', 'Product Name', 'Description', 'Measurement', ''];
+    }
+
     getTableAligns = () => {
         return [
             TableDesktop.ALIGN_LEFT,
@@ -211,6 +202,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     getTableWidths = () => {
-        return [];
+        return ['5%', '33%', '43%', '14%', '5%'];
     }
 }

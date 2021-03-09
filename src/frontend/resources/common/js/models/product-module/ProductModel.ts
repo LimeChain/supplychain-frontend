@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx';
 import ProductModelH from '../../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
 import S from '../../utilities/Main';
 
@@ -14,6 +15,8 @@ export default class ProductModel {
         this.productUnit = S.NOT_EXISTS;
         this.productDescription = S.Strings.EMPTY;
         this.productDeleted = S.INT_FALSE;
+
+        makeAutoObservable(this);
     }
 
     isNew(): boolean {

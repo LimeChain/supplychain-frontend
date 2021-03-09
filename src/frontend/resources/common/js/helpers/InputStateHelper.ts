@@ -76,8 +76,11 @@ export default class InputStateHelper {
 
     isValid() {
         let valid = true;
+        this.values.forEach((value, key) => {
+            valid = valid && InputStateHelper.isValidValue(value) === true;
+        });
         this.errors.forEach((value, key) => {
-            valid = valid && !value;
+            valid = valid && value === false;
         });
         return valid;
     }

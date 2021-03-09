@@ -8,7 +8,7 @@ export default class PopupProductStore extends PopupStore {
 
     static FIELDS_PRODUCT = ['name', 'unit', 'description'];
 
-    productModel: ProductModel
+    @observable productModel: ProductModel
     inputStateHelperProduct: InputStateHelper
 
     constructor() {
@@ -17,13 +17,13 @@ export default class PopupProductStore extends PopupStore {
         this.inputStateHelperProduct = new InputStateHelper(PopupProductStore.FIELDS_PRODUCT, (key, value) => {
             switch (key) {
                 case PopupProductStore.FIELDS_PRODUCT[0]:
-                    this.productModel.productName = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
+                    this.productModel.productName = value;
                     break;
                 case PopupProductStore.FIELDS_PRODUCT[1]:
-                    this.productModel.productUnit = value === S.NOT_EXISTS ? S.NOT_EXISTS : value;
+                    this.productModel.productUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : value;
                     break;
                 case PopupProductStore.FIELDS_PRODUCT[2]:
-                    this.productModel.productDescription = value === S.Strings.EMPTY ? S.Strings.EMPTY : value;
+                    this.productModel.productDescription = value;
                     break;
                 default:
                     break;

@@ -35,6 +35,11 @@
     pointer-events: none;
 }
 
+.Select .Placeholder {
+    font-size: 12px; font-weight: 600;
+    color: #acb3bd;
+}
+
 /* Input background on focus */
 .Select .MuiInputBase-root.Mui-focused {
     background: var(--color-input-background-focused);

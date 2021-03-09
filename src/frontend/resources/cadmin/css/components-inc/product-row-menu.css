@@ -1,0 +1,17 @@
+.ProductRowMenuPopover .MuiPopover-paper {
+    padding: 12px;
+}
+
+.ProductRowMenuPopover .MuiPopover-paper .MenuBox {
+    font-size: 12px; font-weight: 600;
+}
+
+.ProductRowMenuPopover .MuiPopover-paper .MenuBox .MenuItem:not(:first-child) {
+    margin-top: 8px;
+}
+
+.ProductRowMenuPopover .MuiPopover-paper .Icon {
+    width: 14px; height: 16px;
+    fill: currentColor;
+    margin-right: 8px;
+}
