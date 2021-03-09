@@ -14,9 +14,9 @@ export default class PopupShipmentStore extends PopupStore {
     static POPUP_TAB_PRODUCTS: number = 1;
     static POPUP_TAB_DOCUMENTS: number = 2;
 
-    static FIELDS_SHIPMENT = ['toSite'];
-    static FIELDS_LOCALLY_PRODUCED = ['name', 'price', 'quantity'];
-    static FIELDS_FROM_SHIPMENT = ['name', 'fromShipment', 'price', 'quantity'];
+    static FIELDS_SHIPMENT = ['consignmentNumber', 'toSite'];
+    static FIELDS_ADD_SKU_LOCALLY_PRODUCED_SUBSET = ['name', 'price', 'quantity'];
+    static FIELDS_ADD_SKU = ['name', 'fromShipment', 'price', 'quantity'];
 
     @observable popupActiveTab: number = PopupShipmentStore.POPUP_TAB_PRODUCTS;
     @observable productTableHelper: TableHelper;
@@ -40,15 +40,18 @@ export default class PopupShipmentStore extends PopupStore {
         this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
             switch (key) {
                 case PopupShipmentStore.FIELDS_SHIPMENT[0]:
+                    this.shipmentModel.shipmentConsignmentNumber = value;
+                    break;
+                case PopupShipmentStore.FIELDS_SHIPMENT[1]:
                     this.shipmentModel.shipmentDestinationSiteId = value === S.Strings.EMPTY ? S.Strings.NOT_EXISTS : value;
                     break;
                 default:
                     break;
             }
         });
-        this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_FROM_SHIPMENT, (key, value) => {
+        this.buildSkuInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_ADD_SKU, (key, value) => {
             switch (key) {
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[0]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[0]:
                     this.buildSkuModel.productId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     if (this.buildSkuModel.productId === S.Strings.NOT_EXISTS) {
                         this.buildSkuOriginModel.shipmentId = S.Strings.NOT_EXISTS;
@@ -56,13 +59,13 @@ export default class PopupShipmentStore extends PopupStore {
                     this.shipmentStore.fetchSourceShipmentsByProductId(this.buildSkuModel.productId, () => {
                     });
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[1]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[1]:
                     this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[2]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[2]:
                     this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
                     break;
-                case PopupShipmentStore.FIELDS_FROM_SHIPMENT[3]:
+                case PopupShipmentStore.FIELDS_ADD_SKU[3]:
                     this.buildSkuModel.quantity = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
                     break;
                 default:
