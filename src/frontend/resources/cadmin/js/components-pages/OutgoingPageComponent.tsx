@@ -27,6 +27,7 @@ import SvgAdd from '@material-ui/icons/Add';
 import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import './../../css/components-pages/page-outgoing-component.css';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -113,7 +114,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
                 <PageView pageTitle={'Outgoing Shipments'} >
                     {this.props.shipmentStore.screenShipmentModels === null && (
-                        <LoadingIndicator margin = { 'auto' } />
+                        <LoadingIndicator margin={'auto'} />
                     )}
                     {this.props.shipmentStore.screenShipmentModels !== null && (
                         <>
@@ -140,7 +141,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             totalItems={this.tableHelper.tableState.total}
                                             actions={(
                                                 <Actions>
-                                                    <Button onClick = {this.onClickCreateNewShipment}>
+                                                    <Button onClick={this.onClickCreateNewShipment}>
                                                         <div className={'FlexRow'}>
                                                             <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                             Create Shipment
@@ -176,6 +177,20 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
             const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
             const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
 
+            let statusString = '';
+
+            switch (shipmentModel.shipmentStatus) {
+                case ShipmentConstsH.S_STATUS_IN_TRANSIT:
+                    statusString = 'In Transtit';
+                    break;
+                case ShipmentConstsH.S_STATUS_RECEIVED:
+                    statusString = 'Received';
+                    break;
+                default:
+                    statusString = 'Unknown';
+                    break;
+            }
+
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
                 Table.cellString(shipmentModel.shipmentConsignmentNumber),
@@ -183,7 +198,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <Button color = { Button.COLOR_SCHEME_4 } >In Preparation</Button>,
+                    <Button color={Button.COLOR_SCHEME_4} >{statusString}</Button>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
             ])

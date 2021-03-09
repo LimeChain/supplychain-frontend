@@ -71,21 +71,29 @@ export default class ShipmentApi extends AbsApi {
 
             if (shipmentModel.isNew() === true) {
                 let nextId;
+                console.log('new');
 
                 if (storageHelper.shipmentsJson.length > 0) {
                     const lastShipmentJson = storageHelper.shipmentsJson[storageHelper.shipmentsJson.length - 1];
                     nextId = (parseInt(lastShipmentJson.shipmentId) + 1).toString();
+
                 } else {
                     nextId = '1';
                 }
 
                 json.shipmentJson.shipmentId = nextId;
+
+                const currentSite = CookieHelper.fetchAccounts().accountModel.siteId;
+                console.log(CookieHelper.fetchAccounts().accountModel);
+
+                json.shipmentJson.shipmentOriginSiteId = currentSite;
             } else {
                 const shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === shipmentModel.shipmentId);
                 json.shipmentJson.shipmentId = shipmentJson.shipmentId;
             }
 
             shipmentModel.shipmentId = json.shipmentJson.shipmentId;
+            shipmentModel.shipmentOriginSiteId = json.shipmentJson.shipmentOriginSiteId
             json.shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === json.shipmentJson.shipmentId);
 
             if (json.shipmentJson !== undefined) {
@@ -284,9 +292,9 @@ export default class ShipmentApi extends AbsApi {
             if (page === PagesCAdmin.DRAFTS) {
                 json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT)
             } else if (page === PagesCAdmin.INCOMMING) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId)
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConstsH.S_STATUS_DRAFT)
             } else if (page === PagesCAdmin.OUTGOING) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId)
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConstsH.S_STATUS_DRAFT)
             }
             json.totalSize = json.shipmentJsons.length;
 
@@ -296,17 +304,25 @@ export default class ShipmentApi extends AbsApi {
                 const originSiteA = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === a.shipmentOriginSiteId);
                 const originSiteB = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === b.shipmentOriginSiteId);
 
+                console.log(a);
+                console.log(b);
+
                 const originCountryNameA = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSiteA.countryId).countryName;
                 const originCountryNameB = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === originSiteB.countryId).countryName;
 
                 const destinationSiteA = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === a.shipmentDestinationSiteId);
                 const destinationSiteB = storageHelper.sitesJson.find((siteJson) => siteJson.siteId === b.shipmentDestinationSiteId);
 
-                const destinationCountryNameA = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteA.countryId).countryName;
-                const destinationCountryNameB = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteB.countryId).countryName;
+                let destinationCompareStringA = '';
+                let destinationCompareStringB = '';
 
-                const destinationCompareStringA = `${destinationSiteA.siteName}, ${destinationCountryNameA}`
-                const destinationCompareStringB = `${destinationSiteB.siteName}, ${destinationCountryNameB}`
+                if (destinationSiteA !== undefined && destinationSiteB !== undefined) {
+                    const destinationCountryNameA = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteA.countryId).countryName;
+                    const destinationCountryNameB = storageHelper.countriesJson.find((countryJson) => countryJson.countryId === destinationSiteB.countryId).countryName;
+
+                    destinationCompareStringA = `${destinationSiteA.siteName}, ${destinationCountryNameA}`
+                    destinationCompareStringB = `${destinationSiteB.siteName}, ${destinationCountryNameB}`
+                }
 
                 switch (Math.abs(sortBy)) {
                     case ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID:
@@ -382,9 +398,7 @@ export default class ShipmentApi extends AbsApi {
             }
 
             const currentSiteId = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId).siteId;
-            console.log(currentSiteId);
             const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED);
-            console.log(shipmentsDeliveredHere);
 
             shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
                 const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);

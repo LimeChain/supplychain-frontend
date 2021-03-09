@@ -37,7 +37,7 @@ interface State {
     sortBy: number;
 }
 
-export default class DraftsPageComponent extends ContextPageComponent < Props, State > {
+export default class DraftsPageComponent extends ContextPageComponent<Props, State> {
 
     tableHelper: TableHelper;
     searchWord: string = S.Strings.EMPTY;
@@ -115,7 +115,7 @@ export default class DraftsPageComponent extends ContextPageComponent < Props, S
 
                 <PageView pageTitle={'Drafts'} >
                     {this.props.shipmentStore.screenShipmentModels === null && (
-                        <LoadingIndicator margin = { 'auto' } />
+                        <LoadingIndicator margin={'auto'} />
                     )}
                     {this.props.shipmentStore.screenShipmentModels !== null && (
                         <>
@@ -142,7 +142,7 @@ export default class DraftsPageComponent extends ContextPageComponent < Props, S
                                             totalItems={this.tableHelper.tableState.total}
                                             actions={(
                                                 <Actions>
-                                                    <Button onClick = { this.onClickCreateNewShipment }>
+                                                    <Button onClick={this.onClickCreateNewShipment}>
                                                         <div className={'FlexRow'}>
                                                             <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                             Create Shipment
@@ -176,15 +176,23 @@ export default class DraftsPageComponent extends ContextPageComponent < Props, S
             const originCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === originSiteModel.countryId);
 
             const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
-            const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
+
+            let destinationString = '';
+
+            if (destinationSiteModel !== undefined) {
+                const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
+                destinationString = `${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`
+            } else {
+                destinationString = 'N/A';
+            }
 
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
                 Table.cellString(originCountryModel.countryName),
                 Table.cell(<div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
-                Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
+                Table.cellString(destinationString),
                 Table.cell(
-                    <div className={'ShipmentStatusCell FlexColumn'} >In Transit</div>,
+                    <div className={'ShipmentStatusCell FlexColumn'} >In Preparation</div>,
                 ),
                 Table.cell(
                     <Actions>
@@ -216,12 +224,11 @@ export default class DraftsPageComponent extends ContextPageComponent < Props, S
     }
 
     getTableLegend = () => {
-        return ['ID', 'Consignment ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
+        return ['ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
     }
 
     getTableAligns = () => {
         return [
-            TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
@@ -232,6 +239,6 @@ export default class DraftsPageComponent extends ContextPageComponent < Props, S
     }
 
     getTableWidths = () => {
-        return ['5%', '30%', '15%', '10%', '15%', '15%', '10%'];
+        return ['5%', '45%', '10%', '15%', '15%', '10%'];
     }
 }

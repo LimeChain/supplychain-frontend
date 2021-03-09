@@ -11,7 +11,7 @@ import '../../css/components-inc/table.css';
 interface Props extends TableDesktopProps, TableMobileProps {
 }
 
-export default class Table extends React.Component < Props > {
+export default class Table extends React.Component<Props> {
 
     static cell(content: any, sortValue: any = null) {
         if (sortValue === null) {
@@ -23,7 +23,7 @@ export default class Table extends React.Component < Props > {
 
     static cellString(content: string, className = S.Strings.EMPTY) {
         const cellNode = (
-            <span className = { `Dots ${className}` } title = { content } > { content } </span>
+            <span className={`Dots ${className}`} title={content} > { content} </span>
         );
 
         return Table.cell(cellNode, content);
@@ -33,26 +33,26 @@ export default class Table extends React.Component < Props > {
         return (
             <>
                 <TableDesktop
-                    className = { this.props.className }
-                    widths = { this.props.widths }
-                    legend = { this.props.legend }
-                    aligns = { this.props.aligns }
-                    helper = { this.props.helper }
-                    onClickRow = { this.props.onClickRow }
-                    rows = { this.props.rows }
-                    showPaging = { this.props.showPaging }
-                    emptyLabel = { this.props.emptyLabel } />
+                    className={this.props.className}
+                    widths={this.props.widths}
+                    legend={this.props.legend}
+                    aligns={this.props.aligns}
+                    helper={this.props.helper}
+                    onClickRow={this.props.onClickRow}
+                    rows={this.props.rows}
+                    showPaging={this.props.showPaging}
+                    emptyLabel={this.props.emptyLabel} />
                 <TableMobile
-                    className = { this.props.className }
-                    legend = { this.props.legend }
-                    helper = { this.props.helper }
-                    onClickRow = { this.props.onClickRow }
-                    rows = { this.props.rows }
-                    firstRowActionIndex = { this.props.firstRowActionIndex }
-                    lastRowActionIndex = { this.props.lastRowActionIndex }
-                    itemsSize = { this.props.itemsSize }
-                    showPaging = { this.props.showPaging }
-                    emptyLabel = { this.props.emptyLabel } />
+                    className={this.props.className}
+                    legend={this.props.legend}
+                    helper={this.props.helper}
+                    onClickRow={this.props.onClickRow}
+                    rows={this.props.rows}
+                    firstRowActionIndex={this.props.firstRowActionIndex}
+                    lastRowActionIndex={this.props.lastRowActionIndex}
+                    itemsSize={this.props.itemsSize}
+                    showPaging={this.props.showPaging}
+                    emptyLabel={this.props.emptyLabel} />
             </>
         )
     }
@@ -66,12 +66,12 @@ interface TableBoolProps {
     value: S.INT_TRUE | S.INT_FALSE;
 }
 
-export class TableBool extends React.Component < TableBoolProps > {
+export class TableBool extends React.Component<TableBoolProps> {
 
     render() {
         return (
-            <div className = { `TableBool ${this.props.className} ${S.CSS.getActiveClassName(this.props.value === S.INT_TRUE)}` } >
-                { this.props.value === S.INT_TRUE ? this.props.positiveLabel : this.props.negativeLabel }
+            <div className={`TableBool ${this.props.className} ${S.CSS.getActiveClassName(this.props.value === S.INT_TRUE)}`} >
+                { this.props.value === S.INT_TRUE ? this.props.positiveLabel : this.props.negativeLabel}
             </div>
         )
     }

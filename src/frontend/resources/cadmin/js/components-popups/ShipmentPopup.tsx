@@ -133,10 +133,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             return;
         }
 
-        this.props.popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
-        this.props.popupStore.shipmentModel.shipmentDateOfShipment = Date.now();
+        popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+        popupStore.shipmentModel.shipmentDateOfShipment = Date.now();
         this.creditShipment();
-        this.props.popupStore.hide();
+        popupStore.hide();
     }
 
     onClickSaveAsDraft = () => {
@@ -147,7 +147,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     creditShipment = () => {
         const accountModel = this.props.accountSessionStore.accountModel;
-        this.props.popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
 
         this.shipmentApi.creditShipment(
             this.props.popupStore.shipmentModel,
@@ -231,7 +230,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                             <SelectSearchable
                                                 className={'SelectProduct'}
                                                 label={'Product'}
-                                                placeholder = { 'Select a product' }
+                                                placeholder={'Select a product'}
                                                 value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[0])}
                                                 error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[0])}
                                                 onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[0])}
@@ -269,8 +268,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                 className={'InputQuantity'}
                                                 label={'Quantity'}
                                                 placeholder={'0'}
-                                                InputProps={ this.isManufacturePlaceLocal() === true || buildSkuOriginModel.hasShipment() === false ? undefined : {
-                                                    endAdornment: <span className={'EndAdornment'} onClick = { this.onClickMaxQuantity }>max</span>,
+                                                InputProps={this.isManufacturePlaceLocal() === true || buildSkuOriginModel.hasShipment() === false ? undefined : {
+                                                    endAdornment: <span className={'EndAdornment'} onClick={this.onClickMaxQuantity}>max</span>,
                                                 }}
                                                 inputType={InputType.INTEGER}
                                                 value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[3])}
