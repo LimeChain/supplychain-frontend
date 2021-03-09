@@ -98,6 +98,7 @@ class TableMobile extends React.Component < TableMobileProps, State > {
     renderLegend() {
         const helper = this.props.helper
         const legend = this.props.legend;
+        const tableSortKey = helper.tableState.sortKey;
         const tableSortIndex = helper.getTableSortIndex();
         const sortOptions = [];
 
@@ -120,10 +121,10 @@ class TableMobile extends React.Component < TableMobileProps, State > {
                     <div onClick = { this.onToggleSortDropDown }>
                         { sortOptions.length > 0 && (
                             <>
-                                { this.sState.sort_index === S.NOT_EXISTS && (
+                                { tableSortKey === S.NOT_EXISTS && (
                                     'Sort by'
                                 ) }
-                                { this.sState.sort_index !== S.NOT_EXISTS && (
+                                { tableSortKey !== S.NOT_EXISTS && (
                                     <div className = { 'FlexRow' } >
                                         <div>
                                         orted by&nbsp;
@@ -154,12 +155,12 @@ class TableMobile extends React.Component < TableMobileProps, State > {
         )
     }
 
-    renderSortArrow(index: number) {
+    renderSortArrow() {
         const helper = this.props.helper;
-        const sortIndex = helper.getTableSortIndex();
-        if (sortIndex !== index) {
-            return null;
-        }
+        // const sortIndex = helper.getTableSortIndex();
+        // if (sortIndex !== index) {
+        //     return null;
+        // }
 
         return helper.tableState.sortKey > 0 ? <ArrowUpIcon/> : <ArrowDownIcon/>;
     }
