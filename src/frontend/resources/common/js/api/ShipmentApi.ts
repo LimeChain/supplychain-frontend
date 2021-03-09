@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditShipmentReq, DeleteShipmentReq, FetchShipmentsByFilterReq, FetchShipmentByIdReq } from '../network-requests/ShipmentApiReq';
-import { CreditShipmentRes, DeleteShipmentRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
+import { CreditShipmentReq, FetchShipmentsWithProductQuantityLeftByProductIdReq, FetchProductsInStockReq, FetchShipmentsByFilterReq, FetchShipmentByIdReq } from '../network-requests/ShipmentApiReq';
+import { CreditShipmentRes, FetchShipmentsWithProductQuantityLeftByProductIdRes, FetchProductsInStockRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -16,6 +16,23 @@ import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModul
 import GeneralApi from './GeneralApi';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import CookieHelper from '../helpers/CookieHelper';
+import { number } from 'prop-types';
+import ProductModel from '../models/product-module/ProductModel';
+
+class ProductData {
+    productJson: ProductModel
+    productQuantity: number
+    productPrice: number
+    productCurrency: number
+
+    constructor(productJson: ProductModel, productQuantity: number, productPrice: number, productCurrency: number) {
+        this.productJson = productJson;
+        this.productQuantity = productQuantity;
+        this.productPrice = productPrice;
+        this.productCurrency = productCurrency;
+    }
+
+}
 
 export default class ShipmentApi extends AbsApi {
 
@@ -296,6 +313,8 @@ export default class ShipmentApi extends AbsApi {
                         return originCountryNameA.localeCompare(originCountryNameB) * sign;
                     case ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID:
                         return destinationCompareStringA.localeCompare(destinationCompareStringB) * sign
+                    case ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT:
+                        return a.shipmentDateOfShipment > b.shipmentDateOfShipment ? -1 * sign : -1 * sign
                     default:
                         return a.shipmentId.localeCompare(b.shipmentId);
                 }
@@ -341,6 +360,68 @@ export default class ShipmentApi extends AbsApi {
 
         })
 
+    }
+
+    fetchProductsInStock(callBack: (sku: ProductModel[], productQuantities: [], productPrices: []) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = FetchProductsInStockReq();
+
+            const productDataMap = new Map<string, ProductData>();
+
+            const currentSiteId = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId).siteId;
+
+            const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED);
+
+            shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
+                const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);
+
+                skusInCurrentShipment.forEach((skuJson: SkuModel) => {
+                    let skuQuantity = skuJson.quantity;
+
+                    storageHelper.skuoriginsJson.filter((skuOriginJson: SkuOriginModel) => skuOriginJson.shipmentId === shipmentJson.shipmentId)
+                        .filter((skuOriginJson: SkuOriginModel) => {
+                            const skuInThisOrigin = storageHelper.skusJson.find((skuJson: SkuModel) => skuJson.skuId = )
+                        })
+
+                })
+            })
+
+            const res = FetchProductsInStockRes(json);
+        }, 100);
+    }
+
+    fetchShipmentsWhereProductLeftByProductId(productId: string, callback: (shipmentModels: ShipmentModel[], productQuantitiesLeft: number[]) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+            const req = new FetchShipmentsWithProductQuantityLeftByProductIdReq(productId);
+
+            const json = {
+                shipmentModels: new Array<ShipmentModel>(),
+                productQuantitiesLeft: new Array<number>(),
+            }
+
+            const skuJsonsWithProduct = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.productId === productId);
+
+            const shipmentsWithProduct = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => {
+                const foundSku = skuJsonsWithProduct.find((skuJson: SkuModel) => skuJson.shipmentId = shipmentJson.shipmentId);
+
+                return foundSku !== undefined;
+            })
+
+            const skuOriginsWithProductAndShipment = storageHelper.skuOriginsJson.filter((skuoriginJson: SkuOriginModel) => {
+                return true // TODO
+            })
+
+            const res = new FetchShipmentsWithProductQuantityLeftByProductIdRes(json);
+
+            callback(res.shipmentModels, res.productQuantitiesLeft);
+        }, 100);
     }
 
 }
