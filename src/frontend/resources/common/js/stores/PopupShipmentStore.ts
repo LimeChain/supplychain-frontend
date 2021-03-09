@@ -35,6 +35,8 @@ export default class PopupShipmentStore extends PopupStore {
     productStore: ProductStore;
     shipmentStore: ShipmentStore;
 
+    onFinish: (savedShipmentModel: ShipmentModel) => void;
+
     constructor(productStore: ProductStore, shipmentStore: ShipmentStore) {
         super();
 
@@ -80,7 +82,7 @@ export default class PopupShipmentStore extends PopupStore {
         makeObservable(this);
     }
 
-    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[]) {
+    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], onFinish: (savedShipmentModel: ShipmentModel) => void) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => {});
         this.shipmentModel = shipmentModel;
@@ -89,6 +91,7 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.genSkuId = 0;
+        this.onFinish = onFinish;
         this.productIdsInSkuModels = new Set();
         skuModels.forEach((skuModel: SkuModel) => {
             this.productIdsInSkuModels.add(skuModel.productId);

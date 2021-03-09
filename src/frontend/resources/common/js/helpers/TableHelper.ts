@@ -8,7 +8,7 @@ export default class TableHelper {
     tableState: TableState;
     onUpdateTable: () => void;
 
-    constructor(defaultSortKey: number, keys: Array < Array < number > >, callback: () => void, itemsPerPage: number = 10) {
+    constructor(defaultSortKey: number, keys: Array < Array < number > >, callback: () => void, itemsPerPage: number = 20) {
         this.tableSortKeyToIndex = new Map();
         this.tableSortIndexToKey = new Map();
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
+import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
 
 import moment from 'moment';
 import S from '../../../common/js/utilities/Main';
@@ -11,7 +12,6 @@ import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import Sidebar from '../components-inc/Sidebar';
-import Notifications from '../components-inc/Notifications';
 import PageTable from '../components-inc/PageTable';
 import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
 import PageTableFooter from '../components-inc/PageTableFooter';
@@ -21,13 +21,12 @@ import PageView from '../components-inc/PageView';
 import NoEntryPage from '../components-inc/NoEntryPage';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
+import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 
 import SvgAdd from '@material-ui/icons/Add';
 import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import './../../css/components-pages/page-outgoing-component.css';
-import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
-import TableDesktop from '../../../common/js/components-inc/TableDesktop';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -94,13 +93,16 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSortBy = (sortBy) => {
-        this.tableHelper.tableState.sortKey = sortBy; Destination
-
+        this.tableHelper.tableState.sortKey = sortBy;
         this.fetchShipments();
     }
 
-    newShipmentPopup = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], []);
+    onClickCreateNewShipment = () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], () => {
+            const tableState = this.tableHelper.tableState;
+            tableState.pageZero();
+            this.fetchShipments();
+        });
     }
 
     renderContent() {
@@ -111,12 +113,12 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
                 <PageView pageTitle={'Outgoing Shipments'} >
                     {this.props.shipmentStore.screenShipmentModels === null && (
-                        'Loading'
+                        <LoadingIndicator margin = { 'auto' } />
                     )}
                     {this.props.shipmentStore.screenShipmentModels !== null && (
                         <>
                             {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
-                                <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                                <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.onClickCreateNewShipment} />
                             )}
                             {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
                                 <PageTable
@@ -138,25 +140,22 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             totalItems={this.tableHelper.tableState.total}
                                             actions={(
                                                 <Actions>
-                                                    <Button onClick = {this.newShipmentPopup}>
+                                                    <Button onClick = {this.onClickCreateNewShipment}>
                                                         <div className={'FlexRow'}>
                                                             <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Create Shipment
+                                                            Create Shipment
                                                         </div>
                                                     </Button>
                                                 </Actions>
                                             )} />
                                     )} >
-                                    <TableDesktop
+                                    <Table
                                         className={'ShipmentsTable'}
                                         legend={this.getTableLegend()}
                                         widths={this.getTableWidths()}
                                         aligns={this.getTableAligns()}
                                         helper={this.tableHelper}
-                                        rows={this.renderRows()}
-                                        showPaging={true}
-                                    >
-                                    </TableDesktop>
+                                        rows={this.renderRows()} />
                                 </PageTable>
                             )}
                         </>
@@ -165,10 +164,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
             </div>
         )
-    }
-
-    getTableLegend = () => {
-        return ['ID', 'Consignment ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
     }
 
     renderRows = () => {
@@ -185,23 +180,20 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(`#${shipmentModel.shipmentId}`),
                 Table.cellString(shipmentModel.shipmentConsignmentNumber),
                 Table.cellString(originCountryModel.countryName),
-                Table.cell(<div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
+                Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <div className={'ShipmentStatusCell FlexColumn'} >In Preparation</div>,
+                    <Button color = { Button.COLOR_SCHEME_4 } >In Preparation</Button>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
-                // Table.cell(
-                //     <Actions>
-                //         <Button onClick={() => this.submitShipmentRowAction(shipmentModel.shipmentId)}>
-                //             Submit
-                //         </Button>
-                //     </Actions>,
-                // ),
             ])
         })
 
         return result;
+    }
+
+    getTableLegend = () => {
+        return ['ID', 'Consignment ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
     }
 
     getTableAligns = () => {
@@ -209,7 +201,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
-            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_CENTER,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
             TableDesktop.ALIGN_LEFT,
@@ -217,6 +209,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     getTableWidths = () => {
-        return ['5%', '10%', '8%', '5%', '47%', '15%', '10%'];
+        return ['5%', '30%', '15%', '10%', '15%', '15%', '10%'];
     }
 }

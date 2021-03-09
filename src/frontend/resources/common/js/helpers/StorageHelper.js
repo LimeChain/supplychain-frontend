@@ -9,7 +9,7 @@ import CountryModel from '../models/CountryModel';
 import SiteModel from '../models/SiteModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 41;
+const VERSION = 42;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),

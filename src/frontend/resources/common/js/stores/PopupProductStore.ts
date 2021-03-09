@@ -9,6 +9,7 @@ export default class PopupProductStore extends PopupStore {
     static FIELDS_PRODUCT = ['name', 'unit', 'description'];
 
     @observable productModel: ProductModel;
+
     inputStateHelperProduct: InputStateHelper;
     onFinish: (savedProductModel: ProductModel) => void;
 

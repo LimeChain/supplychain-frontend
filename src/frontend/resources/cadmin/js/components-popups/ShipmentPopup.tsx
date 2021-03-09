@@ -352,12 +352,12 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         const siteStore = this.props.siteStore;
         const accountModel = this.props.accountSessionStore.accountModel;
+        const ownSiteModel = siteStore.getSiteModel(accountModel.siteId);
         const ownCountryModel = siteStore.getCountryModel(accountModel.countryId);
-        if (ownCountryModel === null) {
+        if (ownSiteModel === null || ownCountryModel === null) {
             return null;
         }
 
-        const ownSiteModel = this.props.siteStore.getFirstSiteModelByCountryId(ownCountryModel.countryId);
         return (
             <Select
                 label={'To'}

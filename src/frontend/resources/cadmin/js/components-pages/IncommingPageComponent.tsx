@@ -3,21 +3,21 @@ import { inject, observer } from 'mobx-react';
 
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 
+import S from '../../../common/js/utilities/Main';
+
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
+import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
+import PageTableFooter from '../components-inc/PageTableFooter';
 import Sidebar from '../components-inc/Sidebar';
-import Header from '../components-inc/header';
 import PageView from '../components-inc/PageView';
+import PageTable from '../components-inc/PageTable';
+import Button from '../../../common/js/components-inc/Button';
+import NoEntryPage from '../components-inc/NoEntryPage';
+import Actions from '../../../common/js/components-inc/Actions';
 
 import SvgAdd from '@material-ui/icons/Add';
 import './../../css/components-pages/page-incomming-component.css';
-import PageTable from '../components-inc/PageTable';
-import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
-import S from '../../../common/js/utilities/Main';
-import PageTableFooter from '../components-inc/PageTableFooter';
-import Actions from '../../../common/js/components-inc/Actions';
-import Button from '../../../common/js/components-inc/Button';
-import NoEntryPage from '../components-inc/NoEntryPage';
 
 interface Props extends ContextPageComponentProps {
 }
@@ -98,7 +98,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                                             <Button>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Add product
+                                                    Add product
                                                 </div>
                                             </Button>
                                         </Actions>
