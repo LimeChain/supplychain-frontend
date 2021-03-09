@@ -236,6 +236,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     getTableWidths = () => {
-        return ['10%', '20%', '20%', '30%', '30%'];
+        return ['10%', '20%', '20%', '30%', '5%'];
     }
 }
