@@ -4,9 +4,9 @@ import ShipmentModel from '../models/shipment-module/ShipmentModel';
 
 export default class ShipmentStore {
 
-    shipmentsMap: Map < string, ShipmentModel > = new Map< string, ShipmentModel >();
+    shipmentsMap: Map<string, ShipmentModel> = new Map<string, ShipmentModel>();
 
-    screenShipmentModels: ShipmentModel[];
+    screenShipmentModels: ShipmentModel[] = null;
 
     constructor() {
         makeAutoObservable(this);

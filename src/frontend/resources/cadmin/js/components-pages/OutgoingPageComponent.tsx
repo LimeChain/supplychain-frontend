@@ -37,13 +37,12 @@ interface Props extends ContextPageComponentProps {
 }
 
 interface State {
-    searchWord: string;
     sortBy: number;
-    showNoEntryPage: boolean;
 }
 
 export default class OutgoingPageComponent extends ContextPageComponent<Props, State> {
     tableHelper: TableHelper;
+    searchWord: string = S.Strings.EMPTY;
 
     static layout() {
         const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore'])(observer(OutgoingPageComponent));
@@ -54,9 +53,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         super(props);
 
         this.state = {
-            searchWord: S.Strings.EMPTY,
             sortBy: S.NOT_EXISTS,
-            showNoEntryPage: true,
         };
 
         this.tableHelper = new TableHelper(
@@ -82,28 +79,19 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     fetchShipments = () => {
         this.shipmentApi.fetchShipmentByFilter(
             PagesCAdmin.OUTGOING,
-            this.state.searchWord,
+            this.searchWord,
             this.tableHelper.tableState.sortKey,
             this.tableHelper.tableState.from,
             this.tableHelper.tableState.to(),
             (shipmentModels, totalSize) => {
                 this.props.shipmentStore.onScreenData(shipmentModels);
                 this.tableHelper.tableState.total = totalSize;
-
-                if (totalSize > 0 || this.state.searchWord !== S.Strings.EMPTY) {
-                    this.setState({ showNoEntryPage: false })
-                } else {
-                    this.setState({ showNoEntryPage: true })
-                }
             },
         )
     }
 
     onChangeSearchWord = (searchWord) => {
-        this.setState({
-            searchWord,
-        });
-
+        this.searchWord = searchWord;
         this.fetchShipments();
     }
 
@@ -142,48 +130,55 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 <Sidebar page={PagesCAdmin.OUTGOING} />
 
                 <PageView pageTitle={'Outgoing Shipments'} >
-                    {this.state.showNoEntryPage === true && (
-                        <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
+                    {this.props.shipmentStore.screenShipmentModels === null && (
+                        'Loading'
                     )}
-                    {this.state.showNoEntryPage === false && (
-                        <PageTable
-                            className={'WhiteBox PageExtend'}
-                            header={(
-                                <PageTableHeader
-                                    searchPlaceHolder={'Search outgoing shipments'}
-                                    selectedSortBy={this.tableHelper.tableState.sortKey}
-                                    options={[
-                                        new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
-                                        new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
-                                    ]}
-                                    onChangeSearchWord={this.onChangeSearchWord}
-                                    onChangeSortBy={this.onChangeSortBy} />
+                    {this.props.shipmentStore.screenShipmentModels !== null && (
+                        <>
+                            {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
+                                <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
                             )}
-                            footer={(
-                                <PageTableFooter
-                                    totalItems={this.tableHelper.tableState.total}
-                                    actions={(
-                                        <Actions>
-                                            <Button>
-                                                <div className={'FlexRow'}>
-                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                            {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
+                                <PageTable
+                                    className={'WhiteBox PageExtend'}
+                                    header={(
+                                        <PageTableHeader
+                                            searchPlaceHolder={'Search outgoing shipments'}
+                                            selectedSortBy={this.tableHelper.tableState.sortKey}
+                                            options={[
+                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
+                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
+                                            ]}
+                                            onChangeSearchWord={this.onChangeSearchWord}
+                                            onChangeSortBy={this.onChangeSortBy} />
+                                    )}
+                                    footer={(
+                                        <PageTableFooter
+                                            totalItems={this.tableHelper.tableState.total}
+                                            actions={(
+                                                <Actions>
+                                                    <Button>
+                                                        <div className={'FlexRow'}>
+                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Create Shipment
-                                                </div>
-                                            </Button>
-                                        </Actions>
-                                    )} />
-                            )} >
-                            <TableDesktop
-                                className={'ShipmentsTable'}
-                                legend={this.getTableLegend()}
-                                widths={this.getTableWidths()}
-                                aligns={this.getTableAligns()}
-                                helper={this.tableHelper}
-                                rows={this.renderRows()}
-                                showPaging={true}
-                            >
-                            </TableDesktop>
-                        </PageTable>
+                                                        </div>
+                                                    </Button>
+                                                </Actions>
+                                            )} />
+                                    )} >
+                                    <TableDesktop
+                                        className={'ShipmentsTable'}
+                                        legend={this.getTableLegend()}
+                                        widths={this.getTableWidths()}
+                                        aligns={this.getTableAligns()}
+                                        helper={this.tableHelper}
+                                        rows={this.renderRows()}
+                                        showPaging={true}
+                                    >
+                                    </TableDesktop>
+                                </PageTable>
+                            )}
+                        </>
                     )}
                 </PageView>
 

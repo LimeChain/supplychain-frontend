@@ -6,7 +6,7 @@ export default class ProductStore {
 
     productsMap: Map<string, ProductModel> = new Map();
 
-    screenProductModels: ProductModel[] = [];
+    screenProductModels: ProductModel[] = null;
 
     constructor() {
         makeAutoObservable(this);
