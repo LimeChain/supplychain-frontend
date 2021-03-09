@@ -34,6 +34,16 @@ export class FetchShipmentsByFilterRes {
     }
 }
 
+export class FetchShipmentsWithProductQuantityLeftByProductIdRes {
+    shipmentModels: ShipmentModel[];
+    productQuantitiesLeft: number[];
+
+    constructor(json) {
+        this.productQuantitiesLeft = json.productQuantitiesLeft
+        this.shipmentModels = json.shipmentJsons.map((shipmentJson: ShipmentModel) => ShipmentModel.fromJson(shipmentJson));
+    }
+}
+
 export class FetchShipmentsByIdRes {
     shipmentModel: ShipmentModel;
 

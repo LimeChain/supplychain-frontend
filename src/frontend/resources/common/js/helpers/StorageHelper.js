@@ -2,11 +2,13 @@ import S from '../utilities/Main';
 import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
 import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
 import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+
 import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
 import CountryModel from '../models/CountryModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 37;
+const VERSION = 38;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -30,19 +32,19 @@ const skuOriginsJson = [
 ]
 
 const shipmentsJson = [
-    jsonShipment('1', 'Chairs to Germany', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('2', 'Chairs to Germany2', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('3', 'Chairs to Germany3', ShipmentDocumentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('4', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('5', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('6', 'Tables to Malta', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('7', 'Machines to Greece', ShipmentDocumentConstsH.S_STATUS_RECEIVED, '3', '2', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('8', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('9', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('10', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('11', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('12', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('13', 'Gold from Germany', ShipmentDocumentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('1', 'Chairs to Germany', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('2', 'Chairs to Germany2', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('3', 'Chairs to Germany3', ShipmentConstsH.S_STATUS_DRAFT, '1', '3', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('4', 'Tables to Malta', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('5', 'Tables to Malta', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('6', 'Tables to Malta', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('7', 'Machines to Greece', ShipmentConstsH.S_STATUS_RECEIVED, '3', '2', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('8', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('9', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('10', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('11', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('12', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    jsonShipment('13', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '3', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
 
 ]
 
@@ -91,7 +93,7 @@ class StorageHelper {
         this.skusJson = skusJson;
         this.accountsJson = accountsJson;
     }
-
+    S_STATUS_DRAFT
     static open() {
         const result = new StorageHelper();
         const json = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -147,7 +149,7 @@ function jsonShipment(shipmentId, name, status, shipmentOriginSiteId, shipmentDe
     return {
         'shipmentId': shipmentId,
         'shipmentName': name,
-        'shipmentStatus': status,
+        'status': status,
         'shipmentOriginSiteId': shipmentOriginSiteId,
         'shipmentDestinationSiteId': shipmentDestinationSiteId,
         'shipmentDateOfShipment': dateOfShipment,

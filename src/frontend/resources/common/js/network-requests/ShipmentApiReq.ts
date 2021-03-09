@@ -37,6 +37,14 @@ export class FetchShipmentsByFilterReq {
     }
 }
 
+export class FetchShipmentsWithProductQuantityLeftByProductIdReq {
+    productId: string
+
+    constructor(productId: string) {
+        this.productId = productId;
+    }
+}
+
 export class FetchShipmentByIdReq {
     shipmentId: string
 
