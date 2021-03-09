@@ -1,12 +1,12 @@
 import { makeObservable, observable } from 'mobx';
 import TableHelper from '../helpers/TableHelper';
-import ProductModel from '../models/product-module/ProductModel';
 import SkuModel from '../models/product-module/SkuModel';
 import SkuOriginModel from '../models/product-module/SkuOriginModel';
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import S from '../utilities/Main';
 import PopupStore from './PopupStore';
 import InputStateHelper from '../helpers/InputStateHelper';
+import ProductStore from './ProductStore';
 
 export default class PopupShipmentStore extends PopupStore {
 
@@ -30,7 +30,9 @@ export default class PopupShipmentStore extends PopupStore {
     buildSkuInputStateHelper: InputStateHelper;
     genSkuId: 0;
 
-    constructor() {
+    productStore: ProductStore;
+
+    constructor(productStore: ProductStore) {
         super();
 
         this.shipmentInputStateHelper = new InputStateHelper(PopupShipmentStore.FIELDS_SHIPMENT, (key, value) => {
@@ -61,6 +63,8 @@ export default class PopupShipmentStore extends PopupStore {
             }
         });
 
+        this.productStore = productStore;
+
         makeObservable(this);
     }
 
@@ -73,7 +77,11 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.genSkuId = 0;
-        this.show();
+
+        this.productStore.fetchProductsList(() => {
+            this.show();
+        })
+
     }
 
     setTabProducts() {

@@ -31,6 +31,7 @@ import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import AppStore from '../../../common/js/stores/AppStore';
 import CountryModel from '../../../common/js/models/CountryModel';
+import ProductStore from '../../../common/js/stores/ProductStore';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -38,6 +39,7 @@ interface Props extends PopupWindowProps {
     siteStore: SiteStore;
     accountSessionStore: AccountSessionStore;
     popupStore: PopupShipmentStore;
+    productStore: ProductStore;
 }
 
 interface State {
@@ -160,6 +162,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
         ]);
 
+        console.log('value', buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : buildSkuModel.productId);
         return (
             <div className={'PopupWindowContent LargeContent'} >
                 <div className={'PopupHeader FlexRow'} >
@@ -201,9 +204,11 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                                 value={buildSkuInputStateHelper.values.get(FIELDS[0])}
                                                 error={buildSkuInputStateHelper.errors.get(FIELDS[0])}
                                                 onChange={buildSkuInputStateHelper.onChanges.get(FIELDS[0])}
-                                                options={[
-                                                    SelectSearchable.option('1', '#35 Product name'),
-                                                ]} />
+                                                options={
+                                                    this.props.productStore.listProductModels.map((productModel, i: number) => {
+                                                        return SelectSearchable.option(productModel.productId, productModel.productName);
+                                                    })
+                                                } />
                                             {this.state.manufacturedPlace === S.INT_FALSE && (
                                                 <SelectSearchable
                                                     className={'SelectFromShipment'}
@@ -354,7 +359,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     renderProductRows() {
         const popupStore = this.props.popupStore;
+        const productStore = this.props.productStore;
         const result = popupStore.skuModels.map((skuModel: SkuModel, i: number) => {
+            const productModel = productStore.getProduct(skuModel.productId);
+            console.log(productModel, skuModel.productId);
             return [
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString('Product name'),
@@ -362,7 +370,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 Table.cellString(skuModel.quantity.toString()),
                 Table.cellString('Measurement'),
                 Table.cellString(skuModel.pricePerUnit.toString()),
-                Table.cellString('total price'),
+                Table.cellString(NumralHelper(skuModel.getTotalPrice()).format()),
                 Table.cell((
                     <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />
                 )),
@@ -381,5 +389,6 @@ export default inject((stores) => {
         siteStore: stores.siteStore,
         accountSessionStore: stores.accountSessionStore,
         popupStore: stores.popupShipmentStore,
+        productStore: stores.productStore,
     }
 })(observer(ShipmentPopup));

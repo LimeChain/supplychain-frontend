@@ -96,8 +96,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onChangeSortBy = (sortBy) => {
-        console.log(sortBy);
-
         this.tableHelper.tableState.sortKey = sortBy;
 
         this.fetchShipments();
@@ -138,47 +136,28 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                             {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
                                 <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.newShipmentPopup} />
                             )}
-                            {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
-                                <PageTable
-                                    className={'WhiteBox PageExtend'}
-                                    header={(
-                                        <PageTableHeader
-                                            searchPlaceHolder={'Search outgoing shipments'}
-                                            selectedSortBy={this.tableHelper.tableState.sortKey}
-                                            options={[
-                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
-                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
-                                            ]}
-                                            onChangeSearchWord={this.onChangeSearchWord}
-                                            onChangeSortBy={this.onChangeSortBy} />
-                                    )}
-                                    footer={(
-                                        <PageTableFooter
-                                            totalItems={this.tableHelper.tableState.total}
-                                            actions={(
-                                                <Actions>
-                                                    <Button>
-                                                        <div className={'FlexRow'}>
-                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                Create Shipment
-                                                        </div>
-                                                    </Button>
-                                                </Actions>
-                                            )} />
-                                    )} >
-                                    <TableDesktop
-                                        className={'ShipmentsTable'}
-                                        legend={this.getTableLegend()}
-                                        widths={this.getTableWidths()}
-                                        aligns={this.getTableAligns()}
-                                        helper={this.tableHelper}
-                                        rows={this.renderRows()}
-                                        showPaging={true}
-                                    >
-                                    </TableDesktop>
-                                </PageTable>
-                            )}
-                        </>
+                            footer={(
+                                <PageTableFooter
+                                    totalItems={this.tableHelper.tableState.total}
+                                    actions={(
+                                        <Actions>
+                                            <Button onClick={this.newShipmentPopup}>
+                                                <div className={'FlexRow'}>
+                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                                    Create Shipment
+                                                </div>
+                                            </Button>
+                                        </Actions>
+                                    )} />
+                            )} >
+                            <TableDesktop
+                                className={'ShipmentsTable'}
+                                legend={this.getTableLegend()}
+                                widths={this.getTableWidths()}
+                                aligns={this.getTableAligns()}
+                                helper={this.tableHelper}
+                                rows={this.renderRows()} />
+                        </PageTable>
                     )}
                 </PageView>
 
