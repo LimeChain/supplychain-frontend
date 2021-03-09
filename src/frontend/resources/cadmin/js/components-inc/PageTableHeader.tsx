@@ -50,10 +50,6 @@ export default class PageTableHeader extends React.Component < Props, State > {
         this.props.onChangeSortBy(value === S.Strings.EMPTY ? S.NOT_EXISTS : value);
     }
 
-    // sortByRenderValue = (value: any) => {
-    //     return value !== S.NOT_EXISTS ? this.props.options.find((struct) => struct.key === value)?.value || S.Strings.EMPTY : 'Sort by';
-    // }
-
     render() {
         return (
             <div className = { 'PageTableHeader FlexSplit FlexRow' } >
@@ -66,7 +62,7 @@ export default class PageTableHeader extends React.Component < Props, State > {
                 <Select
                     className = { 'SelectSortBy StartRight' }
                     placeholder = { 'Sort by' }
-                    value = { this.props.selectedSortBy === S.NOT_EXISTS ? S.Strings.EMPTY : this.props.selectedSortBy }
+                    value = { this.props.selectedSortBy === S.NOT_EXISTS ? S.Strings.EMPTY : Math.abs(this.props.selectedSortBy) }
                     onChange = { this.onChangeSortBy }
                     displayEmpty = { true }>
                     { this.props.options.map((item, i: number) => {

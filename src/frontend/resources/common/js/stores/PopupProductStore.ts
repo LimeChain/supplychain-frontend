@@ -8,8 +8,9 @@ export default class PopupProductStore extends PopupStore {
 
     static FIELDS_PRODUCT = ['name', 'unit', 'description'];
 
-    @observable productModel: ProductModel
-    inputStateHelperProduct: InputStateHelper
+    @observable productModel: ProductModel;
+    inputStateHelperProduct: InputStateHelper;
+    onFinish: (savedProductModel: ProductModel) => void;
 
     constructor() {
         super();
@@ -33,8 +34,9 @@ export default class PopupProductStore extends PopupStore {
         makeObservable(this);
     }
 
-    signalShow(productModel: ProductModel) {
+    signalShow(productModel: ProductModel, onFinish: (savedProductModel: ProductModel) => void) {
         this.productModel = productModel;
+        this.onFinish = onFinish;
         this.show();
     }
 

@@ -18,7 +18,8 @@ import './../../css/components-inc/product-row-menu.css';
 
 interface Props {
     show: number
-    productId: string
+    productModel: ProductModel;
+    onFinishDelete: () => void;
     appStore: AppStore
     alertStore: AlertStore
     popupProductStore: PopupProductStore
@@ -52,13 +53,18 @@ class ProductRowMenu extends React.Component < Props, State > {
     }
 
     onClickEditProduct = () => {
-        this.props.popupProductStore.signalShow(this.props.productStore.screenProductModels.find((productModel: ProductModel) => productModel.productId === this.props.productId).clone())
+        this.props.popupProductStore.signalShow(this.props.productModel.clone(), ((savedProductModel) => {
+            Object.assign(this.props.productModel, savedProductModel);
+        }));
         this.toggleOpenState();
     }
 
     onClickDeleteProduct = () => {
         this.props.alertStore.show('You are about to delete a product', () => {
-
+            this.props.productModel.markAsDeleted();
+            this.productApi.creditProduct(this.props.productModel, () => {
+                this.props.onFinishDelete();
+            });
         }, () => {});
         this.toggleOpenState();
     }

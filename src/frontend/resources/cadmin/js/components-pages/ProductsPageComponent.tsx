@@ -56,12 +56,10 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         };
 
         this.tableHelper = new TableHelper(
-            ProductFilter.S_SORT_BY_ID,
+            S.NOT_EXISTS,
             [
-                [ProductFilter.S_SORT_BY_ID, 0],
                 [ProductFilter.S_SORT_BY_NAME, 1],
                 [ProductFilter.S_SORT_BY_DESCRIPTION, 2],
-                [ProductFilter.S_SORT_BY_UNIT, 3],
             ],
             this.fetchProducts,
         )
@@ -84,11 +82,15 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     fetchProducts = () => {
-        this.productApi.fetchProductsByFilter(this.tableHelper.tableState.sortKey, this.tableHelper.tableState.from, this.tableHelper.tableState.to(), (productModels: ProductModel[], totalSize: number) => {
+        const tableState = this.tableHelper.tableState;
+        this.productApi.fetchProductsByFilter(tableState.sortKey, tableState.from, tableState.to(), (productModels: ProductModel[], totalSize: number) => {
+            if (productModels.length === 0 && tableState.from > 0) {
+                tableState.pageBack();
+                this.fetchProducts();
+                return;
+            }
+
             this.props.productStore.onScreenData(productModels);
-
-            console.log(this.tableHelper.tableState.sortKey);
-
             this.tableHelper.tableState.total = totalSize;
             this.dataReady = S.INT_TRUE;
         });
@@ -105,6 +107,10 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         this.fetchProducts();
     }
 
+    onClickAddProduct = () => {
+        this.props.popupProductStore.signalShow(new ProductModel());
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -113,7 +119,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
 
                 <PageView pageTitle={'Products'} >
                     {this.showNoEntryPage === true && (
-                        <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.addProductPopup} />
+                        <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.onClickAddProduct} />
                     )}
                     {this.showNoEntryPage === false && (
                         <PageTable
@@ -123,7 +129,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                                     searchPlaceHolder={'Search products'}
                                     selectedSortBy={this.tableHelper.tableState.sortKey}
                                     options={[
-                                        new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_ID, 'ID'),
                                         new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_NAME, 'Name'),
                                         new PageTableHeaderSortByStruct(ProductFilter.S_SORT_BY_DESCRIPTION, 'Description'),
                                     ]}
@@ -135,7 +140,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                                     totalItems={this.tableHelper.tableState.total}
                                     actions={(
                                         <Actions>
-                                            <Button onClick={this.addProductPopup}>
+                                            <Button onClick={this.onClickAddProduct}>
                                                 <div className={'FlexRow'}>
                                                     <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
@@ -161,14 +166,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         )
     }
 
-    addProductPopup = () => {
-        this.props.popupProductStore.signalShow(new ProductModel());
-    }
-
-    renderEditProductPopup = (rowId) => {
-        this.props.popupProductStore.signalShow(this.props.productStore.screenProductModels[rowId]);
-    }
-
     renderRows = () => {
         const result = [];
 
@@ -179,7 +176,9 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(productModel.productDescription, 'ProductDescriptionCell'),
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cell(
-                    <ProductRowMenu productId={productModel.productId} />,
+                    <ProductRowMenu
+                        productModel = { productModel }
+                        onFinishDelete = { this.fetchProducts } />,
                 ),
             ])
         })

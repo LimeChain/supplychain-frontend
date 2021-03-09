@@ -48,8 +48,11 @@ class ProductPopup extends PopupWindow<Props> {
             return;
         }
 
-        this.productApi.creditProduct(this.props.popupStore.productModel, () => {
+        const onFinish = this.props.popupStore.onFinish;
+        const productModel = this.props.popupStore.productModel;
+        this.productApi.creditProduct(productModel, () => {
             this.props.popupStore.hide();
+            onFinish(productModel);
         });
     }
 

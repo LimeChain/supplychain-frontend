@@ -111,27 +111,26 @@ export default class ProductApi extends AbsApi {
                 totalSize: 0,
             }
 
-            if (filter === S.Strings.EMPTY) {
-                json.productJsons = storageHelper.productsJson;
-            } else {
-                storageHelper.productsJson.forEach((productJson: ProductModel) => {
-                    let occurance = 0;
+            const productsJson = storageHelper.productsJson.filter((productJson) => productJson.productDeleted === S.INT_FALSE);
+            json.productJsons = productsJson.filter((productJson: ProductModel) => {
+                if (filter === S.Strings.EMPTY) {
+                    return true;
+                }
 
-                    if (productJson.productName.includes(filter)) {
-                        occurance++;
-                    }
+                if (productJson.productName.includes(filter)) {
+                    return true;
+                }
 
-                    if (productJson.productDescription.includes(filter)) {
-                        occurance++;
-                    }
+                if (productJson.productDescription.includes(filter)) {
+                    return true;
+                }
 
-                    if (productJson.productId.includes(filter)) {
-                        occurance++;
-                    }
+                if (productJson.productId.includes(filter)) {
+                    return true;
+                }
 
-                    json.productJsons.push(productJson);
-                });
-            }
+                return false;
+            })
 
             json.totalSize = json.productJsons.length;
 
@@ -141,14 +140,12 @@ export default class ProductApi extends AbsApi {
                 const returnFalse = 1 * sign;
 
                 switch (Math.abs(sortBy)) {
-                    case ProductFilter.S_SORT_BY_ID:
-                        return a.productId > b.productId ? returnTrue : returnFalse
                     case ProductFilter.S_SORT_BY_NAME:
                         return a.productName > b.productName ? returnTrue : returnFalse
                     case ProductFilter.S_SORT_BY_DESCRIPTION:
                         return a.productDescription > b.productDescription ? returnTrue : returnFalse
                     default:
-                        return a.productId > b.productId ? returnTrue : returnFalse
+                        return parseInt(b.productId) - parseInt(a.productId);
                 }
 
             }).slice(from, to);

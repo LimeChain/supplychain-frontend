@@ -23,6 +23,10 @@ export default class ProductModel {
         return this.productId === S.Strings.NOT_EXISTS;
     }
 
+    markAsDeleted(): void {
+        this.productDeleted = S.INT_TRUE;
+    }
+
     clone(): ProductModel {
         return Object.assign(new ProductModel(), this);
     }
