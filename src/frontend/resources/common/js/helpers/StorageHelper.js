@@ -9,7 +9,7 @@ import CountryModel from '../models/CountryModel';
 import SiteModel from '../models/SiteModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 41;
+const VERSION = 43;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -94,7 +94,7 @@ class StorageHelper {
     }
     S_STATUS_DRAFT
     static open() {
-        const result = new StorageHelper();
+        const result = new StorageHelper(); status
         const json = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (json !== null) {
             const storage = JSON.parse(json);
@@ -144,11 +144,11 @@ function jsonSkuOrigin(skuOriginId, skuId, shipmentId) {
     }
 }
 
-function jsonShipment(shipmentId, name, status, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, description, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) {
+function jsonShipment(shipmentId, name, shipmentStatus, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, description, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) {
     return {
         'shipmentId': shipmentId,
         'shipmentName': name,
-        'status': status,
+        'shipmentStatus': shipmentStatus,
         'shipmentOriginSiteId': shipmentOriginSiteId,
         'shipmentDestinationSiteId': shipmentDestinationSiteId,
         'shipmentDateOfShipment': dateOfShipment,

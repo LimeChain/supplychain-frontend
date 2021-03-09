@@ -1,3 +1,4 @@
+import ProductModel from '../models/product-module/ProductModel';
 import SkuModel from '../models/product-module/SkuModel';
 import SkuOriginModel from '../models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
@@ -31,6 +32,16 @@ export class FetchShipmentsByFilterRes {
             this.shipmentModels.push(ShipmentModel.fromJson(shipmentJson));
         }
 
+    }
+}
+
+export class FetchProductsInStockRes {
+    skuModels: SkuModel[];
+    productModels: ProductModel[];
+
+    constructor(json) {
+        this.skuModels = json.skuJsons.map((skuJson: SkuModel) => SkuModel.fromJson(skuJson));
+        this.productModels = json.productJsons.map((productJson: SkuModel) => ProductModel.fromJson(productJson));
     }
 }
 

@@ -284,9 +284,9 @@ export default class ShipmentApi extends AbsApi {
             if (page === PagesCAdmin.DRAFTS) {
                 json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT)
             } else if (page === PagesCAdmin.INCOMMING) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId)
-            } else if (page === PagesCAdmin.OUTGOING) {
                 json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId)
+            } else if (page === PagesCAdmin.OUTGOING) {
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId)
             }
             json.totalSize = json.shipmentJsons.length;
 
@@ -362,22 +362,29 @@ export default class ShipmentApi extends AbsApi {
 
     }
 
-    fetchProductsInStock(callBack: (sku: ProductModel[], productQuantities: [], productPrices: []) => void) {
+    fetchProductsInStock(
+        searchBy: string,
+        sortBy: number,
+        from: number,
+        to: number,
+        callBack: (skuModels: SkuModel[], productModels: ProductModel[]) => void,
+    ) {
         this.disableActions();
 
         setTimeout(() => {
             this.enableActions();
 
-            const req = FetchProductsInStockReq();
+            const req = new FetchProductsInStockReq(searchBy, sortBy, from, to);
 
             const json = {
-                skujsons: [],
+                skuJsons: [],
                 productJsons: [],
             }
 
             const currentSiteId = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId).siteId;
-
+            console.log(currentSiteId);
             const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED);
+            console.log(shipmentsDeliveredHere);
 
             shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
                 const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);
@@ -394,10 +401,25 @@ export default class ShipmentApi extends AbsApi {
                             }
                         })
 
+                    const productJson = storageHelper.productsJson.find((productJsonTemp: ProductModel) => productJsonTemp.productId === skuJson.productId);
+
+                    const skuTemp = JSON.parse(JSON.stringify(skuJson));
+                    skuTemp.quantity = skuQuantity;
+                    if (skuTemp.quantity > 0) {
+                        json.skuJsons.push(skuTemp);
+
+                        if (json.productJsons.find((p: ProductModel) => p.productId === productJson.productId) === undefined) {
+                            json.productJsons.push(productJson);
+                        }
+                    }
                 })
             })
 
-            const res = FetchProductsInStockRes(json);
+            json.skuJsons = json.skuJsons.slice(from, to);
+
+            const res = new FetchProductsInStockRes(json);
+
+            callBack(res.skuModels, res.productModels)
         }, 100);
     }
 

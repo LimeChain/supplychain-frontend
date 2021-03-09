@@ -24,6 +24,8 @@ import NoEntryPage from '../components-inc/NoEntryPage';
 import PageTableFooter from '../components-inc/PageTableFooter';
 import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
+import ShipmentApi from '../../../common/js/api/ShipmentApi';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
@@ -35,7 +37,7 @@ interface State {
     sortBy: number;
 }
 
-export default class ProductsInStockPageComponent extends ContextPageComponent < Props, State > {
+export default class ProductsInStockPageComponent extends ContextPageComponent<Props, State> {
     showNoEntryPage: boolean = false;
 
     dataReady: number;
@@ -60,24 +62,18 @@ export default class ProductsInStockPageComponent extends ContextPageComponent <
     async loadData() {
         await super.loadData();
 
-        this.productApi.fetchProductsByFilter(1, 3, 1, (productModels: ProductModel[]) => {
-            this.props.productStore.onScreenData(productModels);
-            this.dataReady = S.INT_TRUE;
-        });
+        this.fetchProductsInStock();
     }
 
     getPageLayoutComponentCssClassName() {
         return 'PageProductsInStock';
     }
 
-    fetchProducts = () => {
-        this.productApi.fetchProductsByFilter(1, 7, -1, (productModels, totalSize) => {
+    fetchProductsInStock = () => {
+        this.shipmentApi.fetchProductsInStock('', 1, 0, 200, (skuModels: SkuModel[], productModels: ProductModel[]) => {
+            console.log(skuModels);
             console.log(productModels);
-            console.log(totalSize);
-        });
 
-        this.productApi.fetchProductById('7', (productModel) => {
-            console.log(productModel);
         })
     }
 

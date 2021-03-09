@@ -37,6 +37,25 @@ export class FetchShipmentsByFilterReq {
     }
 }
 
+export class FetchProductsInStockReq {
+    searchBy: string
+    sortBy: number
+    from: number
+    to: number
+
+    constructor(
+        searchBy: string,
+        sortBy: number,
+        from: number,
+        to: number,
+    ) {
+        this.searchBy = searchBy;
+        this.sortBy = sortBy;
+        this.from = from;
+        this.to = to;
+    }
+}
+
 export class FetchShipmentsWithProductQuantityLeftByProductIdReq {
     productId: string
 
