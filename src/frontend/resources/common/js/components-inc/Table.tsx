@@ -68,6 +68,8 @@ interface TableBoolProps {
 
 export class TableBool extends React.Component<TableBoolProps> {
 
+    static defaultProps: any;
+
     render() {
         return (
             <div className={`TableBool ${this.props.className} ${S.CSS.getActiveClassName(this.props.value === S.INT_TRUE)}`} >
