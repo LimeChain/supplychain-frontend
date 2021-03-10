@@ -82,6 +82,8 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
             this.tableHelper.tableState.from,
             this.tableHelper.tableState.to(),
             (shipmentModels, totalSize) => {
+                console.log(shipmentModels);
+
                 this.props.shipmentStore.onScreenData(shipmentModels);
                 this.tableHelper.tableState.total = totalSize;
             },

@@ -50,10 +50,6 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
         this.dataReady = S.INT_FALSE;
         this.productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
 
-        this.state = {
-            searchWord: S.Strings.EMPTY,
-        };
-
         this.tableHelper = new TableHelper(
             S.NOT_EXISTS,
             [

@@ -15,6 +15,7 @@ import SiteStore from '../stores/SiteStore';
 import OriginStore from '../stores/OriginStore';
 import AccountSessionStore from '../stores/AccountSessionStore';
 import PopupShipmentStore from '../stores/PopupShipmentStore';
+import SkuStore from '../stores/SkuStore';
 
 import PageLayoutComponent from './PageLayoutComponent';
 import PopupSubmitShipmentStatusStore from '../stores/PopupSubmitShipmentStatusStore';
@@ -28,30 +29,32 @@ export interface PageComponentProps {
     alertStore: AlertStore,
 }
 
-export default class PageComponent < Pr extends PageComponentProps, St = {}, SS = any > extends React.Component < Pr, St, SS > {
+export default class PageComponent<Pr extends PageComponentProps, St = {}, SS = any> extends React.Component<Pr, St, SS> {
 
     static layout(componentNode: React.ReactNode) {
         const appStore = new AppStore();
         const alertStore = new AlertStore();
         const prodcutStore = new ProductStore(appStore, alertStore);
         const shipmentStore = new ShipmentStore(appStore, alertStore);
+        const skuStore = new SkuStore();
 
         ReactDOM.render((
             <Provider
-                appStore = { appStore }
-                originStore = { new OriginStore() }
-                productStore = { prodcutStore }
-                shipmentStore = { shipmentStore }
-                siteStore = { new SiteStore() }
-                notificationStore = { new NotificationStore(appStore, alertStore) }
-                shipmentDocumentStore = { new ShipmentDocumentStore() }
-                popupProductStore = { new PopupProductStore() }
-                popupShipmentStore = { new PopupShipmentStore(prodcutStore, shipmentStore) }
-                popupSubmitShipmentStatusStore = { new PopupSubmitShipmentStatusStore() }
-                accountSessionStore = { new AccountSessionStore() }
-                alertStore = { alertStore }>
+                appStore={appStore}
+                originStore={new OriginStore()}
+                productStore={prodcutStore}
+                shipmentStore={shipmentStore}
+                skuStore={skuStore}
+                siteStore={new SiteStore()}
+                notificationStore={new NotificationStore(appStore, alertStore)}
+                shipmentDocumentStore={new ShipmentDocumentStore()}
+                popupProductStore={new PopupProductStore()}
+                popupShipmentStore={new PopupShipmentStore(prodcutStore, shipmentStore)}
+                popupSubmitShipmentStatusStore={new PopupSubmitShipmentStatusStore()}
+                accountSessionStore={new AccountSessionStore()}
+                alertStore={alertStore}>
 
-                { componentNode }
+                { componentNode}
 
             </Provider>
         ), document.querySelector('.ReactEntryPoint'));
@@ -99,10 +102,10 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
     render() {
         return (
             <PageLayoutComponent
-                className = { `${this.getPageLayoutComponentCssClassName()} Transition` }
-                popups = { this.renderPopups() } >
+                className={`${this.getPageLayoutComponentCssClassName()} Transition`}
+                popups={this.renderPopups()} >
 
-                { this.renderContent() }
+                { this.renderContent()}
 
             </PageLayoutComponent>
         );

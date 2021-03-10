@@ -21,7 +21,7 @@ export class FetchNotificationsByFilterRes {
 
     constructor(json) {
         this.notificationModels = json.notificationJsons.map((j) => NotificationModel.fromJson(j));
-        this.totalSize = json.totalSize;
+        this.totalSize = Number.parseInt(json.totalSize);
     }
 
 }

@@ -57,9 +57,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         this.tableHelper = new TableHelper(
             ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID,
             [
-                [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 2],
-                [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 4],
-                [ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 6],
+                [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 1],
+                [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 3],
             ],
             this.fetchShipments,
         )
@@ -132,7 +131,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                                             options={[
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
-                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 'Date'),
                                             ]}
                                             onChangeSearchWord={this.onChangeSearchWord}
                                             onChangeSortBy={this.onChangeSortBy} />
@@ -174,7 +172,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         this.props.shipmentStore.screenShipmentModels.forEach((shipmentModel: ShipmentModel) => {
             const originSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentOriginSiteId);
             const originCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === originSiteModel.countryId);
-
             const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
 
             let destinationString = '';
@@ -208,9 +205,11 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     submitShipmentRowAction = (shipmentId) => {
-        const shipmentModelClone = this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).clone();
+        const shipmentModel = this.props.shipmentStore.screenShipmentModels.find((sModel: ShipmentModel) => sModel.shipmentId === shipmentId);
+        const shipmentModelClone = shipmentModel.clone();
 
         shipmentModelClone.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+        shipmentModelClone.shipmentDateOfShipment = Date.now();
 
         this.shipmentApi.creditShipment(
             shipmentModelClone,
@@ -218,27 +217,28 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
             [],
             [],
             () => {
-                this.props.shipmentStore.screenShipmentModels.find((shipmentModel) => shipmentModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
+                this.props.shipmentStore.screenShipmentModels.find((sModel) => sModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
+                this.fetchShipments();
             },
         )
     }
 
     getTableLegend = () => {
-        return ['ID', 'Shipped From', '', 'Destination', 'Status', 'Date'];
+        return ['ID', 'Shipped From', '', 'Destination', 'Status', 'Action'];
     }
 
     getTableAligns = () => {
         return [
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
-            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
-            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_CENTER,
         ]
     }
 
     getTableWidths = () => {
-        return ['5%', '45%', '10%', '15%', '15%', '10%'];
+        return ['5%', '10%', '8%', '47%', '15%', '15%'];
     }
 }

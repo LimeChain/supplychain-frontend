@@ -66,7 +66,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     dragTimeout: NodeJS.Timeout;
 
     iNodes: {
-        'uploader': RefObject < UploaderComponent >,
+        'uploader': RefObject<UploaderComponent>,
     };
 
     constructor(props: Props) {
@@ -219,8 +219,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         e.preventDefault();
     }
 
-    creditShipment = (): Promise < void > => {
-        return new Promise < void >((resolve, reject) => {
+    creditShipment = (): Promise<void> => {
+        return new Promise<void>((resolve, reject) => {
             const popupStore = this.props.popupStore;
             const shipmentModel = popupStore.shipmentModel;
             const onFinish = popupStore.onFinish;
@@ -272,28 +272,28 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         return (
             <div
-                className = { `PopupWindowWrapper ${this.getCssClassName()} Transition ActiveVisibilityHidden ${S.CSS.getActiveClassName(popupStore.visible)}`}
-                onClick = { this.isRemovable() === true ? popupStore.hide : undefined }
-                onWheel = { this.onWheel }
-                onDrop = { this.onDropWrapper }
-                onDragOver = { this.onDragOverWrapper } >
+                className={`PopupWindowWrapper ${this.getCssClassName()} Transition ActiveVisibilityHidden ${S.CSS.getActiveClassName(popupStore.visible)}`}
+                onClick={this.isRemovable() === true ? popupStore.hide : undefined}
+                onWheel={this.onWheel}
+                onDrop={this.onDropWrapper}
+                onDragOver={this.onDragOverWrapper} >
 
-                <div ref = { this.nodes.popupWindow } className = { 'PopupWindow' } onClick = { S.stopPropagation } onWheel = { S.stopPropagation } >
+                <div ref={this.nodes.popupWindow} className={'PopupWindow'} onClick={S.stopPropagation} onWheel={S.stopPropagation} >
 
-                    { popupStore.visible === true && (
+                    {popupStore.visible === true && (
                         <>
-                            <div className = { 'ScrollableContent Scrolls' } >
-                                { this.hasClose() === true && (
+                            <div className={'ScrollableContent Scrolls'} >
+                                {this.hasClose() === true && (
                                     <div
-                                        className = { 'Close SVG Size Clickable' }
-                                        onClick = { this.onClickClose } >
+                                        className={'Close SVG Size Clickable'}
+                                        onClick={this.onClickClose} >
                                         <SvgClear />
                                     </div>
-                                ) }
-                                { this.renderContent() }
+                                )}
+                                {this.renderContent()}
                             </div>
                         </>
-                    ) }
+                    )}
 
                 </div>
 
@@ -347,10 +347,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 </div>
                 <div className={'TabsContent'} >
                     <div className={`TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} >
-                        { this.renderProducts() }
+                        {this.renderProducts()}
                     </div>
                     <div className={`TabDocuments ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
-                        { this.renderDocuments() }
+                        {this.renderDocuments()}
                     </div>
                 </div>
                 <hr />
@@ -559,61 +559,61 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         return (
             <>
-                <div className = { `UploadCnt FlexColumn ${S.CSS.getActiveClassName(popupStore.dragging)}` } onDrop = { this.onDrop } >
-                    <div className = { 'UploadTitle FlexRow' } >
+                <div className={`UploadCnt FlexColumn ${S.CSS.getActiveClassName(popupStore.dragging)}`} onDrop={this.onDrop} >
+                    <div className={'UploadTitle FlexRow'} >
                         <div className={'SVG IconAttachment'} dangerouslySetInnerHTML={{ __html: SvgAttachment }} />
                         Drop your file here or&nbsp;<span>click here to add</span>
                     </div>
-                    <div className = { 'UploadDesc' } > Upload anything you want. There is no limit. </div>
+                    <div className={'UploadDesc'} > Upload anything you want. There is no limit. </div>
                     <UploaderComponent
-                        ref = { this.iNodes.uploader }
-                        id = { shipmentModel }
-                        params = { this.makeDocumentUploadParams() } />
+                        ref={this.iNodes.uploader}
+                        id={shipmentModel}
+                        params={this.makeDocumentUploadParams()} />
                 </div>
                 <hr />
-                <div className = { 'UploadedDocumentsCnt' } >
-                    { popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
+                <div className={'UploadedDocumentsCnt'} >
+                    {popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
                         return (
-                            <div key = { i } className = { 'UploadedDocument FlexRow FlexSplit' } >
+                            <div key={i} className={'UploadedDocument FlexRow FlexSplit'} >
                                 <Select
-                                    className = { 'UploadedDocumentType' }
-                                    placeholder = { 'Select document type' }
-                                    value = { shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType }
-                                    onChange = { this.onChangeDocumentType.bind(this, shipmentDocumentModel) }
-                                    displayEmpty = { true } >
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
-                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
+                                    className={'UploadedDocumentType'}
+                                    placeholder={'Select document type'}
+                                    value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
+                                    onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
+                                    displayEmpty={true} >
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
                                 </Select>
-                                <div className = { 'UploadedDocumentName' } > { shipmentDocumentModel.name } </div>
-                                <div className = { 'StartRight UploadedDocumentSize' } > { formatBytes(shipmentDocumentModel.sizeInBytes) } </div>
-                                <div className = { 'UploadDocumentProgressCnt FlexRow' } >
-                                    { shipmentDocumentModel.isUploaded() === false && (
-                                        <div className = { 'UploadDocumentProgress' }>
-                                            <div className = { 'UploadDocumentProgressIndicator' } style = { { transform: `scaleX(${shipmentDocumentModel.uploadProgress})` } } />
+                                <div className={'UploadedDocumentName'} > {shipmentDocumentModel.name} </div>
+                                <div className={'StartRight UploadedDocumentSize'} > {formatBytes(shipmentDocumentModel.sizeInBytes)} </div>
+                                <div className={'UploadDocumentProgressCnt FlexRow'} >
+                                    {shipmentDocumentModel.isUploaded() === false && (
+                                        <div className={'UploadDocumentProgress'}>
+                                            <div className={'UploadDocumentProgressIndicator'} style={{ transform: `scaleX(${shipmentDocumentModel.uploadProgress})` }} />
                                         </div>
-                                    ) }
-                                    { shipmentDocumentModel.isUploaded() === true && (
+                                    )}
+                                    {shipmentDocumentModel.isUploaded() === true && (
                                         <>
-                                            <div className = { 'SVG Size IconUploadDone' } ><SvgCheck /></div>
+                                            <div className={'SVG Size IconUploadDone'} ><SvgCheck /></div>
                                             Uploaded
                                         </>
-                                    ) }
+                                    )}
                                 </div>
                                 { shipmentDocumentModel.isUploaded() === false && (
-                                    <div className = { 'SVG IconUploadAction' } onClick = { this.onClickDeleteDocument.bind(this, shipmentDocumentModel) } ><SvgClear /></div>
-                                ) }
+                                    <div className={'SVG IconUploadAction'} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} ><SvgClear /></div>
+                                )}
                                 { shipmentDocumentModel.isUploaded() === true && (
                                     <>
-                                        <a href = { shipmentDocumentModel.shipmentDocumentUrl } download = { shipmentDocumentModel.name } className = { 'SVG IconUploadAction' } dangerouslySetInnerHTML = {{ __html: SvgDownload }} />
-                                        <div className = { 'SVG IconUploadAction' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} onClick = { this.onClickDeleteDocument.bind(this, shipmentDocumentModel) } />
+                                        <a href={shipmentDocumentModel.shipmentDocumentUrl} download={shipmentDocumentModel.name} className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDownload }} />
+                                        <div className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} />
                                     </>
-                                ) }
+                                )}
                             </div>
                         )
                     })}
