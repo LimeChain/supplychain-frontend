@@ -40,7 +40,6 @@ import SvgAttachment from '../../../common/svg/attachment.svg';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
-import '@drawbotics/file-icons/dist/style.css'
 import '../../css/components-popups/shipment-popup.css';
 
 interface Props extends PopupWindowProps {
