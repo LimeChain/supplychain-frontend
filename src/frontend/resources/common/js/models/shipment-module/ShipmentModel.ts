@@ -43,6 +43,10 @@ export default class ShipmentModel {
         return Object.assign(new ShipmentModel(), this);
     }
 
+    canSubmit(): boolean {
+        return this.shipmentDestinationSiteId !== S.Strings.NOT_EXISTS && this.shipmentConsignmentNumber !== S.Strings.EMPTY;
+    }
+
     saveAsDraft() {
         this.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
     }
@@ -61,6 +65,15 @@ export default class ShipmentModel {
             default:
                 return 'Unknown';
         }
+    }
+
+    receiveShipment() {
+        this.shipmentStatus = ShipmentConstsH.S_STATUS_RECEIVED;
+        this.shipmentDateOfArrival = Date.now();
+    }
+
+    isDraft(): boolean {
+        return this.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT;
     }
 
     toJson(): any {

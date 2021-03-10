@@ -188,7 +188,9 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>,
+                    <Actions>
+                        <Button color={Button.COLOR_SCHEME_4} >{statusString}</Button>
+                    </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
             ])

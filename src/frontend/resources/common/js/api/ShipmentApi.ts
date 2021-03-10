@@ -16,7 +16,7 @@ import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModul
 import GeneralApi from './GeneralApi';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import CookieHelper from '../helpers/CookieHelper';
-import { number } from 'prop-types';
+import { number, string } from 'prop-types';
 import ProductModel from '../models/product-module/ProductModel';
 import SkuFilter from '../../../../../../builds/dev-generated/ProductModule/Sku/Utils/SkuFilterConsts';
 import moment from 'moment';
@@ -54,22 +54,12 @@ export default class ShipmentApi extends AbsApi {
 
             const json = {
                 shipmentJson: null,
-                skuOriginJsons: [],
                 skuJsons: [],
+                skuOriginJsons: [],
                 shipmentDocumentJsons: [],
             }
 
-            // if not specified set shipment to not sent
-            if (shipmentModel.shipmentStatus === undefined) {
-                shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
-            }
-
-            // save shipment to storageHelper
-            // set new id or get old one
-
-            json.shipmentJson = {
-                shipmentId: S.Strings.NOT_EXISTS,
-            }
+            json.shipmentJson = {};
 
             if (shipmentModel.isNew() === true) {
                 let nextId;
@@ -77,36 +67,23 @@ export default class ShipmentApi extends AbsApi {
                 if (storageHelper.shipmentsJson.length > 0) {
                     const lastShipmentJson = storageHelper.shipmentsJson[storageHelper.shipmentsJson.length - 1];
                     nextId = (parseInt(lastShipmentJson.shipmentId) + 1).toString();
-
                 } else {
                     nextId = '1';
                 }
 
-                json.shipmentJson.shipmentId = nextId;
-
                 const currentSite = CookieHelper.fetchAccounts().accountModel.siteId;
-
+                json.shipmentJson.shipmentId = nextId;
                 json.shipmentJson.shipmentOriginSiteId = currentSite;
             } else {
-                const shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === shipmentModel.shipmentId);
-                json.shipmentJson.shipmentId = shipmentJson.shipmentId;
-            }
-
-            shipmentModel.shipmentId = json.shipmentJson.shipmentId;
-            json.shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === json.shipmentJson.shipmentId);
-
-            if (json.shipmentJson !== undefined) {
-                Object.assign(json.shipmentJson, shipmentModel.toJson());
-            } else {
-                storageHelper.shipmentsJson.push(shipmentModel.toJson());
                 json.shipmentJson = shipmentModel.toJson();
             }
 
             // save skuModels to storageHelper
             skuModels.forEach((skuModel) => {
-                let skuId = S.Strings.NOT_EXISTS;
+                let skuJson = {
+                    skuId: null,
+                };
 
-                // set new id or get old one
                 if (skuModel.isNew() === true) {
                     let nextId;
 
@@ -117,36 +94,19 @@ export default class ShipmentApi extends AbsApi {
                         nextId = '1';
                     }
 
-                    skuId = nextId;
-
-                    // change referenceId in origin to new actual id
-                    const skuOriginModel = skuOriginModels.find((skuOriginModel) => skuOriginModel.skuId === skuModel.skuId)
-                    if (skuOriginModel !== undefined) {
-                        skuOriginModel.skuId = skuId;
-                    }
-                } else {
-                    skuId = skuModel.skuId;
-                }
-
-                skuModel.skuId = skuId;
-
-                let skuJson = storageHelper.skusJson.find((s) => s.skuId === skuId);
-
-                if (skuJson !== undefined) {
-                    Object.assign(skuJson, skuModel.toJson());
+                    skuJson.skuId = nextId;
                 } else {
                     skuJson = skuModel.toJson();
-                    storageHelper.skusJson.push(skuJson);
                 }
 
                 json.skuJsons.push(skuJson);
             })
 
-            // save shkuOrigins to storageHelper
             skuOriginModels.forEach((skuOriginModel) => {
-                let skuOriginId = S.Strings.NOT_EXISTS;
+                let skuOriginJson = {
+                    skuOriginId: null,
+                };
 
-                // set new id or get old one
                 if (skuOriginModel.isNew() === true) {
                     let nextId;
 
@@ -157,28 +117,89 @@ export default class ShipmentApi extends AbsApi {
                         nextId = '1';
                     }
 
-                    skuOriginId = nextId;
-                } else {
-                    skuOriginId = skuOriginModel.skuOriginId;
-                }
-
-                skuOriginModel.skuOriginId = skuOriginId;
-
-                let skuOriginJson = storageHelper.skuOriginsJson.find((s) => s.skuOriginId === skuOriginId);
-
-                if (skuOriginJson !== undefined) {
-                    Object.assign(skuOriginJson, skuOriginModel.toJson());
+                    skuOriginJson.skuOriginId = nextId;
                 } else {
                     skuOriginJson = skuOriginModel.toJson();
-                    storageHelper.skuOriginsJson.push(skuOriginJson);
                 }
 
                 json.skuOriginJsons.push(skuOriginJson);
             })
 
             // documents
-            json.shipmentDocumentJsons = shipmentDocumentModels.map((shipmentDocumentModel) => shipmentDocumentModel.toJson())
+            shipmentDocumentModels.forEach((shipmentDocumentModel) => {
+                let shipmentDocumentJson = {
+                    shipmentDocumentId: null,
+                };
+
+                if (shipmentDocumentModel.isNew() === true) {
+                    let nextId;
+
+                    if (storageHelper.shipmentDocumentsJson.length > 0) {
+                        const lastShipmentDocumentId = storageHelper.shipmentDocumentsJson[storageHelper.shipmentDocumentsJson.length - 1];
+                        nextId = (parseInt(lastShipmentDocumentId.shipmentDocumentId) + 1).toString();
+                    } else {
+                        nextId = '1';
+                    }
+
+                    shipmentDocumentJson.shipmentDocumentId = nextId;
+                } else {
+                    shipmentDocumentJson = shipmentDocumentModel.toJson();
+                }
+
+                json.shipmentDocumentJsons.push(shipmentDocumentJson);
+            });
+
+            const skuIdsMatch = new Map < string, string >();
             const res = new CreditShipmentRes(json);
+            shipmentModel.shipmentId = res.shipmentModel.shipmentId;
+            shipmentModel.shipmentOriginSiteId = res.shipmentModel.shipmentOriginSiteId;
+            for (let i = skuModels.length; i-- > 0;) {
+                skuIdsMatch.set(skuModels[i].skuId, res.skuModels[i].skuId);
+                skuModels[i].skuId = res.skuModels[i].skuId;
+                skuModels[i].shipmentId = shipmentModel.shipmentId;
+            }
+            for (let i = skuOriginModels.length; i-- > 0;) {
+                skuOriginModels[i].skuOriginId = res.skuOriginModels[i].skuOriginId;
+                skuOriginModels[i].skuId = skuIdsMatch.get(skuOriginModels[i].skuId);
+            }
+            for (let i = shipmentDocumentModels.length; i-- > 0;) {
+                shipmentDocumentModels[i].shipmentDocumentId = res.shipmentDocumentModels[i].shipmentDocumentId;
+                shipmentDocumentModels[i].shipmentId = shipmentModel.shipmentId;
+            }
+
+            const shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === shipmentModel.toJson().shipmentId);
+            if (shipmentJson !== undefined) {
+                Object.assign(shipmentJson, shipmentModel.toJson());
+            } else {
+                storageHelper.shipmentsJson.push(shipmentModel.toJson());
+            }
+
+            skuModels.forEach((skuModel) => {
+                const skuJson = storageHelper.skusJson.find((t) => t.skuId === skuModel.toJson().skuId);
+                if (skuJson !== undefined) {
+                    Object.assign(skuJson, skuModel.toJson());
+                } else {
+                    storageHelper.skusJson.push(skuModel.toJson());
+                }
+            });
+
+            skuOriginModels.forEach((skuOriginModel) => {
+                const skuOriginJson = storageHelper.skuOriginsJson.find((t) => t.skuOriginId === skuOriginModel.toJson().skuOriginId);
+                if (skuOriginJson !== undefined) {
+                    Object.assign(skuOriginJson, skuOriginModel.toJson());
+                } else {
+                    storageHelper.skuOriginsJson.push(skuOriginModel.toJson());
+                }
+            });
+
+            shipmentDocumentModels.forEach((shipmentDocumentModel) => {
+                const shipmentDocumentJson = storageHelper.shipmentDocumentsJson.find((t) => t.shipmentDocumentId === shipmentDocumentModel.toJson().shipmentDocumentId);
+                if (shipmentDocumentJson !== undefined) {
+                    Object.assign(shipmentDocumentJson, shipmentDocumentModel.toJson());
+                } else {
+                    storageHelper.shipmentDocumentsJson.push(shipmentDocumentModel.toJson());
+                }
+            });
 
             storageHelper.save();
             callback();
@@ -374,20 +395,47 @@ export default class ShipmentApi extends AbsApi {
         // });
     }
 
-    fetchShipmentById(shipmentId: string, callback: (shipmentModel: ShipmentModel) => void) {
-        const req = new FetchShipmentByIdReq(shipmentId);
+    fetchShipmentById(shipmentId: string, callback: (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => void) {
+        this.disableActions();
 
-        this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENT_BY_ID, req, (json: any) => {
+        setTimeout(() => {
+            this.enableActions();
 
-            if (json.status !== ResponseConsts.S_STATUS_OK) {
-                this.showAlert('Something went wrong');
-                return;
+            const req = new FetchShipmentByIdReq(shipmentId);
+
+            const json = {
+                shipmentJson: null,
+                skuJsons: [],
+                skuOriginJsons: [],
+                shipmentDocumentJsons: [],
             }
 
-            const res = new FetchShipmentsByIdRes(json.obj);
-            callback(res.shipmentModel);
+            const skuIds = new Set < string >();
+            json.shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === req.shipmentId);
+            json.skuJsons = storageHelper.skusJson.filter((t) => t.shipmentId === req.shipmentId);
+            json.skuJsons.forEach((skuJson) => {
+                skuIds.add(skuJson.skuId);
+            });
+            json.skuOriginJsons = storageHelper.skuOriginsJson.filter((t) => skuIds.has(t.skuId));
+            json.shipmentDocumentJsons = storageHelper.shipmentDocumentsJson.filter((t) => t.shipmentId === req.shipmentId);
 
-        })
+            const res = new FetchShipmentsByIdRes(json);
+            callback(res.shipmentModel, res.skuModels, res.skuOriginModels, res.shipmentDocumentModels);
+        }, 100);
+
+        // const req = new FetchShipmentByIdReq(shipmentId);
+
+        // this.shipmentApi.req(Actions.SHIPMENT.FETCH_SHIPMENT_BY_ID, req, (json: any) => {
+
+        //     if (json.status !== ResponseConsts.S_STATUS_OK) {
+        //         this.showAlert('Something went wrong');
+        //         return;
+        //     }
+
+        //     const res = new FetchShipmentsByIdRes(json.obj);
+        //     callback(res.shipmentModel);
+
+        // })
 
     }
 

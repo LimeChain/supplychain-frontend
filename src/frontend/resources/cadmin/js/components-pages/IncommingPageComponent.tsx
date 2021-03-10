@@ -28,6 +28,9 @@ import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -102,8 +105,20 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         this.fetchShipments();
     }
 
+    onClickSubmitShipmentRowAction(sourceShipmentModel: ShipmentModel, e) {
+        e.stopPropagation();
+
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            shipmentModel.receiveShipment();
+            this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
+                Object.assign(sourceShipmentModel, shipmentModel);
+            });
+        });
+    }
+
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();
@@ -190,12 +205,14 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>,
+                    <Actions>
+                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{statusString}</Button>
+                    </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
                 Table.cell(
                     <Actions>
-                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED} onClick={() => this.receiveShipmentRowAction(shipmentModel.shipmentId)}>
+                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED} onClick={this.onClickSubmitShipmentRowAction.bind(this, shipmentModel)}>
                             Goods Received
                         </Button>
                     </Actions>,
@@ -204,25 +221,6 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         })
 
         return result;
-    }
-
-    receiveShipmentRowAction = (shipmentId) => {
-        const shipmentModel = this.props.shipmentStore.screenShipmentModels.find((sModel: ShipmentModel) => sModel.shipmentId === shipmentId);
-        const shipmentModelClone = shipmentModel.clone();
-
-        shipmentModelClone.shipmentStatus = ShipmentConstsH.S_STATUS_RECEIVED;
-        shipmentModelClone.shipmentDateOfArrival = Date.now();
-
-        this.shipmentApi.creditShipment(
-            shipmentModelClone,
-            [],
-            [],
-            [],
-            () => {
-                this.props.shipmentStore.screenShipmentModels.find((sModel) => sModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
-                this.fetchShipments();
-            },
-        )
     }
 
     getTableLegend = () => {

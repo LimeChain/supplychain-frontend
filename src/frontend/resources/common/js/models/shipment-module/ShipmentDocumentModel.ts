@@ -26,6 +26,10 @@ export default class ShipmentDocumentModel {
         makeAutoObservable(this);
     }
 
+    isNew(): boolean {
+        return this.shipmentDocumentId === S.Strings.NOT_EXISTS;
+    }
+
     isUploaded(): boolean {
         return this.shipmentDocumentUrl !== S.Strings.EMPTY;
     }
