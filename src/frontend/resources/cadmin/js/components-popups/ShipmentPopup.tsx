@@ -1,14 +1,25 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler, RefObject } from 'react';
 import { inject, observer } from 'mobx-react';
 
 import { MenuItem } from '@material-ui/core';
 
+import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+
 import S from '../../../common/js/utilities/Main';
-import { formatNumber, formatPrice } from '../../../common/js/helpers/NumeralHelper';
+import { formatBytes, formatNumber, formatPrice } from '../../../common/js/helpers/NumeralHelper';
 import AlertStore from '../../../common/js/stores/AlertStore';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import SiteStore from '../../../common/js/stores/SiteStore';
 import AccountSessionStore from '../../../common/js/stores/AccountSessionStore';
+import AppStore from '../../../common/js/stores/AppStore';
+import ProductStore from '../../../common/js/stores/ProductStore';
+import ShipmentStore from '../../../common/js/stores/ShipmentStore';
+import SiteModel from '../../../common/js/models/SiteModel';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import ProductModel from '../../../common/js/models/product-module/ProductModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
+import ShipmentApi from '../../../common/js/api/ShipmentApi';
 
 import PopupWindow, { PopupWindowProps } from '../../../common/js/components-core/PopupWindow';
 import Actions from '../../../common/js/components-inc/Actions';
@@ -19,21 +30,17 @@ import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
 import Table from '../../../common/js/components-inc/Table';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import Expandable from '../components-inc/Expandable';
+import UploaderComponent from '../../../common/js/components-core/UploaderComponent';
+import SelectSearchable from '../../../common/js/components-inc/SelectSearchable';
 
+import SvgCheck from '@material-ui/icons/Check';
+import SvgClear from '@material-ui/icons/Clear';
 import SvgAdd from '@material-ui/icons/Add';
+import SvgAttachment from '../../../common/svg/attachment.svg';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
+import SvgDownload from '../../../common/svg/download.svg';
 import '../../css/components-popups/shipment-popup.css';
-import SiteModel from '../../../common/js/models/SiteModel';
-import SkuModel from '../../../common/js/models/product-module/SkuModel';
-import SelectSearchable from '../../../common/js/components-inc/SelectSearchable';
-import ShipmentApi from '../../../common/js/api/ShipmentApi';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
-import AppStore from '../../../common/js/stores/AppStore';
-import CountryModel from '../../../common/js/models/CountryModel';
-import ProductModel from '../../../common/js/models/product-module/ProductModel';
-import ProductStore from '../../../common/js/stores/ProductStore';
-import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -54,13 +61,22 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     onClickLocallyManufactured: (_: number, e: MouseEventHandler<HTMLDivElement>) => void;
     onClickFromShipment: (_: number, e: MouseEventHandler<HTMLDivElement>) => void;
 
-    shipmentApi: ShipmentApi
+    shipmentApi: ShipmentApi;
+    dragTimeout: NodeJS.Timeout;
+
+    iNodes: {
+        'uploader': RefObject < UploaderComponent >,
+    };
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
             manufacturedPlace: S.INT_TRUE,
+        };
+
+        this.iNodes = {
+            'uploader': React.createRef(),
         };
 
         this.onClickLocallyManufactured = this.onClickChangeManufacturedPlace.bind(this, S.INT_TRUE);
@@ -145,6 +161,49 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         this.props.popupStore.hide();
     }
 
+    onClickDeleteDocument(shipmentDocumentModel: ShipmentDocumentModel) {
+        this.props.popupStore.deleteDocument(shipmentDocumentModel);
+    }
+
+    onChangeDocumentType(shipmentDocumentModel: ShipmentDocumentModel, value: number) {
+        shipmentDocumentModel.documentType = value;
+    }
+
+    onDrop = (e) => {
+        e.preventDefault();
+
+        this.props.popupStore.dragging = false;
+
+        let files = [];
+        if (e.dataTransfer.items) {
+            for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                if (e.dataTransfer.items[i].kind === 'file') {
+                    const file = e.dataTransfer.items[i].getAsFile();
+                    files.push(file);
+                }
+            }
+        } else {
+            files = e.dataTransfer.files;
+        }
+
+        this.iNodes.uploader.current.uploader.uploadFiles(files);
+    }
+
+    onDropWrapper = (e) => {
+        e.preventDefault();
+
+        this.props.popupStore.dragging = false;
+    }
+
+    onDragOverWrapper = (e) => {
+        this.props.popupStore.dragging = true;
+        clearTimeout(this.dragTimeout);
+        this.dragTimeout = setTimeout(() => {
+            this.props.popupStore.dragging = false;
+        }, 1000);
+        e.preventDefault();
+    }
+
     creditShipment = () => {
         const popupStore = this.props.popupStore;
         const shipmentModel = popupStore.shipmentModel;
@@ -163,6 +222,67 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         }, 0);
     }
 
+    makeDocumentUploadParams() {
+        const popupStore = this.props.popupStore;
+        let shipmentDocumentModels = null;
+
+        return {
+            'maxSize': 1 << 30, // 1GB
+            'controller': 'http://localhost:8001/resources/common/img/favicon/favicon-16x16.png',
+            'progressWindow': false,
+            'onExceedLimit': () => {
+                this.props.alertStore.show('Max files size is 1GB.');
+            },
+            onBeforeStart: (totalFiles: number) => {
+                shipmentDocumentModels = popupStore.onStartUploading(totalFiles);
+            },
+            onProgress: (loaded: number, total: number, files: any[], i: number) => {
+                shipmentDocumentModels[i].uploadProgress = loaded / total;
+                shipmentDocumentModels[i].name = files[i].name;
+                shipmentDocumentModels[i].sizeInBytes = files[i].size;
+                shipmentDocumentModels[i].mimeType = files[i].type;
+            },
+            onUpload: (base64File, response, files: any[], i: number) => {
+                shipmentDocumentModels[i].uploadProgress = 1;
+                shipmentDocumentModels[i].shipmentDocumentUrl = base64File;
+            },
+        }
+    }
+
+    render() {
+        const { popupStore } = this.props;
+
+        return (
+            <div
+                className = { `PopupWindowWrapper ${this.getCssClassName()} Transition ActiveVisibilityHidden ${S.CSS.getActiveClassName(popupStore.visible)}`}
+                onClick = { this.isRemovable() === true ? popupStore.hide : undefined }
+                onWheel = { this.onWheel }
+                onDrop = { this.onDropWrapper }
+                onDragOver = { this.onDragOverWrapper } >
+
+                <div ref = { this.nodes.popupWindow } className = { 'PopupWindow' } onClick = { S.stopPropagation } onWheel = { S.stopPropagation } >
+
+                    { popupStore.visible === true && (
+                        <>
+                            <div className = { 'ScrollableContent Scrolls' } >
+                                { this.hasClose() === true && (
+                                    <div
+                                        className = { 'Close SVG Size Clickable' }
+                                        onClick = { this.onClickClose } >
+                                        <SvgClear />
+                                    </div>
+                                ) }
+                                { this.renderContent() }
+                            </div>
+                        </>
+                    ) }
+
+                </div>
+
+            </div>
+        );
+    }
+
     renderContent() {
         const popupStore = this.props.popupStore;
         const productStore = this.props.productStore;
@@ -174,7 +294,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         const buildSkuInputStateHelper = this.props.popupStore.buildSkuInputStateHelper;
         const shipmentInputStateHelper = this.props.popupStore.shipmentInputStateHelper;
-        const FIELDS_ADD_SKU = PopupShipmentStore.FIELDS_ADD_SKU;
         const FIELDS_SHIPMENT = PopupShipmentStore.FIELDS_SHIPMENT;
 
         buildSkuInputStateHelper.updateValues([
@@ -210,93 +329,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 </div>
                 <div className={'TabsContent'} >
                     <div className={`TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} >
-                        <Expandable
-                            defaultExpanded={true}
-                            accordionSummary={
-                                <div className={'BlockLabel'} > Select product </div>
-                            }
-                            accordionDetailsClasses={'FlexColumn'}
-                            accordionDetails={
-                                <>
-                                    <div className={'ProductManufactureQuestion'} >Is the product locally manufactured?</div>
-                                    <div className={'FlexRow'} >
-                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufacturePlaceLocal())}`} onClick={this.onClickLocallyManufactured} > Yes </div>
-                                        <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufactureFromShipment())}`} onClick={this.onClickFromShipment} > No </div>
-                                    </div>
-                                    <div className={'AddProductCnt FlexSplit'} >
-                                        <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
-                                            <SelectSearchable
-                                                className={'SelectProduct'}
-                                                label={'Product'}
-                                                placeholder={'Select a product'}
-                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[0])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[0])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[0])}
-                                                options={
-                                                    productStore.listProductModels.filter((productModel) => {
-                                                        return popupStore.canAddProductById(productModel.productId);
-                                                    }).map((productModel) => {
-                                                        return SelectSearchable.option(productModel.productId, productModel.productName);
-                                                    })
-                                                } />
-                                            {this.isManufactureFromShipment() === true && (
-                                                <SelectSearchable
-                                                    className={'SelectFromShipment'}
-                                                    label={'From Shipment'}
-                                                    placeholder={buildSkuModel.isProductSelected() === false ? 'Select a product first' : 'Select a shipment'}
-                                                    value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[1])}
-                                                    error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[1])}
-                                                    onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[1])}
-                                                    options={shipmentStore.sourceShipmentModels.map((sModel) => {
-                                                        return SelectSearchable.option(sModel.shipmentId, sModel.shipmentConsignmentNumber);
-                                                    })} />
-                                            )}
-                                            <Input
-                                                className={'InputSku'}
-                                                label={'SKU Value'}
-                                                placeholder={'0'}
-                                                InputProps={{
-                                                    startAdornment: <span className={'StartAdornment'}>€</span>,
-                                                }}
-                                                inputType={InputType.INTEGER}
-                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])} />
-                                            <Input
-                                                className={'InputQuantity'}
-                                                label={'Quantity'}
-                                                placeholder={'0'}
-                                                InputProps={this.isManufacturePlaceLocal() === true || buildSkuOriginModel.hasShipment() === false ? undefined : {
-                                                    endAdornment: <span className={'EndAdornment'} onClick={this.onClickMaxQuantity}>max</span>,
-                                                }}
-                                                inputType={InputType.INTEGER}
-                                                value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[3])}
-                                                error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[3])}
-                                                onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[3])} />
-                                        </LayoutBlock>
-                                        <Actions className={'StartRight'} >
-                                            <Button onClick={this.onClickAddSku}>
-                                                <div className={'FlexRow'} >
-                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                    Add
-                                                </div>
-                                            </Button>
-                                        </Actions>
-                                    </div>
-                                </>
-                            } />
-                        <hr className={'MarginBottomOnly'} />
-                        <div className={'BlockLabel'} >Product list</div>
-                        <Table
-                            widths={['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%']}
-                            legend={['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY]}
-                            aligns={[TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT]}
-                            rows={this.renderProductRows()}
-                            helper={this.props.popupStore.productTableHelper}
-                            emptyLabel={'Product list is still empty'} />
+                        { this.renderProducts() }
                     </div>
-                    <div className={`ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
-                        Documnets
+                    <div className={`TabDocuments ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
+                        { this.renderDocuments() }
                     </div>
                 </div>
                 <hr />
@@ -375,6 +411,107 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         )
     }
 
+    renderProducts() {
+        const popupStore = this.props.popupStore;
+        const productStore = this.props.productStore;
+        const shipmentStore = this.props.shipmentStore;
+
+        const buildSkuModel = popupStore.buildSkuModel;
+        const buildSkuOriginModel = popupStore.buildSkuOriginModel;
+
+        const buildSkuInputStateHelper = this.props.popupStore.buildSkuInputStateHelper;
+        const FIELDS_ADD_SKU = PopupShipmentStore.FIELDS_ADD_SKU;
+
+        return (
+            <>
+                <Expandable
+                    defaultExpanded={true}
+                    accordionSummary={
+                        <div className={'BlockLabel'} > Select product </div>
+                    }
+                    accordionDetailsClasses={'FlexColumn'}
+                    accordionDetails={
+                        <>
+                            <div className={'ProductManufactureQuestion'} >Is the product locally manufactured?</div>
+                            <div className={'FlexRow'} >
+                                <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufacturePlaceLocal())}`} onClick={this.onClickLocallyManufactured} > Yes </div>
+                                <div className={`Radio FlexRow ${S.CSS.getActiveClassName(this.isManufactureFromShipment())}`} onClick={this.onClickFromShipment} > No </div>
+                            </div>
+                            <div className={'AddProductCnt FlexSplit'} >
+                                <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
+                                    <SelectSearchable
+                                        className={'SelectProduct'}
+                                        label={'Product'}
+                                        placeholder={'Select a product'}
+                                        value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[0])}
+                                        error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[0])}
+                                        onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[0])}
+                                        options={
+                                            productStore.listProductModels.filter((productModel) => {
+                                                return popupStore.canAddProductById(productModel.productId);
+                                            }).map((productModel) => {
+                                                return SelectSearchable.option(productModel.productId, productModel.productName);
+                                            })
+                                        } />
+                                    {this.isManufactureFromShipment() === true && (
+                                        <SelectSearchable
+                                            className={'SelectFromShipment'}
+                                            label={'From Shipment'}
+                                            placeholder={buildSkuModel.isProductSelected() === false ? 'Select a product first' : 'Select a shipment'}
+                                            value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[1])}
+                                            error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[1])}
+                                            onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[1])}
+                                            options={shipmentStore.sourceShipmentModels.map((sModel) => {
+                                                return SelectSearchable.option(sModel.shipmentId, sModel.shipmentConsignmentNumber);
+                                            })} />
+                                    )}
+                                    <Input
+                                        className={'InputSku'}
+                                        label={'SKU Value'}
+                                        placeholder={'0'}
+                                        InputProps={{
+                                            startAdornment: <span className={'StartAdornment'}>€</span>,
+                                        }}
+                                        inputType={InputType.INTEGER}
+                                        value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
+                                        error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
+                                        onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])} />
+                                    <Input
+                                        className={'InputQuantity'}
+                                        label={'Quantity'}
+                                        placeholder={'0'}
+                                        InputProps={this.isManufacturePlaceLocal() === true || buildSkuOriginModel.hasShipment() === false ? undefined : {
+                                            endAdornment: <span className={'EndAdornment'} onClick={this.onClickMaxQuantity}>max</span>,
+                                        }}
+                                        inputType={InputType.INTEGER}
+                                        value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[3])}
+                                        error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[3])}
+                                        onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[3])} />
+                                </LayoutBlock>
+                                <Actions className={'StartRight'} >
+                                    <Button onClick={this.onClickAddSku}>
+                                        <div className={'FlexRow'} >
+                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                                    Add
+                                        </div>
+                                    </Button>
+                                </Actions>
+                            </div>
+                        </>
+                    } />
+                <hr className={'MarginBottomOnly'} />
+                <div className={'BlockLabel'} >Product list</div>
+                <Table
+                    widths={['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%']}
+                    legend={['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY]}
+                    aligns={[TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT]}
+                    rows={this.renderProductRows()}
+                    helper={this.props.popupStore.productTableHelper}
+                    emptyLabel={'Product list is still empty'} />
+            </>
+        )
+    }
+
     renderProductRows() {
         const popupStore = this.props.popupStore;
         const productStore = this.props.productStore;
@@ -396,6 +533,75 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         });
 
         return result;
+    }
+
+    renderDocuments() {
+        const popupStore = this.props.popupStore;
+        const shipmentModel = popupStore.shipmentModel;
+
+        return (
+            <>
+                <div className = { `UploadCnt FlexColumn ${S.CSS.getActiveClassName(popupStore.dragging)}` } onDrop = { this.onDrop } >
+                    <div className = { 'UploadTitle FlexRow' } >
+                        <div className={'SVG IconAttachment'} dangerouslySetInnerHTML={{ __html: SvgAttachment }} />
+                        Drop your file here or&nbsp;<span>click here to add</span>
+                    </div>
+                    <div className = { 'UploadDesc' } > Upload anything you want. There is no limit. </div>
+                    <UploaderComponent
+                        ref = { this.iNodes.uploader }
+                        id = { shipmentModel }
+                        params = { this.makeDocumentUploadParams() } />
+                </div>
+                <hr />
+                <div className = { 'UploadedDocumentsCnt' } >
+                    { popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
+                        return (
+                            <div key = { i } className = { 'UploadedDocument FlexRow FlexSplit' } >
+                                <Select
+                                    className = { 'UploadedDocumentType' }
+                                    placeholder = { 'Select document type' }
+                                    value = { shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType }
+                                    onChange = { this.onChangeDocumentType.bind(this, shipmentDocumentModel) }
+                                    displayEmpty = { true } >
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
+                                    <MenuItem value = { ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER }>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
+                                </Select>
+                                <div className = { 'UploadedDocumentName' } > { shipmentDocumentModel.name } </div>
+                                <div className = { 'StartRight UploadedDocumentSize' } > { formatBytes(shipmentDocumentModel.sizeInBytes) } </div>
+                                <div className = { 'UploadDocumentProgressCnt FlexRow' } >
+                                    { shipmentDocumentModel.isUploaded() === false && (
+                                        <div className = { 'UploadDocumentProgress' }>
+                                            <div className = { 'UploadDocumentProgressIndicator' } style = { { transform: `scaleX(${shipmentDocumentModel.uploadProgress})` } } />
+                                        </div>
+                                    ) }
+                                    { shipmentDocumentModel.isUploaded() === true && (
+                                        <>
+                                            <div className = { 'SVG Size IconUploadDone' } ><SvgCheck /></div>
+                                            Uploaded
+                                        </>
+                                    ) }
+                                </div>
+                                { shipmentDocumentModel.isUploaded() === false && (
+                                    <div className = { 'SVG IconUploadAction' } onClick = { this.onClickDeleteDocument.bind(this, shipmentDocumentModel) } ><SvgClear /></div>
+                                ) }
+                                { shipmentDocumentModel.isUploaded() === true && (
+                                    <>
+                                        <div className = { 'SVG IconUploadAction' } dangerouslySetInnerHTML = {{ __html: SvgDelete }} onClick = { this.onClickDeleteDocument.bind(this, shipmentDocumentModel) } />
+                                        <a href = { shipmentDocumentModel.shipmentDocumentUrl } download = { shipmentDocumentModel.name } className = { 'SVG IconUploadAction' } dangerouslySetInnerHTML = {{ __html: SvgDownload }} />
+                                    </>
+                                ) }
+                            </div>
+                        )
+                    })}
+                </div>
+            </>
+        )
     }
 
 }

@@ -8,6 +8,7 @@ import PopupStore from './PopupStore';
 import InputStateHelper from '../helpers/InputStateHelper';
 import ProductStore from './ProductStore';
 import ShipmentStore from './ShipmentStore';
+import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
 
 export default class PopupShipmentStore extends PopupStore {
 
@@ -23,9 +24,12 @@ export default class PopupShipmentStore extends PopupStore {
     @observable shipmentModel: ShipmentModel;
     @observable skuModels: SkuModel[];
     @observable skuOriginModels: SkuOriginModel[];
+    @observable shipmentDocumentModels: ShipmentDocumentModel[];
 
     @observable buildSkuModel: SkuModel;
     @observable buildSkuOriginModel: SkuOriginModel;
+
+    @observable dragging: boolean;
 
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
@@ -82,14 +86,16 @@ export default class PopupShipmentStore extends PopupStore {
         makeObservable(this);
     }
 
-    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], onFinish: (savedShipmentModel: ShipmentModel) => void) {
+    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[], onFinish: (savedShipmentModel: ShipmentModel) => void) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => {});
         this.shipmentModel = shipmentModel;
         this.skuModels = skuModels;
         this.skuOriginModels = skuOriginModels;
+        this.shipmentDocumentModels = shipmentDocumentModels;
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
+        this.dragging = false;
         this.genSkuId = 0;
         this.onFinish = onFinish;
         this.productIdsInSkuModels = new Set();
@@ -143,6 +149,24 @@ export default class PopupShipmentStore extends PopupStore {
 
     canAddProductById(productId: string) {
         return this.productIdsInSkuModels.has(productId) === false;
+    }
+
+    onStartUploading(totalFiles: number): ShipmentDocumentModel[] {
+        const result = [];
+        for (let i = totalFiles; i-- > 0;) {
+            const model = new ShipmentDocumentModel();
+            model.uploadProgress = 0;
+            this.shipmentDocumentModels.push(model);
+            result.push(model);
+        }
+        return result;
+    }
+
+    deleteDocument(shipmentDocumentModel: ShipmentDocumentModel) {
+        const index = this.shipmentDocumentModels.indexOf(shipmentDocumentModel);
+        if (index !== -1) {
+            this.shipmentDocumentModels.splice(index, 1);
+        }
     }
 
 }

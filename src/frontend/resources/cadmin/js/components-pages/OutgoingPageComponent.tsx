@@ -99,7 +99,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();

@@ -12,7 +12,7 @@ export default class UploaderComponent extends React.Component < Props > {
 
     nodes: any;
     sState: any;
-    upload: any | null;
+    uploader: any | null;
 
     constructor(props: Props) {
         super(props);
