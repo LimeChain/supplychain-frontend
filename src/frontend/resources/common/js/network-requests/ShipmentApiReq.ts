@@ -37,6 +37,12 @@ export class FetchShipmentsByFilterReq {
     }
 }
 
+export class FetchTotalValueInStockReq {
+    constructor() {
+
+    }
+}
+
 export class FetchProductsInStockReq {
     searchBy: string
     sortBy: number

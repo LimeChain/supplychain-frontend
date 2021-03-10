@@ -19,6 +19,7 @@ import SkuStore from '../stores/SkuStore';
 
 import PageLayoutComponent from './PageLayoutComponent';
 import PopupSubmitShipmentStatusStore from '../stores/PopupSubmitShipmentStatusStore';
+import DashboardStore from '../stores/DashboardStore';
 
 configure({
     'enforceActions': 'never',
@@ -37,6 +38,7 @@ export default class PageComponent<Pr extends PageComponentProps, St = {}, SS = 
         const prodcutStore = new ProductStore(appStore, alertStore);
         const shipmentStore = new ShipmentStore(appStore, alertStore);
         const skuStore = new SkuStore();
+        const dashboardStore = new DashboardStore(appStore, alertStore);
 
         ReactDOM.render((
             <Provider
@@ -45,6 +47,7 @@ export default class PageComponent<Pr extends PageComponentProps, St = {}, SS = 
                 productStore={prodcutStore}
                 shipmentStore={shipmentStore}
                 skuStore={skuStore}
+                dashboardStore={dashboardStore}
                 siteStore={new SiteStore()}
                 notificationStore={new NotificationStore(appStore, alertStore)}
                 shipmentDocumentStore={new ShipmentDocumentStore()}

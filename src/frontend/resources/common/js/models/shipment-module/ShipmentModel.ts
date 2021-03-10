@@ -52,6 +52,17 @@ export default class ShipmentModel {
         this.shipmentDateOfShipment = Date.now();
     }
 
+    getStatusString() {
+        switch (this.shipmentStatus) {
+            case ShipmentConstsH.S_STATUS_IN_TRANSIT:
+                return 'In Transtit';
+            case ShipmentConstsH.S_STATUS_RECEIVED:
+                return 'Received';
+            default:
+                return 'Unknown';
+        }
+    }
+
     toJson(): any {
         return {
             'shipmentId': this.shipmentId,

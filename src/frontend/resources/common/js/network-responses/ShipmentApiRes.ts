@@ -43,6 +43,14 @@ export class FetchProductsInStockRes {
     }
 }
 
+export class FetchTotalValueInStockRes {
+    totalValue: number
+
+    constructor(json) {
+        this.totalValue = Number.parseInt(json.totalValue);
+    }
+}
+
 export class FetchShipmentsWithProductQuantityLeftByProductIdRes {
     skuModels: SkuModel[];
     shipmentModels: ShipmentModel[];

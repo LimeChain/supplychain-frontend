@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditShipmentReq, FetchShipmentsWithProductQuantityLeftByProductIdReq, FetchProductsInStockReq, FetchShipmentsByFilterReq, FetchShipmentByIdReq } from '../network-requests/ShipmentApiReq';
-import { CreditShipmentRes, FetchShipmentsWithProductQuantityLeftByProductIdRes, FetchProductsInStockRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
+import { CreditShipmentReq, FetchShipmentsWithProductQuantityLeftByProductIdReq, FetchTotalValueInStockReq, FetchProductsInStockReq, FetchShipmentsByFilterReq, FetchShipmentByIdReq } from '../network-requests/ShipmentApiReq';
+import { CreditShipmentRes, FetchShipmentsWithProductQuantityLeftByProductIdRes, FetchTotalValueInStockRes, FetchProductsInStockRes, FetchShipmentsByFilterRes, FetchShipmentsByIdRes } from '../network-responses/ShipmentApiRes';
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -429,6 +429,27 @@ export default class ShipmentApi extends AbsApi {
             const res = new FetchProductsInStockRes(json);
 
             callBack(res.skuModels, res.productModels, res.totalSkuSize)
+        }, 100);
+    }
+
+    fetchTotalValueInStock(callBack: (totalValue: number) => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new FetchTotalValueInStockReq();
+
+            const json = {
+                totalValue: 0,
+            }
+
+            this.fetchSkusInStock('').skuJsons.forEach((skuModel: SkuModel) => {
+                json.totalValue += skuModel.quantity * skuModel.pricePerUnit;
+            });
+
+            const res = new FetchTotalValueInStockRes(json);
+
         }, 100);
     }
 

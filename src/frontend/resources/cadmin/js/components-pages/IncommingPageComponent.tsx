@@ -181,19 +181,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
             const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
             const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
 
-            let statusString = '';
-
-            switch (shipmentModel.shipmentStatus) {
-                case ShipmentConstsH.S_STATUS_IN_TRANSIT:
-                    statusString = 'In Transtit';
-                    break;
-                case ShipmentConstsH.S_STATUS_RECEIVED:
-                    statusString = 'Received';
-                    break;
-                default:
-                    statusString = 'Unknown';
-                    break;
-            }
+            const statusString = '';
 
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
@@ -202,7 +190,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{statusString}</Button>,
+                    <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
                 Table.cell(
