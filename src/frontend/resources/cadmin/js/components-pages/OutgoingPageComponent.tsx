@@ -200,7 +200,9 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 Table.cell(<div className={'SVG IconDestination'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
-                    <Button color={Button.COLOR_SCHEME_4} >{statusString}</Button>,
+                    <Actions>
+                        <Button color={Button.COLOR_SCHEME_4} >{statusString}</Button>
+                    </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
             ])

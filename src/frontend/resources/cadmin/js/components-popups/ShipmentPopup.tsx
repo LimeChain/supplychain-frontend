@@ -227,7 +227,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             const accountModel = this.props.accountSessionStore.accountModel;
             popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
 
-            this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, [], () => {
+            this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, popupStore.shipmentDocumentModels, () => {
                 onFinish(shipmentModel);
                 resolve();
             })
@@ -533,10 +533,17 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     renderProductRows() {
         const popupStore = this.props.popupStore;
         const productStore = this.props.productStore;
-        const result = popupStore.skuModels.map((skuModel: SkuModel, i: number) => {
+        const result = [];
+
+        for (let i = 0; i < popupStore.skuModels.length; ++i) {
+            const skuModel = popupStore.skuModels[i];
             const productModel = productStore.getProduct(skuModel.productId);
             const skuOriginModel = popupStore.getSkuOriginModel(skuModel.skuId);
-            return [
+            if (productModel === null || skuOriginModel === null) {
+                continue;
+            }
+
+            result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),
                 Table.cellString(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : `#${skuOriginModel.shipmentId}`),
@@ -547,8 +554,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 Table.cell((
                     <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />
                 )),
-            ];
-        });
+            ]);
+        }
 
         return result;
     }

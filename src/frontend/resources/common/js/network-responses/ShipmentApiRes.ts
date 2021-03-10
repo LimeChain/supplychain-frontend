@@ -54,9 +54,17 @@ export class FetchShipmentsWithProductQuantityLeftByProductIdRes {
 }
 
 export class FetchShipmentsByIdRes {
+
     shipmentModel: ShipmentModel;
+    skuModels: SkuModel[];
+    skuOriginModels: SkuOriginModel[];
+    shipmentDocumentModels: ShipmentDocumentModel[]
 
     constructor(json) {
         this.shipmentModel = ShipmentModel.fromJson(json.shipmentJson);
+        this.skuModels = json.skuJsons.map((j) => SkuModel.fromJson(j));
+        this.skuOriginModels = json.skuOriginJsons.map((j) => SkuOriginModel.fromJson(j));
+        this.shipmentDocumentModels = json.shipmentDocumentJsons.map((j) => ShipmentDocumentModel.fromJson(j));
+
     }
 }

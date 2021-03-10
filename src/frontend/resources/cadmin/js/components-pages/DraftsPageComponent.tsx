@@ -28,6 +28,9 @@ import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModul
 import Table from '../../../common/js/components-inc/Table';
 import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -89,6 +92,12 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         )
     }
 
+    fetchShipmentsInit = () => {
+        const tableState = this.tableHelper.tableState;
+        tableState.pageZero();
+        this.fetchShipments();
+    }
+
     onChangeSearchWord = (searchWord) => {
         this.searchWord = searchWord;
         this.fetchShipments();
@@ -99,12 +108,33 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         this.fetchShipments();
     }
 
-    onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
-            const tableState = this.tableHelper.tableState;
-            tableState.pageZero();
-            this.fetchShipments();
+    onClickSubmitShipmentRowAction(sourceShipmentModel: ShipmentModel, e) {
+        e.stopPropagation();
+
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            shipmentModel.submitShipment();
+            this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, this.fetchShipmentsInit);
         });
+    }
+
+    onClickShipment = (i: number) => {
+        const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+                if (savedShipmentModel.isDraft() === true) {
+                    Object.assign(sourceShipmentModel, savedShipmentModel);
+                } else {
+                    this.fetchShipmentsInit();
+                }
+            });
+        });
+
+    }
+
+    onClickCreateNewShipment = () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], this.fetchShipmentsInit);
     }
 
     renderContent() {
@@ -155,7 +185,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                                         widths={this.getTableWidths()}
                                         aligns={this.getTableAligns()}
                                         helper={this.tableHelper}
-                                        rows={this.renderRows()} />
+                                        rows={this.renderRows()}
+                                        onClickRow = { this.onClickShipment } />
                                 </PageTable>
                             )}
                         </>
@@ -189,11 +220,13 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                 Table.cell(<div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(destinationString),
                 Table.cell(
-                    <div className={'ShipmentStatusCell FlexColumn'} >In Preparation</div>,
+                    <Actions>
+                        <Button color={Button.COLOR_SCHEME_2} >In Preparation</Button>
+                    </Actions>,
                 ),
                 Table.cell(
                     <Actions>
-                        <Button onClick={() => this.submitShipmentRowAction(shipmentModel.shipmentId)}>
+                        <Button disabled = { shipmentModel.canSubmit() === false } onClick={this.onClickSubmitShipmentRowAction.bind(this, shipmentModel)}>
                             Submit
                         </Button>
                     </Actions>,
@@ -202,25 +235,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         })
 
         return result;
-    }
-
-    submitShipmentRowAction = (shipmentId) => {
-        const shipmentModel = this.props.shipmentStore.screenShipmentModels.find((sModel: ShipmentModel) => sModel.shipmentId === shipmentId);
-        const shipmentModelClone = shipmentModel.clone();
-
-        shipmentModelClone.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
-        shipmentModelClone.shipmentDateOfShipment = Date.now();
-
-        this.shipmentApi.creditShipment(
-            shipmentModelClone,
-            [],
-            [],
-            [],
-            () => {
-                this.props.shipmentStore.screenShipmentModels.find((sModel) => sModel.shipmentId === shipmentId).shipmentStatus = shipmentModelClone.shipmentStatus;
-                this.fetchShipments();
-            },
-        )
     }
 
     getTableLegend = () => {

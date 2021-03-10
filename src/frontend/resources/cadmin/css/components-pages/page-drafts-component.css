@@ -1,20 +1,12 @@
-.PageDrafts {}
+.PageDrafts {
+    
+}
 
-.PageDrafts .ShipmentsTable .ShipmentOriginCell {
+/* .PageDrafts .ShipmentsTable .ShipmentOriginCell {
     justify-content: space-between;
     flex-grow: 1;
 }
 
 .PageDrafts .ShipmentsTable .ShipmentOriginCell .SVG {
     margin-right: 35px;
-}
-
-.PageDrafts .ShipmentsTable .ShipmentStatusCell {
-    background: rgba(125, 66, 184, 0.2);
-    color: var(--color-primary);
-    width: 110px;
-    height: 30px;
-    border-radius: 5px;
-    justify-content: center;
-    text-align: center;
-}
+} */
