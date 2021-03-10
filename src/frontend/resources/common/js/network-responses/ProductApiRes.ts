@@ -16,7 +16,7 @@ export class FetchProductsByFilterRes {
 
     constructor(json) {
         this.productModels = json.productJsons.map((v) => ProductModel.fromJson(v));
-        this.totalSize = json.totalSize;
+        this.totalSize = Number.parseFloat(json.totalSize);
     }
 }
 

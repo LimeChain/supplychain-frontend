@@ -31,7 +31,7 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
     generalApi: GeneralApi;
 
     static getStores() {
-        return ['accountSessionStore', 'notificationStore', 'siteStore', 'popupProductStore', 'popupShipmentStore'];
+        return ['skuStore', 'accountSessionStore', 'notificationStore', 'siteStore', 'popupProductStore', 'popupShipmentStore'];
     }
 
     constructor(props: Pr) {

@@ -26,31 +26,29 @@ export class FetchShipmentsByFilterRes {
 
     constructor(json) {
         this.shipmentModels = [];
-        this.totalSize = json.totalSize;
-
-        for (const shipmentJson of json.shipmentJsons) {
-            this.shipmentModels.push(ShipmentModel.fromJson(shipmentJson));
-        }
-
+        this.totalSize = Number.parseInt(json.totalSize);
+        this.shipmentModels = json.shipmentJsons.map((shipmentJson: ShipmentModel) => ShipmentModel.fromJson(shipmentJson));
     }
 }
 
 export class FetchProductsInStockRes {
     skuModels: SkuModel[];
     productModels: ProductModel[];
+    totalSkuSize: number;
 
     constructor(json) {
         this.skuModels = json.skuJsons.map((skuJson: SkuModel) => SkuModel.fromJson(skuJson));
         this.productModels = json.productJsons.map((productJson: SkuModel) => ProductModel.fromJson(productJson));
+        this.totalSkuSize = Number.parseInt(json.totalSkuSize);
     }
 }
 
 export class FetchShipmentsWithProductQuantityLeftByProductIdRes {
+    skuModels: SkuModel[];
     shipmentModels: ShipmentModel[];
-    productQuantitiesLeft: number[];
 
     constructor(json) {
-        this.productQuantitiesLeft = json.productQuantitiesLeft
+        this.skuModels = json.skuJsons.map((skuJson: SkuModel) => SkuModel.fromJson(skuJson));
         this.shipmentModels = json.shipmentJsons.map((shipmentJson: ShipmentModel) => ShipmentModel.fromJson(shipmentJson));
     }
 }

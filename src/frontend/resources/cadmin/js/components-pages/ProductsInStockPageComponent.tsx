@@ -18,6 +18,7 @@ import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import S from '../../../common/js/utilities/Main';
 import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
+import SkuFilter from '../../../../../../builds/dev-generated/ProductModule/Sku/Utils/SkuFilterConsts';
 import PageView from '../components-inc/PageView';
 import './../../css/components-pages/page-products-component.css';
 import NoEntryPage from '../components-inc/NoEntryPage';
@@ -26,36 +27,49 @@ import Actions from '../../../common/js/components-inc/Actions';
 import Button from '../../../common/js/components-inc/Button';
 import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuStore from '../../../common/js/stores/SkuStore';
+import TableHelper from '../../../common/js/helpers/TableHelper';
+import TableDesktop from '../../../common/js/components-inc/TableDesktop';
+import Table from '../../../common/js/components-inc/Table';
+import ProductRowMenu from '../components-inc/ProductRowMenu';
+import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
+import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
     productStore: ProductStore;
+    skuStore: SkuStore;
 }
 
 interface State {
-    searchWord: string;
-    sortBy: number;
 }
 
 export default class ProductsInStockPageComponent extends ContextPageComponent<Props, State> {
     showNoEntryPage: boolean = false;
-
     dataReady: number;
-    productApi: ProductApi;
+    tableHelper: TableHelper;
+    searchWord: string = S.Strings.EMPTY;
 
     constructor(props: Props) {
         super(props);
         this.dataReady = S.INT_FALSE;
-        this.productApi = new ProductApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
 
         this.state = {
             searchWord: S.Strings.EMPTY,
             sortBy: S.NOT_EXISTS,
         };
+
+        this.tableHelper = new TableHelper(
+            S.NOT_EXISTS,
+            [
+                [SkuFilter.S_SORT_BY_NAME, 1],
+            ],
+            this.fetchProductsInStock,
+        )
     }
 
     static layout() {
-        const MobXComponent = inject('appStore', 'alertStore', 'productStore', 'accountSessionStore', 'popupProductStore', 'notificationStore', 'siteStore')(observer(ProductsInStockPageComponent));
+        const MobXComponent = inject('appStore', 'alertStore', 'productStore', 'accountSessionStore', 'popupProductStore', 'notificationStore', 'siteStore', 'skuStore')(observer(ProductsInStockPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -70,27 +84,44 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
     }
 
     fetchProductsInStock = () => {
-        this.shipmentApi.fetchProductsInStock('', 1, 0, 200, (skuModels: SkuModel[], productModels: ProductModel[]) => {
-            console.log(skuModels);
-            console.log(productModels);
+        const tableState = this.tableHelper.tableState;
 
-        })
+        this.shipmentApi.fetchProductsInStock(
+            this.searchWord,
+            this.tableHelper.tableState.sortKey,
+            this.tableHelper.tableState.from,
+            this.tableHelper.tableState.to(),
+            (skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize) => {
+                if (skuModels.length === 0 && tableState.from > 0) {
+                    tableState.pageBack();
+                    this.fetchProductsInStock();
+                    return;
+                }
+
+                this.props.skuStore.onScreenData(skuModels);
+                this.props.productStore.onScreenData(productModels);
+                this.tableHelper.tableState.total = totalSkuSize;
+                this.dataReady = S.INT_TRUE;
+            },
+        )
     }
 
     onChangeSearchWord = (searchWord) => {
-        this.setState({
-            searchWord,
-        });
+        this.searchWord = searchWord;
+        this.fetchProductsInStock();
     }
 
     onChangeSortBy = (sortBy) => {
-        this.setState({
-            sortBy,
-        });
+        this.tableHelper.tableState.sortKey = sortBy;
+        this.fetchProductsInStock();
     }
 
-    addProductPopup = () => {
-        // TODO: open new shipment popup
+    onClickAddProduct = () => {
+        this.props.popupProductStore.signalShow(new ProductModel(), () => {
+            const tableState = this.tableHelper.tableState;
+            tableState.pageZero();
+            this.fetchProductsInStock();
+        });
     }
 
     renderContent() {
@@ -100,52 +131,97 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
                 <Sidebar page={PagesCAdmin.PRODUCTS_IN_STOCK} />
 
                 <PageView pageTitle={'ProductsinStock'} >
-                    {this.showNoEntryPage === true && (
-                        <NoEntryPage modelName='product' subText='' buttonText='' buttonFunction={null} />
+                    {this.props.productStore.screenProductModels === null && (
+                        'Loading'
                     )}
-                    {this.showNoEntryPage === false && (
-                        <PageTable
-                            className={'WhiteBox PageExtend'}
-                            header={(
-                                <PageTableHeader
-                                    searchPlaceHolder={'Search products'}
-                                    selectedSortBy={this.state.sortBy}
-                                    options={[
-                                        new PageTableHeaderSortByStruct(5, 'Name'),
-                                        new PageTableHeaderSortByStruct(10, 'Site'),
-                                    ]}
-                                    onChangeSearchWord={this.onChangeSearchWord}
-                                    onChangeSortBy={this.onChangeSortBy} />
+                    {this.props.productStore.screenProductModels !== null && (
+                        <>
+                            {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
+                                <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.onClickAddProduct} />
                             )}
-                            footer={(
-                                <PageTableFooter
-                                    totalItems={5}
-                                    totalPrice={121341}
-                                    actions={(
-                                        <Actions>
-                                            <Button>
-                                                <div className={'FlexRow'}>
-                                                    <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                            {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
+                                <PageTable
+                                    className={'WhiteBox PageExtend'}
+                                    header={(
+                                        <PageTableHeader
+                                            searchPlaceHolder={'Search products'}
+                                            selectedSortBy={this.tableHelper.tableState.sortKey}
+                                            options={[
+                                                new PageTableHeaderSortByStruct(SkuFilter.S_SORT_BY_NAME, 'Name'),
+                                            ]}
+                                            onChangeSearchWord={this.onChangeSearchWord}
+                                            onChangeSortBy={this.onChangeSortBy} />
+                                    )}
+                                    footer={(
+                                        <PageTableFooter
+                                            totalItems={this.tableHelper.tableState.total}
+                                            totalPrice={this.props.skuStore.getTotalPrice()}
+                                            actions={(
+                                                <Actions>
+                                                    <Button onClick={this.onClickAddProduct}>
+                                                        <div className={'FlexRow'}>
+                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
-                                                </div>
-                                            </Button>
-                                        </Actions>
-                                    )} />
-                            )} >
-                            {'some large content'.repeat(10)}
-                        </PageTable>
+                                                        </div>
+                                                    </Button>
+                                                </Actions>
+                                            )} />
+                                    )} >
+                                    <TableDesktop
+                                        className={'ProductsTable'}
+                                        legend={this.getTableLegend()}
+                                        widths={this.getTableWidths()}
+                                        aligns={this.getTableAligns()}
+                                        helper={this.tableHelper}
+                                        rows={this.renderRows()}
+                                        showPaging={true} >
+                                    </TableDesktop>
+                                </PageTable>
+                            )}
+                        </>
                     )}
                 </PageView>
-
             </div>
-            // <>
-            //     <Header page={PagesCAdmin.PRODUCTS} />
-            //     <div className={' PageContent FlexColumn'}>
-            //         <Notifications notifications={this.props.notificationStore.screenNotificationModels} />
-            //         <div onClick={this.props.popupProductStore.show}>show popup</div>
-            //         <div onClick={this.fetchProducts}>fetch products</div>
-            //     </div>
-            // </>
         )
+    }
+
+    renderRows = () => {
+        const result = [];
+
+        this.props.skuStore.screenSkuModels.forEach((skuModel: SkuModel) => {
+
+            const productModel = this.props.productStore.screenProductModels.find((p) => p.productId === skuModel.productId);
+            const totalPrice = skuModel.quantity * skuModel.pricePerUnit;
+
+            result.push([
+                Table.cellString(`#${skuModel.skuId}`),
+                Table.cellString(productModel.productName),
+                Table.cellString(`#${skuModel.shipmentId}`),
+                Table.cellString(`${skuModel.quantity}`),
+                Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
+                Table.cellString(`${formatPrice(totalPrice)}`),
+            ])
+        })
+
+        return result;
+    }
+
+    getTableLegend() {
+        return ['ID', 'Product Name', 'From Shipment', 'Quantity', 'Measurement', 'Total Value'];
+    }
+
+    getTableAligns = () => {
+        return [
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_LEFT,
+            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
+        ]
+    }
+
+    getTableWidths = () => {
+        return ['5%', '35%', '15%', '15%', '15%', '15%'];
     }
 }

@@ -1,18 +1,20 @@
-import DatabaseWhere from "../../../../utilities/database/DatabaseWhere"
-import SV from "../../../../utilities/SV"
-import ShipmentModelH from "../Model/ShipmentModelH"
+import DatabaseWhere from '../../../../utilities/database/DatabaseWhere'
+import SV from '../../../../utilities/SV'
+import ShipmentModelH from '../Model/ShipmentModelH'
 
 export default class ShipmentFilter {
     static S_SORT_BY_ID: number = 1
     static S_SORT_BY_NAME: number = 2
-    static S_SORT_BY_STATUS: number = 3
-    static S_SORT_BY_ORIGIN_SITE_ID: number = 4
-    static S_SORT_BY_DESTINATION_SITE_ID: number = 5
-    static S_SORT_BY_DATE_OF_SHIPMENT: number = 6
-    static S_SORT_BY_DATE_OF_ARRIVAL: number = 7
+    static S_SORT_BY_CONSIGNMENT_NUMBER: number = 3
+    static S_SORT_BY_STATUS: number = 4
+    static S_SORT_BY_ORIGIN_SITE_ID: number = 5
+    static S_SORT_BY_DESTINATION_SITE_ID: number = 6
+    static S_SORT_BY_DATE_OF_SHIPMENT: number = 7
+    static S_SORT_BY_DATE_OF_ARRIVAL: number = 8
 
     filterId: number = SV.NOT_EXISTS
     filterName: string = SV.Strings.NOT_EXISTS
+    filterConsignmentNumber: string = SV.Strings.NOT_EXISTS
     filterStatus: number = SV.NOT_EXISTS
     filterOriginSiteId: number = SV.NOT_EXISTS
     filterDestinationSiteId: number = SV.NOT_EXISTS
@@ -26,6 +28,8 @@ export default class ShipmentFilter {
                 return ShipmentModelH.P_SHIPMENT_ID;
             case ShipmentFilter.S_SORT_BY_NAME:
                 return ShipmentModelH.P_SHIPMENT_NAME;
+            case ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER:
+                return ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER;
             case ShipmentFilter.S_SORT_BY_STATUS:
                 return ShipmentModelH.P_SHIPMENT_STATUS;
             case ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID:

@@ -33,5 +33,5 @@ export const formatNumber = (value): string => {
 }
 
 export const formatPrice = (value): string => {
-    return numeral(value).format('$0,0');
+    return numeral(value).format('$ 0,0');
 }

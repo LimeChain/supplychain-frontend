@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import ShipmentApi from '../api/ShipmentApi';
+import SkuModel from '../models/product-module/SkuModel';
 
 import ShipmentModel from '../models/shipment-module/ShipmentModel';
 import S from '../utilities/Main';
@@ -12,7 +13,7 @@ export default class ShipmentStore {
 
     screenShipmentModels: ShipmentModel[] = null;
     sourceShipmentModels: ShipmentModel[] = [];
-    sourceMaxAvailableQuantitiesMap: Map < string, number > = new Map();
+    sourceMaxAvailableQuantitiesMap: Map<string, number> = new Map();
 
     shipmentApi: ShipmentApi;
 
@@ -26,12 +27,18 @@ export default class ShipmentStore {
         this.updateShipmentModels(shipmentModels);
     }
 
-    onSourceShipment(shipmentModels: ShipmentModel[], sourceMaxAvailableQuantities: number[]) {
+    onSourceShipment(shipmentModels: ShipmentModel[], skuModels: SkuModel[]) {
+
         this.sourceShipmentModels = shipmentModels;
         this.sourceMaxAvailableQuantitiesMap.clear();
-        for (let i = shipmentModels.length; i-- > 0;) {
-            this.sourceMaxAvailableQuantitiesMap.set(shipmentModels[i].shipmentId, sourceMaxAvailableQuantities[i]);
-        }
+
+        this.sourceShipmentModels.forEach((shipmentModel: ShipmentModel) => {
+            this.sourceMaxAvailableQuantitiesMap.set(
+                shipmentModel.shipmentId,
+                skuModels.find((skuModel: SkuModel) => skuModel.shipmentId === shipmentModel.shipmentId).quantity,
+            );
+        })
+
         this.updateShipmentModels(shipmentModels);
     }
 
@@ -64,10 +71,10 @@ export default class ShipmentStore {
             return;
         }
 
-        const model = new ShipmentModel();
-        model.shipmentId = '1';
-        model.shipmentConsignmentNumber = 'test 1';
-        this.onSourceShipment([model], [10]);
+        this.shipmentApi.fetchShipmentsWhereProductLeftByProductId(productId, (skuModels: SkuModel[], shipmentModels: ShipmentModel[]) => {
+            this.onSourceShipment(shipmentModels, skuModels);
+        })
+
         callback();
     }
 

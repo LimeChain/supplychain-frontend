@@ -43,7 +43,7 @@ interface Props {
     target?: string;
 }
 
-export default class Button extends React.Component < Props > {
+export default class Button extends React.Component<Props> {
 
     static defaultProps: any;
 
@@ -94,21 +94,20 @@ export default class Button extends React.Component < Props > {
         const className = `Button Transition ${this.props.className}`;
 
         return (
-            <ThemeProvider theme = { theme01 } >
-                <ThemeProvider theme = { this.muiTheme() } >
+            <ThemeProvider theme={theme01} >
+                <ThemeProvider theme={this.muiTheme()} >
                     <MuiButton
-                        disableElevation = { true }
-                        disabled = { this.props.disabled }
-                        className = { className }
-                        onClick = { this.props.onClick }
-                        variant = { this.muiVariant() }
-                        color = { this.cssMuiClassColor() }
-                        href = { this.props.href }
-                        target = { this.props.target } >
-                        <div className = { 'ButtonContent FlexColumn' } >
-                            { this.props.children }
+                        disableElevation={true}
+                        disabled={this.props.disabled}
+                        className={className}
+                        onClick={this.props.onClick}
+                        variant={this.muiVariant()}
+                        color={this.cssMuiClassColor()}
+                        href={this.props.href}
+                        target={this.props.target} >
+                        <div className={'ButtonContent FlexColumn'} >
+                            {this.props.children}
                         </div>
-
                     </MuiButton>
                 </ThemeProvider>
             </ThemeProvider>

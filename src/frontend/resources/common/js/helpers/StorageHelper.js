@@ -8,7 +8,7 @@ import CountryModel from '../models/CountryModel';
 import SiteModel from '../models/SiteModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 44;
+const VERSION = 45;
 
 const productsJson = [
     jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -18,32 +18,33 @@ const productsJson = [
 ]
 
 const skusJson = [
-    jsonSku('1', '1', 30, 20, SkuConstsH.S_CURRENCY_EUR),
-    jsonSku('2', '2', 10, 420, SkuConstsH.S_CURRENCY_EUR),
-    jsonSku('3', '3', 36, 10, SkuConstsH.S_CURRENCY_USD),
-    jsonSku('4', '4', 3345, 20, SkuConstsH.S_CURRENCY_EUR),
-    jsonSku('5', '1', 30, 20, SkuConstsH.S_CURRENCY_USD),
-    jsonSku('6', '3', 30, 20, SkuConstsH.S_CURRENCY_USD),
-    jsonSku('7', '2', 30, 20, SkuConstsH.S_CURRENCY_EUR),
+    jsonSku('1', '5', '1', 30, 20, SkuConstsH.S_CURRENCY_EUR),
+    jsonSku('2', '6', '1', 10, 420, SkuConstsH.S_CURRENCY_EUR),
+    jsonSku('3', '5', '3', 36, 10, SkuConstsH.S_CURRENCY_USD),
+    jsonSku('4', '7', '4', 3345, 20, SkuConstsH.S_CURRENCY_EUR),
+    // jsonSku('5', '1', 30, 20, SkuConstsH.S_CURRENCY_USD),
+    // jsonSku('6', '3', 30, 20, SkuConstsH.S_CURRENCY_USD),
+    // jsonSku('7', '2', 30, 20, SkuConstsH.S_CURRENCY_EUR),
 ]
 
 const skuOriginsJson = [
-    jsonSkuOrigin('1', '1', '1'),
+    jsonSkuOrigin('1', '2', '5'),
+    jsonSkuOrigin('1', '4', '5'),
 ]
 
 const shipmentsJson = [
-    jsonShipment('1', 'Chairs to Germany', ShipmentConstsH.S_STATUS_DRAFT, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('2', 'Chairs to Germany2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('3', 'Chairs to Germany3', ShipmentConstsH.S_STATUS_RECEIVED, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('4', 'Tables to Malta', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('5', 'Tables to Malta', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('6', 'Tables to Malta', ShipmentConstsH.S_STATUS_RECEIVED, '1', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('8', 'Gold from Germany', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('9', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('10', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('11', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('12', 'Gold from Germany', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('13', 'Gold from Germany', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('1', 'Chairs to Germany', 'C1', ShipmentConstsH.S_STATUS_DRAFT, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('2', 'Chairs to Germany2', 'C2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('3', 'Chairs to Germany3', 'C3', ShipmentConstsH.S_STATUS_RECEIVED, '1', '2', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('4', 'Tables to Malta', 'C4', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('5', 'Tables to Malta', 'C5', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    jsonShipment('6', 'Tables to Germany', 'C6', ShipmentConstsH.S_STATUS_IN_TRANSIT, '1', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('8', 'Gold from Germany', 'C8', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('9', 'Gold from Germany', 'C9', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('10', 'Gold from Germany', 'C10', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('11', 'Gold from Germany', 'C11', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('12', 'Gold from Germany', 'C12', ShipmentConstsH.S_STATUS_DRAFT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('13', 'Gold from Germany', 'C13', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
 
 ]
 
@@ -125,13 +126,14 @@ function jsonProduct(productId, productName, productUnit, productDescription, pr
     }
 }
 
-function jsonSku(skuId, skuProductId, skuQuantity, skuPricePerUnit, skuCurrency) {
+function jsonSku(skuId, shipmentId, productId, quantity, pricePerUnit, currency) {
     return {
         'skuId': skuId,
-        'skuProductId': skuProductId,
-        'skuQuantity': skuQuantity,
-        'skuPricePerUnit': skuPricePerUnit,
-        'skuCurrency': skuCurrency,
+        'shipmentId': shipmentId,
+        'productId': productId,
+        'quantity': quantity,
+        'pricePerUnit': pricePerUnit,
+        'currency': currency,
     }
 }
 
@@ -143,10 +145,11 @@ function jsonSkuOrigin(skuOriginId, skuId, shipmentId) {
     }
 }
 
-function jsonShipment(shipmentId, name, shipmentStatus, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, description, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) {
+function jsonShipment(shipmentId, name, shipmentConsignmentNumber, shipmentStatus, shipmentOriginSiteId, shipmentDestinationSiteId, dateOfShipment, dateOfArrival, description, shipmentDltAnchored, shipmentDltProof, shipmentDeleted) {
     return {
         'shipmentId': shipmentId,
         'shipmentName': name,
+        'shipmentConsignmentNumber': shipmentConsignmentNumber,
         'shipmentStatus': shipmentStatus,
         'shipmentOriginSiteId': shipmentOriginSiteId,
         'shipmentDestinationSiteId': shipmentDestinationSiteId,

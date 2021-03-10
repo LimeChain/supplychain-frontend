@@ -296,7 +296,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                             emptyLabel={'Product list is still empty'} />
                     </div>
                     <div className={`ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
-                        Documnets
+                        Documents
                     </div>
                 </div>
                 <hr />
