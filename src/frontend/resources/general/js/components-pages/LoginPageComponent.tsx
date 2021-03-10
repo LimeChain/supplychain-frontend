@@ -112,12 +112,12 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
 
                 <div className = { 'LoginBox FlexColumn' } >
 
-                    <div className = { 'Title' } > Welcome! </div>
+                    <div className = { 'Title' } > Welcome to VAT Check! </div>
                     <div className = { 'Subtitle' } > Enter your credentials to access your account </div>
 
                     <LayoutBlock className = { 'LoginForm' } >
                         <Select
-                            label = { 'Choose site and country' }
+                            label = { 'EU Member State' }
                             value = { this.inputStateHelper.values.get(FIELDS[0]) }
                             error = { this.inputStateHelper.errors.get(FIELDS[0]) }
                             onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >

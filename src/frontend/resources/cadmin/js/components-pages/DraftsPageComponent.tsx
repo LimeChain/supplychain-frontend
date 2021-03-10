@@ -100,7 +100,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();

@@ -6,6 +6,8 @@ import AlertStore from '../stores/AlertStore';
 import S from '../utilities/Main';
 
 import '../../css/components-core/alert.css';
+import Button from '../components-inc/Button';
+import Actions from '../components-inc/Actions';
 
 interface Props {
     alertStore: AlertStore;
@@ -39,55 +41,38 @@ class Alert extends React.Component < Props > {
         }
     }
 
-    onClickNeutral = () => {
-        const { alertStore } = this.props;
-
-        let handled: boolean | void = false;
-        if (alertStore.neutralListener !== null) {
-            handled = alertStore.neutralListener();
-        }
-
-        if (handled !== true) {
-            alertStore.hide();
-        }
-    }
-
     render() {
         const { alertStore } = this.props;
 
         return (
             <div className = { `AlertWrapper Transition ActiveVisibilityHidden ${S.CSS.getActiveClassName(alertStore.isVisible())}` } >
                 <div className = { 'Alert ShadowDark' } >
-                    <div className = { 'Msg ScrollView' } >{alertStore.msg}</div>
+                    <div className = { 'MsgCnt ScrollView' } >
+                        <div className = { 'Msg' } >{alertStore.msg}</div>
+                        { alertStore.subMsg !== S.Strings.EMPTY && (
+                            <div className = { 'SubMsg' } >{alertStore.subMsg}</div>
+                        )}
+                    </div>
 
-                    <div className = { 'FlexSplit' } >
-                        { alertStore.neutralLabel !== null && (
-                            <div
-                                className = { 'TextButton Neutral' }
-                                onClick = { this.onClickNeutral } >
-                                { alertStore.neutralLabel }
-                            </div>
+                    <Actions>
+
+                        { alertStore.negativeLabel !== null && (
+                            <Button
+                                type = { Button.TYPE_OUTLINE }
+                                onClick = { this.onClickNegative } >
+                                {alertStore.negativeLabel}
+                            </Button>
                         ) }
 
-                        <div className = { 'StartRight' } >
-                            { alertStore.negativeLabel !== null && (
-                                <div
-                                    className = { 'TextButton Negative' }
-                                    onClick = { this.onClickNegative } >
-                                    { alertStore.negativeLabel }
-                                </div>
-                            ) }
+                        { alertStore.positiveLabel !== null && (
+                            <Button
+                                type = { Button.TYPE_ROUNDED }
+                                onClick = { this.onClickPositive } >
+                                {alertStore.positiveLabel}
+                            </Button>
+                        ) }
 
-                            { alertStore.positiveLabel !== null && (
-                                <div
-                                    className = { 'TextButton Positive' }
-                                    onClick = { this.onClickPositive } >
-                                    { alertStore.positiveLabel }
-                                </div>
-                            ) }
-
-                        </div>
-                    </div>
+                    </Actions>
                 </div>
             </div>
         )

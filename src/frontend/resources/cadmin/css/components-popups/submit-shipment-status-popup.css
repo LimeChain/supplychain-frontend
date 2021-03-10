@@ -1,0 +1,9 @@
+.SubmitShipmentStatusPopup .PopupWindowContent {
+    align-items: center;
+}
+
+.SubmitShipmentStatusPopup .Label {
+    color: var(--color-gray-dark);
+    font-weight: 600;
+    margin-top: 28px;
+}

@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import ShipmentConstsH from '../../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import S from '../../utilities/Main';
 
 export default class ShipmentModel {
@@ -40,6 +41,15 @@ export default class ShipmentModel {
 
     clone(): ShipmentModel {
         return Object.assign(new ShipmentModel(), this);
+    }
+
+    saveAsDraft() {
+        this.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
+    }
+
+    submitShipment() {
+        this.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+        this.shipmentDateOfShipment = Date.now();
     }
 
     toJson(): any {

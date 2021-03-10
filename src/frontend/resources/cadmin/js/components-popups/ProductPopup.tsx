@@ -1,7 +1,6 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { MenuItem } from '@material-ui/core';
-import { runInAction } from 'mobx';
 
 import ProductModelHConsts from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts'
 
@@ -14,7 +13,7 @@ import ProductApi from '../../../common/js/api/ProductApi';
 
 import PopupWindow, { PopupWindowProps } from '../../../common/js/components-core/PopupWindow';
 import LayoutBlock from '../../../common/js/components-inc/LayoutBlock';
-import Input, { InputType } from '../../../common/js/components-inc/Input';
+import Input from '../../../common/js/components-inc/Input';
 import Select from '../../../common/js/components-inc/Select';
 import Button from '../../../common/js/components-inc/Button';
 import Actions from '../../../common/js/components-inc/Actions';
