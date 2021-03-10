@@ -1,3 +1,9 @@
+.PageDashboard {
+    font-family: Poppins;
+    font-style: normal;
+    color: #07172F;
+}
+
 .PageDashboard .Stats {
     display: flex;
     gap: var(--desktop-spacing);
@@ -19,7 +25,7 @@
     flex: 1 1 auto;
 }
 
-.PageDashboard .Stats .StatIcon {
+.PageDashboard .Icon {
     height: 46px;
     width: 46px;
     background: rgba(54, 121, 224, 0.1);
@@ -31,4 +37,49 @@
     margin-right: 15px;
 }
 
-.PageDashboard .Stats .StatIcon {}
+.PageDashboard .Stats .StatData {
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 45px;
+}
+
+.PageDashboard .Stats .StatInfo {
+    font-size: 10px;
+    line-height: 15px;
+
+    color: #BFC3CA;
+}
+
+.PageDashboard .Stats .StatMoreInfo {
+    align-self: flex-start;
+}
+
+.PageDashboard .Stats .SeeAll {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 18px;
+
+    text-align: right;
+
+    color: #3679E0;
+}
+
+.PageDashboard .Tables .TableHeader {
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 30px;
+    margin-bottom: 21px;
+}
+
+.PageDashboard .Tables .TableContainer .ShipmentLine .ShipmentLineInfo .ConsignmentNumber {
+    margin-left: 5px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 21px;
+}
+
+.PageDashboard .Tables .TableContainer .ShipmentLine .ShipmentLineInfo .TimeStamp {
+    font-size: 10px;
+    line-height: 15px;
+    color: #BFC3CA;
+}

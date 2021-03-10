@@ -179,8 +179,6 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
             const destinationSiteModel = this.props.siteStore.screenSiteModels.find((siteModel) => siteModel.siteId === shipmentModel.shipmentDestinationSiteId);
             const destinationCountryModel = this.props.siteStore.screenCountryModels.find((countryModel) => countryModel.countryId === destinationSiteModel.countryId);
 
-            const statusString = '';
-
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
                 Table.cellString(shipmentModel.shipmentConsignmentNumber),
@@ -189,7 +187,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
                     <Actions>
-                        <Button color={Button.COLOR_SCHEME_4} >{statusString}</Button>
+                        <Button color={Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>
                     </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),

@@ -206,7 +206,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
                     <Actions>
-                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{statusString}</Button>
+                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>
                     </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),

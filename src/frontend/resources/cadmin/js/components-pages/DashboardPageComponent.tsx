@@ -6,7 +6,7 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import Sidebar from '../components-inc/Sidebar';
-
+import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
 import SvgNotification from '../../../common/svg/notification.svg';
 import SvgMoreInfo from '../../../common/svg/more-info.svg';
 import './../../css/components-pages/page-dashboard-component.css';
@@ -67,42 +67,42 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                 <PageView pageTitle={'Dashboard'} >
                     <div className={'Stats MarginBottom'} >
                         <div className={'WhiteBox FlexRow'} >
-                            <div className='StatIcon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
+                            <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
                             <div className='FlexColumn'>
                                 <div className='StatData'>{this.props.dashboardStore.outgoingShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Total Outgoing Shipments</div>
                             </div>
                         </div>
                         <div className={'WhiteBox FlexRow'} >
-                            <div className='StatIcon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
+                            <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
                             <div className='FlexColumn'>
                                 <div className='StatData'>{this.props.dashboardStore.incommingShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Total Incomming Shipments</div>
                             </div>
                         </div>
-                        <div className={'WhiteBox FlexRow'} >
-                            <div className='StatIcon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgNotification }} /></div>
+                        <div className={'WhiteBox FlexRow FlexSplit'} >
+                            <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgNotification }} /></div>
                             <div className='FlexColumn'>
-                                <div className='StatData'>{this.props.dashboardStore.totalValueOfProducts}</div>
-                                <div className='StatInfo'>Total value of products in stock</div>
+                                <div className='StatData'>{formatPrice(this.props.dashboardStore.totalValueOfProducts)}</div>
+                                <div className='StatInfo '>Total value of products in stock</div>
                             </div>
-                            <div className='StatMoreInfo'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgMoreInfo }} /></div>
+                            <div className='StatMoreInfo StartRight FlexColumn'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgMoreInfo }} /></div>
                         </div>
-                        <div className={'WhiteBox FlexRow'} >
+                        <div className={'WhiteBox FlexRow FlexSplit'} >
                             <div className='FlexColumn'>
                                 <div className='StatData'>{this.props.dashboardStore.draftShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Prepared Shipments</div>
                             </div>
-                            <div className='SeeAll'>See All</div>
+                            <div className='SeeAll StartRight'>See All</div>
                         </div>
                     </div>
 
                     <div className={'Tables PageExtend'} >
                         <Scrollable className={'WhiteBox FlexColumn'} >
-                            <div className='Tableheader'></div>
+                            <div className='TableHeader'>Recent Outgoing</div>
                             <div className='TableContainer'>
-                                {this.props.dashboardStore.screenOutgoingShipments.map((shipmentModel: ShipmentModel) => <div className={' ShipmentLine FlexRow '} key={shipmentModel.shipmentId}>
-                                    <div className='ShipmentLineIcon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
+                                {this.props.dashboardStore.screenOutgoingShipments.map((shipmentModel: ShipmentModel) => <div className={'ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
+                                    <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
                                     <div className={'ShipmentLineInfo FlexColumn'}>
                                         <div className='FlexRow'>
                                             <div className={'SVG'} dangerouslySetInnerHTML={{
@@ -112,9 +112,9 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                             }} />
                                             <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
                                         </div>
-                                        <div>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
+                                        <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
                                     </div>
-                                    <div className={'ShipmentLineStatus'}>
+                                    <div className={'ShipmentLineStatus StartRight'}>
                                         <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
                                             {shipmentModel.getStatusString()}
                                         </Button>
@@ -127,10 +127,10 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                             </div>
                         </Scrollable>
                         <Scrollable className={'WhiteBox FlexColumn'} >
-                            <div className='Tableheader'></div>
+                            <div className='TableHeader'>Recent Incomming</div>
                             <div className='TableContainer'>
-                                {this.props.dashboardStore.screenIncommingShipments.map((shipmentModel: ShipmentModel) => <div className={' ShipmentLine FlexRow '} key={shipmentModel.shipmentId}>
-                                    <div className='ShipmentLineIcon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
+                                {this.props.dashboardStore.screenIncommingShipments.map((shipmentModel: ShipmentModel) => <div className={' ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
+                                    <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
                                     <div className={'ShipmentLineInfo FlexColumn'}>
                                         <div className='FlexRow'>
                                             <div className={'SVG'} dangerouslySetInnerHTML={{
@@ -140,9 +140,9 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                             }} />
                                             <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
                                         </div>
-                                        <div>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
+                                        <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
                                     </div>
-                                    <div className={'ShipmentLineStatus'}>
+                                    <div className={'ShipmentLineStatus StartRight'}>
                                         <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
                                             {shipmentModel.getStatusString()}
                                         </Button>
