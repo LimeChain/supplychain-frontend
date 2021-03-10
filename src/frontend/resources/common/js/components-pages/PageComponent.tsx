@@ -17,6 +17,7 @@ import AccountSessionStore from '../stores/AccountSessionStore';
 import PopupShipmentStore from '../stores/PopupShipmentStore';
 
 import PageLayoutComponent from './PageLayoutComponent';
+import PopupSubmitShipmentStatusStore from '../stores/PopupSubmitShipmentStatusStore';
 
 configure({
     'enforceActions': 'never',
@@ -46,6 +47,7 @@ export default class PageComponent < Pr extends PageComponentProps, St = {}, SS 
                 shipmentDocumentStore = { new ShipmentDocumentStore() }
                 popupProductStore = { new PopupProductStore() }
                 popupShipmentStore = { new PopupShipmentStore(prodcutStore, shipmentStore) }
+                popupSubmitShipmentStatusStore = { new PopupSubmitShipmentStatusStore() }
                 accountSessionStore = { new AccountSessionStore() }
                 alertStore = { alertStore }>
 

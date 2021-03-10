@@ -11,11 +11,11 @@
 }
 
 .AlertWrapper > .Alert {
-    width:280px; max-width:90%;
+    width:540px; max-width:90%;
     box-sizing:border-box;
     font-weight:400;
-    padding:16px;
-    border-radius:4px;
+    padding:54px 72px;
+    border-radius:20px;
     opacity:0;
     background:#fff;
 }
@@ -24,22 +24,24 @@
     opacity:1;
 }
 
-.Alert > .Msg {
+.Alert .MsgCnt {
     max-height:384px;
-    text-align:left;
-    margin-bottom:16px;
+    text-align:center;
+    margin-bottom: 45px;
     overflow:auto;
 }
 
-.Alert .StartRight {
-    display:flex;
+.Alert .Msg {
+    color: var(--color-gray-dark);
+    font-weight: 600;
 }
 
-.Alert .TextButton {
-	color:var(--color-primary);
-    text-transform:uppercase;
-    font-weight:700; font-size: 12px;
-    border-radius:4px;
-    padding:4px 12px;
-    cursor:pointer;
+.Alert .SubMsg {
+    color: #afafaf;
+    font-size: 12px; font-weight: 500;
+    margin-top:10px;
+}
+
+.Alert .Button {
+    margin: 0 8px;
 }

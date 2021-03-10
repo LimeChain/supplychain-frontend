@@ -4,16 +4,16 @@ import { inject, observer } from 'mobx-react';
 import { MenuItem } from '@material-ui/core';
 
 import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 
 import S from '../../../common/js/utilities/Main';
-import { formatBytes, formatNumber, formatPrice } from '../../../common/js/helpers/NumeralHelper';
+import { formatBytes, formatPrice } from '../../../common/js/helpers/NumeralHelper';
 import AlertStore from '../../../common/js/stores/AlertStore';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import SiteStore from '../../../common/js/stores/SiteStore';
 import AccountSessionStore from '../../../common/js/stores/AccountSessionStore';
 import AppStore from '../../../common/js/stores/AppStore';
 import ProductStore from '../../../common/js/stores/ProductStore';
+import PopupSubmitShipmentStatusStore from '../../../common/js/stores/PopupSubmitShipmentStatusStore';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import SiteModel from '../../../common/js/models/SiteModel';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
@@ -40,6 +40,7 @@ import SvgAttachment from '../../../common/svg/attachment.svg';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
+import '@drawbotics/file-icons/dist/style.css'
 import '../../css/components-popups/shipment-popup.css';
 
 interface Props extends PopupWindowProps {
@@ -50,6 +51,7 @@ interface Props extends PopupWindowProps {
     popupStore: PopupShipmentStore;
     productStore: ProductStore;
     shipmentStore: ShipmentStore;
+    popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore;
 }
 
 interface State {
@@ -149,15 +151,29 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             return;
         }
 
-        popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
-        popupStore.shipmentModel.shipmentDateOfShipment = Date.now();
-        this.creditShipment();
-        popupStore.hide();
+        const alertStore = this.props.alertStore;
+        alertStore.msg = 'Are you sure you want to submit shipment?';
+        alertStore.subMsg = 'This action cannot be reversed';
+        alertStore.positiveLabel = 'Submit';
+        alertStore.negativeLabel = 'Cancel';
+        alertStore.positiveListener = () => {
+            const run = async () => {
+                popupStore.shipmentModel.submitShipment();
+                await this.creditShipment();
+                this.props.popupSubmitShipmentStatusStore.show();
+                setTimeout(() => {
+                    this.props.popupSubmitShipmentStatusStore.hide();
+                    popupStore.hide();
+                }, 2000);
+            }
+            run();
+        }
+        alertStore.visible = true;
     }
 
-    onClickSaveAsDraft = () => {
-        this.props.popupStore.shipmentModel.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
-        this.creditShipment();
+    onClickSaveAsDraft = async () => {
+        this.props.popupStore.shipmentModel.saveAsDraft();
+        await this.creditShipment();
         this.props.popupStore.hide();
     }
 
@@ -204,16 +220,19 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         e.preventDefault();
     }
 
-    creditShipment = () => {
-        const popupStore = this.props.popupStore;
-        const shipmentModel = popupStore.shipmentModel;
-        const onFinish = popupStore.onFinish;
-        const accountModel = this.props.accountSessionStore.accountModel;
-        popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
+    creditShipment = (): Promise < void > => {
+        return new Promise < void >((resolve, reject) => {
+            const popupStore = this.props.popupStore;
+            const shipmentModel = popupStore.shipmentModel;
+            const onFinish = popupStore.onFinish;
+            const accountModel = this.props.accountSessionStore.accountModel;
+            popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
 
-        this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, [], () => {
-            onFinish(shipmentModel);
-        })
+            this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, [], () => {
+                onFinish(shipmentModel);
+                resolve();
+            })
+        });
     }
 
     getTotalPrice() {
@@ -615,5 +634,6 @@ export default inject((stores) => {
         popupStore: stores.popupShipmentStore,
         productStore: stores.productStore,
         shipmentStore: stores.shipmentStore,
+        popupSubmitShipmentStatusStore: stores.popupSubmitShipmentStatusStore,
     }
 })(observer(ShipmentPopup));

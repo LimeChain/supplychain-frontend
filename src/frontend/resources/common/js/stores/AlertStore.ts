@@ -4,13 +4,12 @@ import S from '../utilities/Main';
 export default class AlertStore {
 
     visible: boolean = false;
-    msg: string | null = null;
+    msg: string = S.Strings.EMPTY;
+    subMsg: string = S.Strings.EMPTY;
     positiveLabel: string | null = null;
     positiveListener: null | (() => boolean | void) = null;
     negativeLabel: string | null = null;
     negativeListener: null | (() => boolean | void) = null;
-    neutralLabel: string | null = null;
-    neutralListener: null | (() => boolean | void) = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -35,9 +34,9 @@ export default class AlertStore {
 
     hide = () => {
         this.visible = false;
-        this.msg = S.Strings.EMPTY;
-        this.positiveLabel = this.neutralLabel = this.negativeLabel = null;
-        this.positiveListener = this.neutralListener = this.negativeListener = null;
+        this.msg = this.subMsg = S.Strings.EMPTY;
+        this.positiveLabel = this.negativeLabel = null;
+        this.positiveListener = this.negativeListener = null;
     }
 
 }

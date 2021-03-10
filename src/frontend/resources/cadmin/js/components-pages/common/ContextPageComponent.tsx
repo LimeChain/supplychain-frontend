@@ -15,6 +15,7 @@ import ProductPopup from '../../components-popups/ProductPopup';
 import ShipmentPopup from '../../components-popups/ShipmentPopup';
 
 import PageComponent, { PageComponentProps } from '../../../../common/js/components-pages/PageComponent';
+import SubmitShipmentStatusPopup from '../../components-popups/SubmitShipmentStatusPopup';
 
 export interface ContextPageComponentProps extends PageComponentProps {
     accountSessionStore: AccountSessionStore;
@@ -86,6 +87,7 @@ export default class ContextPageComponent<Pr extends ContextPageComponentProps, 
         return super.renderPopups().concat([
             <ProductPopup key={100} />,
             <ShipmentPopup key={200} />,
+            <SubmitShipmentStatusPopup key = { 300 } />,
         ]);
     }
 
