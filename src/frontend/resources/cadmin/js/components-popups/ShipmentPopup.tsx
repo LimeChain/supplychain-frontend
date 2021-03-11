@@ -40,6 +40,7 @@ import SvgAttachment from '../../../common/svg/attachment.svg';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
+import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
 
 interface Props extends PopupWindowProps {
@@ -132,6 +133,16 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const FIELDS = this.isManufacturePlaceLocal() === true ? PopupShipmentStore.FIELDS_ADD_SKU_LOCALLY_PRODUCED_SUBSET : PopupShipmentStore.FIELDS_ADD_SKU;
         if (popupStore.buildSkuInputStateHelper.getValues(FIELDS) === null) {
             return;
+        }
+
+        const buildSkuOriginModel = popupStore.buildSkuOriginModel;
+        if (buildSkuOriginModel.isLocallyProduced() === false) {
+            const shipmentStore = this.props.shipmentStore;
+            const maxQuantity = shipmentStore.getSourceMaxAvailableQuantity(buildSkuOriginModel.shipmentId);
+            if (popupStore.buildSkuModel.quantity > maxQuantity) {
+                this.props.alertStore.show(`Max quantity is ${maxQuantity}`);
+                return;
+            }
         }
 
         popupStore.addSkuFromBuild();
@@ -614,6 +625,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                     <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
                                     <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
                                 </Select>
+                                <div className = { 'SVG IconUploadedDocument' } dangerouslySetInnerHTML = {{ __html: SvgFile }} />
                                 <div className={'UploadedDocumentName'} > {shipmentDocumentModel.name} </div>
                                 <div className={'StartRight UploadedDocumentSize'} > {formatBytes(shipmentDocumentModel.sizeInBytes)} </div>
                                 <div className={'UploadDocumentProgressCnt FlexRow'} >
