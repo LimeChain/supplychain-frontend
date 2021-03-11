@@ -381,19 +381,24 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     renderFromSite() {
-        const accountModel = this.props.accountSessionStore.accountModel;
-        const countryModel = this.props.siteStore.getCountryModel(accountModel.countryId);
-        const siteModel = this.props.siteStore.getSiteModel(accountModel.siteId);
-        if (siteModel === null || countryModel === null) {
+        const siteStore = this.props.siteStore;
+
+        const originSiteModel = siteStore.getSiteModel(this.props.popupStore.shipmentModel.shipmentOriginSiteId);
+        if (originSiteModel === null) {
+            return null;
+        }
+
+        const originCountryModel = siteStore.getCountryModel(originSiteModel.countryId);
+        if (originCountryModel === null) {
             return null;
         }
 
         return (
             <Select
                 label={'From'}
-                value={siteModel.siteId}
+                value={originSiteModel.siteId}
                 readOnly={true} >
-                <MenuItem value={siteModel.siteId} >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
+                <MenuItem value={originSiteModel.siteId} >{originSiteModel.siteName}, {originCountryModel.countryName}</MenuItem>
             </Select>
         )
     }
@@ -406,6 +411,14 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const accountModel = this.props.accountSessionStore.accountModel;
         const ownSiteModel = siteStore.getSiteModel(accountModel.siteId);
         const ownCountryModel = siteStore.getCountryModel(accountModel.countryId);
+
+        const destinationSiteModel = siteStore.getSiteModel(this.props.popupStore.shipmentModel.shipmentDestinationSiteId);
+
+        let destinationCountryModel = null;
+        if (destinationSiteModel !== null) {
+            destinationCountryModel = siteStore.getCountryModel(destinationSiteModel.countryId);
+        }
+
         if (ownSiteModel === null || ownCountryModel === null) {
             return null;
         }
@@ -413,19 +426,22 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return (
             <Select
                 label={'To'}
+                readOnly={this.props.popupStore.popupMode === PopupShipmentStore.POPUP_MODE_AUDIT}
                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[1])}
                 error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[1])}
                 onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[1])} >
-                { siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
-                    if (ownSiteModel.siteId === siteModel.siteId) {
-                        return null;
-                    }
+                {this.props.popupStore.popupMode === PopupShipmentStore.POPUP_MODE_AUDIT
+                    ? <MenuItem key={destinationSiteModel.siteId} value={destinationCountryModel.countryId} >{destinationSiteModel.siteName}, {destinationCountryModel.countryName}</MenuItem>
+                    : siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
+                        if (ownSiteModel.siteId === siteModel.siteId) {
+                            return null;
+                        }
 
-                    const countryModel = siteStore.getCountryModel(siteModel.countryId);
-                    return (
-                        <MenuItem key={i} value={countryModel.countryId} >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
-                    )
-                })}
+                        const countryModel = siteStore.getCountryModel(siteModel.countryId);
+                        return (
+                            <MenuItem key={i} value={countryModel.countryId} >{siteModel.siteName}, {countryModel.countryName}</MenuItem>
+                        )
+                    })}
             </Select>
         )
     }

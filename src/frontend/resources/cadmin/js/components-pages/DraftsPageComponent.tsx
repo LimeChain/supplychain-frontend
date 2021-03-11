@@ -136,7 +136,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, this.fetchShipmentsInit);
+        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, this.fetchShipmentsInit);
     }
 
     renderContent() {

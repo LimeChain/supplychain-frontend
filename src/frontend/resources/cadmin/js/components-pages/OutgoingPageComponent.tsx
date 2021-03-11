@@ -28,6 +28,7 @@ import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import './../../css/components-pages/page-outgoing-component.css';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -102,7 +103,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, () => {
+        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();

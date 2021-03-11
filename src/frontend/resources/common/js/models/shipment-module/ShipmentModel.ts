@@ -35,6 +35,13 @@ export default class ShipmentModel {
         makeAutoObservable(this);
     }
 
+    static newInstance(siteId: string): ShipmentModel {
+        const shipmentModel = new ShipmentModel();
+        shipmentModel.shipmentOriginSiteId = siteId;
+
+        return shipmentModel;
+    }
+
     isNew(): boolean {
         return this.shipmentId === S.Strings.NOT_EXISTS
     }

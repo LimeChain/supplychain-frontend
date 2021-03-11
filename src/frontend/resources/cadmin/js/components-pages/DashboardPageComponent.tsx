@@ -23,6 +23,9 @@ import moment from 'moment';
 import ProjectUtils from '../../../common/js/ProjectUtils';
 import Tooltip from '../../../common/js/components-inc/Tooltip';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props extends ContextPageComponentProps {
     dashboardStore: DashboardStore
@@ -84,8 +87,10 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
         }
     }
 
-    onClickShipmentLine = (shipmentModel: ShipmentModel) => {
-        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], PopupShipmentStore.POPUP_MODE_AUDIT, () => {
+    onClickShipmentLine = (sModel: ShipmentModel) => {
+        this.shipmentApi.fetchShipmentById(sModel.shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
+            });
         });
     }
 

@@ -120,7 +120,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, PopupShipmentStore.POPUP_MODE_CREDIT, () => {
+        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, PopupShipmentStore.POPUP_MODE_CREDIT, () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();
