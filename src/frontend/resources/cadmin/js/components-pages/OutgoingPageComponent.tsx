@@ -61,6 +61,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                 [ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 6],
             ],
             this.fetchShipments,
+            8,
         )
     }
 
@@ -101,7 +102,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();

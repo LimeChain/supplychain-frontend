@@ -54,6 +54,14 @@
     align-self: flex-start;
 }
 
+.Tooltip {
+    padding: 12px;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 18px;
+    color: #8C99AC;
+}
+
 .PageDashboard .Stats .SeeAll {
     font-weight: 600;
     font-size: 12px;
@@ -64,22 +72,33 @@
     color: #3679E0;
 }
 
-.PageDashboard .Tables .TableHeader {
+
+.PageDashboard .Tables .TableSection {
+    padding-right: 7px;
+}
+
+.PageDashboard .Tables .TableSection .TableHeader {
     font-weight: bold;
     font-size: 20px;
     line-height: 30px;
     margin-bottom: 21px;
 }
 
-.PageDashboard .Tables .TableContainer .ShipmentLine .ShipmentLineInfo .ConsignmentNumber {
+.PageDashboard .Tables .TableSection .TableContainer .ShipmentLine {
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+.PageDashboard .Tables .TableSection .TableContainer .ShipmentLine .ShipmentLineInfo .ConsignmentNumber {
     margin-left: 5px;
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
 }
 
-.PageDashboard .Tables .TableContainer .ShipmentLine .ShipmentLineInfo .TimeStamp {
+.PageDashboard .Tables .TableSection .TableContainer .ShipmentLine .ShipmentLineInfo .TimeStamp {
     font-size: 10px;
     line-height: 15px;
     color: #BFC3CA;
+    margin-top: 7px;
 }

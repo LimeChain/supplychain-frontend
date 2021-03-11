@@ -32,6 +32,26 @@ export const formatNumber = (value): string => {
     return numeral(value).format('0,0');
 }
 
+export const formatDashboardBigPrice = (value: number): string => {
+    const thousand = 1000;
+    const mil = thousand * thousand;
+    const bil = thousand * mil;
+
+    if (value < 10 * thousand) {
+        return numeral(value).format('$ 0.00');
+    }
+
+    if (value < mil) {
+        return numeral(value).format('$ 0,0');
+    }
+
+    if (value < bil) {
+        return `${numeral(value / mil).format('$ 0.0')}M`;
+    }
+
+    return `${numeral(value / bil).format('$ 0.0')}B`;
+}
+
 export const formatPrice = (value): string => {
     return numeral(value).format('$ 0,0');
 }

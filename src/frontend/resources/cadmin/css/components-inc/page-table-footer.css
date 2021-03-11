@@ -1,3 +1,8 @@
+.PageTableFooter {
+    justify-content: center;
+    margin-top: 20px;
+}
+
 .PageTableFooter .ItemsCnt {
     height: var(--default-height);
     color: var(--color-gray);

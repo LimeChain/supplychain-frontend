@@ -31,6 +31,7 @@ import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentMod
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -66,6 +67,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 [ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 6],
             ],
             this.fetchShipments,
+            8,
         )
     }
 
@@ -118,7 +120,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], () => {
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, PopupShipmentStore.POPUP_MODE_CREDIT, () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();
@@ -159,16 +161,17 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                                     footer={(
                                         <PageTableFooter
                                             totalItems={this.tableHelper.tableState.total}
-                                            actions={(
-                                                <Actions>
-                                                    <Button onClick={this.onClickCreateNewShipment}>
-                                                        <div className={'FlexRow'}>
-                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                                    Create Shipment
-                                                        </div>
-                                                    </Button>
-                                                </Actions>
-                                            )} />
+                                        // actions={(
+                                        //     <Actions>
+                                        //         <Button onClick={this.onClickCreateNewShipment}>
+                                        //             <div className={'FlexRow'}>
+                                        //                 <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                                        //         Create Shipment
+                                        //             </div>
+                                        //         </Button>
+                                        //     </Actions>
+                                        // )}
+                                        />
                                     )} ><Table
                                         className={'ShipmentsTable'}
                                         legend={this.getTableLegend()}

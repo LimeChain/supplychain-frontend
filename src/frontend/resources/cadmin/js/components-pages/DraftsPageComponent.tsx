@@ -31,6 +31,7 @@ import LoadingIndicator from '../../../common/js/components-core/LoadingIndicato
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -64,6 +65,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                 [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 3],
             ],
             this.fetchShipments,
+            8,
         )
 
     }
@@ -122,7 +124,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
         const shipmentId = sourceShipmentModel.shipmentId;
         this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_CREDIT, (savedShipmentModel: ShipmentModel) => {
                 if (savedShipmentModel.isDraft() === true) {
                     Object.assign(sourceShipmentModel, savedShipmentModel);
                 } else {
@@ -134,7 +136,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], this.fetchShipmentsInit);
+        this.props.popupShipmentStore.signalShow(new ShipmentModel(), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, this.fetchShipmentsInit);
     }
 
     renderContent() {
@@ -186,7 +188,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                                         aligns={this.getTableAligns()}
                                         helper={this.tableHelper}
                                         rows={this.renderRows()}
-                                        onClickRow = { this.onClickShipment } />
+                                        onClickRow={this.onClickShipment} />
                                 </PageTable>
                             )}
                         </>
@@ -226,7 +228,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                 ),
                 Table.cell(
                     <Actions>
-                        <Button disabled = { shipmentModel.canSubmit() === false } onClick={this.onClickSubmitShipmentRowAction.bind(this, shipmentModel)}>
+                        <Button disabled={shipmentModel.canSubmit() === false} onClick={this.onClickSubmitShipmentRowAction.bind(this, shipmentModel)}>
                             Submit
                         </Button>
                     </Actions>,

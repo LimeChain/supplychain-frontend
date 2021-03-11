@@ -69,7 +69,7 @@ export default class DashboardStore {
         shipmentsMap = cacheMap;
     }
 
-    fetchMoreIncommingShipments(wipe: boolean = false) {
+    fetchMoreIncommingShipments = (wipe: boolean = false) => {
         if (this.isFetchingIncommingShipments) {
             return;
         }

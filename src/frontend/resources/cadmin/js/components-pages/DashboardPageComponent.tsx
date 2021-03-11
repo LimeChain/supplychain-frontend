@@ -6,7 +6,7 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import Sidebar from '../components-inc/Sidebar';
-import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
+import { formatDashboardBigPrice } from '../../../common/js/helpers/NumeralHelper';
 import SvgNotification from '../../../common/svg/notification.svg';
 import SvgMoreInfo from '../../../common/svg/more-info.svg';
 import './../../css/components-pages/page-dashboard-component.css';
@@ -21,6 +21,8 @@ import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModu
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import moment from 'moment';
 import ProjectUtils from '../../../common/js/ProjectUtils';
+import Tooltip from '../../../common/js/components-inc/Tooltip';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 
 interface Props extends ContextPageComponentProps {
     dashboardStore: DashboardStore
@@ -58,6 +60,35 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
         });
     }
 
+    onScrollOutgoingShipments = (event) => {
+        if (!this.props.dashboardStore.hasMoreOutgoingShipments) {
+            return;
+        }
+        this.onScrollFetchShipments(event, this.props.dashboardStore.fetchMoreOutgoingShipments);
+    }
+
+    onScrollIncommingShipments = (event) => {
+        if (!this.props.dashboardStore.hasMoreIncommingShipments) {
+            return;
+        }
+        this.onScrollFetchShipments(event, this.props.dashboardStore.fetchMoreIncommingShipments);
+    }
+
+    onScrollFetchShipments = (event, fetchMoreFunc: (boolean) => void) => {
+
+        const container = event.target.querySelector('.TableContainer');
+
+        const lastShipmentLine = container.querySelector('.ShipmentLine:nth-last-child(2)');
+        if (container.scrollTop + container.offsetHeight + lastShipmentLine.offsetHeight > lastShipmentLine.offsetTop) {
+            fetchMoreFunc(false);
+        }
+    }
+
+    onClickShipmentLine = (shipmentModel: ShipmentModel) => {
+        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], PopupShipmentStore.POPUP_MODE_AUDIT, () => {
+        });
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -83,82 +114,92 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                         <div className={'WhiteBox FlexRow FlexSplit'} >
                             <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgNotification }} /></div>
                             <div className='FlexColumn'>
-                                <div className='StatData'>{formatPrice(this.props.dashboardStore.totalValueOfProducts)}</div>
+                                <div className='StatData'>{formatDashboardBigPrice(this.props.dashboardStore.totalValueOfProducts)}</div>
                                 <div className='StatInfo '>Total value of products in stock</div>
                             </div>
-                            <div className='StatMoreInfo StartRight FlexColumn'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgMoreInfo }} /></div>
+                            <div className='StatMoreInfo StartRight FlexColumn'>
+                                <Tooltip title={<div className={'Tooltip'}>VAT is not included</div>} placement={'bottom-end'}>
+                                    <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgMoreInfo }} />
+                                </Tooltip>
+                            </div>
                         </div>
                         <div className={'WhiteBox FlexRow FlexSplit'} >
                             <div className='FlexColumn'>
                                 <div className='StatData'>{this.props.dashboardStore.draftShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Prepared Shipments</div>
                             </div>
-                            <div className='SeeAll StartRight'>See All</div>
+                            <a href={PagesCAdmin.DRAFTS} className='SeeAll StartRight'>See All</a>
                         </div>
                     </div>
 
                     <div className={'Tables PageExtend'} >
-                        <Scrollable className={'WhiteBox FlexColumn'} >
+                        <div className={'WhiteBox FlexColumn TableSection'} onScroll={this.onScrollOutgoingShipments}>
                             <div className='TableHeader'>Recent Outgoing</div>
-                            <div className='TableContainer'>
-                                {this.props.dashboardStore.screenOutgoingShipments.map((shipmentModel: ShipmentModel) => <div className={'ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
-                                    <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
-                                    <div className={'ShipmentLineInfo FlexColumn'}>
-                                        <div className='FlexRow'>
-                                            <div className={'SVG'} dangerouslySetInnerHTML={{
-                                                __html: ProjectUtils.getCountrySvg(
-                                                    this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
-                                                ),
-                                            }} />
-                                            <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
-                                        </div>
-                                        <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
-                                    </div>
-                                    <div className={'ShipmentLineStatus StartRight'}>
-                                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
-                                            {shipmentModel.getStatusString()}
-                                        </Button>
-                                    </div>
-                                </div>)
-                                }
-                                {/* {this.props.notificationStore.hasMore
-                                    ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
-                                } */}
-                            </div>
-                        </Scrollable>
-                        <Scrollable className={'WhiteBox FlexColumn'} >
+                            <Scrollable>
+                                <div className='TableContainer'>
+
+                                    {this.props.dashboardStore.screenOutgoingShipments
+                                        .map((shipmentModel: ShipmentModel) => <div onClick={() => this.onClickShipmentLine(shipmentModel)} className={'ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
+                                            <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
+                                            <div className={'ShipmentLineInfo FlexColumn'}>
+                                                <div className='FlexRow'>
+                                                    <div className={'SVG'} dangerouslySetInnerHTML={{
+                                                        __html: ProjectUtils.getCountrySvg(
+                                                            this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
+                                                        ),
+                                                    }} />
+                                                    <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
+                                                </div>
+                                                <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
+                                            </div>
+                                            <div className={'ShipmentLineStatus StartRight'}>
+                                                <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
+                                                    {shipmentModel.getStatusString()}
+                                                </Button>
+                                            </div>
+                                        </div>)
+                                    }
+                                    {this.props.notificationStore.hasMore
+                                        ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
+                                    }
+                                </div>
+                            </Scrollable>
+                        </div>
+                        <div className={'WhiteBox FlexColumn TableSection'} onScroll={this.onScrollIncommingShipments}>
                             <div className='TableHeader'>Recent Incomming</div>
-                            <div className='TableContainer'>
-                                {this.props.dashboardStore.screenIncommingShipments.map((shipmentModel: ShipmentModel) => <div className={' ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
-                                    <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
-                                    <div className={'ShipmentLineInfo FlexColumn'}>
-                                        <div className='FlexRow'>
-                                            <div className={'SVG'} dangerouslySetInnerHTML={{
-                                                __html: ProjectUtils.getCountrySvg(
-                                                    this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
-                                                ),
-                                            }} />
-                                            <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
+                            <Scrollable >
+                                <div className='TableContainer'>
+                                    {this.props.dashboardStore.screenIncommingShipments.map((shipmentModel: ShipmentModel) => <div onClick={() => this.onClickShipmentLine(shipmentModel)} className={' ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>
+                                        <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
+                                        <div className={'ShipmentLineInfo FlexColumn'}>
+                                            <div className='FlexRow'>
+                                                <div className={'SVG'} dangerouslySetInnerHTML={{
+                                                    __html: ProjectUtils.getCountrySvg(
+                                                        this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
+                                                    ),
+                                                }} />
+                                                <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
+                                            </div>
+                                            <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
                                         </div>
-                                        <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
-                                    </div>
-                                    <div className={'ShipmentLineStatus StartRight'}>
-                                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
-                                            {shipmentModel.getStatusString()}
-                                        </Button>
-                                    </div>
-                                </div>)
-                                }
-                                {/* {this.props.notificationStore.hasMore
-                                    ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
-                                } */}
-                            </div>
-                        </Scrollable>
+                                        <div className={'ShipmentLineStatus StartRight'}>
+                                            <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
+                                                {shipmentModel.getStatusString()}
+                                            </Button>
+                                        </div>
+                                    </div>)
+                                    }
+                                    {this.props.notificationStore.hasMore
+                                        ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
+                                    }
+                                </div>
+                            </Scrollable>
+                        </div>
                     </div>
 
                 </PageView>
 
-            </div>
+            </div >
         )
     }
 }

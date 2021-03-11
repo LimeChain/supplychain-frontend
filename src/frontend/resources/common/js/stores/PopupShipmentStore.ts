@@ -12,6 +12,9 @@ import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentMod
 
 export default class PopupShipmentStore extends PopupStore {
 
+    static POPUP_MODE_CREDIT: number = 1;
+    static POPUP_MODE_AUDIT: number = 2;
+
     static POPUP_TAB_PRODUCTS: number = 1;
     static POPUP_TAB_DOCUMENTS: number = 2;
 
@@ -31,9 +34,11 @@ export default class PopupShipmentStore extends PopupStore {
 
     @observable dragging: boolean;
 
+    popupMode: number = PopupShipmentStore.POPUP_MODE_CREDIT;
+
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
-    productIdsInSkuModels: Set < string >;
+    productIdsInSkuModels: Set<string>;
     genSkuId: 0;
 
     productStore: ProductStore;
@@ -86,9 +91,17 @@ export default class PopupShipmentStore extends PopupStore {
         makeObservable(this);
     }
 
-    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[], onFinish: (savedShipmentModel: ShipmentModel) => void) {
+    signalShow(
+        shipmentModel: ShipmentModel,
+        skuModels: SkuModel[],
+        skuOriginModels: SkuOriginModel[],
+        shipmentDocumentModels: ShipmentDocumentModel[],
+        popupMode: number,
+        onFinish: (savedShipmentModel: ShipmentModel) => void,
+    ) {
+        this.popupMode = popupMode;
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
-        this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => {});
+        this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => { });
         this.shipmentModel = shipmentModel;
         this.skuModels = skuModels;
         this.skuOriginModels = skuOriginModels;

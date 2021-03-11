@@ -51,6 +51,7 @@ interface Props extends PopupWindowProps {
     productStore: ProductStore;
     shipmentStore: ShipmentStore;
     popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore;
+    auditMode: boolean;
 }
 
 interface State {
@@ -329,7 +330,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return (
             <div className={'PopupWindowContent LargeContent'} >
                 <div className={'PopupHeader FlexRow'} >
-                    <div className={'PopupTitle'}>New shipment</div>
+                    <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isDraft() ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
                     <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
                         <Input
                             placeholder={'Enter consigment ID'}
@@ -442,7 +443,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         return (
             <>
-                <Expandable
+                {this.props.popupStore.popupMode === PopupShipmentStore.POPUP_MODE_CREDIT ? (<Expandable
                     defaultExpanded={true}
                     accordionSummary={
                         <div className={'BlockLabel'} > Select product </div>
@@ -516,7 +517,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                 </Actions>
                             </div>
                         </>
-                    } />
+                    } />) : ''}
                 <hr className={'MarginBottomOnly'} />
                 <div className={'BlockLabel'} >Product list</div>
                 <Table

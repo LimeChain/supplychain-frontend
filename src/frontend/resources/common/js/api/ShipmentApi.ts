@@ -149,7 +149,7 @@ export default class ShipmentApi extends AbsApi {
                 json.shipmentDocumentJsons.push(shipmentDocumentJson);
             });
 
-            const skuIdsMatch = new Map < string, string >();
+            const skuIdsMatch = new Map<string, string>();
             const res = new CreditShipmentRes(json);
             shipmentModel.shipmentId = res.shipmentModel.shipmentId;
             shipmentModel.shipmentOriginSiteId = res.shipmentModel.shipmentOriginSiteId;
@@ -315,8 +315,6 @@ export default class ShipmentApi extends AbsApi {
 
             const currentSite = storageHelper.sitesJson.find((siteJson) => siteJson.countryId === CookieHelper.fetchAccounts().accountModel.countryId);
 
-            console.log(json.shipmentJsons);
-
             // filter by page
             if (page === PagesCAdmin.DRAFTS) {
                 json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT)
@@ -327,8 +325,6 @@ export default class ShipmentApi extends AbsApi {
             }
 
             json.totalSize = json.shipmentJsons.length;
-
-            console.log(json.shipmentJsons);
 
             json.shipmentJsons = json.shipmentJsons.sort((a: ShipmentModel, b: ShipmentModel): number => {
                 const sign = sortBy / Math.abs(sortBy);
@@ -410,7 +406,7 @@ export default class ShipmentApi extends AbsApi {
                 shipmentDocumentJsons: [],
             }
 
-            const skuIds = new Set < string >();
+            const skuIds = new Set<string>();
             json.shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === req.shipmentId);
             json.skuJsons = storageHelper.skusJson.filter((t) => t.shipmentId === req.shipmentId);
             json.skuJsons.forEach((skuJson) => {
