@@ -1,14 +1,15 @@
 import AbsApi from './AbsApi';
 import storageHelper from '../helpers/StorageHelper';
 import NotificationModel from '../models/NotificationModel';
-import { FetchAllSitesReq, FetchNotificationsByFilterReq } from '../network-requests/GeneralApiReq';
-import { FetchAllSitesRes, FetchNotificationsByFilterRes } from '../network-responses/GeneralApiRes';
+import { FetchAllSitesReq, FetchNotificationsByFilterReq, ReadAllNotificationsReq, ReadNotificationByIdReq } from '../network-requests/GeneralApiReq';
+import { FetchAllSitesRes, FetchNotificationsByFilterRes, ReadAllNotificationsRes, ReadNotificationByIdRes } from '../network-responses/GeneralApiRes';
 import SiteModel from '../models/SiteModel';
 import CountryModel from '../models/CountryModel';
 import Api from '../utilities/Api';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 import Apis from '../../../../../../builds/dev-generated/Apis';
+import S from '../utilities/Main';
 
 export default class GeneralApi extends AbsApi {
 
@@ -19,7 +20,7 @@ export default class GeneralApi extends AbsApi {
         this.generalApi = new Api(Apis.GENERAL, this.enableActions, this.disableActions);
     }
 
-    fetchNotificationsByFilter(notificationRead: number, from: number, to: number, callback: (notificationModels: NotificationModel[], totalSize: number) => void) {
+    fetchNotificationsByFilter(notificationRead: number, from: number, to: number, callback: (notificationModels: NotificationModel[], totalSize: number, hasUnread: number) => void) {
         this.disableActions();
 
         setTimeout(() => {
@@ -30,11 +31,17 @@ export default class GeneralApi extends AbsApi {
             const json = {
                 notificationJsons: [],
                 totalSize: 0,
+                unreadCount: 0,
             }
 
             json.notificationJsons = storageHelper.notificationsJson
-                .filter((notificationJson) => notificationJson.notificationRead === notificationRead)
-                .sort((a, b) => (a.notificationTime > b.notificationTime ? 1 : -1));
+            if (notificationRead === S.INT_TRUE || notificationRead === S.INT_FALSE) {
+                json.notificationJsons = json.notificationJsons.filter((notificationJson) => notificationJson.notificationRead === notificationRead)
+            }
+
+            storageHelper.notificationsJson.forEach((j: NotificationModel) => (j.notificationRead === S.INT_FALSE ? json.unreadCount++ : ''));
+
+            json.notificationJsons.sort((a, b) => (a.notificationTime < b.notificationTime ? 1 : -1));
 
             json.totalSize = json.notificationJsons.length;
 
@@ -42,7 +49,7 @@ export default class GeneralApi extends AbsApi {
 
             const res = new FetchNotificationsByFilterRes(json);
 
-            callback(res.notificationModels, res.totalSize);
+            callback(res.notificationModels, res.totalSize, res.unreadCount);
         }, 100);
 
         // const req = new FetchNotificationsByFilterReq(notificationRead, from, to);
@@ -58,6 +65,30 @@ export default class GeneralApi extends AbsApi {
         //     callback(res.notificationModels, res.totalSize);
 
         // });
+    }
+
+    readNotification(notificationModel: NotificationModel, callback: () => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            const req = new ReadNotificationByIdReq(notificationModel.notificationId);
+
+            const json = {
+                notificationJson: null,
+            }
+
+            json.notificationJson = storageHelper.notificationsJson.find((nJson: NotificationModel) => nJson.notificationId === notificationModel.notificationId)
+            json.notificationJson.notificationRead = S.INT_TRUE;
+
+            notificationModel.notificationRead = json.notificationJson.notificationRead;
+            storageHelper.save();
+
+            const res = new ReadNotificationByIdRes(json);
+
+            callback();
+        }, 100);
     }
 
     fetchAllSites(callback: (siteModels: SiteModel[], countryModels: CountryModel[]) => void) {

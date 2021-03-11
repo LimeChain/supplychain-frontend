@@ -89,7 +89,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
 
     onClickShipmentLine = (sModel: ShipmentModel) => {
         this.shipmentApi.fetchShipmentById(sModel.shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
+            this.props.popupShipmentStore.signalShow(sModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
             });
         });
     }
@@ -164,8 +164,8 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                             </div>
                                         </div>)
                                     }
-                                    {this.props.notificationStore.hasMore
-                                        ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
+                                    {this.props.dashboardStore.isFetchingOutgoingShipments
+                                        && <LoadingIndicator className={'LoadingIndicator'} margin={'0'} />
                                     }
                                 </div>
                             </Scrollable>
@@ -194,8 +194,8 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                         </div>
                                     </div>)
                                     }
-                                    {this.props.notificationStore.hasMore
-                                        ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
+                                    {this.props.dashboardStore.isFetchingIncommingShipments
+                                        && <LoadingIndicator className={'LoadingIndicator'} margin={'0'} />
                                     }
                                 </div>
                             </Scrollable>

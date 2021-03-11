@@ -182,4 +182,8 @@ export default class PopupShipmentStore extends PopupStore {
         }
     }
 
+    isAuditMode() {
+        return this.popupMode === PopupShipmentStore.POPUP_MODE_AUDIT;
+    }
+
 }

@@ -32,10 +32,11 @@ import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import PopupStore from '../../../common/js/stores/PopupStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
-
+    popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore
 }
 
 interface State {
@@ -47,7 +48,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
     searchWord: string = S.Strings.EMPTY;
 
     static layout() {
-        const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore'])(observer(IncommingPageComponent));
+        const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore', 'popupSubmitShipmentStatusStore'])(observer(IncommingPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -59,7 +60,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         };
 
         this.tableHelper = new TableHelper(
-            ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID,
+            ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER,
             [
                 [ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 1],
                 [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 2],
@@ -107,24 +108,61 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         this.fetchShipments();
     }
 
-    onClickSubmitShipmentRowAction(sourceShipmentModel: ShipmentModel, e) {
-        e.stopPropagation();
-
-        const shipmentId = sourceShipmentModel.shipmentId;
-        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            shipmentModel.receiveShipment();
-            this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
-                Object.assign(sourceShipmentModel, shipmentModel);
-            });
-        });
-    }
-
     onClickCreateNewShipment = () => {
         this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, PopupShipmentStore.POPUP_MODE_CREDIT, () => {
             const tableState = this.tableHelper.tableState;
             tableState.pageZero();
             this.fetchShipments();
         });
+    }
+
+    fetchShipmentsInit = () => {
+        const tableState = this.tableHelper.tableState;
+        tableState.pageZero();
+        this.fetchShipments();
+    }
+
+    onClickShipment = (i: number) => {
+        const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
+                if (savedShipmentModel.isDraft() === true) {
+                    Object.assign(sourceShipmentModel, savedShipmentModel);
+                } else {
+                    this.fetchShipmentsInit();
+                }
+            });
+        });
+
+    }
+
+    onClickReceiveShipmentRowAction = (sourceShipmentModel: ShipmentModel, e) => {
+        e.stopPropagation();
+
+        const alertStore = this.props.alertStore;
+        alertStore.msg = 'Are you sure you want to receive shipment?';
+        alertStore.subMsg = 'This action cannot be reversed';
+        alertStore.positiveLabel = 'Receive';
+        alertStore.negativeLabel = 'Cancel';
+        alertStore.positiveListener = () => {
+            const run = async () => {
+                const shipmentId = sourceShipmentModel.shipmentId;
+                this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+                    shipmentModel.receiveShipment();
+                    this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
+                        this.fetchShipmentsInit();
+                        this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_RECEIVED;
+                        this.props.popupSubmitShipmentStatusStore.show();
+                        setTimeout(() => {
+                            this.props.popupSubmitShipmentStatusStore.hide();
+                        }, 2000);
+                    });
+                });
+            }
+            run();
+        }
+        alertStore.visible = true;
     }
 
     renderContent() {
@@ -178,7 +216,8 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                                         widths={this.getTableWidths()}
                                         aligns={this.getTableAligns()}
                                         helper={this.tableHelper}
-                                        rows={this.renderRows()} />
+                                        rows={this.renderRows()}
+                                        onClickRow={this.onClickShipment} />
                                 </PageTable>
                             )}
                         </>
@@ -215,7 +254,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
                 Table.cell(
                     <Actions>
-                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED} onClick={this.onClickSubmitShipmentRowAction.bind(this, shipmentModel)}>
+                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED} onClick={(e) => this.onClickReceiveShipmentRowAction(shipmentModel, e)}>
                             Goods Received
                         </Button>
                     </Actions>,

@@ -32,9 +32,12 @@ import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import PopupSubmitShipmentStatusStore from '../../../common/js/stores/PopupSubmitShipmentStatusStore';
+import PopupStore from '../../../common/js/stores/PopupStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
+    popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore;
 }
 
 interface State {
@@ -47,7 +50,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     searchWord: string = S.Strings.EMPTY;
 
     static layout() {
-        const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore'])(observer(DraftsPageComponent));
+        const MobXComponent = inject(...[...PageComponent.getStores(), ...ContextPageComponent.getStores(), 'shipmentStore', 'popupSubmitShipmentStatusStore'])(observer(DraftsPageComponent));
         PageComponent.layout(<MobXComponent />);
     }
 
@@ -113,11 +116,29 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     onClickSubmitShipmentRowAction(sourceShipmentModel: ShipmentModel, e) {
         e.stopPropagation();
 
-        const shipmentId = sourceShipmentModel.shipmentId;
-        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            shipmentModel.submitShipment();
-            this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, this.fetchShipmentsInit);
-        });
+        const alertStore = this.props.alertStore;
+        alertStore.msg = 'Are you sure you want to submit shipment?';
+        alertStore.subMsg = 'This action cannot be reversed';
+        alertStore.positiveLabel = 'Submit';
+        alertStore.negativeLabel = 'Cancel';
+        alertStore.positiveListener = () => {
+            const run = async () => {
+                const shipmentId = sourceShipmentModel.shipmentId;
+                this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+                    shipmentModel.submitShipment();
+                    this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
+                        this.fetchShipmentsInit();
+                        this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_SUBMITTED;
+                        this.props.popupSubmitShipmentStatusStore.show();
+                        setTimeout(() => {
+                            this.props.popupSubmitShipmentStatusStore.hide();
+                        }, 2000);
+                    });
+                });
+            }
+            run();
+        }
+        alertStore.visible = true;
     }
 
     onClickShipment = (i: number) => {

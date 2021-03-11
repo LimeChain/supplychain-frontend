@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, observable } from 'mobx';
 import GeneralApi from '../api/GeneralApi';
 import NotificationModel from '../models/NotificationModel';
 import S from '../utilities/Main';
@@ -10,7 +10,8 @@ export default class NotificationStore {
     hasMore: boolean = true;
     totalSize: number = 0;
     notificationsMap: Map<string, NotificationModel> = new Map();
-    screenNotificationModels: NotificationModel[] = [];
+    @observable screenNotificationModels: NotificationModel[] = [];
+    @observable unreadCount: number = S.INT_FALSE;
 
     constructor(appStore, alertStore) {
         makeAutoObservable(this);
@@ -51,10 +52,11 @@ export default class NotificationStore {
         const from = wipe === true ? 0 : this.screenNotificationModels.length;
         const to = from + NotificationStore.NOTIFICATION_SHOW_COUNT;
 
-        this.generalApi.fetchNotificationsByFilter(S.INT_FALSE, from, to, (notificationModels: NotificationModel[], totalSize: number) => {
+        this.generalApi.fetchNotificationsByFilter(null, from, to, (notificationModels: NotificationModel[], totalSize: number, unreadCount: number) => {
             this.isFetching = false;
 
             this.hasMore = !(this.screenNotificationModels.length === totalSize)
+            this.unreadCount = unreadCount;
 
             if (this.totalSize < totalSize && from > 0) {
                 this.fetchMoreNotifications(true);
@@ -69,4 +71,15 @@ export default class NotificationStore {
         })
     }
 
+    readAllNotifications() {
+        this.generalApi.readAllNotifications(() => {
+            this.fetchMoreNotifications(true);
+        });
+    }
+
+    readNotification(notificationModel: NotificationModel) {
+        this.generalApi.readNotification(notificationModel, () => {
+            this.unreadCount--;
+        });
+    }
 }

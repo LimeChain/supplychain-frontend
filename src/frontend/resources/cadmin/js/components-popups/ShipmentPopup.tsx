@@ -4,9 +4,13 @@ import { inject, observer } from 'mobx-react';
 import { MenuItem } from '@material-ui/core';
 
 import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import SvgMoreInfo from '../../../common/svg/more-info.svg';
 
-import S from '../../../common/js/utilities/Main';
 import { formatBytes, formatPrice } from '../../../common/js/helpers/NumeralHelper';
+import S from '../../../common/js/utilities/Main';
+
+import SvgIncomming from '../../../common/svg/incomming.svg';
+
 import AlertStore from '../../../common/js/stores/AlertStore';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import SiteStore from '../../../common/js/stores/SiteStore';
@@ -42,6 +46,10 @@ import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
 import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
+import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
+import moment from 'moment';
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import PopupStore from '../../../common/js/stores/PopupStore';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -171,6 +179,35 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             const run = async () => {
                 popupStore.shipmentModel.submitShipment();
                 await this.creditShipment();
+                this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_SUBMITTED;
+                this.props.popupSubmitShipmentStatusStore.show();
+                setTimeout(() => {
+                    this.props.popupSubmitShipmentStatusStore.hide();
+                    popupStore.hide();
+                }, 2000);
+            }
+            run();
+        }
+        alertStore.visible = true;
+    }
+
+    onClickReceiveShipment = () => {
+        const popupStore = this.props.popupStore;
+        if (popupStore.shipmentInputStateHelper.getValues() === null) {
+            return;
+        }
+
+        const alertStore = this.props.alertStore;
+        alertStore.msg = 'Are you sure you want to receive shipment?';
+        alertStore.subMsg = 'This action cannot be reversed';
+        alertStore.positiveLabel = 'Receive';
+        alertStore.negativeLabel = 'Cancel';
+
+        alertStore.positiveListener = () => {
+            const run = async () => {
+                popupStore.shipmentModel.receiveShipment();
+                await this.creditShipment();
+                this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_RECEIVED;
                 this.props.popupSubmitShipmentStatusStore.show();
                 setTimeout(() => {
                     this.props.popupSubmitShipmentStatusStore.hide();
@@ -236,9 +273,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             const popupStore = this.props.popupStore;
             const shipmentModel = popupStore.shipmentModel;
             const onFinish = popupStore.onFinish;
-            const accountModel = this.props.accountSessionStore.accountModel;
-            popupStore.shipmentModel.shipmentOriginSiteId = accountModel.siteId;
-
             this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, popupStore.shipmentDocumentModels, () => {
                 onFinish(shipmentModel);
                 resolve();
@@ -352,6 +386,11 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         {this.renderToSite()}
                     </LayoutBlock>
                 </div>
+                {this.props.popupStore.isAuditMode() ? <div className={'FlexRow'}>
+                    <a className={'SubData TransactionId'}>{shipmentModel.shipmentDltProof || '0xTRAETwgaeherherh'}</a>
+                    <div className={'SubData TimeStamp'}>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
+                    <div className={'SubData Status'}>{shipmentModel.getStatusString()}</div>
+                </div> : ''}
                 <hr />
                 <div className={'TabsHeader FlexRow'} >
                     <div className={`Tab ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} onClick={this.onClickTabProducts} >Products</div>
@@ -377,13 +416,23 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                     </div>
                     <div className={'FooterRight StartRight'} >
                         <Actions>
-                            <Button type={Button.TYPE_OUTLINE} onClick={this.onClickSaveAsDraft} >
-                                <div className={'FlexRow'}>
-                                    <div className={'SVG Size ButtonSvg'} dangerouslySetInnerHTML={{ __html: SvgSave }} />
-                                    Save as draft
-                                </div>
-                            </Button>
-                            <Button onClick={this.onClickSubmitShipment}>Submit shipment</Button>
+                            {this.props.popupStore.shipmentModel.isDraft()
+                                ? <>
+                                    <Button type={Button.TYPE_OUTLINE} onClick={this.onClickSaveAsDraft} >
+                                        <div className={'FlexRow'}>
+                                            <div className={'SVG Size ButtonSvg'} dangerouslySetInnerHTML={{ __html: SvgSave }} />
+                                            Save as draft
+                                        </div>
+                                    </Button>
+                                    <Button onClick={this.onClickSubmitShipment}>Submit shipment</Button>
+                                </>
+                                : ''
+                            }
+                            {this.props.popupStore.shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_IN_TRANSIT
+                                && this.props.accountSessionStore.accountModel.siteId === this.props.popupStore.shipmentModel.shipmentDestinationSiteId
+                                ? <Button onClick={this.onClickReceiveShipment}>Mark as received</Button>
+                                : ''
+                            }
                         </Actions>
                     </div>
                 </div>
@@ -437,11 +486,11 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return (
             <Select
                 label={'To'}
-                readOnly={this.props.popupStore.popupMode === PopupShipmentStore.POPUP_MODE_AUDIT}
+                readOnly={this.props.popupStore.isAuditMode()}
                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[1])}
                 error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[1])}
                 onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[1])} >
-                {this.props.popupStore.popupMode === PopupShipmentStore.POPUP_MODE_AUDIT
+                {this.props.popupStore.isAuditMode()
                     ? <MenuItem key={destinationSiteModel.siteId} value={destinationCountryModel.countryId} >{destinationSiteModel.siteName}, {destinationCountryModel.countryName}</MenuItem>
                     : siteStore.screenSiteModels.map((siteModel: SiteModel, i: number) => {
                         if (ownSiteModel.siteId === siteModel.siteId) {
@@ -579,9 +628,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cellString(skuModel.pricePerUnit.toString()),
                 Table.cellString(formatPrice(skuModel.getTotalPrice())),
-                Table.cell((
-                    <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />
-                )),
+                Table.cell(
+                    this.props.popupStore.isAuditMode() ? '' : <div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteSku.bind(this, i)} />,
+                ),
             ]);
         }
 
@@ -592,72 +641,98 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const popupStore = this.props.popupStore;
         const shipmentModel = popupStore.shipmentModel;
 
-        return (
-            <>
-                <div className={`UploadCnt FlexColumn ${S.CSS.getActiveClassName(popupStore.dragging)}`} onDrop={this.onDrop} >
-                    <div className={'UploadTitle FlexRow'} >
-                        <div className={'SVG IconAttachment'} dangerouslySetInnerHTML={{ __html: SvgAttachment }} />
-                        Drop your file here or&nbsp;<span>click here to add</span>
-                    </div>
-                    <div className={'UploadDesc'} > Upload anything you want. There is no limit. </div>
-                    <UploaderComponent
-                        ref={this.iNodes.uploader}
-                        id={shipmentModel}
-                        params={this.makeDocumentUploadParams()} />
-                </div>
-                <hr />
-                <div className={'UploadedDocumentsCnt'} >
-                    {popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
+        return (<>
+            {this.props.popupStore.isAuditMode()
+                && <>
+                    {this.props.popupStore.shipmentDocumentModels.map((docModel: ShipmentDocumentModel, i) => {
                         return (
-                            <div key={i} className={'UploadedDocument FlexRow FlexSplit'} >
-                                <Select
-                                    className={'UploadedDocumentType'}
-                                    placeholder={'Select document type'}
-                                    value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
-                                    onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
-                                    displayEmpty={true} >
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
-                                </Select>
-                                <div className = { 'SVG IconUploadedDocument' } dangerouslySetInnerHTML = {{ __html: SvgFile }} />
-                                <div className={'UploadedDocumentName'} > {shipmentDocumentModel.name} </div>
-                                <div className={'StartRight UploadedDocumentSize'} > {formatBytes(shipmentDocumentModel.sizeInBytes)} </div>
-                                <div className={'UploadDocumentProgressCnt FlexRow'} >
-                                    {shipmentDocumentModel.isUploaded() === false && (
-                                        <div className={'UploadDocumentProgress'}>
-                                            <div className={'UploadDocumentProgressIndicator'} style={{ transform: `scaleX(${shipmentDocumentModel.uploadProgress})` }} />
-                                        </div>
-                                    )}
-                                    {shipmentDocumentModel.isUploaded() === true && (
-                                        <>
-                                            <div className={'SVG Size IconUploadDone'} ><SvgCheck /></div>
-                                            Uploaded
-                                        </>
-                                    )}
+                            <div key={i} className="DocumentLine FlexRow">
+                                <div className="SideHolder FlexRow">
+                                    <div className="DocumentType">{ShipmentDocumentModel.getTypeAsString(docModel.documentType)}</div>
+                                    <div className="DocumentFile FlexRow">
+                                        <div className="FileIcon"></div>
+                                        <div className="FileName">{docModel.name}</div>
+                                    </div>
                                 </div>
-                                { shipmentDocumentModel.isUploaded() === false && (
-                                    <div className={'SVG IconUploadAction'} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} ><SvgClear /></div>
-                                )}
-                                { shipmentDocumentModel.isUploaded() === true && (
-                                    <>
-                                        <a href={shipmentDocumentModel.shipmentDocumentUrl} download={shipmentDocumentModel.name} className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDownload }} />
-                                        <div className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} />
-                                    </>
-                                )}
+                                <div className="SideHolder FlexRow">
+                                    <div className="DocumentType">{formatBytes(docModel.sizeInBytes)}</div>
+                                    <Actions>
+                                        <Button>
+                                            <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} />
+                                        Download
+                                        </Button>
+                                    </Actions>
+                                </div>
                             </div>
                         )
                     })}
-                </div>
-            </>
-        )
+                </>
+            }
+            {!this.props.popupStore.isAuditMode()
+                && <>
+                    <div className={`UploadCnt FlexColumn ${S.CSS.getActiveClassName(popupStore.dragging)}`} onDrop={this.onDrop} >
+                        <div className={'UploadTitle FlexRow'} >
+                            <div className={'SVG IconAttachment'} dangerouslySetInnerHTML={{ __html: SvgAttachment }} />
+                        Drop your file here or&nbsp;<span>click here to add</span>
+                        </div>
+                        <div className={'UploadDesc'} > Upload anything you want. There is no limit. </div>
+                        <UploaderComponent
+                            ref={this.iNodes.uploader}
+                            id={shipmentModel}
+                            params={this.makeDocumentUploadParams()} />
+                    </div>
+                    <hr />
+                    <div className={'UploadedDocumentsCnt'} >
+                        {popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
+                            return (
+                                <div key={i} className={'UploadedDocument FlexRow FlexSplit'} >
+                                    <Select
+                                        className={'UploadedDocumentType'}
+                                        placeholder={'Select document type'}
+                                        value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
+                                        onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
+                                        displayEmpty={true} >
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
+                                        <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
+                                    </Select>
+                                    <div className={'SVG IconUploadedDocument'} dangerouslySetInnerHTML={{ __html: SvgFile }} />
+                                    <div className={'UploadedDocumentName'} > {shipmentDocumentModel.name} </div>
+                                    <div className={'StartRight UploadedDocumentSize'} > {formatBytes(shipmentDocumentModel.sizeInBytes)} </div>
+                                    <div className={'UploadDocumentProgressCnt FlexRow'} >
+                                        {shipmentDocumentModel.isUploaded() === false && (
+                                            <div className={'UploadDocumentProgress'}>
+                                                <div className={'UploadDocumentProgressIndicator'} style={{ transform: `scaleX(${shipmentDocumentModel.uploadProgress})` }} />
+                                            </div>
+                                        )}
+                                        {shipmentDocumentModel.isUploaded() === true && (
+                                            <>
+                                                <div className={'SVG Size IconUploadDone'} ><SvgCheck /></div>
+                                            Uploaded
+                                            </>
+                                        )}
+                                    </div>
+                                    { shipmentDocumentModel.isUploaded() === false && (
+                                        <div className={'SVG IconUploadAction'} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} ><SvgClear /></div>
+                                    )}
+                                    { shipmentDocumentModel.isUploaded() === true && (
+                                        <>
+                                            <a href={shipmentDocumentModel.shipmentDocumentUrl} download={shipmentDocumentModel.name} className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDownload }} />
+                                            <div className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} />
+                                        </>
+                                    )}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </>}
+        </>)
     }
-
 }
 
 export default inject((stores) => {

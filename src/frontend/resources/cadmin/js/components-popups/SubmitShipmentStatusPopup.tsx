@@ -11,7 +11,7 @@ interface Props extends PopupWindowProps {
     popupStore: PopupSubmitShipmentStatusStore;
 }
 
-class SubmitShipmentStatusPopup extends PopupWindow < Props > {
+class SubmitShipmentStatusPopup extends PopupWindow<Props> {
 
     getCssClassName() {
         return 'SubmitShipmentStatusPopup PopupPadding PopupBox';
@@ -27,9 +27,9 @@ class SubmitShipmentStatusPopup extends PopupWindow < Props > {
 
     renderContent() {
         return (
-            <div className = { 'PopupWindowContent SmallContent FlexColumn' } >
-                <div className = { 'SVG IconSuccess' } dangerouslySetInnerHTML = {{ __html: SvgSuccess }} />
-                <div className = { 'Label' } >Shipment is successfully submitted!</div>
+            <div className={'PopupWindowContent SmallContent FlexColumn'} >
+                <div className={'SVG IconSuccess'} dangerouslySetInnerHTML={{ __html: SvgSuccess }} />
+                <div className={'Label'} >Shipment is successfully {this.props.popupStore.getStatusNameString()}!</div>
             </div>
         )
     }

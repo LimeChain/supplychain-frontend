@@ -20,6 +20,7 @@ import { number, string } from 'prop-types';
 import ProductModel from '../models/product-module/ProductModel';
 import SkuFilter from '../../../../../../builds/dev-generated/ProductModule/Sku/Utils/SkuFilterConsts';
 import moment from 'moment';
+import NotificationModel from '../models/NotificationModel';
 
 class ProductData {
     productJson: ProductModel
@@ -169,6 +170,10 @@ export default class ShipmentApi extends AbsApi {
 
             const shipmentJson = storageHelper.shipmentsJson.find((t) => t.shipmentId === shipmentModel.toJson().shipmentId);
             if (shipmentJson !== undefined) {
+
+                if (shipmentJson.shipmentStatus !== shipmentModel.shipmentStatus) {
+                    storageHelper.notificationsJson.push(NotificationModel.newInstance(shipmentModel.shipmentId, shipmentModel.shipmentStatus).toJson())
+                }
                 Object.assign(shipmentJson, shipmentModel.toJson());
             } else {
                 storageHelper.shipmentsJson.push(shipmentModel.toJson());

@@ -29,6 +29,9 @@ import './../../css/components-pages/page-outgoing-component.css';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
@@ -55,8 +58,9 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         };
 
         this.tableHelper = new TableHelper(
-            ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID,
+            ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER,
             [
+                [ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 1],
                 [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 2],
                 [ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 4],
                 [ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 6],
@@ -110,6 +114,27 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         });
     }
 
+    fetchShipmentsInit = () => {
+        const tableState = this.tableHelper.tableState;
+        tableState.pageZero();
+        this.fetchShipments();
+    }
+
+    onClickShipment = (i: number) => {
+        const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
+                if (savedShipmentModel.isDraft() === true) {
+                    Object.assign(sourceShipmentModel, savedShipmentModel);
+                } else {
+                    this.fetchShipmentsInit();
+                }
+            });
+        });
+
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -133,6 +158,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                             searchPlaceHolder={'Search outgoing shipments'}
                                             selectedSortBy={this.tableHelper.tableState.sortKey}
                                             options={[
+                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 'Consignment Number'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 'Date'),
@@ -160,7 +186,8 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
                                         widths={this.getTableWidths()}
                                         aligns={this.getTableAligns()}
                                         helper={this.tableHelper}
-                                        rows={this.renderRows()} />
+                                        rows={this.renderRows()}
+                                        onClickRow={this.onClickShipment} />
                                 </PageTable>
                             )}
                         </>

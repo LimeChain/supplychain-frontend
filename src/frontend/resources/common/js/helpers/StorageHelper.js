@@ -8,7 +8,7 @@ import CountryModel from '../models/CountryModel';
 import SiteModel from '../models/SiteModel';
 
 const LOCAL_STORAGE_KEY = 'hedera_storage';
-const VERSION = 48;
+const VERSION = 49;
 
 const productsJson = [
     // jsonProduct('1', 'Chair', ProductConstsH.S_UNIT_PACK, 'Simple wooden chair', S.INT_FALSE),
@@ -33,30 +33,30 @@ const skuOriginsJson = [
 ]
 
 const shipmentsJson = [
-    jsonShipment('1', 'Chairs to Germany', 'C1', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('2', 'Chairs to Germany2', 'C2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('3', 'Chairs to Germany3', 'C3', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('4', 'Tables to Malta', 'C4', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('5', 'Tables to Malta', 'C5', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('6', 'Tables to Germany', 'C6', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('8', 'Gold from Germany', 'C8', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('9', 'Gold from Germany', 'C9', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('10', 'Gold from Germany', 'C10', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('11', 'Gold from Germany', 'C11', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('12', 'Gold from Germany', 'C12', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('13', 'Gold from Germany', 'C13', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('21', 'Chairs to Germany', 'C1', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('22', 'Chairs to Germany2', 'C2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('23', 'Chairs to Germany3', 'C3', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('24', 'Tables to Malta', 'C4', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('25', 'Tables to Malta', 'C5', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('26', 'Tables to Germany', 'C6', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
-    jsonShipment('28', 'Gold from Germany', 'C8', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('29', 'Gold from Germany', 'C9', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('30', 'Gold from Germany', 'C10', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('31', 'Gold from Germany', 'C11', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('32', 'Gold from Germany', 'C12', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
-    jsonShipment('33', 'Gold from Germany', 'C13', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('1', 'Chairs to Germany', 'C1', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('2', 'Chairs to Germany2', 'C2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('3', 'Chairs to Germany3', 'C3', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('4', 'Tables to Malta', 'C4', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('5', 'Tables to Malta', 'C5', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('6', 'Tables to Germany', 'C6', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('8', 'Gold from Germany', 'C8', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('9', 'Gold from Germany', 'C9', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('10', 'Gold from Germany', 'C10', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('11', 'Gold from Germany', 'C11', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('12', 'Gold from Germany', 'C12', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('13', 'Gold from Germany', 'C13', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('21', 'Chairs to Germany', 'C1', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('22', 'Chairs to Germany2', 'C2', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('23', 'Chairs to Germany3', 'C3', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('24', 'Tables to Malta', 'C4', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('25', 'Tables to Malta', 'C5', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('26', 'Tables to Germany', 'C6', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), Date.now() + 1000, 1, 1, S.INT_FALSE),
+    // jsonShipment('28', 'Gold from Germany', 'C8', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('29', 'Gold from Germany', 'C9', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('30', 'Gold from Germany', 'C10', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('31', 'Gold from Germany', 'C11', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('32', 'Gold from Germany', 'C12', ShipmentConstsH.S_STATUS_RECEIVED, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
+    // jsonShipment('33', 'Gold from Germany', 'C13', ShipmentConstsH.S_STATUS_IN_TRANSIT, '2', '1', Date.now(), S.NOT_EXISTS, 1, 1, S.INT_FALSE),
 
 ]
 

@@ -23,7 +23,7 @@ export default class ShipmentModel {
         this.shipmentId = S.Strings.NOT_EXISTS;
         this.shipmentConsignmentNumber = S.Strings.EMPTY;
         this.shipmentName = S.Strings.EMPTY;
-        this.shipmentStatus = S.NOT_EXISTS;
+        this.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
         this.shipmentOriginSiteId = S.Strings.NOT_EXISTS;
         this.shipmentDestinationSiteId = S.Strings.NOT_EXISTS;
         this.shipmentDateOfShipment = S.NOT_EXISTS;

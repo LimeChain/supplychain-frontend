@@ -1,4 +1,5 @@
 import S from '../utilities/Main';
+import { makeAutoObservable } from 'mobx';
 
 export default class NotificationModel {
     notificationId: string
@@ -7,12 +8,24 @@ export default class NotificationModel {
     notificationTime: number
     notificationRead: number
 
-    constructor(){
+    constructor() {
         this.notificationId = S.Strings.NOT_EXISTS;
         this.shipmentId = S.Strings.NOT_EXISTS;
         this.notificationStatus = S.NOT_EXISTS;
         this.notificationTime = S.NOT_EXISTS;
         this.notificationRead = S.NOT_EXISTS;
+
+        makeAutoObservable(this);
+    }
+
+    static newInstance(shipmentId: string, notificationStatus: number): NotificationModel {
+        const notificationModel = new NotificationModel();
+        notificationModel.shipmentId = shipmentId;
+        notificationModel.notificationStatus = notificationStatus;
+        notificationModel.notificationTime = Date.now();
+        notificationModel.notificationRead = S.INT_FALSE;
+
+        return notificationModel;
     }
 
     toJson(): any {
@@ -40,6 +53,5 @@ export default class NotificationModel {
 
         return model;
     }
-
 
 }

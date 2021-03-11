@@ -72,12 +72,15 @@
     float: right;
 }
 
+.NotificationsPopover .NotificationBox .NotificationMessage.Unread {
+    background: rgba(54, 121, 224, 0.05);
+}
+
 .NotificationsPopover .NotificationBox .NotificationMessage {
     box-sizing: border-box;
     justify-content: space-between;
     fill: var(--color-primary);
     height: 65px;
-    background: #F9F9F9;
     border-top: 1px solid rgba(54, 121, 224, 0.1);
     box-sizing: border-box;
     margin: 0 10px;
@@ -86,8 +89,10 @@
     font-size: 12px;
 }
 
-.NotificationsPopover .NotificationBox .NotificationMessage:hover {
-    background: rgba(54, 121, 224, 0.05);
+.NotificationsPopover .NotificationBox .NotificationMessage.NoNotificationMessage {
+    width: 324px;
+    color: var(--color-gray);
+    justify-content: center;
 }
 
 .NotificationsPopover .NotificationBox .NotificationMessage p {

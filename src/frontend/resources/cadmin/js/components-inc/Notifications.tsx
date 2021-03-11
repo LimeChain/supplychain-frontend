@@ -106,12 +106,24 @@ class Notifications extends React.Component<Props, State> {
         }
     }
 
+    onclickMarkAllNotificationsRead = () => {
+        this.props.notificationStore.readAllNotifications();
+    }
+
+    onClickNotificationMessage = (notificationModel: NotificationModel) => {
+        if (notificationModel.notificationRead === S.INT_TRUE) {
+            return;
+        }
+
+        this.props.notificationStore.readNotification(notificationModel);
+    }
+
     render() {
         return (
             <div className={'Notifications'} ref={this.nodes.root}>
                 <div className={'NotificationsIcon'} onClick={this.onClickNotification}>
-                    <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotificationNone }}></div>
-                    <div className={`SVG Dot ActiveVisibilityHidden Transition ${S.CSS.getActiveClassName(this.props.notificationStore.screenNotificationModels.length > 0)}`} dangerouslySetInnerHTML={{ __html: SvgNotificationDot }}></div>
+                    <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgNotificationNone }}></div>
+                    <div className={`SVG Dot ActiveVisibilityHidden Transition ${S.CSS.getActiveClassName(this.props.notificationStore.unreadCount > 0)}`} dangerouslySetInnerHTML={{ __html: SvgNotificationDot }}></div>
                 </div>
                 <Popover classes={{ root: 'NotificationsPopover' }}
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
@@ -122,18 +134,22 @@ class Notifications extends React.Component<Props, State> {
                     <div className={'NotificationBox'}>
                         <div className={'NotificationsHeader FlexRow'}>
                             Notifications
-                            <div className="ReadAllButton">Mark all as read</div>
+                            {this.props.notificationStore.unreadCount > 0 ? <div className="ReadAllButton" onClick={this.onclickMarkAllNotificationsRead}>Mark all as read</div> : ''}
                         </div>
                         <div className={'NotificationMessageBox FlexColumn'} onScroll={this.notificationScroll}>
-                            {this.props.notificationStore.screenNotificationModels.map((notification) => <div className={' NotificationMessage FlexRow '} key={notification.notificationId}>
-                                <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotification }}></div>
-                                <div className={'NotificationMessageText '}>
-                                    <p>Shipment # {notification.shipmentId}</p> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
-                                </div>
-                                <div className={'NotificationMessageTime '}>
-                                    {moment(notification.notificationTime).fromNow(true)}
-                                </div>
-                            </div>)}
+                            {this.props.notificationStore.screenNotificationModels.length > 0
+                                ? this.props.notificationStore.screenNotificationModels.map((notification) => <div onClick={() => this.onClickNotificationMessage(notification)} className={`NotificationMessage FlexRow ${notification.notificationRead === S.INT_TRUE ? '' : 'Unread'}`} key={notification.notificationId}>
+                                    <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotification }}></div>
+                                    <div className={'NotificationMessageText '}>
+                                        <p>Shipment # {notification.shipmentId}</p> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
+                                    </div>
+                                    <div className={'NotificationMessageTime '}>
+                                        {moment(notification.notificationTime).fromNow(true)}
+                                    </div>
+                                </div>)
+                                : <div className={'NotificationMessage NoNotificationMessage FlexRow '}>
+                                    There are no notifications
+                                </div>}
                             {this.props.notificationStore.hasMore
                                 ? <LoadingIndicator className={'LoadingIndicator'} margin={'0'} /> : ''
                             }

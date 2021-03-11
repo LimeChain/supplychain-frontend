@@ -130,54 +130,49 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
                 <Sidebar page={PagesCAdmin.PRODUCTS_IN_STOCK} />
 
-                <PageView pageTitle={'ProductsinStock'} >
+                <PageView pageTitle={'Products in Stock'} >
                     {this.props.productStore.screenProductModels === null && (
                         'Loading'
                     )}
                     {this.props.productStore.screenProductModels !== null && (
                         <>
-                            {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
-                                <NoEntryPage modelName='product' subText='Add products for your shipments' buttonText='Add Product' buttonFunction={this.onClickAddProduct} />
-                            )}
-                            {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
-                                <PageTable
-                                    className={'WhiteBox PageExtend'}
-                                    header={(
-                                        <PageTableHeader
-                                            searchPlaceHolder={'Search products'}
-                                            selectedSortBy={this.tableHelper.tableState.sortKey}
-                                            options={[
-                                                new PageTableHeaderSortByStruct(SkuFilter.S_SORT_BY_NAME, 'Name'),
-                                            ]}
-                                            onChangeSearchWord={this.onChangeSearchWord}
-                                            onChangeSortBy={this.onChangeSortBy} />
-                                    )}
-                                    footer={(
-                                        <PageTableFooter
-                                            totalItems={this.tableHelper.tableState.total}
-                                            totalPrice={this.props.skuStore.getTotalPrice()}
-                                            actions={(
-                                                <Actions>
-                                                    <Button onClick={this.onClickAddProduct}>
-                                                        <div className={'FlexRow'}>
-                                                            <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
+                            <PageTable
+                                className={'WhiteBox PageExtend'}
+                                header={(
+                                    <PageTableHeader
+                                        searchPlaceHolder={'Search products'}
+                                        selectedSortBy={this.tableHelper.tableState.sortKey}
+                                        options={[
+                                            new PageTableHeaderSortByStruct(SkuFilter.S_SORT_BY_NAME, 'Name'),
+                                        ]}
+                                        onChangeSearchWord={this.onChangeSearchWord}
+                                        onChangeSortBy={this.onChangeSortBy} />
+                                )}
+                                footer={(
+                                    <PageTableFooter
+                                        totalItems={this.tableHelper.tableState.total}
+                                        totalPrice={this.props.skuStore.getTotalPrice()}
+                                        actions={(
+                                            <Actions>
+                                                {/* <Button onClick={this.onClickAddProduct}>
+                                                    <div className={'FlexRow'}>
+                                                        <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
                                                 Add product
-                                                        </div>
-                                                    </Button>
-                                                </Actions>
-                                            )} />
-                                    )} >
-                                    <TableDesktop
-                                        className={'ProductsTable'}
-                                        legend={this.getTableLegend()}
-                                        widths={this.getTableWidths()}
-                                        aligns={this.getTableAligns()}
-                                        helper={this.tableHelper}
-                                        rows={this.renderRows()}
-                                        showPaging={true} >
-                                    </TableDesktop>
-                                </PageTable>
-                            )}
+                                                    </div>
+                                                </Button> */}
+                                            </Actions>
+                                        )} />
+                                )} >
+                                <TableDesktop
+                                    className={'ProductsTable'}
+                                    legend={this.getTableLegend()}
+                                    widths={this.getTableWidths()}
+                                    aligns={this.getTableAligns()}
+                                    helper={this.tableHelper}
+                                    rows={this.renderRows()}
+                                    showPaging={true} >
+                                </TableDesktop>
+                            </PageTable>
                         </>
                     )}
                 </PageView>
