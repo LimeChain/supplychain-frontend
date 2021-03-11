@@ -30,7 +30,7 @@ export default class Sidebar extends React.Component < Props > {
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgDashboard }} />
                             Dashboard
                         </a>
-                        <div className = { 'SidebarButtonMarginTop' } >
+                        <div className = { 'SidebarButton SidebarButtonMarginTop' } >
                             <Expandable
                                 arrowOffset = { false }
                                 defaultExpanded = { this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK }

@@ -185,6 +185,10 @@
     margin-right: 32px;
 }
 
+.ShipmentPopup .TabDocuments .UploadedDocumentsCnt .IconUploadedDocument {
+    margin-right: 16px;
+}
+
 .ShipmentPopup .TabDocuments .UploadedDocumentsCnt .UploadedDocumentName {
     color: var(--color-gray-dark);
     font-weight: 600;
