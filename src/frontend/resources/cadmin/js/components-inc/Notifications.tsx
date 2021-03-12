@@ -1,24 +1,24 @@
 import React, { RefObject } from 'react';
+import { inject, observer } from 'mobx-react';
 import moment from 'moment';
+
+import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+
 import NotificationModel from '../../../common/js/models/NotificationModel';
+import AppStore from '../../../common/js/stores/AppStore';
+import AlertStore from '../../../common/js/stores/AlertStore';
+import NotificationStore from '../../../common/js/stores/NotificationStore';
+import GeneralApi from '../../../common/js/api/GeneralApi';
+
+import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
+import Popover from '../../../common/js/components-inc/Popover';
 
 import SvgNotificationNone from '../../../common/svg/notification-none.svg';
 import SvgNotificationDot from '../../../common/svg/notification-dot.svg';
 import SvgNotification from '../../../common/svg/notification.svg';
-
 import './../../css/components-inc/notifications.css';
-import Popover from '../../../common/js/components-inc/Popover';
+
 import S from '../../../common/js/utilities/Main';
-import ProjectUtils from '../../../common/js/ProjectUtils';
-import NotificationStore from '../../../common/js/stores/NotificationStore';
-import { inject, observer } from 'mobx-react';
-import GeneralApi from '../../../common/js/api/GeneralApi';
-import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
-import NotificationConstsH from '../../../../../../builds/dev-generated/Notification/NotificationModelHConsts';
-import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
-import AppStore from '../../../common/js/stores/AppStore';
-import AlertStore from '../../../common/js/stores/AlertStore';
 
 interface Props {
     notifications: NotificationModel[];
@@ -111,7 +111,7 @@ class Notifications extends React.Component<Props, State> {
     }
 
     onClickNotificationMessage(notificationModel: NotificationModel) {
-        if (notificationModel.notificationRead === S.INT_TRUE) {
+        if (notificationModel.isRead() === true) {
             return;
         }
 
@@ -145,13 +145,13 @@ class Notifications extends React.Component<Props, State> {
                                         return (
                                             <div
                                                 onClick={this.onClickNotificationMessage.bind(this, notification)}
-                                                className={`NotificationMessage FlexRow ${S.CSS.getClassName(notification.notificationRead === S.INT_TRUE, 'Unread')}`}
+                                                className={`NotificationMessage FlexRow FlexSplit ${S.CSS.getClassName(notification.isRead() === false, 'Unread')}`}
                                                 key={notification.notificationId}>
                                                 <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgNotification }}></div>
                                                 <div className={'NotificationMessageText '}>
-                                                    <p>Shipment # {notification.shipmentId}</p> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
+                                                    <span>Shipment # {notification.shipmentId}</span> has been {getNotificationStatus(notification.notificationStatus, S.INT_FALSE)}
                                                 </div>
-                                                <div className={'NotificationMessageTime '}>
+                                                <div className={'NotificationMessageTime StartRight'}>
                                                     {moment(notification.notificationTime).fromNow(true)}
                                                 </div>
                                             </div>

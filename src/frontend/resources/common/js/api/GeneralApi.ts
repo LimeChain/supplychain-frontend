@@ -10,6 +10,7 @@ import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 import Apis from '../../../../../../builds/dev-generated/Apis';
 import S from '../utilities/Main';
+import { callbackify } from 'util';
 
 export default class GeneralApi extends AbsApi {
 
@@ -67,6 +68,21 @@ export default class GeneralApi extends AbsApi {
         // });
     }
 
+    readAllNotifications(callback: () => void) {
+        this.disableActions();
+
+        setTimeout(() => {
+            this.enableActions();
+
+            storageHelper.notificationsJson.forEach((notificationJson) => {
+                notificationJson.notificationRead = S.INT_TRUE;
+            });
+            storageHelper.save();
+
+            callback();
+        }, 100);
+    }
+
     readNotification(notificationModel: NotificationModel, callback: () => void) {
         this.disableActions();
 
@@ -82,10 +98,10 @@ export default class GeneralApi extends AbsApi {
             json.notificationJson = storageHelper.notificationsJson.find((nJson: NotificationModel) => nJson.notificationId === notificationModel.notificationId)
             json.notificationJson.notificationRead = S.INT_TRUE;
 
-            notificationModel.notificationRead = json.notificationJson.notificationRead;
             storageHelper.save();
 
             const res = new ReadNotificationByIdRes(json);
+            notificationModel.notificationRead = res.notificationModel.notificationRead;
 
             callback();
         }, 100);

@@ -12,8 +12,8 @@ export default class NotificationModel {
         this.notificationId = S.Strings.NOT_EXISTS;
         this.shipmentId = S.Strings.NOT_EXISTS;
         this.notificationStatus = S.NOT_EXISTS;
-        this.notificationTime = S.NOT_EXISTS;
-        this.notificationRead = S.NOT_EXISTS;
+        this.notificationTime = 0;
+        this.notificationRead = S.INT_FALSE;
 
         makeAutoObservable(this);
     }
@@ -26,6 +26,14 @@ export default class NotificationModel {
         notificationModel.notificationRead = S.INT_FALSE;
 
         return notificationModel;
+    }
+
+    isRead() {
+        return this.notificationRead === S.INT_TRUE;
+    }
+
+    markAsRead() {
+        this.notificationRead = S.INT_TRUE;
     }
 
     toJson(): any {

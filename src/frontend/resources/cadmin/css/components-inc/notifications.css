@@ -11,10 +11,6 @@
     border-radius: 5px;
 }
 
-.NotificationsPopover .NotificationBox {
-    border-radius: 5px;
-}
-
 .Notifications .NotificationsIcon {
     display: flex;
     justify-content: center;
@@ -22,14 +18,14 @@
     position: relative;
 }
 
-.Notifications .NotificationsIcon .Icon {
-    margin: 0 auto;
-}
-
-.Notifications .SVG.Dot {
+.Notifications .NotificationsIcon .SVG.Dot {
     position: absolute;
     right: -1px;
     top: 12px;
+}
+
+.NotificationsPopover .NotificationBox {
+    border-radius: 5px;
 }
 
 .NotificationsPopover .NotificationBox .NotificationMessageBox {
@@ -40,14 +36,6 @@
     font-style: normal;
     font-weight: 500;
     font-size: 12px;
-}
-
-.NotificationsPopover .NotificationBox .NotificationMessageBox .Icon {
-    margin-right: 9px;
-}
-
-.NotificationsPopover .NotificationBox .NotificationMessageBox .LoadingIndicator {
-    flex: 0 0 auto;
 }
 
 .NotificationsPopover .NotificationBox .NotificationsHeader {
@@ -68,8 +56,12 @@
     color: var(--color-primary);
 }
 
-.NotificationsPopover .NotificationBox .NotificationsHeaderMenu {
-    float: right;
+.NotificationsPopover .NotificationBox .NotificationMessageBox .Icon {
+    margin-right: 9px;
+}
+
+.NotificationsPopover .NotificationBox .NotificationMessageBox .LoadingIndicator {
+    flex: 0 0 auto;
 }
 
 .NotificationsPopover .NotificationBox .NotificationMessage.Unread {
@@ -95,28 +87,18 @@
     justify-content: center;
 }
 
-.NotificationsPopover .NotificationBox .NotificationMessage p {
-    display: inline;
-    color: #07172F;
+.NotificationsPopover .NotificationBox .NotificationMessage .NotificationMessageText {
+    color: var(--color-gray);
+    font-size: 12px;
+    margin-right: 24px;
 }
 
-
-.NotificationsPopover .NotificationMessage .NotificationMessageInfo .NotificationMessageText {
-    margin-top: 3px;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
-    color: #A0A4B3;
-    box-sizing: border-box;
+.NotificationsPopover .NotificationBox .NotificationMessage .NotificationMessageText span {
+    color: var(--color-gray-dark);
 }
 
-.NotificationsPopover .NotificationMessage .NotificationMessageTime {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12px;
-    line-height: 16px;
-    color: #959AA1;
-    margin-left: auto;
+.NotificationsPopover .NotificationBox .NotificationMessage .NotificationMessageTime {
     flex: 0 0 auto;
+    color: #BFC3CA;
+    font-size: 12px;
 }
