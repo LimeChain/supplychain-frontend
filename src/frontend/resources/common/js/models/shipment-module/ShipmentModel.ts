@@ -35,7 +35,7 @@ export default class ShipmentModel {
         makeAutoObservable(this);
     }
 
-    static newInstance(siteId: string): ShipmentModel {
+    static newInstanceByOriginSiteId(siteId: string): ShipmentModel {
         const shipmentModel = new ShipmentModel();
         shipmentModel.shipmentOriginSiteId = siteId;
 
@@ -81,6 +81,10 @@ export default class ShipmentModel {
 
     isDraft(): boolean {
         return this.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT;
+    }
+
+    isReceived(): boolean {
+        return this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED;
     }
 
     toJson(): any {

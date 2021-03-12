@@ -128,8 +128,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                     shipmentModel.submitShipment();
                     this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
                         this.fetchShipmentsInit();
-                        this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_SUBMITTED;
-                        this.props.popupSubmitShipmentStatusStore.show();
+                        this.props.popupSubmitShipmentStatusStore.signalShow(PopupSubmitShipmentStatusStore.ACTION_NAME_SUBMITTED);
                         setTimeout(() => {
                             this.props.popupSubmitShipmentStatusStore.hide();
                         }, 2000);
@@ -145,7 +144,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
         const shipmentId = sourceShipmentModel.shipmentId;
         this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_CREDIT, (savedShipmentModel: ShipmentModel) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
                 if (savedShipmentModel.isDraft() === true) {
                     Object.assign(sourceShipmentModel, savedShipmentModel);
                 } else {
@@ -157,7 +156,8 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, this.fetchShipmentsInit);
+        const shipmentModel = ShipmentModel.newInstanceByOriginSiteId(this.props.accountSessionStore.accountModel.siteId);
+        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], this.fetchShipmentsInit);
     }
 
     renderContent() {

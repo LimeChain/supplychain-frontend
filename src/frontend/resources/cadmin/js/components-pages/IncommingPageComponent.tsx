@@ -33,10 +33,11 @@ import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginMo
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import PopupStore from '../../../common/js/stores/PopupStore';
+import PopupSubmitShipmentStatusStore from '../../../common/js/stores/PopupSubmitShipmentStatusStore';
 
 interface Props extends ContextPageComponentProps {
     shipmentStore: ShipmentStore;
-    popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore
+    popupSubmitShipmentStatusStore: PopupSubmitShipmentStatusStore;
 }
 
 interface State {
@@ -83,19 +84,11 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
     }
 
     fetchShipments = () => {
-        this.shipmentApi.fetchShipmentByFilter(
-            PagesCAdmin.INCOMMING,
-            this.searchWord,
-            this.tableHelper.tableState.sortKey,
-            this.tableHelper.tableState.from,
-            this.tableHelper.tableState.to(),
-            (shipmentModels, totalSize) => {
-                console.log(shipmentModels);
-
-                this.props.shipmentStore.onScreenData(shipmentModels);
-                this.tableHelper.tableState.total = totalSize;
-            },
-        )
+        const tableState = this.tableHelper.tableState;
+        this.shipmentApi.fetchShipmentByFilter(PagesCAdmin.INCOMMING, this.searchWord, tableState.sortKey, tableState.from, tableState.to(), (shipmentModels, totalSize) => {
+            this.props.shipmentStore.onScreenData(shipmentModels);
+            this.tableHelper.tableState.total = totalSize;
+        });
     }
 
     onChangeSearchWord = (searchWord) => {
@@ -106,35 +99,6 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
     onChangeSortBy = (sortBy) => {
         this.tableHelper.tableState.sortKey = sortBy;
         this.fetchShipments();
-    }
-
-    onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, PopupShipmentStore.POPUP_MODE_CREDIT, () => {
-            const tableState = this.tableHelper.tableState;
-            tableState.pageZero();
-            this.fetchShipments();
-        });
-    }
-
-    fetchShipmentsInit = () => {
-        const tableState = this.tableHelper.tableState;
-        tableState.pageZero();
-        this.fetchShipments();
-    }
-
-    onClickShipment = (i: number) => {
-        const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
-        const shipmentId = sourceShipmentModel.shipmentId;
-        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
-                if (savedShipmentModel.isDraft() === true) {
-                    Object.assign(sourceShipmentModel, savedShipmentModel);
-                } else {
-                    this.fetchShipmentsInit();
-                }
-            });
-        });
-
     }
 
     onClickReceiveShipmentRowAction = (sourceShipmentModel: ShipmentModel, e) => {
@@ -151,9 +115,8 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
                     shipmentModel.receiveShipment();
                     this.shipmentApi.creditShipment(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, () => {
-                        this.fetchShipmentsInit();
-                        this.props.popupSubmitShipmentStatusStore.action = PopupStore.ACTION_NAME_RECEIVED;
-                        this.props.popupSubmitShipmentStatusStore.show();
+                        Object.assign(sourceShipmentModel, shipmentModel);
+                        this.props.popupSubmitShipmentStatusStore.signalShow(PopupSubmitShipmentStatusStore.ACTION_NAME_RECEIVED);
                         setTimeout(() => {
                             this.props.popupSubmitShipmentStatusStore.hide();
                         }, 2000);
@@ -163,6 +126,26 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
             run();
         }
         alertStore.visible = true;
+    }
+
+    onClickCreateNewShipment = () => {
+        const shipmentModel = ShipmentModel.newInstanceByOriginSiteId(this.props.accountSessionStore.accountModel.siteId);
+        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], () => {
+            // creating a shipment from incoming page results in no any change on this page so we can do nothing
+        });
+    }
+
+    onClickShipment = (i: number) => {
+        const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
+        const shipmentId = sourceShipmentModel.shipmentId;
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+                if (savedShipmentModel.isReceived() === true) {
+                    Object.assign(sourceShipmentModel, savedShipmentModel);
+                }
+            });
+        });
+
     }
 
     renderContent() {
@@ -188,7 +171,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                                             searchPlaceHolder={'Search incoming shipments'}
                                             selectedSortBy={this.tableHelper.tableState.sortKey}
                                             options={[
-                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 'Sonsignment Number'),
+                                                new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 'Consignment Number'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 'Shipped From'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID, 'Destination'),
                                                 new PageTableHeaderSortByStruct(ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT, 'Date'),

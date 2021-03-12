@@ -78,7 +78,6 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
     }
 
     onScrollFetchShipments = (event, fetchMoreFunc: (boolean) => void) => {
-
         const container = event.target.querySelector('.TableContainer');
 
         const lastShipmentLine = container.querySelector('.ShipmentLine:nth-last-child(2)');
@@ -89,7 +88,10 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
 
     onClickShipmentLine = (sModel: ShipmentModel) => {
         this.shipmentApi.fetchShipmentById(sModel.shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(sModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
+            this.props.popupShipmentStore.signalShow(sModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+                if (sModel.isReceived() === false && savedShipmentModel.isReceived() === true) {
+                    Object.assign(sModel, savedShipmentModel);
+                }
             });
         });
     }

@@ -41,6 +41,7 @@ interface Props {
     onClick?: () => void;
     disabled?: boolean;
     target?: string;
+    download?: string;
 }
 
 export default class Button extends React.Component<Props> {
@@ -104,7 +105,8 @@ export default class Button extends React.Component<Props> {
                         variant={this.muiVariant()}
                         color={this.cssMuiClassColor()}
                         href={this.props.href}
-                        target={this.props.target} >
+                        target={this.props.target}
+                        download = { this.props.download} >
                         <div className={'ButtonContent FlexColumn'} >
                             {this.props.children}
                         </div>

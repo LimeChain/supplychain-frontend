@@ -81,19 +81,17 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     fetchShipments = () => {
-        this.shipmentApi.fetchShipmentByFilter(
-            PagesCAdmin.OUTGOING,
-            this.searchWord,
-            this.tableHelper.tableState.sortKey,
-            this.tableHelper.tableState.from,
-            this.tableHelper.tableState.to(),
-            (shipmentModels, totalSize) => {
-                console.log(shipmentModels);
+        const tableState = this.tableHelper.tableState;
+        this.shipmentApi.fetchShipmentByFilter(PagesCAdmin.OUTGOING, this.searchWord, tableState.sortKey, tableState.from, tableState.to(), (shipmentModels, totalSize) => {
+            this.props.shipmentStore.onScreenData(shipmentModels);
+            tableState.total = totalSize;
+        });
+    }
 
-                this.props.shipmentStore.onScreenData(shipmentModels);
-                this.tableHelper.tableState.total = totalSize;
-            },
-        )
+    fetchShipmentsInit = () => {
+        const tableState = this.tableHelper.tableState;
+        tableState.pageZero();
+        this.fetchShipments();
     }
 
     onChangeSearchWord = (searchWord) => {
@@ -107,29 +105,20 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
     }
 
     onClickCreateNewShipment = () => {
-        this.props.popupShipmentStore.signalShow(ShipmentModel.newInstance(this.props.accountSessionStore.accountModel.siteId), [], [], [], PopupShipmentStore.POPUP_MODE_CREDIT, () => {
-            const tableState = this.tableHelper.tableState;
-            tableState.pageZero();
-            this.fetchShipments();
+        const shipmentModel = ShipmentModel.newInstanceByOriginSiteId(this.props.accountSessionStore.accountModel.siteId);
+        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], (savedShipmentModel: ShipmentModel) => {
+            if (savedShipmentModel.isDraft() === false) {
+                this.fetchShipmentsInit();
+            }
         });
-    }
-
-    fetchShipmentsInit = () => {
-        const tableState = this.tableHelper.tableState;
-        tableState.pageZero();
-        this.fetchShipments();
     }
 
     onClickShipment = (i: number) => {
         const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
         const shipmentId = sourceShipmentModel.shipmentId;
         this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, PopupShipmentStore.POPUP_MODE_AUDIT, (savedShipmentModel: ShipmentModel) => {
-                if (savedShipmentModel.isDraft() === true) {
-                    Object.assign(sourceShipmentModel, savedShipmentModel);
-                } else {
-                    this.fetchShipmentsInit();
-                }
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+                // there is no action that could happen in the popup that could affect this page lauout so we can do nothing on save
             });
         });
 

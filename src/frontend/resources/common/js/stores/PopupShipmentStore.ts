@@ -12,9 +12,6 @@ import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentMod
 
 export default class PopupShipmentStore extends PopupStore {
 
-    static POPUP_MODE_CREDIT: number = 1;
-    static POPUP_MODE_AUDIT: number = 2;
-
     static POPUP_TAB_PRODUCTS: number = 1;
     static POPUP_TAB_DOCUMENTS: number = 2;
 
@@ -34,12 +31,11 @@ export default class PopupShipmentStore extends PopupStore {
 
     @observable dragging: boolean;
 
-    popupMode: number = PopupShipmentStore.POPUP_MODE_CREDIT;
-
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
     productIdsInSkuModels: Set<string>;
-    genSkuId: 0;
+    genSkuId: number;
+    initialShipmentDocumentLength: number;
 
     productStore: ProductStore;
     shipmentStore: ShipmentStore;
@@ -96,10 +92,8 @@ export default class PopupShipmentStore extends PopupStore {
         skuModels: SkuModel[],
         skuOriginModels: SkuOriginModel[],
         shipmentDocumentModels: ShipmentDocumentModel[],
-        popupMode: number,
         onFinish: (savedShipmentModel: ShipmentModel) => void,
     ) {
-        this.popupMode = popupMode;
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => { });
         this.shipmentModel = shipmentModel;
@@ -110,6 +104,7 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuOriginModel = new SkuOriginModel();
         this.dragging = false;
         this.genSkuId = 0;
+        this.initialShipmentDocumentLength = shipmentDocumentModels.length;
         this.onFinish = onFinish;
         this.productIdsInSkuModels = new Set();
         skuModels.forEach((skuModel: SkuModel) => {

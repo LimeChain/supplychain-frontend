@@ -87,6 +87,7 @@
 .PageDashboard .Tables .TableSection .TableContainer .ShipmentLine {
     margin-bottom: 20px;
     padding-right: 10px;
+    cursor: pointer;
 }
 
 .PageDashboard .Tables .TableSection .TableContainer .ShipmentLine .ShipmentLineInfo .ConsignmentNumber {

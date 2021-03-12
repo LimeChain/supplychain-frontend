@@ -11,35 +11,44 @@
 }
 
 /* header */
-.ShipmentPopup .PopupHeader .PopupTitle {
+.ShipmentPopup .PopupHeader {
+    display: flex;
+}
+
+.ShipmentPopup .PopupHeader .PopupTitleCnt {
     flex: 0 0 auto;
-    font-size: 20px;
-    font-weight: 700;
+    position: relative;
     margin-right: 25px;
 }
 
-.ShipmentPopup .SubData {
-    font-weight: 500;
-    font-size: 10px;
-    line-height: 15px;
-    color: var(--color-primary);
-    margin-right: 30px;
+.ShipmentPopup .PopupHeader .PopupTitleCnt .PopupTitle {
+    height: 45px; /* to match input's height */
+    font-size: 20px;
+    font-weight: 700;
 }
 
-.ShipmentPopup .Status {
+.ShipmentPopup .PopupHeader .PopupTitleCnt .TransactionId {
+    width: 100%;
+    position: absolute;
+    left: 0; bottom: 0;
+    text-decoration: underline;
+}
+
+.ShipmentPopup .PopupHeader .SubData {
+    color: var(--color-primary);
+    font-weight: 500;
+    font-size: 10px;
+}
+
+.ShipmentPopup .PopupHeader .Status {
     font-style: italic;
 }
 
-.ShipmentPopup .TimeStamp {
+.ShipmentPopup .PopupHeader .TimeStamp {
     color: #8C99AC;
 }
 
-.ShipmentPopup .TransactionId {
-    text-decoration-line: underline;
-}
-
-.ShipmentPopup .PopupHeader .Input,
-.ShipmentPopup .PopupHeader .Select {
+.ShipmentPopup .PopupHeader .WidthLimiter {
     width: 160px;
     flex: 0 0 auto;
 }
@@ -168,7 +177,7 @@
     fill: #CAD0DB;
 }
 
-/* documents */
+/* documents - credit */
 .ShipmentPopup .TabDocuments .UploadCnt {
     width: 50%;
     min-height: 160px;
@@ -180,19 +189,6 @@
     border-radius: 20px;
     margin: var(--desktop-spacing-small) auto;
 }
-
-.ShipmentPopup .TabDocuments .DocumentLine {
-    justify-content: space-between;
-}
-
-.ShipmentPopup .TabDocuments .DocumentLine .SideHolder {
-    justify-content: space-between;
-}
-
-.ShipmentPopup .TabDocuments .DocumentLine .SideHolder :nth-child(0) {
-    margin-right: 68px;
-}
-
 
 .ShipmentPopup .TabDocuments .UploadCnt.Active {
     background: yellow;
@@ -285,6 +281,40 @@
     fill: currentColor;
     margin-left: 30px;
     cursor: pointer;
+}
+
+/* documents - audit */
+.ShipmentPopup .TabDocuments .DocumentsAudit {
+    margin: var(--desktop-spacing-small) 114px;
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine:not(:first-child) {
+    margin-top: 28px;
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine .DocumentType {
+    width: 150px;
+    color: var(--color-gray-dark);
+    margin-right: 16px;
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine .IconDocumentType {
+    margin-right: 16px;
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine .DocumentName {
+    color: var(--color-gray);
+}
+
+.ShipmentPopup .TabDocuments .DocumentLine .DocumentSize {
+    color: var(--color-gray);
+    font-weight: 400;
+    margin-right: 90px;
 }
 
 /* footer */
