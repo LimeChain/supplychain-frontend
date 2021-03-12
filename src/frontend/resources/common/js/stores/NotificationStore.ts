@@ -55,7 +55,6 @@ export default class NotificationStore {
         this.generalApi.fetchNotificationsByFilter(null, from, to, (notificationModels: NotificationModel[], totalSize: number, unreadCount: number) => {
             this.isFetching = false;
 
-            this.hasMore = !(this.screenNotificationModels.length === totalSize)
             this.unreadCount = unreadCount;
 
             if (this.totalSize < totalSize && from > 0) {
@@ -68,6 +67,8 @@ export default class NotificationStore {
             } else {
                 this.appendToScreenData(notificationModels);
             }
+
+            this.hasMore = this.screenNotificationModels.length !== totalSize;
         })
     }
 
