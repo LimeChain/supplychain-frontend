@@ -10,7 +10,6 @@ import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 import Apis from '../../../../../../builds/dev-generated/Apis';
 import S from '../utilities/Main';
-import { callbackify } from 'util';
 
 export default class GeneralApi extends AbsApi {
 
@@ -89,7 +88,7 @@ export default class GeneralApi extends AbsApi {
         setTimeout(() => {
             this.enableActions();
 
-            const req = new ReadNotificationByIdReq(notificationModel.notificationId);
+            const req = new ReadNotificationByIdReq(notificationModel);
 
             const json = {
                 notificationJson: null,

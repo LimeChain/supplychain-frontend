@@ -3,9 +3,6 @@ import CountryModel from './CountryModel';
 
 export default class SiteModel {
 
-    static ID_BERLIN: string = '1';
-    static ID_ROTHERDAM: string = '2';
-
     siteId: string
     countryId: string
     siteName: string
@@ -24,13 +21,6 @@ export default class SiteModel {
         model.siteName = siteName;
 
         return model;
-    }
-
-    static getAllSites() {
-        return [
-            SiteModel.newInstance(SiteModel.ID_BERLIN, CountryModel.ID_GERMANY, 'Berlin'),
-            SiteModel.newInstance(SiteModel.ID_ROTHERDAM, CountryModel.ID_NETHERLANDS, 'Rotherdam'),
-        ];
     }
 
     toJson(): any {

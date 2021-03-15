@@ -1,9 +1,4 @@
-
-            
 export default class ProductModelH {
-
-    static S_UNIT_PACK = 1;
-    static S_UNIT_KG = 2;
 
     static P_PRODUCT_ID = 1;
     static P_PRODUCT_NAME = 2;

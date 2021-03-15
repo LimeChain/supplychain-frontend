@@ -17,7 +17,7 @@ import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentMod
 import SvgIncomming from '../../../common/svg/incomming.svg';
 import SvgOutgoing from '../../../common/svg/outgoing.svg';
 import Button from '../../../common/js/components-inc/Button';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
 import moment from 'moment';
 import ProjectUtils from '../../../common/js/ProjectUtils';
@@ -160,7 +160,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                                 <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
                                             </div>
                                             <div className={'ShipmentLineStatus StartRight'}>
-                                                <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
+                                                <Button color={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
                                                     {shipmentModel.getStatusString()}
                                                 </Button>
                                             </div>
@@ -190,7 +190,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                             <div className='TimeStamp'>Sent {moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
                                         </div>
                                         <div className={'ShipmentLineStatus StartRight'}>
-                                            <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
+                                            <Button color={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >
                                                 {shipmentModel.getStatusString()}
                                             </Button>
                                         </div>

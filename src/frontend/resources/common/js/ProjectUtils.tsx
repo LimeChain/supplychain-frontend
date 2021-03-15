@@ -3,6 +3,7 @@ import S from './utilities/Main';
 
 import SvgGermany from '../svg/flags/germany.svg';
 import SvgNetherlands from '../svg/flags/netherlands.svg';
+import CountryConsts from '../../../../../builds/dev-generated/Country/CountryModelConsts';
 
 const QUERY_PATTERN = '?p=';
 
@@ -144,9 +145,9 @@ export default class ProjectUtils {
     static getCountrySvg(countryId) {
         switch (countryId) {
             default:
-            case CountryModel.ID_GERMANY:
+            case CountryConsts.S_GERMANY.toString():
                 return SvgGermany;
-            case CountryModel.ID_NETHERLANDS:
+            case CountryConsts.S_NETHERLANDS.toString():
                 return SvgNetherlands;
         }
 

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import ProductModelH from '../../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
+import ProductModelH from '../../../../../../../builds/dev-generated/ProductModule/Product/ProductModelConsts';
 import S from '../../utilities/Main';
 
 export default class ProductModel {

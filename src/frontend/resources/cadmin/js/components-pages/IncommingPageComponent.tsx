@@ -26,7 +26,7 @@ import Table from '../../../common/js/components-inc/Table';
 import moment from 'moment';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
@@ -231,13 +231,13 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cellString(`${destinationSiteModel.siteName}, ${destinationCountryModel.countryName}`),
                 Table.cell(
                     <Actions>
-                        <Button color={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>
+                        <Button color={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} >{shipmentModel.getStatusString()}</Button>
                     </Actions>,
                 ),
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
                 Table.cell(
                     <Actions>
-                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED} onClick={(e) => this.onClickReceiveShipmentRowAction(shipmentModel, e)}>
+                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED} onClick={(e) => this.onClickReceiveShipmentRowAction(shipmentModel, e)}>
                             Goods Received
                         </Button>
                     </Actions>,

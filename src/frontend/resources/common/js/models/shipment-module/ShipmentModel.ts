@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import ShipmentConstsH from '../../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import S from '../../utilities/Main';
 
 export default class ShipmentModel {
@@ -23,7 +23,7 @@ export default class ShipmentModel {
         this.shipmentId = S.Strings.NOT_EXISTS;
         this.shipmentConsignmentNumber = S.Strings.EMPTY;
         this.shipmentName = S.Strings.EMPTY;
-        this.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
+        this.shipmentStatus = ShipmentConsts.S_STATUS_DRAFT;
         this.shipmentOriginSiteId = S.Strings.NOT_EXISTS;
         this.shipmentDestinationSiteId = S.Strings.NOT_EXISTS;
         this.shipmentDateOfShipment = S.NOT_EXISTS;
@@ -55,19 +55,19 @@ export default class ShipmentModel {
     }
 
     saveAsDraft() {
-        this.shipmentStatus = ShipmentConstsH.S_STATUS_DRAFT;
+        this.shipmentStatus = ShipmentConsts.S_STATUS_DRAFT;
     }
 
     submitShipment() {
-        this.shipmentStatus = ShipmentConstsH.S_STATUS_IN_TRANSIT;
+        this.shipmentStatus = ShipmentConsts.S_STATUS_IN_TRANSIT;
         this.shipmentDateOfShipment = Date.now();
     }
 
     getStatusString() {
         switch (this.shipmentStatus) {
-            case ShipmentConstsH.S_STATUS_IN_TRANSIT:
+            case ShipmentConsts.S_STATUS_IN_TRANSIT:
                 return 'In Transtit';
-            case ShipmentConstsH.S_STATUS_RECEIVED:
+            case ShipmentConsts.S_STATUS_RECEIVED:
                 return 'Received';
             default:
                 return 'Unknown';
@@ -75,16 +75,16 @@ export default class ShipmentModel {
     }
 
     receiveShipment() {
-        this.shipmentStatus = ShipmentConstsH.S_STATUS_RECEIVED;
+        this.shipmentStatus = ShipmentConsts.S_STATUS_RECEIVED;
         this.shipmentDateOfArrival = Date.now();
     }
 
     isDraft(): boolean {
-        return this.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT;
+        return this.shipmentStatus === ShipmentConsts.S_STATUS_DRAFT;
     }
 
     isReceived(): boolean {
-        return this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED;
+        return this.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED;
     }
 
     toJson(): any {

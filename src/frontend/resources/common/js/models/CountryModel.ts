@@ -2,9 +2,6 @@ import S from '../utilities/Main';
 
 export default class CountryModel {
 
-    static ID_GERMANY: string = '1';
-    static ID_NETHERLANDS: string = '2';
-
     countryId: string
     countryName: string
     countryVat: number
@@ -21,13 +18,6 @@ export default class CountryModel {
         model.countryName = countryName;
         model.countryVat = countryVat;
         return model;
-    }
-
-    static getAllCountries() {
-        return [
-            CountryModel.newInstance(CountryModel.ID_GERMANY, 'Germany', 0.18),
-            CountryModel.newInstance(CountryModel.ID_NETHERLANDS, 'Netherlands', 0.19),
-        ]
     }
 
     toJson(): any {

@@ -24,12 +24,7 @@ export class FetchShipmentsByFilterReq {
     from: number
     to: number
 
-    constructor(
-        searchBy: string,
-        sortBy: number,
-        from: number,
-        to: number,
-    ) {
+    constructor(searchBy: string, sortBy: number, from: number, to: number) {
         this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
@@ -38,9 +33,6 @@ export class FetchShipmentsByFilterReq {
 }
 
 export class FetchTotalValueInStockReq {
-    constructor() {
-
-    }
 }
 
 export class FetchProductsInStockReq {
@@ -49,12 +41,7 @@ export class FetchProductsInStockReq {
     from: number
     to: number
 
-    constructor(
-        searchBy: string,
-        sortBy: number,
-        from: number,
-        to: number,
-    ) {
+    constructor(searchBy: string, sortBy: number, from: number, to: number) {
         this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
@@ -63,6 +50,7 @@ export class FetchProductsInStockReq {
 }
 
 export class FetchShipmentsWithProductQuantityLeftByProductIdReq {
+
     productId: string
 
     constructor(productId: string) {
@@ -71,6 +59,7 @@ export class FetchShipmentsWithProductQuantityLeftByProductIdReq {
 }
 
 export class FetchShipmentByIdReq {
+
     shipmentId: string
 
     constructor(shipmentId: string) {

@@ -1,20 +1,20 @@
 import AbsApi from './AbsApi';
 import storageHelper from '../helpers/StorageHelper';
-import {UploadShipmentDocumentReq} from '../network-requests/ShipmentDocumentApiReq';
-import {UploadShipmentDocumentRes} from '../network-responses/ShipmentDocumentApiRes';
+import { UploadShipmentDocumentReq } from '../network-requests/ShipmentDocumentApiReq';
+import { UploadShipmentDocumentRes } from '../network-responses/ShipmentDocumentApiRes';
 import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
 
 export default class ShipmentDocumentsApi extends AbsApi {
     uploadDocument(shipmentDocumentModel: ShipmentDocumentModel, callback: () => void) {
         this.disableActions();
-        
+
         setTimeout(() => {
             this.enableActions();
 
             const req = new UploadShipmentDocumentReq(shipmentDocumentModel);
 
-            let json = {
-                shipmentDocument: null
+            const json = {
+                shipmentDocument: null,
             }
 
             if (shipmentDocumentModel.isNew() === true) {
@@ -35,7 +35,6 @@ export default class ShipmentDocumentsApi extends AbsApi {
                 json.shipmentDocument = ShipmentDocumentModel.fromJson(shipmentDocumentJson);
             }
 
-            
             const res = new UploadShipmentDocumentRes(json);
 
             shipmentDocumentModel.shipmentDocumentId = res.shipmentDocumentModel.shipmentDocumentId;

@@ -2,7 +2,7 @@ const SV = require('./SV');
 const crypto = require('crypto');
 const aesjs = require('aes-js');
 
-const ENCRYPTION_KEY = [3, 5, 1, 10, 20, 54, 20, 4, 11, 15, 0, 1, 52, 15, 23, 41];
+const ENCRYPTION_KEY = [13, 15, 8, 5, 10, 53, 21, 9, 3, 9, 43, 18, 26, 3, 51, 4];
 
 export default class SF {
 

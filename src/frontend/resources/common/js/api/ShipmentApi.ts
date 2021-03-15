@@ -11,7 +11,7 @@ import Api from '../utilities/Api';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
 import ShipmentDocumentModel from '../models/shipment-module/ShipmentDocumentModel';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
 import GeneralApi from './GeneralApi';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
@@ -21,21 +21,6 @@ import ProductModel from '../models/product-module/ProductModel';
 import SkuFilter from '../../../../../../builds/dev-generated/ProductModule/Sku/Utils/SkuFilterConsts';
 import moment from 'moment';
 import NotificationModel from '../models/NotificationModel';
-
-class ProductData {
-    productJson: ProductModel
-    productQuantity: number
-    productPrice: number
-    productCurrency: number
-
-    constructor(productJson: ProductModel, productQuantity: number, productPrice: number, productCurrency: number) {
-        this.productJson = productJson;
-        this.productQuantity = productQuantity;
-        this.productPrice = productPrice;
-        this.productCurrency = productCurrency;
-    }
-
-}
 
 export default class ShipmentApi extends AbsApi {
 
@@ -322,11 +307,11 @@ export default class ShipmentApi extends AbsApi {
 
             // filter by page
             if (page === PagesCAdmin.DRAFTS) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_DRAFT)
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentStatus === ShipmentConsts.S_STATUS_DRAFT)
             } else if (page === PagesCAdmin.INCOMMING) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConstsH.S_STATUS_DRAFT)
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT)
             } else if (page === PagesCAdmin.OUTGOING) {
-                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConstsH.S_STATUS_DRAFT)
+                json.shipmentJsons = json.shipmentJsons.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentOriginSiteId === currentSite.siteId && shipmentJson.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT)
             }
 
             json.totalSize = json.shipmentJsons.length;
@@ -534,7 +519,7 @@ export default class ShipmentApi extends AbsApi {
         }
 
         const currentSiteId = CookieHelper.fetchAccounts().accountModel.siteId;
-        const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED);
+        const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED);
 
         shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
             const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);

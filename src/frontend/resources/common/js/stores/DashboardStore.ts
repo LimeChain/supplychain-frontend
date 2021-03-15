@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx';
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
 import ProductApi from '../api/ProductApi';
 import ShipmentApi from '../api/ShipmentApi';

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import ShipmentDocumentConstsH from '../../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import ShipmentDocumentConsts from '../../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelConsts';
 import S from '../../utilities/Main';
 
 export default class ShipmentDocumentModel {
@@ -50,21 +50,21 @@ export default class ShipmentDocumentModel {
         switch (type) {
             default:
                 return S.Strings.EMPTY;
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_CRM_DOCUMENT:
                 return 'CRM document';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_BILL_OF_LANDING:
                 return 'Bill of lading';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_INVOICE:
                 return 'Invoice';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_INSURANCE_POLICY:
                 return 'Insurance policy';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_BANK:
                 return 'Bank document';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_PUBLIC_AUTH:
                 return 'Public authority issued document';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_RECEIPT:
                 return 'Receipt';
-            case ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER:
+            case ShipmentDocumentConsts.S_DOCUMENT_TYPE_OTHER:
                 return 'Other';
         }
     }

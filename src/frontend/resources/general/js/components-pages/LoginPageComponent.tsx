@@ -22,6 +22,7 @@ import S from '../../../common/js/utilities/Main';
 import ProjectUtils from '../../../common/js/ProjectUtils';
 import SiteStore from '../../../common/js/stores/SiteStore';
 import GeneralApi from '../../../common/js/api/GeneralApi';
+import CountryConsts from '../../../../../../builds/dev-generated/Country/CountryModelConsts';
 
 interface Props extends ContextPageComponentProps {
     siteStore: SiteStore;
@@ -49,16 +50,17 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
         this.inputStateHelper = new InputStateHelper(FIELDS, () => {
             this.setState({})
         });
-        this.inputStateHelper.updateValues([
-            `${SiteModel.ID_BERLIN},${CountryModel.ID_GERMANY}`,
-            S.Strings.EMPTY,
-        ]);
     }
 
     componentDidMount() {
         super.componentDidMount();
         this.generalApi.fetchAllSites((siteModels, countryModels) => {
             this.props.siteStore.onScreenData(siteModels, countryModels);
+            this.inputStateHelper.updateValues([
+                `${siteModels[0].siteId},${countryModels[0].countryId}`,
+                S.Strings.EMPTY,
+            ]);
+            this.setState({});
         });
     }
 
@@ -85,10 +87,10 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
 
         let email = S.Strings.EMPTY;
         switch (countryId) {
-            case CountryModel.ID_GERMANY:
+            case CountryConsts.S_GERMANY.toString():
                 email = 'germany@pwc.com';
                 break;
-            case CountryModel.ID_NETHERLANDS:
+            case CountryConsts.S_NETHERLANDS.toString():
                 email = 'netherlands@pwc.com';
                 break;
             default:

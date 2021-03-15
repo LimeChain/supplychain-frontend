@@ -16,7 +16,7 @@ export class FetchProductsByFilterReq {
     from: number
     to: number
 
-    constructor(searchBy, sortBy: number, from: number, to: number) {
+    constructor(searchBy: string, sortBy: number, from: number, to: number) {
         this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
@@ -25,10 +25,10 @@ export class FetchProductsByFilterReq {
 
 }
 
-export class FetchProductByIdReq {
-    productId: string
+// export class FetchProductByIdReq {
+//     productId: string
 
-    constructor(productId: string) {
-        this.productId = productId;
-    }
-}
+//     constructor(productId: string) {
+//         this.productId = productId;
+//     }
+// }

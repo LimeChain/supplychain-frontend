@@ -8,7 +8,6 @@ import Api from '../utilities/Api';
 import Apis from '../../../../../../builds/dev-generated/Apis';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
-import ProductConstsH from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts';
 import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 
 export default class ProductApi extends AbsApi {
@@ -154,22 +153,22 @@ export default class ProductApi extends AbsApi {
 
     }
 
-    fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
-        this.disableActions();
+    // fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
+    //     this.disableActions();
 
-        const req = new FetchProductByIdReq(productId);
+    //     const req = new FetchProductByIdReq(productId);
 
-        this.productApi.req(Actions.PRODUCT.FETCH_PRODUCT_BY_ID, req, (json: any) => {
-            if (json.status !== ResponseConsts.S_STATUS_OK) {
-                this.showAlert('Something went wrong');
-                return;
-            }
+    //     this.productApi.req(Actions.PRODUCT.FETCH_PRODUCT_BY_ID, req, (json: any) => {
+    //         if (json.status !== ResponseConsts.S_STATUS_OK) {
+    //             this.showAlert('Something went wrong');
+    //             return;
+    //         }
 
-            const res = new FetchProductByIdRes(json.obj);
+    //         const res = new FetchProductByIdRes(json.obj);
 
-            callback(res.productModel);
+    //         callback(res.productModel);
 
-            this.enableActions();
-        });
-    }
+    //         this.enableActions();
+    //     });
+    // }
 }

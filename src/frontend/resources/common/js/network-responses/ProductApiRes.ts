@@ -20,10 +20,10 @@ export class FetchProductsByFilterRes {
     }
 }
 
-export class FetchProductByIdRes {
-    productModel: ProductModel
+// export class FetchProductByIdRes {
+//     productModel: ProductModel
 
-    constructor(json) {
-        this.productModel = ProductModel.fromJson(json.productJson);
-    }
-}
+//     constructor(json) {
+//         this.productModel = ProductModel.fromJson(json.productJson);
+//     }
+// }

@@ -27,7 +27,7 @@ import SvgAdd from '@material-ui/icons/Add';
 import SvgArrowRight from '../../../common/svg/arrow-right.svg';
 import './../../css/components-pages/page-outgoing-component.css';
 import LoadingIndicator from '../../../common/js/components-core/LoadingIndicator';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';

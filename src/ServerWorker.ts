@@ -29,7 +29,7 @@ if (Config.Build.DEV === true) {
 // }
 
 const SESSION_CONFIG = {
-    key: 'reactnode',
+    key: 'pwc-bat-session',
     /** (string) cookie key (default is koa:sess) */
     /** (number || 'session') maxAge in ms (default is 1 days) */
     /** 'session' will result in a cookie that expires when session/browser is closed */
@@ -45,7 +45,7 @@ const SESSION_CONFIG = {
     /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
     renew: true,
     /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false) */
-    store: sessionStore,
+    // store: sessionStore,
 };
 
 class ServerWorker {

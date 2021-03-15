@@ -2,7 +2,7 @@ import React, { RefObject } from 'react';
 import { inject, observer } from 'mobx-react';
 import moment from 'moment';
 
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 
 import NotificationModel from '../../../common/js/models/NotificationModel';
 import AppStore from '../../../common/js/stores/AppStore';
@@ -37,10 +37,10 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
     let result = '';
 
     switch (status) {
-        case ShipmentConstsH.S_STATUS_IN_TRANSIT:
+        case ShipmentConsts.S_STATUS_IN_TRANSIT:
             result = 'sent';
             break;
-        case ShipmentConstsH.S_STATUS_RECEIVED:
+        case ShipmentConsts.S_STATUS_RECEIVED:
             result = 'received';
             break;
         default:

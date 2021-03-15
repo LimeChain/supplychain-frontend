@@ -11,7 +11,7 @@ import './../../css/components-pages/page-drafts-component.css';
 import S from '../../../common/js/utilities/Main';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import PageView from '../components-inc/PageView';
 import SvgAdd from '@material-ui/icons/Add';
 import './../../css/components-pages/page-incomming-component.css';

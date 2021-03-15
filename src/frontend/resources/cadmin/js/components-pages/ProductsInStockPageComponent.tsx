@@ -33,7 +33,7 @@ import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import Table from '../../../common/js/components-inc/Table';
 import ProductRowMenu from '../components-inc/ProductRowMenu';
 import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
-import SkuConstsH from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelHConsts';
+import SkuConsts from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelConsts';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;

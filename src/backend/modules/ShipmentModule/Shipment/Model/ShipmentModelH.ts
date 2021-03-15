@@ -1,10 +1,4 @@
-
-            
 export default class ShipmentModelH {
-
-    static S_STATUS_DRAFT = 1;
-    static S_STATUS_IN_TRANSIT = 2;
-    static S_STATUS_RECEIVED = 3;
 
     static P_SHIPMENT_ID = 1;
     static P_SHIPMENT_CONSIGNMENT_NUMBER = 2;

@@ -24,9 +24,9 @@ export class ReadAllNotificationsReq {
 }
 
 export class ReadNotificationByIdReq {
-    notificationId: string
+    notificationJson: string
 
-    constructor(notificationId: string) {
-        this.notificationId = notificationId;
+    constructor(notificationModel: NotificationModel) {
+        this.notificationJson = notificationModel.toJson();
     }
 }

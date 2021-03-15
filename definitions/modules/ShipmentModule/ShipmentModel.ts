@@ -1,5 +1,7 @@
-
 export default class ShipmentModel {
+    static S_STATUS_DRAFT: number;
+    static S_STATUS_IN_TRANSIT: number;
+    static S_STATUS_RECEIVED: number;
 
     shipmentId: number
     shipmentConsignmentNumber: string
@@ -13,8 +15,4 @@ export default class ShipmentModel {
     shipmentDltProof: string
     shipmentDeleted: number
 
-
-    static S_STATUS_DRAFT: number = 1;
-    static S_STATUS_IN_TRANSIT: number = 2;
-    static S_STATUS_RECEIVED: number = 3;
 }

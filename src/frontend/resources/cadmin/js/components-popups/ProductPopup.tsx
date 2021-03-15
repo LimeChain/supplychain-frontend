@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import { MenuItem } from '@material-ui/core';
 
-import ProductModelHConsts from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelHConsts'
+import ProductModelConsts from '../../../../../../builds/dev-generated/ProductModule/Product/ProductModelConsts'
 
 import S from '../../../common/js/utilities/Main';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
@@ -86,8 +86,8 @@ class ProductPopup extends PopupWindow<Props> {
                         error={inputStateHelperProduct.errors.get(FIELDS[1])}
                         onChange={inputStateHelperProduct.onChanges.get(FIELDS[1])}
                         displayEmpty={true}>
-                        {Object.keys(ProductModelHConsts).map((constName) => {
-                            const itemKey = ProductModelHConsts[constName];
+                        {Object.keys(ProductModelConsts).map((constName) => {
+                            const itemKey = ProductModelConsts[constName];
                             const itemValue = ProductModel.getUnitName(itemKey);
 
                             return (

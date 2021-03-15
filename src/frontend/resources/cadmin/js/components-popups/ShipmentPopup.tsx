@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react';
 
 import { MenuItem } from '@material-ui/core';
 
-import ShipmentDocumentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelHConsts';
+import ShipmentDocumentConsts from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelConsts';
 import SvgMoreInfo from '../../../common/svg/more-info.svg';
 
 import { formatBytes, formatPrice } from '../../../common/js/helpers/NumeralHelper';
@@ -48,7 +48,7 @@ import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import moment from 'moment';
-import ShipmentConstsH from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelHConsts';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import PopupStore from '../../../common/js/stores/PopupStore';
 
 interface Props extends PopupWindowProps {
@@ -430,7 +430,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                     <Button onClick={this.onClickSubmitShipment}>Submit shipment</Button>
                                 </>
                             )}
-                            {this.props.popupStore.shipmentModel.shipmentStatus === ShipmentConstsH.S_STATUS_IN_TRANSIT
+                            {this.props.popupStore.shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_IN_TRANSIT
                                 && this.props.accountSessionStore.accountModel.siteId === this.props.popupStore.shipmentModel.shipmentDestinationSiteId
                                 && (
                                     <Button onClick={this.onClickReceiveShipment}>Mark as received</Button>
@@ -690,14 +690,14 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                     value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
                                     onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
                                     displayEmpty={true} >
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_BANK)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
-                                    <MenuItem value={ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConstsH.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_INVOICE}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_INVOICE)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_INSURANCE_POLICY}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_INSURANCE_POLICY)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_BANK}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_BANK)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_PUBLIC_AUTH}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_PUBLIC_AUTH)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_RECEIPT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_RECEIPT)}</MenuItem>
+                                    <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_OTHER}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_OTHER)}</MenuItem>
                                 </Select>
                                 <div className={'SVG IconUploadedDocument'} dangerouslySetInnerHTML={{ __html: SvgFile }} />
                                 <div className={'UploadedDocumentName'} > {shipmentDocumentModel.name} </div>

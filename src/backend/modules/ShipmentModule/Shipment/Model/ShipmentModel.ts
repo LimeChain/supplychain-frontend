@@ -1,8 +1,11 @@
-import ShipmentConstsH from '../Model/ShipmentModelH';
 import SV from '../../../../utilities/SV';
 import ShipmentModelG from './ShipmentModelG';
 
 export default class ShipmentModel extends ShipmentModelG {
+
+    static S_STATUS_DRAFT: number = 1;
+    static S_STATUS_IN_TRANSIT: number = 2;
+    static S_STATUS_RECEIVED: number = 3;
 
     isNew(): boolean {
         return this.shipmentId === SV.NOT_EXISTS;
@@ -10,12 +13,12 @@ export default class ShipmentModel extends ShipmentModelG {
 
     isStatusChangeForNotification(oldShipmentStatus): boolean {
         return oldShipmentStatus !== this.shipmentStatus
-            && (this.shipmentStatus === ShipmentConstsH.S_STATUS_IN_TRANSIT
-                || this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED)
+            && (this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT
+                || this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED)
     }
 
     isShipmentStatusLocked(newShipmentStatus) {
-        return this.shipmentStatus === ShipmentConstsH.S_STATUS_RECEIVED && newShipmentStatus !== ShipmentConstsH.S_STATUS_RECEIVED;
+        return this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED && newShipmentStatus !== ShipmentModel.S_STATUS_RECEIVED;
     }
 
 }
