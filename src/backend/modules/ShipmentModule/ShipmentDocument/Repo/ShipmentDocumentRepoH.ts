@@ -8,7 +8,6 @@ export default class ShipmentDocumentRepoH {
     static C_SHIPMENT_DOCUMENT_URL = 'shipmentDocumentUrl';
     static C_SIZE_IN_BYTES = 'sizeInBytes';
     static C_NAME = 'name';
-    static C_UPLOAD_PROGRESS = 'uploadProgress';
         
     shipmentDocumentId: number | null;
     shipmentDocumentIdToDb: boolean;
@@ -24,8 +23,6 @@ export default class ShipmentDocumentRepoH {
     sizeInBytesToDb: boolean;
     name: string | null;
     nameToDb: boolean;
-    uploadProgress: number | null;
-    uploadProgressToDb: boolean;
     
     constructor() {
         this.shipmentDocumentId = null;
@@ -42,8 +39,6 @@ export default class ShipmentDocumentRepoH {
         this.sizeInBytesToDb = false;
         this.name = null;
         this.nameToDb = false;
-        this.uploadProgress = null;
-        this.uploadProgressToDb = false;
     }
     
     static instanceByDbRow(row): ShipmentDocumentRepoH {
@@ -56,7 +51,6 @@ export default class ShipmentDocumentRepoH {
         repo.shipmentDocumentUrl = row[ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_URL] ?? repo.shipmentDocumentUrl;
         repo.sizeInBytes = row[ShipmentDocumentRepoH.C_SIZE_IN_BYTES] ?? repo.sizeInBytes;
         repo.name = row[ShipmentDocumentRepoH.C_NAME] ?? repo.name;
-        repo.uploadProgress = row[ShipmentDocumentRepoH.C_UPLOAD_PROGRESS] ?? repo.uploadProgress;
 
         return repo;
     }
@@ -105,11 +99,6 @@ export default class ShipmentDocumentRepoH {
         if (this.nameToDb === true) {
             columns.push(ShipmentDocumentRepoH.C_NAME);
             values.push(this.name === null ? null : this.name.toString());
-        }
-
-        if (this.uploadProgressToDb === true) {
-            columns.push(ShipmentDocumentRepoH.C_UPLOAD_PROGRESS);
-            values.push(this.uploadProgress === null ? null : this.uploadProgress.toString());
         }
 
         return [columns, values];

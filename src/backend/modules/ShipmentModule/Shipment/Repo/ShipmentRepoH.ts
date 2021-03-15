@@ -1,9 +1,6 @@
 export default class ShipmentRepoH {
 
     static TABLE_NAME = 'shipments';
-    static C_S__S_T_A_T_U_S__D_R_A_F_T = 'S_STATUS_DRAFT';
-    static C_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T = 'S_STATUS_IN_TRANSIT';
-    static C_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D = 'S_STATUS_RECEIVED';
     static C_SHIPMENT_ID = 'shipmentId';
     static C_SHIPMENT_CONSIGNMENT_NUMBER = 'shipmentConsignmentNumber';
     static C_SHIPMENT_NAME = 'shipmentName';
@@ -16,12 +13,6 @@ export default class ShipmentRepoH {
     static C_SHIPMENT_DLT_PROOF = 'shipmentDltProof';
     static C_SHIPMENT_DELETED = 'shipmentDeleted';
         
-    s_STATUS_DRAFT: number | null;
-    s_STATUS_DRAFTToDb: boolean;
-    s_STATUS_IN_TRANSIT: number | null;
-    s_STATUS_IN_TRANSITToDb: boolean;
-    s_STATUS_RECEIVED: number | null;
-    s_STATUS_RECEIVEDToDb: boolean;
     shipmentId: number | null;
     shipmentIdToDb: boolean;
     shipmentConsignmentNumber: string | null;
@@ -46,12 +37,6 @@ export default class ShipmentRepoH {
     shipmentDeletedToDb: boolean;
     
     constructor() {
-        this.s_STATUS_DRAFT = null;
-        this.s_STATUS_DRAFTToDb = false;
-        this.s_STATUS_IN_TRANSIT = null;
-        this.s_STATUS_IN_TRANSITToDb = false;
-        this.s_STATUS_RECEIVED = null;
-        this.s_STATUS_RECEIVEDToDb = false;
         this.shipmentId = null;
         this.shipmentIdToDb = false;
         this.shipmentConsignmentNumber = null;
@@ -79,9 +64,6 @@ export default class ShipmentRepoH {
     static instanceByDbRow(row): ShipmentRepoH {
         const repo = new ShipmentRepoH();
     
-        repo.s_STATUS_DRAFT = row[ShipmentRepoH.C_S__S_T_A_T_U_S__D_R_A_F_T] ?? repo.s_STATUS_DRAFT;
-        repo.s_STATUS_IN_TRANSIT = row[ShipmentRepoH.C_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T] ?? repo.s_STATUS_IN_TRANSIT;
-        repo.s_STATUS_RECEIVED = row[ShipmentRepoH.C_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D] ?? repo.s_STATUS_RECEIVED;
         repo.shipmentId = row[ShipmentRepoH.C_SHIPMENT_ID] ?? repo.shipmentId;
         repo.shipmentConsignmentNumber = row[ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER] ?? repo.shipmentConsignmentNumber;
         repo.shipmentName = row[ShipmentRepoH.C_SHIPMENT_NAME] ?? repo.shipmentName;
@@ -98,11 +80,11 @@ export default class ShipmentRepoH {
     }
 
     getPrimaryValue(): number | null {
-        return this.s_STATUS_DRAFT;
+        return this.shipmentId;
     }
 
     setPrimaryValue(value: number): void {
-        this.s_STATUS_DRAFT = parseInt(value as unknown as string);
+        this.shipmentId = parseInt(value as unknown as string);
     }
 
     getPrimaryValueForInsert(): number | null {
@@ -112,21 +94,6 @@ export default class ShipmentRepoH {
     getDbPairs() {
         const columns = [];
         const values = [];
-
-        if (this.s_STATUS_IN_TRANSITToDb === true) {
-            columns.push(ShipmentRepoH.C_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T);
-            values.push(this.s_STATUS_IN_TRANSIT === null ? null : this.s_STATUS_IN_TRANSIT.toString());
-        }
-
-        if (this.s_STATUS_RECEIVEDToDb === true) {
-            columns.push(ShipmentRepoH.C_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D);
-            values.push(this.s_STATUS_RECEIVED === null ? null : this.s_STATUS_RECEIVED.toString());
-        }
-
-        if (this.shipmentIdToDb === true) {
-            columns.push(ShipmentRepoH.C_SHIPMENT_ID);
-            values.push(this.shipmentId === null ? null : this.shipmentId.toString());
-        }
 
         if (this.shipmentConsignmentNumberToDb === true) {
             columns.push(ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER);
@@ -182,7 +149,7 @@ export default class ShipmentRepoH {
     }
 
     getPrimaryDbPair() {
-        return [ShipmentRepoH.C_S__S_T_A_T_U_S__D_R_A_F_T, this.s_STATUS_DRAFT];
+        return [ShipmentRepoH.C_SHIPMENT_ID, this.shipmentId];
     }
 
 }

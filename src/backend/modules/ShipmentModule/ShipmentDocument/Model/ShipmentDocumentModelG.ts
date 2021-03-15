@@ -15,7 +15,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         this.shipmentDocumentUrl = SV.Strings.EMPTY;
         this.sizeInBytes = SV.NOT_EXISTS;
         this.name = SV.Strings.EMPTY;
-        this.uploadProgress = SV.NOT_EXISTS;
     }
 
     copyRefProperties(sourceModel: ShipmentDocumentModel): void {
@@ -66,10 +65,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
             repo.name = this.name;
             repo.nameToDb = true;
         }
-        if (map.has(ShipmentDocumentModelH.P_UPLOAD_PROGRESS) === true && this.uploadProgress !== undefined) {
-            repo.uploadProgress = this.uploadProgress;
-            repo.uploadProgressToDb = true;
-        }
 
         return repo;
     }
@@ -84,7 +79,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         model.shipmentDocumentUrl = repo.shipmentDocumentUrl ?? model.shipmentDocumentUrl;
         model.sizeInBytes = parseInt((repo.sizeInBytes ?? model.sizeInBytes) as unknown as string);
         model.name = repo.name ?? model.name;
-        model.uploadProgress = parseInt((repo.uploadProgress ?? model.uploadProgress) as unknown as string);
 
         return model;
     }
@@ -99,7 +93,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
             shipmentDocumentUrl: this.shipmentDocumentUrl,
             sizeInBytes: this.sizeInBytes,
             name: this.name,
-            uploadProgress: this.uploadProgress,
         };
     }
 
@@ -117,7 +110,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
         model.shipmentDocumentUrl = json.shipmentDocumentUrl ?? model.shipmentDocumentUrl;
         model.sizeInBytes = parseInt(json.sizeInBytes ?? model.sizeInBytes);
         model.name = json.name ?? model.name;
-        model.uploadProgress = parseInt(json.uploadProgress ?? model.uploadProgress);
 
         return model;
     }
@@ -138,8 +130,6 @@ export default class ShipmentDocumentModelG extends ShipmentDocumentModelH {
                 return ShipmentDocumentRepoH.C_SIZE_IN_BYTES;
             case ShipmentDocumentModelH.P_NAME:
                 return ShipmentDocumentRepoH.C_NAME;
-            case ShipmentDocumentModelH.P_UPLOAD_PROGRESS:
-                return ShipmentDocumentRepoH.C_UPLOAD_PROGRESS;
             default:
                 return null;
         }

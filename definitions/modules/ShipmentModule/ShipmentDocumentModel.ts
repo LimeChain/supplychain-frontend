@@ -7,6 +7,5 @@ export default class ShipmentDocumentModel {
     shipmentDocumentUrl: string
     sizeInBytes: number;
     name: string;
-    uploadProgress: number;
 
 }

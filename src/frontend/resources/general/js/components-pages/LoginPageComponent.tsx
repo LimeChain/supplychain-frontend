@@ -93,6 +93,9 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
             case CountryConsts.S_NETHERLANDS.toString():
                 email = 'netherlands@pwc.com';
                 break;
+            case CountryConsts.S_POLAND.toString():
+                email = 'poland@pwc.com';
+                break;
             default:
         }
 

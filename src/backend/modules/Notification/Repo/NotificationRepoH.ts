@@ -3,7 +3,6 @@ export default class NotificationRepoH {
     static TABLE_NAME = 'notifications';
     static C_NOTIFICATION_ID = 'notificationId';
     static C_SHIPMENT_ID = 'shipmentId';
-    static C_NOTIFICATION_STATUS = 'notificationStatus';
     static C_NOTIFICATION_TIME = 'notificationTime';
     static C_NOTIFICATION_READ = 'notificationRead';
         
@@ -11,8 +10,6 @@ export default class NotificationRepoH {
     notificationIdToDb: boolean;
     shipmentId: number | null;
     shipmentIdToDb: boolean;
-    notificationStatus: number | null;
-    notificationStatusToDb: boolean;
     notificationTime: number | null;
     notificationTimeToDb: boolean;
     notificationRead: number | null;
@@ -23,8 +20,6 @@ export default class NotificationRepoH {
         this.notificationIdToDb = false;
         this.shipmentId = null;
         this.shipmentIdToDb = false;
-        this.notificationStatus = null;
-        this.notificationStatusToDb = false;
         this.notificationTime = null;
         this.notificationTimeToDb = false;
         this.notificationRead = null;
@@ -36,7 +31,6 @@ export default class NotificationRepoH {
     
         repo.notificationId = row[NotificationRepoH.C_NOTIFICATION_ID] ?? repo.notificationId;
         repo.shipmentId = row[NotificationRepoH.C_SHIPMENT_ID] ?? repo.shipmentId;
-        repo.notificationStatus = row[NotificationRepoH.C_NOTIFICATION_STATUS] ?? repo.notificationStatus;
         repo.notificationTime = row[NotificationRepoH.C_NOTIFICATION_TIME] ?? repo.notificationTime;
         repo.notificationRead = row[NotificationRepoH.C_NOTIFICATION_READ] ?? repo.notificationRead;
 
@@ -62,11 +56,6 @@ export default class NotificationRepoH {
         if (this.shipmentIdToDb === true) {
             columns.push(NotificationRepoH.C_SHIPMENT_ID);
             values.push(this.shipmentId === null ? null : this.shipmentId.toString());
-        }
-
-        if (this.notificationStatusToDb === true) {
-            columns.push(NotificationRepoH.C_NOTIFICATION_STATUS);
-            values.push(this.notificationStatus === null ? null : this.notificationStatus.toString());
         }
 
         if (this.notificationTimeToDb === true) {

@@ -9,7 +9,7 @@
     "dev": "node ./tools/builder/Main.js -target=dev",
     "prod": "export ENV_FILENAME=.env.production|| set ENV_FILENAME=.env.production&& node ./tools/builder/Main.js -target=prod",
     "create-migration": "node ./src/backend/db/cli/CreateMigration.js",
-    "dev-migrate-db": "node ./builds/dev/src/backend/db/cli/ExecuteMigrations.js",
+    "dev-migrate-db": "node ./tools/builder/Main.js -target=dev -start-server=0 -webpack=0 -server=0 -watch=0&& node ./builds/dev/src/backend/db/cli/ExecuteMigrations.js",
     "migrate-db": "node ./src/backend/db/cli/ExecuteMigrations.js"
   },
   "engines": {
