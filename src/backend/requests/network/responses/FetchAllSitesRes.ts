@@ -3,8 +3,8 @@ import SiteModelG from '../../../modules/Site/Model/SiteModelG';
 import SiteModelH from '../../../modules/Site/Model/SiteModelH';
 import CountryModel from '../../../modules/Country/Model/CountryModel';
 import CountryModelG from '../../../modules/Country/Model/CountryModelG';
-import CountryModelH from '../../../modules/Country/Model/CountryModelH';
-
+import CountryModelH from '../../../modules/Country/Model/CountryModelH';            
+            
 export default class FetchAllSitesRes {
 
     siteJsons: SiteModel[];;

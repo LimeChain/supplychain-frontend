@@ -1,13 +1,13 @@
 import Payload from '../../../utilities/network/Payload';
 
             
-export default class FetchShipmentByIdReq {
+export default class ReadAllNotificationsReq {
     
-    shipmentId: string;
+
 
     constructor(payload: Payload) {
         const json = payload.params;
-        this.shipmentId = json.shipmentId.toString();
+
     }
 
 }

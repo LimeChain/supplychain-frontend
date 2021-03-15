@@ -9,8 +9,8 @@ import SkuModelG from '../../../modules/ProductModule/Sku/Model/SkuModelG';
 import SkuModelH from '../../../modules/ProductModule/Sku/Model/SkuModelH';
 import ShipmentDocumentModel from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
 import ShipmentDocumentModelG from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelG';
-import ShipmentDocumentModelH from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
-
+import ShipmentDocumentModelH from '../../../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';            
+            
 export default class CreditShipmentRes {
 
     shipmentJson: ShipmentModel;

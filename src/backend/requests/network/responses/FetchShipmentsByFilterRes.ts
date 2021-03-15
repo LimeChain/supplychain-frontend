@@ -5,14 +5,14 @@ import ShipmentModelH from '../../../modules/ShipmentModule/Shipment/Model/Shipm
 export default class FetchShipmentsByFilterRes {
 
     shipmentJsons: ShipmentModel[];;
-    titalSize: number;
+    totalSize: number;
 
-    constructor(shipmentModels: ShipmentModel[], titalSize: number) {
+    constructor(shipmentModels: ShipmentModel[], totalSize: number) {
         this.shipmentJsons = [];
         for (let i = 0; i < shipmentModels.length; ++i) {
             this.shipmentJsons.push(shipmentModels[i].toNetwork());
         }
-        this.titalSize = titalSize;
+        this.totalSize = totalSize;
     }
 
 }

@@ -62,7 +62,7 @@ export default class ShipmentRepoG extends Repo {
         const map = ShipmentModel.getPropsAsMap(props);
 
         const ids = models.map((model) => {
-            return model.shipmentId;
+            return model.s_STATUS_DRAFT;
         });
 
 
@@ -77,14 +77,14 @@ export default class ShipmentRepoG extends Repo {
 
     async fetchByPrimaryValue(value: number, props: number[] | null = null): Promise < ShipmentModel | null > {
         const databaseWhere = new DatabaseWhere();
-        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', value));
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T, '=', value));
         const models = await this.fetch(databaseWhere, props);
         return models.length > 0 ? models[0] : null;
     }
 
     async fetchByPrimaryValues(values: number[], props: number[] | null = null): Promise < ShipmentModel[] > {
         const databaseWhere = new DatabaseWhere();
-        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', values));
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T, '=', values));
         return await this.fetch(databaseWhere, props);
     }
 
@@ -100,13 +100,13 @@ export default class ShipmentRepoG extends Repo {
 
     async deleteByPrimaryValue(value: number): Promise < void > {
         const databaseWhere = new DatabaseWhere();
-        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', value));
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T, '=', value));
         await this.delete(databaseWhere);
     }
 
     async deleteByPrimaryValues(values: number[]): Promise < void > {
         const databaseWhere = new DatabaseWhere();
-        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', values));
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T, '=', values));
         await this.delete(databaseWhere);
     }
 

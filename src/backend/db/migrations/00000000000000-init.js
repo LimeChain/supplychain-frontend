@@ -1,6 +1,7 @@
+const AccountRepoH = require('../../modules/Account/Repo/AccountRepoH').default;
 const CountryRepoH = require('../../modules/Country/Repo/CountryRepoH').default;
-const SiteRepoH = require('../../modules/Site/Repo/SiteRepoH').default;
 const NotificationRepoH = require('../../modules/Notification/Repo/NotificationRepoH').default;
+const SiteRepoH = require('../../modules/Site/Repo/SiteRepoH').default;
 
 const ProductRepoH = require('../../modules/ProductModule/Product/Repo/ProductRepoH').default;
 const SkuRepoH = require('../../modules/ProductModule/Sku/Repo/SkuRepoH').default;
@@ -9,7 +10,7 @@ const SkuOriginRepoH = require('../../modules/ProductModule/SkuOrigin/Repo/SkuOr
 const ShipmentRepoH = require('../../modules/ShipmentModule/Shipment/Repo/ShipmentRepoH').default;
 const ShipmentDocumentRepoH = require('../../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepoH').default;
 
-module.exports = class Migration20210224124242 {
+module.exports = class Migration00000000000000 {
 
     async up(db) {
         await db.query(`CREATE TABLE IF NOT EXISTS ${CountryRepoH.TABLE_NAME}(

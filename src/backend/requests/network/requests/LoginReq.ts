@@ -1,13 +1,15 @@
 import Payload from '../../../utilities/network/Payload';
 
             
-export default class FetchShipmentByIdReq {
+export default class LoginReq {
     
-    shipmentId: string;
+    login: string;
+    pass: string;
 
     constructor(payload: Payload) {
         const json = payload.params;
-        this.shipmentId = json.shipmentId.toString();
+        this.login = json.login.toString();
+        this.pass = json.pass.toString();
     }
 
 }

@@ -6,6 +6,7 @@ import SkuOriginRepo from '../../modules/ProductModule/SkuOrigin/Repo/SkuOriginR
 import ShipmentRepo from '../../modules/ShipmentModule/Shipment/Repo/ShipmentRepo';
 import ShipmentDocumentRepo from '../../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepo';
 import SiteRepo from '../../modules/Site/Repo/SiteRepo';
+import AccountRepo from '../../modules/Account/Repo/AccountRepo';
 import Database from './Database';
 
 export default class RepoFactory {
@@ -19,6 +20,7 @@ export default class RepoFactory {
     shipmentRepo: ShipmentRepo | null = null;
     shipmentDocumentRepo: ShipmentDocumentRepo | null = null;
     siteRepo: SiteRepo | null = null;
+    accountRepo: AccountRepo | null = null;
 
     constructor(db: Database) {
         this.db = db;
@@ -62,6 +64,11 @@ export default class RepoFactory {
     getSiteRepo(): SiteRepo {
         this.siteRepo = this.siteRepo ?? new SiteRepo(this);
         return this.siteRepo;
+    }
+
+    getAccountRepo(): AccountRepo {
+        this.accountRepo = this.accountRepo ?? new AccountRepo(this);
+        return this.accountRepo;
     }
 
 }

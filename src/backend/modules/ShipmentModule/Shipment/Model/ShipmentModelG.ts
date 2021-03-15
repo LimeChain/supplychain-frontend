@@ -8,6 +8,9 @@ export default class ShipmentModelG extends ShipmentModelH {
 
     constructor() {
         super();
+        this.s_STATUS_DRAFT = SV.NOT_EXISTS;
+        this.s_STATUS_IN_TRANSIT = SV.NOT_EXISTS;
+        this.s_STATUS_RECEIVED = SV.NOT_EXISTS;
         this.shipmentId = SV.NOT_EXISTS;
         this.shipmentConsignmentNumber = SV.Strings.EMPTY;
         this.shipmentName = SV.Strings.EMPTY;
@@ -29,7 +32,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         const map = new Map < any, ShipmentModel >();
 
         models.forEach((m) => {
-            map.set(m.shipmentId, m);
+            map.set(m.s_STATUS_DRAFT, m);
         });
 
         return map;
@@ -41,6 +44,18 @@ export default class ShipmentModelG extends ShipmentModelH {
 
         const repo = new ShipmentRepoH();
 
+        if (map.has(ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T) === true && this.s_STATUS_DRAFT !== undefined) {
+            repo.s_STATUS_DRAFT = this.s_STATUS_DRAFT;
+            repo.s_STATUS_DRAFTToDb = true;
+        }
+        if (map.has(ShipmentModelH.P_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T) === true && this.s_STATUS_IN_TRANSIT !== undefined) {
+            repo.s_STATUS_IN_TRANSIT = this.s_STATUS_IN_TRANSIT;
+            repo.s_STATUS_IN_TRANSITToDb = true;
+        }
+        if (map.has(ShipmentModelH.P_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D) === true && this.s_STATUS_RECEIVED !== undefined) {
+            repo.s_STATUS_RECEIVED = this.s_STATUS_RECEIVED;
+            repo.s_STATUS_RECEIVEDToDb = true;
+        }
         if (map.has(ShipmentModelH.P_SHIPMENT_ID) === true && this.shipmentId !== undefined) {
             repo.shipmentId = this.shipmentId;
             repo.shipmentIdToDb = true;
@@ -92,6 +107,9 @@ export default class ShipmentModelG extends ShipmentModelH {
     static fromRepo(repo: ShipmentRepoH): ShipmentModel {
         const model = new ShipmentModel();
 
+        model.s_STATUS_DRAFT = parseInt((repo.s_STATUS_DRAFT ?? model.s_STATUS_DRAFT) as unknown as string);
+        model.s_STATUS_IN_TRANSIT = parseInt((repo.s_STATUS_IN_TRANSIT ?? model.s_STATUS_IN_TRANSIT) as unknown as string);
+        model.s_STATUS_RECEIVED = parseInt((repo.s_STATUS_RECEIVED ?? model.s_STATUS_RECEIVED) as unknown as string);
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
         model.shipmentConsignmentNumber = repo.shipmentConsignmentNumber ?? model.shipmentConsignmentNumber;
         model.shipmentName = repo.shipmentName ?? model.shipmentName;
@@ -110,6 +128,9 @@ export default class ShipmentModelG extends ShipmentModelH {
 
     toNetwork(): any {
         return {
+            s_STATUS_DRAFT: this.s_STATUS_DRAFT,
+            s_STATUS_IN_TRANSIT: this.s_STATUS_IN_TRANSIT,
+            s_STATUS_RECEIVED: this.s_STATUS_RECEIVED,
             shipmentId: this.shipmentId,
             shipmentConsignmentNumber: this.shipmentConsignmentNumber,
             shipmentName: this.shipmentName,
@@ -131,6 +152,9 @@ export default class ShipmentModelG extends ShipmentModelH {
 
         const model = new ShipmentModel();
         
+        model.s_STATUS_DRAFT = parseInt(json.s_STATUS_DRAFT ?? model.s_STATUS_DRAFT);
+        model.s_STATUS_IN_TRANSIT = parseInt(json.s_STATUS_IN_TRANSIT ?? model.s_STATUS_IN_TRANSIT);
+        model.s_STATUS_RECEIVED = parseInt(json.s_STATUS_RECEIVED ?? model.s_STATUS_RECEIVED);
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
         model.shipmentConsignmentNumber = json.shipmentConsignmentNumber ?? model.shipmentConsignmentNumber;
         model.shipmentName = json.shipmentName ?? model.shipmentName;
@@ -148,6 +172,12 @@ export default class ShipmentModelG extends ShipmentModelH {
 
     static matchModelToRepoProp(modelProp: number): string | null {
         switch (modelProp) {
+            case ShipmentModelH.P_S__S_T_A_T_U_S__D_R_A_F_T:
+                return ShipmentRepoH.C_S__S_T_A_T_U_S__D_R_A_F_T;
+            case ShipmentModelH.P_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T:
+                return ShipmentRepoH.C_S__S_T_A_T_U_S__I_N__T_R_A_N_S_I_T;
+            case ShipmentModelH.P_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D:
+                return ShipmentRepoH.C_S__S_T_A_T_U_S__R_E_C_E_I_V_E_D;
             case ShipmentModelH.P_SHIPMENT_ID:
                 return ShipmentRepoH.C_SHIPMENT_ID;
             case ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER:
