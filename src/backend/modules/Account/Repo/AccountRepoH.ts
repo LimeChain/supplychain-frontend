@@ -11,6 +11,8 @@ export default class AccountRepoH {
     static C_INVITATION = 'invitation';
     static C_REGISTER_TIMESTAMP = 'registerTimestamp';
     static C_LAST_LOGIN_TIMESTAMP = 'lastLoginTimestamp';
+    static C_PASS = 'pass';
+    static C_SALT = 'salt';
         
     accountId: number | null;
     accountIdToDb: boolean;
@@ -32,6 +34,10 @@ export default class AccountRepoH {
     registerTimestampToDb: boolean;
     lastLoginTimestamp: number | null;
     lastLoginTimestampToDb: boolean;
+    pass: string | null;
+    passToDb: boolean;
+    salt: string | null;
+    saltToDb: boolean;
     
     constructor() {
         this.accountId = null;
@@ -54,6 +60,10 @@ export default class AccountRepoH {
         this.registerTimestampToDb = false;
         this.lastLoginTimestamp = null;
         this.lastLoginTimestampToDb = false;
+        this.pass = null;
+        this.passToDb = false;
+        this.salt = null;
+        this.saltToDb = false;
     }
     
     static instanceByDbRow(row): AccountRepoH {
@@ -69,6 +79,8 @@ export default class AccountRepoH {
         repo.invitation = row[AccountRepoH.C_INVITATION] ?? repo.invitation;
         repo.registerTimestamp = row[AccountRepoH.C_REGISTER_TIMESTAMP] ?? repo.registerTimestamp;
         repo.lastLoginTimestamp = row[AccountRepoH.C_LAST_LOGIN_TIMESTAMP] ?? repo.lastLoginTimestamp;
+        repo.pass = row[AccountRepoH.C_PASS] ?? repo.pass;
+        repo.salt = row[AccountRepoH.C_SALT] ?? repo.salt;
 
         return repo;
     }
@@ -132,6 +144,16 @@ export default class AccountRepoH {
         if (this.lastLoginTimestampToDb === true) {
             columns.push(AccountRepoH.C_LAST_LOGIN_TIMESTAMP);
             values.push(this.lastLoginTimestamp === null ? null : this.lastLoginTimestamp.toString());
+        }
+
+        if (this.passToDb === true) {
+            columns.push(AccountRepoH.C_PASS);
+            values.push(this.pass === null ? null : this.pass.toString());
+        }
+
+        if (this.saltToDb === true) {
+            columns.push(AccountRepoH.C_SALT);
+            values.push(this.salt === null ? null : this.salt.toString());
         }
 
         return [columns, values];

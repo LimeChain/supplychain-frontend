@@ -10,5 +10,7 @@ export default class AccountModel {
     invitation: number;
     registerTimestamp: number;
     lastLoginTimestamp: number;
+    pass: string;
+    salt: string;
 
 }

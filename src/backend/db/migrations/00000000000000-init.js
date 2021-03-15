@@ -1,3 +1,5 @@
+const SF = require('../../utilities/SF').default;
+
 const RepoFactory = require('../../utilities/database/RepoFactory').default;
 
 const AccountRepoH = require('../../modules/Account/Repo/AccountRepoH').default;
@@ -100,6 +102,8 @@ module.exports = class Migration00000000000000 {
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${AccountRepoH.TABLE_NAME}(
             ${AccountRepoH.C_ACCOUNT_ID} INT AUTO_INCREMENT,
+            ${AccountRepoH.C_PASS} TEXT,
+            ${AccountRepoH.C_SALT} TEXT,
             ${AccountRepoH.C_COUNTRY_ID} INT,
             ${AccountRepoH.C_SITE_ID} INT,
             ${AccountRepoH.C_EMAIL} TEXT,
@@ -118,6 +122,8 @@ module.exports = class Migration00000000000000 {
         accountModel.email = 'germany@pwc.com';
         accountModel.name = 'Berlin, Germany';
         accountModel.registerTimestamp = Date.now();
+        accountModel.salt = await SF.generateSalt();
+        accountModel.pass = await SF.hashPassword('1', accountModel.salt);
         await accountRepo.save(accountModel);
 
         accountModel = new AccountModel();
@@ -126,6 +132,8 @@ module.exports = class Migration00000000000000 {
         accountModel.email = 'netherlands@pwc.com';
         accountModel.name = 'Rotherdam, Netherlands';
         accountModel.registerTimestamp = Date.now();
+        accountModel.salt = await SF.generateSalt();
+        accountModel.pass = await SF.hashPassword('2', accountModel.salt);
         await accountRepo.save(accountModel);
 
         accountModel = new AccountModel();
@@ -134,6 +142,8 @@ module.exports = class Migration00000000000000 {
         accountModel.email = 'poland@pwc.com';
         accountModel.name = 'Warsaw, Poland';
         accountModel.registerTimestamp = Date.now();
+        accountModel.salt = await SF.generateSalt();
+        accountModel.pass = await SF.hashPassword('3', accountModel.salt);
         await accountRepo.save(accountModel);
     }
 

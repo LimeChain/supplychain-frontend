@@ -1,7 +1,8 @@
 export default class Session {
 
     static ACCOUNT_ID: number;
-    static ACCOUNT_ROLE: number;
+    static ACCOUNT_COUNTRY: number;
+    static ACCOUNT_SITE: number;
 
     ctx: any;
 
@@ -13,31 +14,21 @@ export default class Session {
         this.ctx.session = null;
     }
 
-    onLogin(accountId, role) {
+    onLogin(accountId, countryId, siteId) {
         setProperty(this.ctx, Session.ACCOUNT_ID, accountId);
-        setProperty(this.ctx, Session.ACCOUNT_ROLE, role);
+        setProperty(this.ctx, Session.ACCOUNT_COUNTRY, countryId);
+        setProperty(this.ctx, Session.ACCOUNT_SITE, siteId);
     }
 
     getAccountId() {
         return getProperty(this.ctx, Session.ACCOUNT_ID);
     }
 
-    setAccountRole(role) {
-        setProperty(this.ctx, Session.ACCOUNT_ROLE, role);
-    }
-
-    getAccountRole() {
-        return getProperty(this.ctx, Session.ACCOUNT_ROLE);
-    }
-
-    isAdmin() {
-        return getProperty(this.ctx, Session.ACCOUNT_ROLE) === 1;
-    }
-
 }
 
 Session.ACCOUNT_ID = 1;
-Session.ACCOUNT_ROLE = 2;
+Session.ACCOUNT_COUNTRY = 2;
+Session.ACCOUNT_SITE = 3;
 
 function getProperty(ctx, key) {
     if (ctx.session !== null && ctx.session[key] !== undefined) {

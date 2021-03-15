@@ -10,7 +10,7 @@ export default class GeneralApiH extends Api {
 
 }
 
-GeneralApiH.URL = `${Config.URL.API}/accounts`;
+GeneralApiH.URL = `${Config.URL.API}/general`;
 GeneralApiH.Actions = {
     LOGIN: 'a',
     GRPCTEST: 'b',

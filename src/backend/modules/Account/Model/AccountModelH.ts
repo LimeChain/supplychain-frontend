@@ -14,6 +14,8 @@ export default class AccountModelH {
     static P_INVITATION = 8;
     static P_REGISTER_TIMESTAMP = 9;
     static P_LAST_LOGIN_TIMESTAMP = 10;
+    static P_PASS = 11;
+    static P_SALT = 12;
     static PROPERTIES = [AccountModelH.P_ACCOUNT_ID,
         AccountModelH.P_COUNTRY_ID,
         AccountModelH.P_SITE_ID,
@@ -23,7 +25,9 @@ export default class AccountModelH {
         AccountModelH.P_ACTIVE,
         AccountModelH.P_INVITATION,
         AccountModelH.P_REGISTER_TIMESTAMP,
-        AccountModelH.P_LAST_LOGIN_TIMESTAMP];
+        AccountModelH.P_LAST_LOGIN_TIMESTAMP,
+        AccountModelH.P_PASS,
+        AccountModelH.P_SALT];
 
     accountId: number;
     countryId: number;
@@ -35,5 +39,7 @@ export default class AccountModelH {
     invitation: number;
     registerTimestamp: number;
     lastLoginTimestamp: number;
+    pass: string;
+    salt: string;
 
 }

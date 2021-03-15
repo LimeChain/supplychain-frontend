@@ -1,5 +1,6 @@
 import Database from '../../utilities/database/Database';
 import RepoFactory from '../../utilities/database/RepoFactory';
+import AccountService from '../AccountService';
 import GeneralService from '../GeneralService';
 import NotificationService from '../NotificationService';
 import ProductService from '../ProductService';
@@ -12,6 +13,7 @@ export default class ServicesFactory {
     repoFactory: RepoFactory;
 
     generalService: GeneralService | null;
+    accountService: AccountService | null;
     shipmentService: ShipmentService | null;
     productService: ProductService | null;
     notificationService: NotificationService | null;
@@ -21,12 +23,18 @@ export default class ServicesFactory {
         this.repoFactory = new RepoFactory(db);
 
         this.generalService = null;
+        this.accountService = null;
         this.shipmentService = null;
     }
 
     getGeneralService(): GeneralService {
         this.generalService = this.generalService ?? new GeneralService(this);
         return this.generalService;
+    }
+
+    getAccountService(): AccountService {
+        this.accountService = this.accountService ?? new AccountService(this);
+        return this.accountService;
     }
 
     getShipmentService(): ShipmentService {

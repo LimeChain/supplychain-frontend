@@ -18,6 +18,8 @@ export default class AccountModelG extends AccountModelH {
         this.invitation = SV.NOT_EXISTS;
         this.registerTimestamp = SV.NOT_EXISTS;
         this.lastLoginTimestamp = SV.NOT_EXISTS;
+        this.pass = SV.Strings.EMPTY;
+        this.salt = SV.Strings.EMPTY;
     }
 
     copyRefProperties(sourceModel: AccountModel): void {
@@ -80,6 +82,14 @@ export default class AccountModelG extends AccountModelH {
             repo.lastLoginTimestamp = this.lastLoginTimestamp;
             repo.lastLoginTimestampToDb = true;
         }
+        if (map.has(AccountModelH.P_PASS) === true && this.pass !== undefined) {
+            repo.pass = this.pass;
+            repo.passToDb = true;
+        }
+        if (map.has(AccountModelH.P_SALT) === true && this.salt !== undefined) {
+            repo.salt = this.salt;
+            repo.saltToDb = true;
+        }
 
         return repo;
     }
@@ -97,6 +107,8 @@ export default class AccountModelG extends AccountModelH {
         model.invitation = parseInt((repo.invitation ?? model.invitation) as unknown as string);
         model.registerTimestamp = parseInt((repo.registerTimestamp ?? model.registerTimestamp) as unknown as string);
         model.lastLoginTimestamp = parseInt((repo.lastLoginTimestamp ?? model.lastLoginTimestamp) as unknown as string);
+        model.pass = repo.pass ?? model.pass;
+        model.salt = repo.salt ?? model.salt;
 
         return model;
     }
@@ -114,6 +126,8 @@ export default class AccountModelG extends AccountModelH {
             invitation: this.invitation,
             registerTimestamp: this.registerTimestamp,
             lastLoginTimestamp: this.lastLoginTimestamp,
+            pass: this.pass,
+            salt: this.salt,
         };
     }
 
@@ -134,6 +148,8 @@ export default class AccountModelG extends AccountModelH {
         model.invitation = parseInt(json.invitation ?? model.invitation);
         model.registerTimestamp = parseInt(json.registerTimestamp ?? model.registerTimestamp);
         model.lastLoginTimestamp = parseInt(json.lastLoginTimestamp ?? model.lastLoginTimestamp);
+        model.pass = json.pass ?? model.pass;
+        model.salt = json.salt ?? model.salt;
 
         return model;
     }
@@ -160,6 +176,10 @@ export default class AccountModelG extends AccountModelH {
                 return AccountRepoH.C_REGISTER_TIMESTAMP;
             case AccountModelH.P_LAST_LOGIN_TIMESTAMP:
                 return AccountRepoH.C_LAST_LOGIN_TIMESTAMP;
+            case AccountModelH.P_PASS:
+                return AccountRepoH.C_PASS;
+            case AccountModelH.P_SALT:
+                return AccountRepoH.C_SALT;
             default:
                 return null;
         }

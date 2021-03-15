@@ -12,4 +12,11 @@ export default class AccountModel extends AccountModelG {
         this.invitation = SV.FALSE;
     }
 
+    toNetwork(): any {
+        const json = super.toNetwork();
+        delete json.pass;
+        delete json.salt;
+        return json;
+    }
+
 }
