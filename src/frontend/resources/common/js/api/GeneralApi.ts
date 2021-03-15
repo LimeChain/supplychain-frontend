@@ -107,21 +107,32 @@ export default class GeneralApi extends AbsApi {
     }
 
     fetchAllSites(callback: (siteModels: SiteModel[], countryModels: CountryModel[]) => void) {
-        this.disableActions();
+        const req = new FetchAllSitesReq();
 
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new FetchAllSitesReq();
-
-            const json = {
-                siteJsons: storageHelper.sitesJson,
-                countryJsons: storageHelper.countriesJson,
+        this.generalApi.req(Actions.GENERAL.FETCH_ALL_SITES, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                return;
             }
 
-            const res = new FetchAllSitesRes(json);
+            const res = new FetchAllSitesRes(json.obj);
             callback(res.siteModels, res.countryModels);
-        }, 100);
+        });
+
+        // this.disableActions();
+
+        // setTimeout(() => {
+        //     this.enableActions();
+
+        //     const req = new FetchAllSitesReq();
+
+        //     const json = {
+        //         siteJsons: storageHelper.sitesJson,
+        //         countryJsons: storageHelper.countriesJson,
+        //     }
+
+        //     const res = new FetchAllSitesRes(json);
+        //     callback(res.siteModels, res.countryModels);
+        // }, 100);
     }
 
 }

@@ -1,4 +1,6 @@
+import FetchAllSitesReq from '../requests/network/requests/FetchAllSitesReq';
 import FetchNotificationsByFilterReq from '../requests/network/requests/FetchNotificationsByFilterReq';
+import FetchAllSitesRes from '../requests/network/responses/FetchAllSitesRes';
 import FetchNotificationsByFilterRes from '../requests/network/responses/FetchNotificationsByFilterRes';
 import Context from '../utilities/network/Context';
 
@@ -20,4 +22,18 @@ export default class GeneralController {
 
         context.res.set(new FetchNotificationsByFilterRes(notificationModels, totalSize));
     }
+
+    async fetchAllSites(context: Context) {
+        const servicesFactory = context.servicesFactory;
+        const payload = context.payload;
+
+        const req = new FetchAllSitesReq(payload);
+        const generalService = servicesFactory.getGeneralService();
+        const siteModels = await generalService.fetchSites();
+        const countryModels = await generalService.fetchCountries();
+        
+        const res = new FetchAllSitesRes(siteModels, countryModels);
+        context.res.set(res);
+    }
+
 }

@@ -13,6 +13,7 @@ export default class GeneralApiH extends Api {
 GeneralApiH.URL = `${Config.URL.API}/accounts`;
 GeneralApiH.Actions = {
     LOGIN: 'a',
-    GRPCTEST: 't',
-    FETCH_NOTIFICATIONS_BY_FILTER: 'n',
+    GRPCTEST: 'b',
+    FETCH_NOTIFICATIONS_BY_FILTER: 'c',
+    FETCH_ALL_SITES: 'd',
 };

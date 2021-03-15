@@ -22,6 +22,9 @@ export default class GeneralApi extends GeneralApiH {
             case GeneralApi.Actions.FETCH_NOTIFICATIONS_BY_FILTER:
                 await this.generalController.fetchNotificationsByFilter(context);
                 break;
+            case GeneralApi.Actions.FETCH_ALL_SITES:
+                await this.generalController.fetchAllSites(context);
+                break;
             default:
                 break;
         }
