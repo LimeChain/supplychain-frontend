@@ -18,16 +18,24 @@ if (result.error) {
 const envVariables = [
     'NODE_ENV',
     'BACKEND_PORT',
+    'FRONTEND_PORT',
     'URL',
     'SESSION_UNIQUE_KEY',
+    'DATABASE_HOST',
+    'DATABASE_PORT',
+    'DATABASE_USER',
+    'DATABASE_PASS',
+    'DATABASE_NAME',
+    'DATABASE_CONNECTION_LIMIT',
+    'TRANSACTION_VIEW_URL',
 ];
 
-if (process.env.NODE_ENV === 'production') {
-    envVariables.concat([
-        'SESSION_STORE_TCP_ADDR',
-        'SESSION_STORE_PORT',
-    ])
-}
+// if (process.env.NODE_ENV === 'production') {
+//     envVariables.concat([
+//         'SESSION_STORE_TCP_ADDR',
+//         'SESSION_STORE_PORT',
+//     ])
+// }
 
 envVariables.forEach((envVariable) => {
     if (!process.env[envVariable]) {
@@ -59,8 +67,7 @@ const Config = {
         BACKEND_PORT: Number(process.env.BACKEND_PORT),
         FRONTEND_PORT: Number(process.env.FRONTEND_PORT),
         SESSION_UNIQUE_KEY: process.env.SESSION_UNIQUE_KEY,
-        SESSION_STORE_TCP_ADDR: process.env.SESSION_STORE_TCP_ADDR,
-        SESSION_STORE_PORT: process.env.SESSION_STORE_PORT,
+        TRANSACTION_VIEW_URL: process.env.TRANSACTION_VIEW_URL,
     },
     Path: {
         ROOT: path.join(__dirname, '..'),

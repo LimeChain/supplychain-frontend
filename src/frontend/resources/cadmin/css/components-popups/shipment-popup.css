@@ -17,27 +17,17 @@
 
 .ShipmentPopup .PopupHeader .PopupTitleCnt {
     flex: 0 0 auto;
-    position: relative;
     margin-right: 25px;
 }
 
 .ShipmentPopup .PopupHeader .PopupTitleCnt .PopupTitle {
-    height: 45px; /* to match input's height */
     font-size: 20px;
     font-weight: 700;
 }
 
-.ShipmentPopup .PopupHeader .PopupTitleCnt .TransactionId {
-    width: 100%;
-    position: absolute;
-    left: 0; bottom: 0;
-    text-decoration: underline;
-}
-
 .ShipmentPopup .PopupHeader .SubData {
     color: var(--color-primary);
-    font-weight: 500;
-    font-size: 10px;
+    font-size: 9px;
 }
 
 .ShipmentPopup .PopupHeader .Status {
@@ -62,6 +52,11 @@
 .ShipmentPopup .PopupHeader .Select .MuiInputBase-root .MuiSelect-root {
     font-size: 14px;
     font-weight: 700;
+}
+
+.ShipmentPopup .PopupHeader .TransactionsActions {
+    flex: 0 0 auto;
+    margin-right: 48px;
 }
 
 /* tabs header */
