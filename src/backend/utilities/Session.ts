@@ -1,3 +1,5 @@
+import SF from './SF';
+
 export default class Session {
 
     static ACCOUNT_ID: number;
@@ -21,7 +23,12 @@ export default class Session {
     }
 
     getAccountId(): number {
-        return getProperty(this.ctx, Session.ACCOUNT_ID);
+        let accountId = getProperty(this.ctx, Session.ACCOUNT_ID);
+        if (accountId === null) {
+            return null;
+        }
+        accountId = parseInt(accountId);
+        return Number.isNaN(accountId) === true ? null : accountId;
     }
 
     isAdmin(): boolean {
@@ -36,7 +43,7 @@ Session.ACCOUNT_SITE = 3;
 
 function getProperty(ctx, key) {
     if (ctx.session !== null && ctx.session[key] !== undefined) {
-        return ctx.session[key];
+        return SF.descrypt(ctx.session[key]);
     }
 
     return null;
@@ -47,7 +54,7 @@ function setProperty(ctx, key, value) {
         ctx.session = {};
     }
 
-    ctx.session[key] = value;
+    ctx.session[key] = SF.encrypt(value.toString());
 }
 
 function unsetProperty(ctx, key) {
