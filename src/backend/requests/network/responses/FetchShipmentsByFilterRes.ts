@@ -10,7 +10,7 @@ export default class FetchShipmentsByFilterRes {
     constructor(shipmentModels: ShipmentModel[], totalSize: number) {
         this.shipmentJsons = [];
         for (let i = 0; i < shipmentModels.length; ++i) {
-            this.shipmentJsons.push(shipmentModels[i].toNetwork());
+            this.shipmentJsons.push(shipmentModels[i] === null ? null : shipmentModels[i].toNetwork());
         }
         this.totalSize = totalSize;
     }

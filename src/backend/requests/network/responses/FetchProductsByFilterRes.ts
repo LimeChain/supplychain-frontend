@@ -10,7 +10,7 @@ export default class FetchProductsByFilterRes {
     constructor(productModels: ProductModel[], totalSize: number) {
         this.productJsons = [];
         for (let i = 0; i < productModels.length; ++i) {
-            this.productJsons.push(productModels[i].toNetwork());
+            this.productJsons.push(productModels[i] === null ? null : productModels[i].toNetwork());
         }
         this.totalSize = totalSize;
     }

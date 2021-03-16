@@ -7,7 +7,7 @@ export default class UploadShipmentDocumentRes {
     shipmentDocumentJson: ShipmentDocumentModel;
 
     constructor(shipmentDocumentModel: ShipmentDocumentModel) {
-        this.shipmentDocumentJson = shipmentDocumentModel.toNetwork();
+        this.shipmentDocumentJson = shipmentDocumentModel === null ? null : shipmentDocumentModel.toNetwork();
     }
 
 }

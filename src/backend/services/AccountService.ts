@@ -1,11 +1,14 @@
-import Response from "../utilities/network/Response";
-import StateException from "../utilities/network/StateException";
-import SF from "../utilities/SF";
-import Service from "./common/Service";
+import AccountModel from '../modules/Account/Model/AccountModel';
+import Response from '../utilities/network/Response';
+import StateException from '../utilities/network/StateException';
+import SF from '../utilities/SF';
+import Service from './common/Service';
 
 export default class AccountService extends Service {
 
-    async fetchSessionAccounts() {
+    async fetchSessionAccounts(accountId: number): Promise < AccountModel | null > {
+        const accountRepo = this.repoFactory.getAccountRepo();
+        return accountRepo.fetchByPrimaryValue(accountId);
     }
 
     async login(login: string, pass: string) {
@@ -33,7 +36,7 @@ export default class AccountService extends Service {
     }
 
     async logout() {
-        
+
     }
 
 }

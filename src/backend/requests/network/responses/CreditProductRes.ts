@@ -7,7 +7,7 @@ export default class CreditProductRes {
     productJson: ProductModel;
 
     constructor(productModel: ProductModel) {
-        this.productJson = productModel.toNetwork();
+        this.productJson = productModel === null ? null : productModel.toNetwork();
     }
 
 }

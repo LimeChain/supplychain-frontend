@@ -13,11 +13,11 @@ export default class FetchShipmentsWithProductQuantityLeftByProductIdRes {
     constructor(skuModels: SkuModel[], shipmentModels: ShipmentModel[]) {
         this.skuJsons = [];
         for (let i = 0; i < skuModels.length; ++i) {
-            this.skuJsons.push(skuModels[i].toNetwork());
+            this.skuJsons.push(skuModels[i] === null ? null : skuModels[i].toNetwork());
         }
         this.shipmentJsons = [];
         for (let i = 0; i < shipmentModels.length; ++i) {
-            this.shipmentJsons.push(shipmentModels[i].toNetwork());
+            this.shipmentJsons.push(shipmentModels[i] === null ? null : shipmentModels[i].toNetwork());
         }
     }
 

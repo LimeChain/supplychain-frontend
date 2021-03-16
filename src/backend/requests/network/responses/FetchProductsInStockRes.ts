@@ -14,11 +14,11 @@ export default class FetchProductsInStockRes {
     constructor(skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize: number) {
         this.skuJsons = [];
         for (let i = 0; i < skuModels.length; ++i) {
-            this.skuJsons.push(skuModels[i].toNetwork());
+            this.skuJsons.push(skuModels[i] === null ? null : skuModels[i].toNetwork());
         }
         this.productJsons = [];
         for (let i = 0; i < productModels.length; ++i) {
-            this.productJsons.push(productModels[i].toNetwork());
+            this.productJsons.push(productModels[i] === null ? null : productModels[i].toNetwork());
         }
         this.totalSkuSize = totalSkuSize;
     }

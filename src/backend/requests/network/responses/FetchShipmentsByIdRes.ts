@@ -19,18 +19,18 @@ export default class FetchShipmentsByIdRes {
     shipmentDocumentJsons: ShipmentDocumentModel[];;
 
     constructor(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) {
-        this.shipmentJson = shipmentModel.toNetwork();
+        this.shipmentJson = shipmentModel === null ? null : shipmentModel.toNetwork();
         this.skuJsons = [];
         for (let i = 0; i < skuModels.length; ++i) {
-            this.skuJsons.push(skuModels[i].toNetwork());
+            this.skuJsons.push(skuModels[i] === null ? null : skuModels[i].toNetwork());
         }
         this.skuOriginJsons = [];
         for (let i = 0; i < skuOriginModels.length; ++i) {
-            this.skuOriginJsons.push(skuOriginModels[i].toNetwork());
+            this.skuOriginJsons.push(skuOriginModels[i] === null ? null : skuOriginModels[i].toNetwork());
         }
         this.shipmentDocumentJsons = [];
         for (let i = 0; i < shipmentDocumentModels.length; ++i) {
-            this.shipmentDocumentJsons.push(shipmentDocumentModels[i].toNetwork());
+            this.shipmentDocumentJsons.push(shipmentDocumentModels[i] === null ? null : shipmentDocumentModels[i].toNetwork());
         }
     }
 

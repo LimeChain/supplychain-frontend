@@ -5,7 +5,7 @@ import CookieHelper from '../helpers/CookieHelper';
 import PagesGeneral from '../../../../../../builds/dev-generated/PagesGeneral';
 import Apis from '../../../../../../builds/dev-generated/Apis';
 import { LoginReq } from '../network-requests/AccountApiReq';
-import { LoginRes } from '../network-responses/AccountApiRes';
+import { FetchSessionAccountRes, LoginRes } from '../network-responses/AccountApiRes';
 import storageHelper from '../helpers/StorageHelper';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
@@ -20,14 +20,24 @@ export default class AccountApi extends AbsApi {
     }
 
     fetchSessionAccount(callback: (account: AccountModel) => void) {
-        this.disableActions();
+        this.accountApi.req(Actions.ACCOUNT.FETCH_SESSION_ACCOUNTS, null, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                callback(null);
+                return;
+            }
 
-        setTimeout(() => {
-            this.enableActions();
+            const res = new FetchSessionAccountRes(json.obj);
+            callback(res.accountModel);
+        });
+        // this.disableActions();
 
-            const accounts = CookieHelper.fetchAccounts();
-            callback(accounts.accountModel);
-        }, 100);
+        // setTimeout(() => {
+        //     this.enableActions();
+
+        //     const accounts = CookieHelper.fetchAccounts();
+
+        //     callback(accounts.accountModel);
+        // }, 100);
     }
 
     login(login: string, pass: string, callback: (accountModel: AccountModel) => void) {
@@ -71,14 +81,17 @@ export default class AccountApi extends AbsApi {
     }
 
     logout() {
-        this.disableActions();
-
-        setTimeout(() => {
-            this.enableActions();
-
-            CookieHelper.saveAccounts(null);
+        this.accountApi.req(Actions.ACCOUNT.LOGOUT, null, (json: any) => {
             window.location.href = PagesGeneral.LOGIN;
-        }, 100);
+        });
+        // this.disableActions();
+
+        // setTimeout(() => {
+        //     this.enableActions();
+
+        //     CookieHelper.saveAccounts(null);
+        //     window.location.href = PagesGeneral.LOGIN;
+        // }, 100);
     }
 
 }

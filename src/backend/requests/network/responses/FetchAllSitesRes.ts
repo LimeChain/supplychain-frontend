@@ -13,11 +13,11 @@ export default class FetchAllSitesRes {
     constructor(siteModels: SiteModel[], countryModels: CountryModel[]) {
         this.siteJsons = [];
         for (let i = 0; i < siteModels.length; ++i) {
-            this.siteJsons.push(siteModels[i].toNetwork());
+            this.siteJsons.push(siteModels[i] === null ? null : siteModels[i].toNetwork());
         }
         this.countryJsons = [];
         for (let i = 0; i < countryModels.length; ++i) {
-            this.countryJsons.push(countryModels[i].toNetwork());
+            this.countryJsons.push(countryModels[i] === null ? null : countryModels[i].toNetwork());
         }
     }
 

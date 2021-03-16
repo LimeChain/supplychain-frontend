@@ -11,7 +11,7 @@ export default class FetchNotificationsByFilterRes {
     constructor(notificationModels: NotificationModel[], totalSize: number, unreadCount: number) {
         this.notificationJsons = [];
         for (let i = 0; i < notificationModels.length; ++i) {
-            this.notificationJsons.push(notificationModels[i].toNetwork());
+            this.notificationJsons.push(notificationModels[i] === null ? null : notificationModels[i].toNetwork());
         }
         this.totalSize = totalSize;
         this.unreadCount = unreadCount;

@@ -7,7 +7,7 @@ export default class ReadNotificationByIdRes {
     notificationJson: NotificationModel;
 
     constructor(notificationModel: NotificationModel) {
-        this.notificationJson = notificationModel.toNetwork();
+        this.notificationJson = notificationModel === null ? null : notificationModel.toNetwork();
     }
 
 }
