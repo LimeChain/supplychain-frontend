@@ -84,15 +84,18 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     fetchShipments = () => {
+        const tableState = this.tableHelper.tableState;
+
         this.shipmentApi.fetchShipmentByFilter(
+
             PagesCAdmin.DRAFTS,
             this.searchWord,
-            this.tableHelper.tableState.sortKey,
-            this.tableHelper.tableState.from,
-            this.tableHelper.tableState.to(),
+            tableState.sortKey,
+            tableState.from,
+            tableState.to(),
             (shipmentModels, totalSize) => {
                 this.props.shipmentStore.onScreenData(shipmentModels);
-                this.tableHelper.tableState.total = totalSize;
+                tableState.total = totalSize;
             },
         )
     }
