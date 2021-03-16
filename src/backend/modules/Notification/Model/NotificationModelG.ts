@@ -12,7 +12,7 @@ export default class NotificationModelG extends NotificationModelH {
         this.shipmentId = SV.NOT_EXISTS;
         this.notificationRead = SV.NOT_EXISTS;
         this.notificationTime = SV.NOT_EXISTS;
-        this.notificationRead = SV.NOT_EXISTS;
+        this.notificationStatus = SV.NOT_EXISTS;
     }
 
     copyRefProperties(sourceModel: NotificationModel): void {
@@ -51,9 +51,9 @@ export default class NotificationModelG extends NotificationModelH {
             repo.notificationTime = this.notificationTime;
             repo.notificationTimeToDb = true;
         }
-        if (map.has(NotificationModelH.P_NOTIFICATION_READ) === true && this.notificationRead !== undefined) {
-            repo.notificationRead = this.notificationRead;
-            repo.notificationReadToDb = true;
+        if (map.has(NotificationModelH.P_NOTIFICATION_STATUS) === true && this.notificationStatus !== undefined) {
+            repo.notificationStatus = this.notificationStatus;
+            repo.notificationStatusToDb = true;
         }
 
         return repo;
@@ -66,7 +66,7 @@ export default class NotificationModelG extends NotificationModelH {
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
         model.notificationRead = parseInt((repo.notificationRead ?? model.notificationRead) as unknown as string);
         model.notificationTime = parseInt((repo.notificationTime ?? model.notificationTime) as unknown as string);
-        model.notificationRead = parseInt((repo.notificationRead ?? model.notificationRead) as unknown as string);
+        model.notificationStatus = parseInt((repo.notificationStatus ?? model.notificationStatus) as unknown as string);
 
         return model;
     }
@@ -78,7 +78,7 @@ export default class NotificationModelG extends NotificationModelH {
             shipmentId: this.shipmentId,
             notificationRead: this.notificationRead,
             notificationTime: this.notificationTime,
-            notificationRead: this.notificationRead,
+            notificationStatus: this.notificationStatus,
         };
     }
 
@@ -93,7 +93,7 @@ export default class NotificationModelG extends NotificationModelH {
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
         model.notificationRead = parseInt(json.notificationRead ?? model.notificationRead);
         model.notificationTime = parseInt(json.notificationTime ?? model.notificationTime);
-        model.notificationRead = parseInt(json.notificationRead ?? model.notificationRead);
+        model.notificationStatus = parseInt(json.notificationStatus ?? model.notificationStatus);
 
         return model;
     }
@@ -108,8 +108,8 @@ export default class NotificationModelG extends NotificationModelH {
                 return NotificationRepoH.C_NOTIFICATION_READ;
             case NotificationModelH.P_NOTIFICATION_TIME:
                 return NotificationRepoH.C_NOTIFICATION_TIME;
-            case NotificationModelH.P_NOTIFICATION_READ:
-                return NotificationRepoH.C_NOTIFICATION_READ;
+            case NotificationModelH.P_NOTIFICATION_STATUS:
+                return NotificationRepoH.C_NOTIFICATION_STATUS;
             default:
                 return null;
         }

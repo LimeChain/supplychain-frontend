@@ -4,6 +4,6 @@ export default class NotificationModel {
     shipmentId: number
     notificationRead: number
     notificationTime: number
-    notificationRead: number
+    notificationStatus: number
 
 }
