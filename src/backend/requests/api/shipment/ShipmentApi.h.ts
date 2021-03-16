@@ -14,4 +14,5 @@ ShipmentApiH.Actions = {
     CREDIT: 'a',
     FETCH_SHIPMENTS_BY_FILTER: 'b',
     FETCH_SHIPMENT_BY_ID: 'c',
+    DOWNLOAD_SHIPMENT_JSON: 'd',
 };

@@ -54,7 +54,7 @@
     font-weight: 700;
 }
 
-.ShipmentPopup .PopupHeader .TransactionsActions {
+.ShipmentPopup .PopupHeader .ActionsTransaction {
     flex: 0 0 auto;
     margin-right: 48px;
 }

@@ -1,5 +1,4 @@
 import ShipmentController from '../../../controllers/ShipmentController';
-import ShipmentModelH from '../../../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import Context from '../../../utilities/network/Context';
 import ShipmentApiH from './ShipmentApi.h';
 
@@ -22,6 +21,9 @@ export default class ShipmentApi extends ShipmentApiH {
                 break;
             case ShipmentApiH.Actions.FETCH_SHIPMENT_BY_ID:
                 await this.shipmentController.fetchShipmentById(context);
+                break;
+            case ShipmentApiH.Actions.DOWNLOAD_SHIPMENT_JSON:
+                await this.shipmentController.downloadShipmentJson(context);
                 break;
             default:
                 break;

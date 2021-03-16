@@ -8,7 +8,7 @@ export default class Payload {
 
     constructor(ctx) {
         this.ctx = ctx;
-        this.action = ctx.request.body[Params.ACTION];
+        this.action = ctx.request.body[Params.ACTION] || ctx.request.query[Params.ACTION];
         this.params = {};
 
         /* json payload */

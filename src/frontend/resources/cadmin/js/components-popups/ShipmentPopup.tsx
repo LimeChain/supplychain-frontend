@@ -45,6 +45,7 @@ import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
 import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
+import CAdminContext from '../CAdminContext';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -384,9 +385,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         </div>
                         {this.renderFromSite()}
                         {this.renderToSite()}
-                        <Actions className = { 'ActionsTransactions StartRight' } height = { Actions.HEIGHT_32 } >
+                        <Actions className = { 'ActionsTransaction StartRight' } height = { Actions.HEIGHT_32 } >
                             <Button href = { shipmentModel.getTransactionLink() } target = { '_blank' } color = { Button.COLOR_SCHEME_2 }>Transaction hash</Button>
-                            <Button color = { Button.COLOR_SCHEME_2 } >Download data</Button>
+                            <Button href = { CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId) } download = { `shipment-${shipmentModel.shipmentId}.json` } color = { Button.COLOR_SCHEME_2 } >Raw Data</Button>
                         </Actions>
                     </LayoutBlock>
                 </div>
