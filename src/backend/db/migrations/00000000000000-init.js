@@ -162,6 +162,7 @@ module.exports = class Migration00000000000000 {
         await db.query(`CREATE TABLE IF NOT EXISTS ${NotificationRepoH.TABLE_NAME}(
             ${NotificationRepoH.C_NOTIFICATION_ID} INT AUTO_INCREMENT,
             ${NotificationRepoH.C_SHIPMENT_ID} INT,
+            ${NotificationRepoH.C_NOTIFICATION_STATUS} TINYINT,
             ${NotificationRepoH.C_NOTIFICATION_TIME} BIGINT,
             ${NotificationRepoH.C_NOTIFICATION_READ} TINYINT,
             PRIMARY KEY(${NotificationRepoH.C_NOTIFICATION_ID})
