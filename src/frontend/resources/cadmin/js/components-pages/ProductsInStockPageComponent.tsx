@@ -6,34 +6,24 @@ import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 import PageComponent from '../../../common/js/components-pages/PageComponent';
 import ContextPageComponent, { ContextPageComponentProps } from './common/ContextPageComponent';
 import Sidebar from '../components-inc/Sidebar';
-import SvgAdd from '@material-ui/icons/Add';
 import './../../css/components-pages/page-incomming-component.css';
 import PageTable from '../components-inc/PageTable';
 import PageTableHeader, { PageTableHeaderSortByStruct } from '../components-inc/PageTableHeader';
-import Notifications from '../components-inc/Notifications';
-import ProductPopup from '../components-popups/ProductPopup';
 import PopupProductStore from '../../../common/js/stores/PopupProductStore';
 import ProductStore from '../../../common/js/stores/ProductStore';
-import ProductApi from '../../../common/js/api/ProductApi';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import S from '../../../common/js/utilities/Main';
-import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 import SkuFilter from '../../../../../../builds/dev-generated/ProductModule/Sku/Utils/SkuFilterConsts';
 import PageView from '../components-inc/PageView';
 import './../../css/components-pages/page-products-component.css';
-import NoEntryPage from '../components-inc/NoEntryPage';
 import PageTableFooter from '../components-inc/PageTableFooter';
 import Actions from '../../../common/js/components-inc/Actions';
-import Button from '../../../common/js/components-inc/Button';
-import ShipmentApi from '../../../common/js/api/ShipmentApi';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuStore from '../../../common/js/stores/SkuStore';
 import TableHelper from '../../../common/js/helpers/TableHelper';
 import TableDesktop from '../../../common/js/components-inc/TableDesktop';
 import Table from '../../../common/js/components-inc/Table';
-import ProductRowMenu from '../components-inc/ProductRowMenu';
 import { formatPrice } from '../../../common/js/helpers/NumeralHelper';
-import SkuConsts from '../../../../../../builds/dev-generated/ProductModule/Sku/SkuModelConsts';
 
 interface Props extends ContextPageComponentProps {
     popupProductStore: PopupProductStore;
@@ -88,9 +78,9 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
         this.shipmentApi.fetchProductsInStock(
             this.searchWord,
-            this.tableHelper.tableState.sortKey,
-            this.tableHelper.tableState.from,
-            this.tableHelper.tableState.to(),
+            tableState.sortKey,
+            tableState.from,
+            tableState.to(),
             (skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize) => {
                 if (skuModels.length === 0 && tableState.from > 0) {
                     tableState.pageBack();
@@ -100,7 +90,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
                 this.props.skuStore.onScreenData(skuModels);
                 this.props.productStore.onScreenData(productModels);
-                this.tableHelper.tableState.total = totalSkuSize;
+                tableState.total = totalSkuSize;
                 this.dataReady = S.INT_TRUE;
             },
         )
