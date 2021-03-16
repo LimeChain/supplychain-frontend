@@ -10,6 +10,7 @@ export default class NotificationModelG extends NotificationModelH {
         super();
         this.notificationId = SV.NOT_EXISTS;
         this.shipmentId = SV.NOT_EXISTS;
+        this.notificationRead = SV.NOT_EXISTS;
         this.notificationTime = SV.NOT_EXISTS;
         this.notificationRead = SV.NOT_EXISTS;
     }
@@ -42,6 +43,10 @@ export default class NotificationModelG extends NotificationModelH {
             repo.shipmentId = this.shipmentId;
             repo.shipmentIdToDb = true;
         }
+        if (map.has(NotificationModelH.P_NOTIFICATION_READ) === true && this.notificationRead !== undefined) {
+            repo.notificationRead = this.notificationRead;
+            repo.notificationReadToDb = true;
+        }
         if (map.has(NotificationModelH.P_NOTIFICATION_TIME) === true && this.notificationTime !== undefined) {
             repo.notificationTime = this.notificationTime;
             repo.notificationTimeToDb = true;
@@ -59,6 +64,7 @@ export default class NotificationModelG extends NotificationModelH {
 
         model.notificationId = parseInt((repo.notificationId ?? model.notificationId) as unknown as string);
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
+        model.notificationRead = parseInt((repo.notificationRead ?? model.notificationRead) as unknown as string);
         model.notificationTime = parseInt((repo.notificationTime ?? model.notificationTime) as unknown as string);
         model.notificationRead = parseInt((repo.notificationRead ?? model.notificationRead) as unknown as string);
 
@@ -70,6 +76,7 @@ export default class NotificationModelG extends NotificationModelH {
         return {
             notificationId: this.notificationId,
             shipmentId: this.shipmentId,
+            notificationRead: this.notificationRead,
             notificationTime: this.notificationTime,
             notificationRead: this.notificationRead,
         };
@@ -84,6 +91,7 @@ export default class NotificationModelG extends NotificationModelH {
         
         model.notificationId = parseInt(json.notificationId ?? model.notificationId);
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
+        model.notificationRead = parseInt(json.notificationRead ?? model.notificationRead);
         model.notificationTime = parseInt(json.notificationTime ?? model.notificationTime);
         model.notificationRead = parseInt(json.notificationRead ?? model.notificationRead);
 
@@ -96,6 +104,8 @@ export default class NotificationModelG extends NotificationModelH {
                 return NotificationRepoH.C_NOTIFICATION_ID;
             case NotificationModelH.P_SHIPMENT_ID:
                 return NotificationRepoH.C_SHIPMENT_ID;
+            case NotificationModelH.P_NOTIFICATION_READ:
+                return NotificationRepoH.C_NOTIFICATION_READ;
             case NotificationModelH.P_NOTIFICATION_TIME:
                 return NotificationRepoH.C_NOTIFICATION_TIME;
             case NotificationModelH.P_NOTIFICATION_READ:
