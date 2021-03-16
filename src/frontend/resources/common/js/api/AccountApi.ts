@@ -50,6 +50,7 @@ export default class AccountApi extends AbsApi {
             }
 
             const res = new LoginRes(json.obj);
+            CookieHelper.saveAccounts(res.accountModel); // temporary
             callback(res.accountModel);
         });
         // this.disableActions();
