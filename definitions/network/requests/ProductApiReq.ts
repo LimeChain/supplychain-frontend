@@ -11,3 +11,9 @@ export class FetchProductsByFilterReq {
     to: number
 
 }
+
+export class FetchProductByIdReq {
+
+    productId: number
+
+}

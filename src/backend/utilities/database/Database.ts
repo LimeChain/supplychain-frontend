@@ -1,5 +1,7 @@
 import mysql, { MysqlError, PoolConnection } from 'mysql';
 import DatabaseWhere from './DatabaseWhere';
+import Config from '../../../../config/config';
+import Logger from '../Logger';
 
 export default class Database {
 
@@ -111,9 +113,6 @@ export default class Database {
         const sqlColumns = columns.join(',');
         const sqlwhere = databaseWhere.build();
 
-        // console.log(`SELECT ${sqlColumns} FROM ${tableName} ${sqlwhere}`);
-
-
         const sqlResult = await this.query(`SELECT ${sqlColumns} FROM ${tableName} ${sqlwhere}`);
         sqlResult.forEach((row) => {
             result.push(row);
@@ -168,6 +167,10 @@ export default class Database {
 
     query(query: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
+            if (Config.Build.DEV === true) {
+                Logger.db(query);
+            }
+
             this.dbc.query(query, (er: MysqlError, result: any, fields) => {
                 if (er) {
                     reject(er);

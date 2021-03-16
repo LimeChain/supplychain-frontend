@@ -1,6 +1,6 @@
-import DatabaseWhere from "../../../../utilities/database/DatabaseWhere"
-import SV from "../../../../utilities/SV"
-import ProductModelH from "../Model/ProductModelH"
+import DatabaseWhere from '../../../../utilities/database/DatabaseWhere'
+import SV from '../../../../utilities/SV'
+import ProductModelH from '../Model/ProductModelH'
 
 export default class ProductFilter {
     static S_SORT_BY_ID: number = 1
@@ -9,6 +9,7 @@ export default class ProductFilter {
     static S_SORT_BY_DESCRIPTION: number = 4
 
     sortBy: number = SV.NOT_EXISTS
+    searchBy: string = SV.Strings.EMPTY;
 
     getSortColumn(): number | null {
         switch (Math.abs(this.sortBy)) {
@@ -27,5 +28,9 @@ export default class ProductFilter {
 
     getSortOrder(): string {
         return this.sortBy > 0 ? DatabaseWhere.ORDER_DIRECTION_ASC : DatabaseWhere.ORDER_DIRECTION_DESC;
+    }
+
+    hasSearchWord(): boolean {
+        return this.searchBy !== SV.Strings.EMPTY;
     }
 }

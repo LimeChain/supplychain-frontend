@@ -1,6 +1,6 @@
 import AbsApi from './AbsApi';
-import { CreditProductReq, DeleteProductReq, fetchProductsByFilterReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
-import { CreditProductRes, FetchProductByIdRes, fetchProductsByFilterRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
+import { CreditProductReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
+import { CreditProductRes, FetchProductByIdRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
 import storageHelper from '../helpers/StorageHelper';
 import S from '../utilities/Main';
@@ -20,155 +20,145 @@ export default class ProductApi extends AbsApi {
     }
 
     creditProduct(productModel: ProductModel, callback: () => void) {
-        this.disableActions();
+        const req = new CreditProductReq(productModel);
 
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new CreditProductReq(productModel);
-
-            const json = {
-                productJson: null,
+        this.productApi.req(Actions.PRODUCT.CREDIT_PRODUCT, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            if (productModel.isNew() === true) {
-                let nextId;
-
-                if (storageHelper.productsJson.length > 0) {
-                    const lastProductJson = storageHelper.productsJson[storageHelper.productsJson.length - 1];
-                    nextId = (parseInt(lastProductJson.productId) + 1).toString();
-                } else {
-                    nextId = '1';
-                }
-
-                json.productJson = {
-                    productId: nextId,
-                };
-            } else {
-                const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
-                json.productJson = ProductModel.fromJson(productJson);
-            }
-
-            const res = new CreditProductRes(json);
-
+            const res = new CreditProductRes(json.obj);
             productModel.productId = res.productModel.productId;
-
-            const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
-            if (productJson !== undefined) {
-                Object.assign(productJson, productModel.toJson());
-            } else {
-                storageHelper.productsJson.push(productModel.toJson());
-            }
-
-            storageHelper.save();
-
             callback();
-        }, 100);
+        });
         // this.disableActions();
 
-        // const req = new CreditProductReq(productModel);
+        // setTimeout(() => {
+        //     this.enableActions();
 
-        // this.productApi.req(Actions.PRODUCT.CREDIT_PRODUCT, req, (json: any) => {
-        //     if (json.status !== ResponseConsts.S_STATUS_OK) {
-        //         this.showAlert('Something went wrong');
-        //         return;
+        //     const req = new CreditProductReq(productModel);
+
+        //     const json = {
+        //         productJson: null,
         //     }
 
-        //     const res = new CreditProductRes(json.obj);
-        //     productModel.productId = res.productModel.productId;
-        //     callback();
+        //     if (productModel.isNew() === true) {
+        //         let nextId;
 
-        //     this.enableActions();
-        // });
+        //         if (storageHelper.productsJson.length > 0) {
+        //             const lastProductJson = storageHelper.productsJson[storageHelper.productsJson.length - 1];
+        //             nextId = (parseInt(lastProductJson.productId) + 1).toString();
+        //         } else {
+        //             nextId = '1';
+        //         }
+
+        //         json.productJson = {
+        //             productId: nextId,
+        //         };
+        //     } else {
+        //         const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
+        //         json.productJson = ProductModel.fromJson(productJson);
+        //     }
+
+        //     const res = new CreditProductRes(json);
+
+        //     productModel.productId = res.productModel.productId;
+
+        //     const productJson = storageHelper.productsJson.find((t) => t.productId === productModel.productId);
+        //     if (productJson !== undefined) {
+        //         Object.assign(productJson, productModel.toJson());
+        //     } else {
+        //         storageHelper.productsJson.push(productModel.toJson());
+        //     }
+
+        //     storageHelper.save();
+
+        //     callback();
+        // }, 100);
     }
 
-    fetchProductsByFilter(searchBy, sortBy: number, from: number, to: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
-        // const req = new FetchProductsByFilterReq(from, to, sortBy);
+    fetchProductsByFilter(searchBy: string, sortBy: number, from: number, to: number, callback: (productModels: ProductModel[], totalSize: number) => void) {
+        const req = new FetchProductsByFilterReq(searchBy, sortBy, from, to);
 
-        // this.productApi.req(Actions.PRODUCT.FETCH_PRODUCTS_BY_FILTER, req, (json: any) => {
-        //     if (json.status !== ResponseConsts.S_STATUS_OK) {
-        //         this.showAlert('Something went wrong');
-        //         return;
-        //     }
-
-        //     const res = new FetchProductsByFilterRes(json.obj);
-
-        //     callback(res.productModels, res.totalSize);
-        // });
-
-        this.disableActions();
-
-        setTimeout(() => {
-            this.enableActions();
-
-            const req = new FetchProductsByFilterReq(searchBy, sortBy, from, to);
-
-            const json = {
-                productJsons: [],
-                totalSize: 0,
+        this.productApi.req(Actions.PRODUCT.FETCH_PRODUCTS_BY_FILTER, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            const productsJson = storageHelper.productsJson.filter((productJson) => productJson.productDeleted === S.INT_FALSE);
-
-            json.productJsons = productsJson.filter((productJson: ProductModel) => {
-                if (searchBy === S.Strings.EMPTY) {
-                    return true;
-                }
-
-                if (productJson.productName.toLowerCase().includes(searchBy.toLowerCase())) {
-                    return true;
-                }
-
-                if (productJson.productDescription.toLowerCase().includes(searchBy.toLowerCase())) {
-                    return true;
-                }
-
-                if (productJson.productId.toLowerCase().includes(searchBy.toLowerCase())) {
-                    return true;
-                }
-
-                return false;
-            })
-
-            json.totalSize = json.productJsons.length;
-
-            json.productJsons = json.productJsons.sort((a: ProductModel, b: ProductModel): number => {
-                const sign = sortBy / Math.abs(sortBy);
-
-                switch (Math.abs(sortBy)) {
-                    case ProductFilter.S_SORT_BY_NAME:
-                        return a.productName.localeCompare(b.productName) * sign;
-                    case ProductFilter.S_SORT_BY_DESCRIPTION:
-                        return a.productDescription.localeCompare(b.productDescription) * sign;
-                    default:
-                        return parseInt(b.productId) - parseInt(a.productId);
-                }
-
-            }).slice(from, to);
-
-            const res = new FetchProductsByFilterRes(json);
+            const res = new FetchProductsByFilterRes(json.obj);
 
             callback(res.productModels, res.totalSize);
-        }, 100);
+        });
+
+        // this.disableActions();
+
+        // setTimeout(() => {
+        //     this.enableActions();
+
+        //     const req = new FetchProductsByFilterReq(searchBy, sortBy, from, to);
+
+        //     const json = {
+        //         productJsons: [],
+        //         totalSize: 0,
+        //     }
+
+        //     const productsJson = storageHelper.productsJson.filter((productJson) => productJson.productDeleted === S.INT_FALSE);
+
+        //     json.productJsons = productsJson.filter((productJson: ProductModel) => {
+        //         if (searchBy === S.Strings.EMPTY) {
+        //             return true;
+        //         }
+
+        //         if (productJson.productName.toLowerCase().includes(searchBy.toLowerCase())) {
+        //             return true;
+        //         }
+
+        //         if (productJson.productDescription.toLowerCase().includes(searchBy.toLowerCase())) {
+        //             return true;
+        //         }
+
+        //         if (productJson.productId.toLowerCase().includes(searchBy.toLowerCase())) {
+        //             return true;
+        //         }
+
+        //         return false;
+        //     })
+
+        //     json.totalSize = json.productJsons.length;
+
+        //     json.productJsons = json.productJsons.sort((a: ProductModel, b: ProductModel): number => {
+        //         const sign = sortBy / Math.abs(sortBy);
+
+        //         switch (Math.abs(sortBy)) {
+        //             case ProductFilter.S_SORT_BY_NAME:
+        //                 return a.productName.localeCompare(b.productName) * sign;
+        //             case ProductFilter.S_SORT_BY_DESCRIPTION:
+        //                 return a.productDescription.localeCompare(b.productDescription) * sign;
+        //             default:
+        //                 return parseInt(b.productId) - parseInt(a.productId);
+        //         }
+
+        //     }).slice(from, to);
+
+        //     const res = new FetchProductsByFilterRes(json);
+
+        //     callback(res.productModels, res.totalSize);
+        // }, 100);
 
     }
 
-    // fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
-    //     this.disableActions();
+    fetchProductById(productId: string, callback: (productModel: ProductModel) => void) {
+        const req = new FetchProductByIdReq(productId);
 
-    //     const req = new FetchProductByIdReq(productId);
+        this.productApi.req(Actions.PRODUCT.FETCH_PRODUCT_BY_ID, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                return;
+            }
 
-    //     this.productApi.req(Actions.PRODUCT.FETCH_PRODUCT_BY_ID, req, (json: any) => {
-    //         if (json.status !== ResponseConsts.S_STATUS_OK) {
-    //             this.showAlert('Something went wrong');
-    //             return;
-    //         }
-
-    //         const res = new FetchProductByIdRes(json.obj);
-
-    //         callback(res.productModel);
-
-    //         this.enableActions();
-    //     });
-    // }
+            const res = new FetchProductByIdRes(json.obj);
+            callback(res.productModel);
+        });
+    }
 }

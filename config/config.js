@@ -72,6 +72,7 @@ const Config = {
                 ERROR: path.join(__dirname, '../logs/error.log'),
                 REQUESTS: path.join(__dirname, '../logs/requests.log'),
                 INFO: path.join(__dirname, '../logs/info.log'),
+                DB: path.join(__dirname, '../logs/db.log'),
             },
 
             DATA: path.join(__dirname, '../data'),

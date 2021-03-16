@@ -33,7 +33,7 @@ export default class DatabaseWhereClause {
                 return 'FALSE';
             }
 
-            for (let i = count; i-- > 0; ) {
+            for (let i = count; i-- > 0;) {
                 const value = this.value[i];
                 if (value === null) {
                     isNull = true;
@@ -46,7 +46,7 @@ export default class DatabaseWhereClause {
             if (this.value === null) {
                 isNull = true;
             }
-            this.value = `'${this.value}'`;
+            this.value = `${mysql.escape(this.value)}`;
             sqlValues = this.value;
         }
 

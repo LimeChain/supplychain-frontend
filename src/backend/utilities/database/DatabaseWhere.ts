@@ -1,4 +1,4 @@
-import DatabaseWhereClause from "./DatabaseWhereClause";
+import DatabaseWhereClause from './DatabaseWhereClause';
 
 export default class DatabaseWhere {
 
@@ -64,7 +64,7 @@ export default class DatabaseWhere {
                 isWhereClauseExists = true;
             }
 
-            sql.push(sqlColumnClause.join(this.columnsClausesJoin[i]));
+            sql.push(`(${sqlColumnClause.join(this.columnsClausesJoin[i])})`);
         }
 
         let sqlColumns = sql.join(' AND ');

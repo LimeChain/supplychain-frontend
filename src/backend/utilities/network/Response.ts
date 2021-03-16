@@ -4,6 +4,7 @@ export default class Response {
     static S_STATUS_ERROR: number;
     static S_STATUS_DO_NOT_HANDLE: number;
     static S_STATUS_RUNTIME_ERROR: number;
+    static S_STATUS_ACCESS_DENIED: number;
 
     status: number;
     obj: any;
@@ -29,3 +30,4 @@ Response.S_STATUS_OK = 0;
 Response.S_STATUS_ERROR = 1;
 Response.S_STATUS_DO_NOT_HANDLE = 2;
 Response.S_STATUS_RUNTIME_ERROR = 3;
+Response.S_STATUS_ACCESS_DENIED = 4;

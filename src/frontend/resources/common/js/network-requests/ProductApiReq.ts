@@ -25,10 +25,10 @@ export class FetchProductsByFilterReq {
 
 }
 
-// export class FetchProductByIdReq {
-//     productId: string
+export class FetchProductByIdReq {
+    productId: string
 
-//     constructor(productId: string) {
-//         this.productId = productId;
-//     }
-// }
+    constructor(productId: string) {
+        this.productId = productId;
+    }
+}

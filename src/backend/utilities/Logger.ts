@@ -14,6 +14,7 @@ export default class Logger {
     static log: any;
     static error: any;
     static request: any;
+    static db: any;
 }
 
 const infoLogger = winston.createLogger({
@@ -21,6 +22,16 @@ const infoLogger = winston.createLogger({
     format: fileLogFormat,
     transports: [
         new winston.transports.File({ filename: Config.Path.Root.Logs.INFO }),
+    ],
+    maxsize: 1 << 20,
+    maxFiles: 128,
+});
+
+const dbLogger = winston.createLogger({
+    level: 'debug',
+    format: fileLogFormat,
+    transports: [
+        new winston.transports.File({ filename: Config.Path.Root.Logs.DB }),
     ],
     maxsize: 1 << 20,
     maxFiles: 128,
@@ -62,6 +73,11 @@ if (Config.Build.PRODUCTION !== true) {
 Logger.log = (...args_) => {
     const args = args_.map(argvMapper);
     infoLogger.info(args.join(' '));
+};
+
+Logger.db = (...args_) => {
+    const args = args_.map(argvMapper);
+    dbLogger.info(args.join(' '));
 };
 
 Logger.error = (...args_) => {

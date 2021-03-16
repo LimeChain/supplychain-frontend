@@ -34,6 +34,15 @@ module.exports = class Migration00000000000000 {
     }
 
     async down(db) {
+        await db.query(`DROP TABLE IF EXISTS ${CountryRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${SiteRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${AccountRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${NotificationRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${ProductRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${SkuRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${SkuOriginRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${ShipmentDocumentRepoH.TABLE_NAME}`);
+        await db.query(`DROP TABLE IF EXISTS ${ShipmentRepoH.TABLE_NAME}`);
     }
 
     async country(repoFactory) {
@@ -106,7 +115,7 @@ module.exports = class Migration00000000000000 {
             ${AccountRepoH.C_SALT} TEXT,
             ${AccountRepoH.C_COUNTRY_ID} INT,
             ${AccountRepoH.C_SITE_ID} INT,
-            ${AccountRepoH.C_EMAIL} TEXT,
+            ${AccountRepoH.C_EMAIL} TEXT COLLATE utf8mb4_general_ci,
             ${AccountRepoH.C_NAME} TEXT,
             ${AccountRepoH.C_ROLE} TINYINT,
             ${AccountRepoH.C_ACTIVE} TINYINT,
@@ -164,9 +173,9 @@ module.exports = class Migration00000000000000 {
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${ProductRepoH.TABLE_NAME}(
             ${ProductRepoH.C_PRODUCT_ID} INT AUTO_INCREMENT,
-            ${ProductRepoH.C_PRODUCT_NAME} TEXT,
+            ${ProductRepoH.C_PRODUCT_NAME} TEXT COLLATE utf8mb4_general_ci,
             ${ProductRepoH.C_PRODUCT_UNIT} INT,
-            ${ProductRepoH.C_PRODUCT_DESCRIPTION} TEXT,
+            ${ProductRepoH.C_PRODUCT_DESCRIPTION} TEXT COLLATE utf8mb4_general_ci,
             ${ProductRepoH.C_PRODUCT_DELETED} TINYINT,
             PRIMARY KEY(${ProductRepoH.C_PRODUCT_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);

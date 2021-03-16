@@ -13,5 +13,7 @@ export class FetchProductsByFilterRes {
 }
 
 export class FetchProductByIdRes {
+
     productModel: ProductModel
+
 }

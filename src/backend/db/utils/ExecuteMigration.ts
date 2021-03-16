@@ -80,8 +80,8 @@ class ExecuteMigration {
                     console.error(`Migration failed ${migrationName}${EOL}`);
                     console.error(ex);
                 }
+                await migrationInst.down(db);
                 await db.rollbackTransaction();
-                await migrationInst.rollback(db);
                 break;
             } finally {
                 await db.comminTransaction();

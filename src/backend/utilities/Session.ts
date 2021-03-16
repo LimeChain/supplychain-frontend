@@ -14,14 +14,18 @@ export default class Session {
         this.ctx.session = null;
     }
 
-    onLogin(accountId, countryId, siteId) {
+    onLogin(accountId: number, countryId: number, siteId: number) {
         setProperty(this.ctx, Session.ACCOUNT_ID, accountId);
         setProperty(this.ctx, Session.ACCOUNT_COUNTRY, countryId);
         setProperty(this.ctx, Session.ACCOUNT_SITE, siteId);
     }
 
-    getAccountId() {
+    getAccountId(): number {
         return getProperty(this.ctx, Session.ACCOUNT_ID);
+    }
+
+    isAdmin(): boolean {
+        return this.getAccountId() !== null;
     }
 
 }
