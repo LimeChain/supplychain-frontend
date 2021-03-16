@@ -6,28 +6,6 @@ import Router from './backend/requests/filters/Router';
 import DatabasePool from './backend/utilities/database/DatabasePool';
 import Logger from './backend/utilities/Logger';
 
-import FileSessionStore from './backend/utilities/session-store/KoaSessionFile';
-import RedisSessionStore from './backend/utilities/session-store/KoaSessionRedis';
-
-const Config = require('../config/config');
-
-let sessionStore;
-if (Config.Build.DEV === true) {
-    sessionStore = new FileSessionStore();
-} else {
-    sessionStore = new RedisSessionStore({ 'host': Config.Server.SESSION_STORE_ADDR, 'port': Config.Server.SESSION_STORE_PORT });
-}
-
-// if (Config.Build.DEV === true) {
-//     const FileSessionStore = require(Config.Path.Backend.UTILITIES + '/session-store/koa-session-file');
-//     sessionStore = new FileSessionStore();
-//     Logger.log('Set FileSessionStore for cookie');
-// } else {
-//     const RedisSessionStore = require(Config.Path.Backend.UTILITIES + '/session-store/koa-session-redis');
-//     sessionStore = new RedisSessionStore({'host': Config.Server.SESSION_STORE_ADDR, 'port': Config.Server.SESSION_STORE_PORT});
-//     Logger.log('Set RedisSessionStore for cookie');
-// }
-
 const SESSION_CONFIG = {
     key: 'pwc-bat-session',
     /** (string) cookie key (default is koa:sess) */

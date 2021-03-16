@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import Config from '../../../../../../../builds/dev-generated/Config';
 import ShipmentConsts from '../../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import S from '../../utilities/Main';
 
@@ -72,6 +73,10 @@ export default class ShipmentModel {
             default:
                 return 'Unknown';
         }
+    }
+
+    getTransactionLink() {
+        return `${Config.Server.TRANSACTION_VIEW_URL.replace('%s', this.shipmentDltProof || '0x4141f431e431d4413e1a4a156454141f431e431d4413e1a4a15645')}`
     }
 
     receiveShipment() {

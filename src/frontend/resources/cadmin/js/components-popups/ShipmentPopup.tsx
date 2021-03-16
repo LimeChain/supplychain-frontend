@@ -1,15 +1,14 @@
 import React, { MouseEventHandler, RefObject } from 'react';
 import { inject, observer } from 'mobx-react';
+import moment from 'moment';
 
 import { MenuItem } from '@material-ui/core';
 
 import ShipmentDocumentConsts from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelConsts';
-import SvgMoreInfo from '../../../common/svg/more-info.svg';
+import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 
 import { formatBytes, formatPrice } from '../../../common/js/helpers/NumeralHelper';
 import S from '../../../common/js/utilities/Main';
-
-import SvgIncomming from '../../../common/svg/incomming.svg';
 
 import AlertStore from '../../../common/js/stores/AlertStore';
 import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
@@ -20,7 +19,6 @@ import ProductStore from '../../../common/js/stores/ProductStore';
 import PopupSubmitShipmentStatusStore from '../../../common/js/stores/PopupSubmitShipmentStatusStore';
 import ShipmentStore from '../../../common/js/stores/ShipmentStore';
 import SiteModel from '../../../common/js/models/SiteModel';
-import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import ProductModel from '../../../common/js/models/product-module/ProductModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import ShipmentApi from '../../../common/js/api/ShipmentApi';
@@ -40,16 +38,14 @@ import SelectSearchable from '../../../common/js/components-inc/SelectSearchable
 import SvgCheck from '@material-ui/icons/Check';
 import SvgClear from '@material-ui/icons/Clear';
 import SvgAdd from '@material-ui/icons/Add';
+import SvgIncomming from '../../../common/svg/incomming.svg';
 import SvgAttachment from '../../../common/svg/attachment.svg';
 import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
 import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
-import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
-import moment from 'moment';
-import ShipmentConsts from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
-import PopupStore from '../../../common/js/stores/PopupStore';
+import CAdminContext from '../CAdminContext';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -373,25 +369,26 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                     <div className = { 'PopupTitleCnt' }>
                         <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isDraft() ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
                         { shipmentModel.isDraft() === false && (
-                            <a className={'SubData TransactionId Dots'}>{shipmentModel.shipmentDltProof || '0x4141f431e431d4413e1a4a156454141f431e431d4413e1a4a15645'}</a>
+                            <div className = { 'FlexSplit' } >
+                                <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>
+                                <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
+                            </div>
                         )}
                     </div>
-                    <LayoutBlock direction={LayoutBlock.DIRECTION_ROW} >
+                    <LayoutBlock className = { 'FlexSplit' } direction={LayoutBlock.DIRECTION_ROW} >
                         <div className = { 'WidthLimiter' }>
                             <Input
                                 placeholder={'Enter consigment ID'}
                                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[0])}
                                 error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[0])}
                                 onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[0])} />
-                            { shipmentModel.isDraft() === false && (
-                                <div className = { 'FlexSplit' } >
-                                    <div className={'SubData TimeStamp'}>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY')}</div>
-                                    <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
-                                </div>
-                            )}
                         </div>
                         {this.renderFromSite()}
                         {this.renderToSite()}
+                        <Actions className = { 'ActionsTransaction StartRight' } height = { Actions.HEIGHT_32 } >
+                            <Button href = { shipmentModel.getTransactionLink() } target = { '_blank' } color = { Button.COLOR_SCHEME_2 }>Transaction hash</Button>
+                            <Button href = { CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId) } download = { `shipment-${shipmentModel.shipmentId}.json` } color = { Button.COLOR_SCHEME_2 } >Raw Data</Button>
+                        </Actions>
                     </LayoutBlock>
                 </div>
                 <hr />

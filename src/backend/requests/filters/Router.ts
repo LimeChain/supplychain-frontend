@@ -31,14 +31,13 @@ export default class Router {
 
     static async init(dbPool: DatabasePool) {
         Router.dbPool = dbPool;
-        let db = await Router.dbPool.aquireConnection();
-        //db.query('SHOW DATABASES').then(result => console.log(result));
+        const db = await Router.dbPool.aquireConnection();
+        // db.query('SHOW DATABASES').then(result => console.log(result));
 
         ApiFilter.init();
         GeneralFilter.init();
         CAdminFilter.init();
     }
-
 
     static async onRequest(ctx) {
         Router.processCtx(ctx);
