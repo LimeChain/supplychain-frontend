@@ -3,6 +3,7 @@ import S from './utilities/Main';
 
 import SvgGermany from '../svg/flags/germany.svg';
 import SvgNetherlands from '../svg/flags/netherlands.svg';
+import SvgPoland from '../svg/flags/poland.svg';
 import CountryConsts from '../../../../../builds/dev-generated/Country/CountryModelConsts';
 
 const QUERY_PATTERN = '?p=';
@@ -149,6 +150,8 @@ export default class ProjectUtils {
                 return SvgGermany;
             case CountryConsts.S_NETHERLANDS.toString():
                 return SvgNetherlands;
+            case CountryConsts.S_POLAND.toString():
+                return SvgPoland;
         }
 
     }
