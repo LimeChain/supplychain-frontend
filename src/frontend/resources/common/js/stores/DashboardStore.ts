@@ -80,7 +80,7 @@ export default class DashboardStore {
         const to = from + DashboardStore.SHIPMENTS_SHOW_COUNT;
 
         this.shipmentApi.fetchShipmentByFilter(
-            PagesCAdmin.INCOMMING,
+            ShipmentFilter.S_PAGE_STATUS_INCOMMING,
             '',
             ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
             from,
@@ -115,7 +115,7 @@ export default class DashboardStore {
         const to = from + DashboardStore.SHIPMENTS_SHOW_COUNT;
 
         this.shipmentApi.fetchShipmentByFilter(
-            PagesCAdmin.OUTGOING,
+            ShipmentFilter.S_PAGE_STATUS_OUTGOING,
             '',
             ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
             from,

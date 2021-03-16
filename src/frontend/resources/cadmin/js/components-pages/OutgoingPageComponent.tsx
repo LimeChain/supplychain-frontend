@@ -82,7 +82,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
 
     fetchShipments = () => {
         const tableState = this.tableHelper.tableState;
-        this.shipmentApi.fetchShipmentByFilter(PagesCAdmin.OUTGOING, this.searchWord, tableState.sortKey, tableState.from, tableState.to(), (shipmentModels, totalSize) => {
+        this.shipmentApi.fetchShipmentByFilter(ShipmentFilter.S_PAGE_STATUS_OUTGOING, this.searchWord, tableState.sortKey, tableState.from, tableState.to(), (shipmentModels, totalSize) => {
             this.props.shipmentStore.onScreenData(shipmentModels);
             tableState.total = totalSize;
         });

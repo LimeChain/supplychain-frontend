@@ -12,15 +12,15 @@ export default class ShipmentFilter {
     static S_SORT_BY_DATE_OF_SHIPMENT: number = 7
     static S_SORT_BY_DATE_OF_ARRIVAL: number = 8
 
-    filterId: number = SV.NOT_EXISTS
-    filterName: string = SV.Strings.NOT_EXISTS
-    filterConsignmentNumber: string = SV.Strings.NOT_EXISTS
-    filterStatus: number = SV.NOT_EXISTS
-    filterOriginSiteId: number = SV.NOT_EXISTS
-    filterDestinationSiteId: number = SV.NOT_EXISTS
-    filterDateOfShipment: number = SV.NOT_EXISTS
-    filterDateOfArrival: number = SV.NOT_EXISTS
-    sortBy: number = SV.NOT_EXISTS
+    static S_PAGE_STATUS_DRAFTS = 1
+    static S_PAGE_STATUS_INCOMMING = 2
+    static S_PAGE_STATUS_OUTGOING = 3
+
+    siteId: number = SV.NOT_EXISTS;
+    status: number = SV.NOT_EXISTS;
+    page: number = SV.NOT_EXISTS;
+    searchBy: string = SV.Strings.NOT_EXISTS;
+    sortBy: number = SV.NOT_EXISTS;
 
     getSortColumn(): number | null {
         switch (Math.abs(this.sortBy)) {

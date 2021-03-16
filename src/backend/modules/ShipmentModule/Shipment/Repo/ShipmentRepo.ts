@@ -1,5 +1,6 @@
 import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
+import SV from '../../../../utilities/SV';
 import ShipmentModel from '../Model/ShipmentModel';
 import ShipmentModelH from '../Model/ShipmentModelH';
 import ShipmentFilter from '../Utils/ShipmentFilter';
@@ -10,15 +11,39 @@ export default class ShipmentRepo extends ShipmentRepoG {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.orderColumn = shipmentFilter.getSortColumn();
         databaseWhere.orderType = shipmentFilter.getSortOrder();
-        databaseWhere.orClause([
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', shipmentFilter.filterId),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_NAME, '=', shipmentFilter.filterName),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', shipmentFilter.filterStatus),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID, '=', shipmentFilter.filterOriginSiteId),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DESTINATION_SITE_ID, '=', shipmentFilter.filterDestinationSiteId),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DATE_OF_SHIPMENT, '=', shipmentFilter.filterDateOfShipment),
-            new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DATE_OF_ARRIVAL, '=', shipmentFilter.filterDateOfArrival),
-        ])
+
+        // filter by page
+        if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_DRAFTS) {
+            databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', ShipmentModel.S_STATUS_DRAFT));
+        } else if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_INCOMMING) {
+            databaseWhere.andClause([
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DESTINATION_SITE_ID, '=', shipmentFilter.siteId),
+            ]);
+        } else if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_OUTGOING) {
+            databaseWhere.andClause([
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID, '=', shipmentFilter.siteId),
+            ]);
+        }
+
+        if (shipmentFilter.status !== SV.NOT_EXISTS) {
+            databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', shipmentFilter.status));
+        }
+
+        if (shipmentFilter.searchBy !== SV.Strings.NOT_EXISTS) {
+
+            const filterClauses = [
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_NAME, 'LIKE', `%${shipmentFilter.searchBy}%`),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER, 'LIKE', `%${shipmentFilter.searchBy}%`),
+            ];
+
+            if (!isNaN(parseInt(shipmentFilter.searchBy))) {
+                filterClauses.push(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', parseInt(shipmentFilter.searchBy)));
+            }
+
+            databaseWhere.orClause(filterClauses);
+        }
 
         return this.fetch(databaseWhere);
     }

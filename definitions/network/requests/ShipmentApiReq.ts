@@ -1,12 +1,13 @@
 export class CreditShipmentReq {
 
     shipmentJson: ShipmentModel
-    skuOriginJsons: Array < SkuOriginModel >
-    skuJsons: Array < SkuModel >
-    shipmentDocumentJsons: Array < ShipmentDocumentModel >
+    skuOriginJsons: Array<SkuOriginModel>
+    skuJsons: Array<SkuModel>
+    shipmentDocumentJsons: Array<ShipmentDocumentModel>
 }
 
 export class FetchShipmentsByFilterReq {
+    page: number
     searchBy: string
     sortBy: number
     from: number

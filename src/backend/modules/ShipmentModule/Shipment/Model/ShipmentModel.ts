@@ -7,6 +7,11 @@ export default class ShipmentModel extends ShipmentModelG {
     static S_STATUS_IN_TRANSIT: number = 2;
     static S_STATUS_RECEIVED: number = 3;
 
+    constructor() {
+        super();
+        this.shipmentDeleted = SV.FALSE;
+    }
+
     isNew(): boolean {
         return this.shipmentId === SV.NOT_EXISTS;
     }

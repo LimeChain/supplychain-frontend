@@ -88,7 +88,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
 
         this.shipmentApi.fetchShipmentByFilter(
 
-            PagesCAdmin.DRAFTS,
+            ShipmentFilter.S_PAGE_STATUS_DRAFTS,
             this.searchWord,
             tableState.sortKey,
             tableState.from,

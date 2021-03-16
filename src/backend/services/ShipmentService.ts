@@ -12,11 +12,32 @@ import StateException from '../utilities/network/StateException';
 import SV from '../utilities/SV';
 import Service from './common/Service';
 import NotificationService from './NotificationService';
+import SkuOriginRepo from '../modules/ProductModule/SkuOrigin/Repo/SkuOriginRepo';
+import DatabaseWhere from '../utilities/database/DatabaseWhere';
+import DatabaseWhereClause from '../utilities/database/DatabaseWhereClause';
+import SkuModelG from '../modules/ProductModule/Sku/Model/SkuModelG';
+import SkuModelH from '../modules/ProductModule/Sku/Model/SkuModelH';
+import SkuOriginModelH from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModelH';
+import ShipmentDocumentModelH from '../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
+import ShipmentModelH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
+import ShipmentConsts from '../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
+import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
+import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 
 export default class ShipmentService extends Service {
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
+    skuRepo: SkuRepo = this.repoFactory.getSkuRepo();
+    skuOriginRepo: SkuOriginRepo = this.repoFactory.getSkuOriginRepo();
+    shipmentDocumentRepo: ShipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
+    productRepo: ProductRepo = this.repoFactory.getProductRepo();
 
-    async creditShipment(reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise<ShipmentModel> {
+    async creditShipment(
+        siteId: number,
+        reqShipmentModel: ShipmentModel,
+        reqSkuModels: SkuModel[],
+        reqSkuOriginModels: SkuOriginModel[],
+        reqShipmentDocumentModels: ShipmentDocumentModel[],
+    ): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
 
         const skuRepo = this.repoFactory.getSkuRepo();
         const skuOriginRepo = this.repoFactory.getSkuOriginRepo();
@@ -25,7 +46,7 @@ export default class ShipmentService extends Service {
         let shipmentModel: ShipmentModel | null = null;
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
-            shipmentModel.shipmentDeleted = SV.FALSE;
+            shipmentModel.shipmentOriginSiteId = siteId;
             // if there is some specific fields that must be set just on creation, e.g. -> creation timestamp
         } else {
             shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
@@ -36,6 +57,7 @@ export default class ShipmentService extends Service {
             if (shipmentModel.isShipmentStatusLocked(reqShipmentModel.shipmentStatus)) {
                 throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
             }
+            shipmentModel.shipmentOriginSiteId = reqShipmentModel.shipmentOriginSiteId;
         }
 
         const oldShipmentStatus = shipmentModel.shipmentStatus;
@@ -53,12 +75,18 @@ export default class ShipmentService extends Service {
 
         shipmentModel.shipmentName = reqShipmentModel.shipmentName;
         shipmentModel.shipmentConsignmentNumber = reqShipmentModel.shipmentConsignmentNumber;
-        shipmentModel.shipmentOriginSiteId = reqShipmentModel.shipmentOriginSiteId;
         shipmentModel.shipmentDestinationSiteId = reqShipmentModel.shipmentDestinationSiteId;
         shipmentModel.shipmentDateOfShipment = reqShipmentModel.shipmentDateOfShipment;
         shipmentModel.shipmentDateOfArrival = reqShipmentModel.shipmentDateOfArrival;
         shipmentModel.shipmentDltAnchored = reqShipmentModel.shipmentDltAnchored;
         shipmentModel.shipmentDltProof = reqShipmentModel.shipmentDltProof;
+
+        if (reqShipmentModel.shipmentDeleted !== SV.NOT_EXISTS) {
+            shipmentModel.shipmentDeleted = reqShipmentModel.shipmentDeleted;
+        }
+
+        console.log(shipmentModel.shipmentDeleted);
+
         shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
 
         // credit sku models
@@ -86,7 +114,7 @@ export default class ShipmentService extends Service {
             skuModel.skuId = (await skuRepo.save(skuModel)).skuId;
 
             // change referenceId in origin to new actual id
-            const reqSkuOriginModel = reqSkuOriginModels.find((reqSkuOriginModel) => reqSkuOriginModel.skuId === reqSkuModel.skuId)
+            const reqSkuOriginModel = reqSkuOriginModels.find((reqSkuOModel) => reqSkuOModel.skuId === reqSkuModel.skuId)
             if (reqSkuOriginModel !== undefined) {
                 reqSkuOriginModel.skuId = skuModel.skuId;
             }
@@ -101,7 +129,6 @@ export default class ShipmentService extends Service {
 
             if (reqSkuOriginModel.isNew() === true) {
                 skuOriginModel = new SkuOriginModel();
-                skuOriginModel.shipmentId = shipmentModel.shipmentId;
             } else {
                 skuOriginModel = await skuOriginRepo.fetchByPrimaryValue(reqSkuOriginModel.skuOriginId);
                 if (skuOriginModel === null) {
@@ -110,6 +137,7 @@ export default class ShipmentService extends Service {
             }
 
             skuOriginModel.skuId = reqSkuOriginModel.skuId;
+            skuOriginModel.shipmentId = shipmentModel.shipmentId;
             skuOriginModel.skuOriginId = (await skuOriginRepo.save(skuOriginModel)).skuOriginId;
 
             skuOriginModels.push(skuOriginModel);
@@ -133,36 +161,31 @@ export default class ShipmentService extends Service {
             shipmentDocumentModel.shipmentId = shipmentModel.shipmentId;
             shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
             shipmentDocumentModel.shipmentDocumentUrl = reqShipmentDocumentModel.shipmentDocumentUrl;
+            shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
+            shipmentDocumentModel.name = reqShipmentDocumentModel.name;
+            shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
             shipmentDocumentModel.shipmentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentId;
 
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
 
-        return shipmentModel;
+        return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }
 
     async fetchShipmentsByFilter(
-        filterId: number,
-        filterName: string,
-        filterStatus: number,
-        filterOriginSiteId: number,
-        filterDestinationSiteId: number,
-        filterDateOfShipment: number,
-        filterDateOfArrival: number,
+        siteId: number,
+        page: number,
+        searchBy: string,
         sortBy: number,
         from: number,
         to: number,
     ): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
 
         const shipmentFilter = new ShipmentFilter();
-        shipmentFilter.filterId = filterId;
-        shipmentFilter.filterName = filterName;
-        shipmentFilter.filterStatus = filterStatus;
-        shipmentFilter.filterOriginSiteId = filterOriginSiteId;
-        shipmentFilter.filterDestinationSiteId = filterDestinationSiteId;
-        shipmentFilter.filterDateOfShipment = filterDateOfShipment;
-        shipmentFilter.filterDateOfArrival = filterDateOfArrival;
+        shipmentFilter.page = page;
+        shipmentFilter.searchBy = searchBy;
         shipmentFilter.sortBy = sortBy;
+        shipmentFilter.siteId = siteId;
 
         const shipmentModels = await this.shipmentRepo.fetchByFilter(shipmentFilter);
 
@@ -176,13 +199,79 @@ export default class ShipmentService extends Service {
         }
     }
 
-    async fetchShipmentById(shipmentId: number): Promise<ShipmentModel> {
+    async fetchShipmentById(shipmentId: number): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
 
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) {
             throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
         }
 
-        return shipmentModel;
+        const skuDbWhere = new DatabaseWhere();
+        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_SHIPMENT_ID, '=', shipmentId));
+        const skuModels = await this.skuRepo.fetch(skuDbWhere);
+
+        const skuoriginDbWhere = new DatabaseWhere();
+        skuoriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SHIPMENT_ID, '=', shipmentId));
+        const skuOriginModels = await this.skuOriginRepo.fetch(skuoriginDbWhere);
+
+        const shipmentDocumentsDbWhere = new DatabaseWhere();
+        shipmentDocumentsDbWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentId));
+        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetch(shipmentDocumentsDbWhere);
+
+        return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
+    }
+
+    // async fetchShipmentsWhereProductLeftByProductId(productId: number): Promise<{ shipmentModels: ShipmentModel[], skuModels: SkuModel[] }> {
+    //     const skuDbWhere = new DatabaseWhere();
+    //     skuDbWhere.clause(SkuModelH.P_PRODUCT_ID, '=', productId);
+
+    //     const skuModels = await this.skuRepo.fetch(skuDbWhere);
+
+    //     const shipmentDbWhere = new DatabaseWhere();
+    //     shipmentDbWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', skuModels.map((s) => s.shipmentId)))
+
+    // }
+
+    async fetchSkusInStock(siteId: number, searchBy: string): Promise<{ skuModels: SkuModel[], productModels: ProductModel[] }> {
+
+        const shipmentFilter = new ShipmentFilter();
+        shipmentFilter.siteId = siteId;
+        shipmentFilter.page = ShipmentFilter.S_PAGE_STATUS_INCOMMING;
+        shipmentFilter.status = ShipmentModel.S_STATUS_RECEIVED;
+
+        const shipmentsDeliveredHere = await this.shipmentRepo.fetchByFilter(shipmentFilter);
+
+        const skusInShipmentsDbWhere = new DatabaseWhere();
+        skusInShipmentsDbWhere.clause(new DatabaseWhereClause(SkuModel.P_SHIPMENT_ID, '=', shipmentsDeliveredHere.map((s) => s.shipmentId)));
+        const skusInShipments = await this.skuRepo.fetch(skusInShipmentsDbWhere);
+
+        const skuOriginsFromShipmentsDbWhere = new DatabaseWhere();
+        skuOriginsFromShipmentsDbWhere.clause(new DatabaseWhereClause(SkuOriginModel.P_SHIPMENT_ID, '=', shipmentsDeliveredHere.map((s) => s.shipmentId)));
+        const skuoriginsFromShipments = await this.skuOriginRepo.fetch(skuOriginsFromShipmentsDbWhere);
+
+        const skusInSkuOrigins = await this.skuRepo.fetchByPrimaryValues(skuoriginsFromShipments.map((s) => s.skuId));
+
+        shipmentsDeliveredHere.forEach((shipmentModel: ShipmentModel) => {
+            skusInShipments.filter((s) => s.shipmentId === shipmentModel.shipmentId)
+                .forEach((skuModel: SkuModel) => {
+                    let skuQuantity = skuModel.quantity;
+
+                    skuoriginsFromShipments.filter((s) => s.shipmentId === shipmentModel.shipmentId)
+                        .forEach((skuoriginModel: SkuOriginModel) => {
+                            const skuInThisOrigin = skusInSkuOrigins.find((s) => s.skuId === skuoriginModel.skuId);
+
+                            if (skuInThisOrigin.productId === skuModel.productId) {
+                                skuQuantity -= skuInThisOrigin.quantity;
+                            }
+                        })
+
+                    skuModel.quantity = skuQuantity;
+                })
+        })
+
+        const skuModels = skusInShipments.filter((s) => s.quantity > 0);
+        const productModels = await this.productRepo.fetchByPrimaryValues(skuModels.map((s) => s.productId));
+
+        return { skuModels, productModels };
     }
 }

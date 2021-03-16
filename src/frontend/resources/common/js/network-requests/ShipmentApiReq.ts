@@ -19,12 +19,14 @@ export class CreditShipmentReq {
 }
 
 export class FetchShipmentsByFilterReq {
+    page: number
     searchBy: string
     sortBy: number
     from: number
     to: number
 
-    constructor(searchBy: string, sortBy: number, from: number, to: number) {
+    constructor(page: number, searchBy: string, sortBy: number, from: number, to: number) {
+        this.page = page;
         this.searchBy = searchBy;
         this.sortBy = sortBy;
         this.from = from;
