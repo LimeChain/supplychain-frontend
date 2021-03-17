@@ -82,10 +82,10 @@ const Config = {
                 DB: path.join(__dirname, '../logs/db.log'),
             },
 
-            DATA: path.join(__dirname, '../data'),
+            DATA: '/usr/src/data',
             Data: {
-                SESSIONS: path.join(__dirname, '../data/sessions'),
-                SHIPMENTS: path.join(__dirname, '../data/shipments'),
+                SESSIONS: '/usr/src/data/sessions',
+                SHIPMENTS: '/usr/src/data/shipments',
             },
 
             BACKEND: path.join(__dirname, '../src/backend'),
