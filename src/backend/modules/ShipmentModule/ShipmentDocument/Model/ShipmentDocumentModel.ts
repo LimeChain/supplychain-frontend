@@ -1,3 +1,4 @@
+import ShipmentDocumentConsts from '../../../../../../builds/dev-generated/ShipmentModule/ShipmentDocument/ShipmentDocumentModelConsts';
 import SV from '../../../../utilities/SV';
 import ShipmentDocumentModelG from './ShipmentDocumentModelG';
 
@@ -12,6 +13,10 @@ export default class ShipmentDocumentModel extends ShipmentDocumentModelG {
     static S_DOCUMENT_TYPE_RECEIPT: number = 7;
     static S_DOCUMENT_TYPE_OTHER: number = 8;
 
+    constructor() {
+        super();
+        this.documentType = ShipmentDocumentModel.S_DOCUMENT_TYPE_OTHER;
+    }
     isNew(): boolean {
         return this.shipmentId === SV.NOT_EXISTS;
     }

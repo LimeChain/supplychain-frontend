@@ -34,7 +34,10 @@ export default class GeneralController {
         const req = new ReadNotificationByIdReq(payload);
 
         const notificationService = servicesFactory.getNotificationService();
+
+        servicesFactory.db.beginTransaction();
         const notificationModel = await notificationService.readNotificationById(req.notificationModel);
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new ReadNotificationByIdRes(notificationModel));
     }
@@ -46,7 +49,10 @@ export default class GeneralController {
         const req = new ReadAllNotificationsReq(payload);
 
         const notificationService = servicesFactory.getNotificationService();
+
+        servicesFactory.db.beginTransaction();
         await notificationService.readAllNotifications();
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new ReadAllNotificationsRes())
     }

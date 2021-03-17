@@ -43,7 +43,7 @@ class ExecuteMigration {
                             PRIMARY KEY(id)
                         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
 
-        const oldMigrationsSet = new Set < string >();
+        const oldMigrationsSet = new Set<string>();
         let sqlResult = await db.query(`SELECT * FROM ${DB_MIGRATIONS_TABLE_NAME}`);
         sqlResult.forEach((row) => {
             oldMigrationsSet.add(row[DB_MIGRATION_NAME]);
@@ -84,7 +84,7 @@ class ExecuteMigration {
                 await db.rollbackTransaction();
                 break;
             } finally {
-                await db.comminTransaction();
+                await db.commitTransaction();
             }
         }
     }

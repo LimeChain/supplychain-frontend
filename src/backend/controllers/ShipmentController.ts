@@ -37,7 +37,11 @@ export default class ShipmentController {
 
         const siteId = await this.getCurrentSiteId(context);
 
+        servicesFactory.db.beginTransaction();
+
         const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await shipmentService.creditShipment(siteId, req.shipmentModel, req.skuModels, req.skuOriginModels, req.shipmentDocumentModels);
+
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new CreditShipmentRes(shipmentModel, skuOriginModels, skuModels, shipmentDocumentModels));
     }

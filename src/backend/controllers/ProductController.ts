@@ -22,7 +22,10 @@ export default class ProductController {
         const req = new CreditProductReq(payload);
 
         const productService = servicesFactory.getProductService();
+
+        servicesFactory.db.beginTransaction();
         const productModel = await productService.creditProduct(req.productModel);
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new CreditProductRes(productModel));
     }

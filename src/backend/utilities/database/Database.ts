@@ -139,7 +139,7 @@ export default class Database {
         });
     }
 
-    async comminTransaction(): Promise<void> {
+    async commitTransaction(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.dbc.commit((er) => {
                 if (er) {
