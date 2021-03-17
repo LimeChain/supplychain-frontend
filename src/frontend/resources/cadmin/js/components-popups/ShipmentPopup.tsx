@@ -725,7 +725,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                 { shipmentDocumentModel.isUploaded() === true && (
                                     <>
                                         <a href={shipmentDocumentModel.shipmentDocumentUrl} download={shipmentDocumentModel.name} className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDownload }} />
-                                        { i >= popupStore.initialShipmentDocumentLength && (
+                                        { (shipmentModel.isDraft() === true || i >= popupStore.initialShipmentDocumentLength) && (
                                             <div className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} />
                                         )}
                                     </>
