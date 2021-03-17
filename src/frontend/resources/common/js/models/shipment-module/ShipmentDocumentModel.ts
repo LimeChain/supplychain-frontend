@@ -16,7 +16,7 @@ export default class ShipmentDocumentModel {
     constructor() {
         this.shipmentDocumentId = S.Strings.NOT_EXISTS;
         this.shipmentId = S.Strings.NOT_EXISTS;
-        this.documentType = S.NOT_EXISTS;
+        this.documentType = ShipmentDocumentConsts.S_DOCUMENT_TYPE_OTHER;
         this.mimeType = S.Strings.EMPTY;
         this.shipmentDocumentUrl = S.Strings.EMPTY;
         this.sizeInBytes = 0;

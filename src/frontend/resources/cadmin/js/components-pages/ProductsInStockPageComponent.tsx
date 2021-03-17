@@ -175,7 +175,11 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
 
         this.props.skuStore.screenSkuModels.forEach((skuModel: SkuModel) => {
 
-            const productModel = this.props.productStore.screenProductModels.find((p) => p.productId === skuModel.productId);
+            const productModel = this.props.productStore.productsMap.get(skuModel.productId);
+
+            if (productModel === undefined) {
+                return;
+            }
             const totalPrice = skuModel.quantity * skuModel.pricePerUnit;
 
             result.push([

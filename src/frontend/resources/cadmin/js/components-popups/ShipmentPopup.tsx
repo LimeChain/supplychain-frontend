@@ -366,17 +366,17 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return (
             <div className={'PopupWindowContent LargeContent'} >
                 <div className={'PopupHeader'} >
-                    <div className = { 'PopupTitleCnt' }>
+                    <div className={'PopupTitleCnt'}>
                         <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isDraft() ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
-                        { shipmentModel.isDraft() === false && (
-                            <div className = { 'FlexSplit' } >
+                        {shipmentModel.isDraft() === false && (
+                            <div className={'FlexSplit'} >
                                 <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>
                                 <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
                             </div>
                         )}
                     </div>
-                    <LayoutBlock className = { 'FlexSplit' } direction={LayoutBlock.DIRECTION_ROW} >
-                        <div className = { 'WidthLimiter' }>
+                    <LayoutBlock className={'FlexSplit'} direction={LayoutBlock.DIRECTION_ROW} >
+                        <div className={'WidthLimiter'}>
                             <Input
                                 placeholder={'Enter consigment ID'}
                                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[0])}
@@ -385,9 +385,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         </div>
                         {this.renderFromSite()}
                         {this.renderToSite()}
-                        <Actions className = { 'ActionsTransaction StartRight' } height = { Actions.HEIGHT_32 } >
-                            <Button href = { shipmentModel.getTransactionLink() } target = { '_blank' } color = { Button.COLOR_SCHEME_2 }>Transaction hash</Button>
-                            <Button href = { CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId) } download = { `shipment-${shipmentModel.shipmentId}.json` } color = { Button.COLOR_SCHEME_2 } >Raw Data</Button>
+                        <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
+                            <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
+                            <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
                         </Actions>
                     </LayoutBlock>
                 </div>
@@ -455,7 +455,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         return (
             <Select
-                className = { 'WidthLimiter' }
+                className={'WidthLimiter'}
                 label={'From'}
                 value={originSiteModel.siteId}
                 readOnly={true} >
@@ -489,7 +489,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const isEditable = shipmentModel.isDraft();
         return (
             <Select
-                className = { 'WidthLimiter' }
+                className={'WidthLimiter'}
                 label={'To'}
                 readOnly={isEditable === false}
                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[1])}
@@ -686,6 +686,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                     placeholder={'Select document type'}
                                     value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
                                     onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
+                                    error={shipmentDocumentModel.documentType === S.NOT_EXISTS}
                                     displayEmpty={true} >
                                     <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_CRM_DOCUMENT}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_CRM_DOCUMENT)}</MenuItem>
                                     <MenuItem value={ShipmentDocumentConsts.S_DOCUMENT_TYPE_BILL_OF_LANDING}>{ShipmentDocumentModel.getTypeAsString(ShipmentDocumentConsts.S_DOCUMENT_TYPE_BILL_OF_LANDING)}</MenuItem>
@@ -735,7 +736,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         const popupStore = this.props.popupStore;
 
         return (
-            <div className = { 'DocumentsAudit' } >
+            <div className={'DocumentsAudit'} >
                 { popupStore.shipmentDocumentModels.map((docModel: ShipmentDocumentModel, i) => {
                     return (
                         <div key={i} className="DocumentLine FlexRow FlexSplit">
@@ -745,9 +746,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                             <div className="DocumentSize StartRight">{formatBytes(docModel.sizeInBytes)}</div>
                             <Actions>
                                 <Button
-                                    href = {docModel.shipmentDocumentUrl }
+                                    href={docModel.shipmentDocumentUrl}
                                     download={docModel.name}>
-                                    <div className = { 'FlexRow' } >
+                                    <div className={'FlexRow'} >
                                         <div className={'SVG ButtonSvg'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} />
                                         Download
                                     </div>

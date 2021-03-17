@@ -14,7 +14,10 @@ export default class ShipmentRepo extends ShipmentRepoG {
 
         // filter by page
         if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_DRAFTS) {
-            databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', ShipmentModel.S_STATUS_DRAFT));
+            databaseWhere.andClause([
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', ShipmentModel.S_STATUS_DRAFT),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID, '=', shipmentFilter.siteId),
+            ]);
         } else if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_INCOMMING) {
             databaseWhere.andClause([
                 new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),

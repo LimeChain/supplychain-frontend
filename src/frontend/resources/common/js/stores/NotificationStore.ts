@@ -77,6 +77,7 @@ export default class NotificationStore {
             this.screenNotificationModels.forEach((notificatioModel) => {
                 notificatioModel.markAsRead();
             })
+            this.unreadCount = 0;
         });
     }
 

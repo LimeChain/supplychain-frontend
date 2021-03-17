@@ -18,6 +18,7 @@ export default class PopupShipmentStore extends PopupStore {
     static FIELDS_SHIPMENT = ['consignmentNumber', 'toSite'];
     static FIELDS_ADD_SKU_LOCALLY_PRODUCED_SUBSET = ['name', 'price', 'quantity'];
     static FIELDS_ADD_SKU = ['name', 'fromShipment', 'price', 'quantity'];
+    static FIELDS_ADD_DOCUMENT = ['documentType'];
 
     @observable popupActiveTab: number = PopupShipmentStore.POPUP_TAB_PRODUCTS;
     @observable productTableHelper: TableHelper;
@@ -33,6 +34,7 @@ export default class PopupShipmentStore extends PopupStore {
 
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
+    documentInputStateHelper: InputStateHelper;
     productIdsInSkuModels: Set<string>;
     genSkuId: number;
     initialShipmentDocumentLength: number;
