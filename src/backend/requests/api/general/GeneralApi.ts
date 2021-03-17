@@ -25,6 +25,12 @@ export default class GeneralApi extends GeneralApiH {
             case GeneralApi.Actions.FETCH_ALL_SITES:
                 await this.generalController.fetchAllSites(context);
                 break;
+            case GeneralApi.Actions.READ_NOTIFICATION_BY_ID:
+                await this.generalController.readNotificationById(context);
+                break;
+            case GeneralApi.Actions.READ_ALL_NOTIFICATIONS:
+                await this.generalController.readAllNotifications(context);
+                break;
             default:
                 break;
         }

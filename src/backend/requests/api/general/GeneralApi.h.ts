@@ -16,4 +16,6 @@ GeneralApiH.Actions = {
     GRPCTEST: 'b',
     FETCH_NOTIFICATIONS_BY_FILTER: 'c',
     FETCH_ALL_SITES: 'd',
+    READ_NOTIFICATION_BY_ID: 'e',
+    READ_ALL_NOTIFICATIONS: 'f',
 };

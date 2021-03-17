@@ -23,6 +23,7 @@ import ShipmentModelH from '../modules/ShipmentModule/Shipment/Model/ShipmentMod
 import ShipmentConsts from '../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
+import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
 
 export default class ShipmentService extends Service {
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
@@ -62,18 +63,9 @@ export default class ShipmentService extends Service {
 
         const oldShipmentStatus = shipmentModel.shipmentStatus;
 
-        // create notification if shipment sent or received
-        if (reqShipmentModel.shipmentStatus !== SV.NOT_EXISTS) {
-            shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
-            // create notification
-
-            if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
-                const notificationService = this.servicesFactory.getNotificationService();
-                notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
-            }
-        }
-
         shipmentModel.shipmentName = reqShipmentModel.shipmentName;
+        shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
+
         shipmentModel.shipmentConsignmentNumber = reqShipmentModel.shipmentConsignmentNumber;
         shipmentModel.shipmentDestinationSiteId = reqShipmentModel.shipmentDestinationSiteId;
         shipmentModel.shipmentDateOfShipment = reqShipmentModel.shipmentDateOfShipment;
@@ -85,9 +77,14 @@ export default class ShipmentService extends Service {
             shipmentModel.shipmentDeleted = reqShipmentModel.shipmentDeleted;
         }
 
-        console.log(shipmentModel.shipmentDeleted);
-
         shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
+
+        // create notification
+
+        if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+            const notificationService = this.servicesFactory.getNotificationService();
+            notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+        }
 
         // credit sku models
         const skuModels = []
@@ -137,7 +134,7 @@ export default class ShipmentService extends Service {
             }
 
             skuOriginModel.skuId = reqSkuOriginModel.skuId;
-            skuOriginModel.shipmentId = shipmentModel.shipmentId;
+            skuOriginModel.shipmentId = reqSkuOriginModel.shipmentId;
             skuOriginModel.skuOriginId = (await skuOriginRepo.save(skuOriginModel)).skuOriginId;
 
             skuOriginModels.push(skuOriginModel);
@@ -180,7 +177,6 @@ export default class ShipmentService extends Service {
         from: number,
         to: number,
     ): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
-
         const shipmentFilter = new ShipmentFilter();
         shipmentFilter.page = page;
         shipmentFilter.searchBy = searchBy;
@@ -211,7 +207,7 @@ export default class ShipmentService extends Service {
         const skuModels = await this.skuRepo.fetch(skuDbWhere);
 
         const skuoriginDbWhere = new DatabaseWhere();
-        skuoriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SHIPMENT_ID, '=', shipmentId));
+        skuoriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SKU_ID, '=', skuModels.map((s) => s.skuId)));
         const skuOriginModels = await this.skuOriginRepo.fetch(skuoriginDbWhere);
 
         const shipmentDocumentsDbWhere = new DatabaseWhere();
@@ -221,18 +217,58 @@ export default class ShipmentService extends Service {
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }
 
-    // async fetchShipmentsWhereProductLeftByProductId(productId: number): Promise<{ shipmentModels: ShipmentModel[], skuModels: SkuModel[] }> {
-    //     const skuDbWhere = new DatabaseWhere();
-    //     skuDbWhere.clause(SkuModelH.P_PRODUCT_ID, '=', productId);
+    async fetchShipmentsWhereProductLeftByProductId(productId: number, siteId): Promise<{ shipmentModels: ShipmentModel[], skuModels: SkuModel[] }> {
+        const skuDbWhere = new DatabaseWhere();
+        let { skuModels } = await this.fetchSkusInStock(siteId);
 
-    //     const skuModels = await this.skuRepo.fetch(skuDbWhere);
+        skuModels = skuModels.filter((s) => s.productId === productId);
+        const shipmentModels = await this.shipmentRepo.fetchByPrimaryValues(skuModels.map((s) => s.shipmentId));
 
-    //     const shipmentDbWhere = new DatabaseWhere();
-    //     shipmentDbWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', skuModels.map((s) => s.shipmentId)))
+        return { shipmentModels, skuModels };
+    }
 
-    // }
+    async fetchProductsInStock(siteId: number, searchBy: string, sortBy: number, from: number, to: number): Promise<{ skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize: number }> {
+        let { skuModels, productModels } = await this.fetchSkusInStock(siteId);
+        const sign = sortBy / Math.abs(sortBy);
 
-    async fetchSkusInStock(siteId: number, searchBy: string): Promise<{ skuModels: SkuModel[], productModels: ProductModel[] }> {
+        skuModels = skuModels.sort((a: SkuModel, b: SkuModel) => {
+
+            const productNameA = productModels.find((productJson: ProductModel) => productJson.productId === a.productId).productName;
+            const productNameB = productModels.find((productJson: ProductModel) => productJson.productId === b.productId).productName;
+
+            switch (Math.abs(sortBy)) {
+                case SkuFilter.S_SORT_BY_NAME:
+                    return productNameA.localeCompare(productNameB) * sign;
+                default:
+                    return (a.skuId - b.skuId) * sign;
+
+            }
+        })
+
+        if (searchBy !== SV.Strings.EMPTY) {
+
+            skuModels = skuModels.filter((skuModel: SkuModel) => {
+                if (skuModel.skuId.toString().includes(searchBy.toLocaleLowerCase())) {
+                    return true;
+                }
+
+                if (productModels.find((p: ProductModel) => p.productId === skuModel.productId).productName.toLowerCase().includes(searchBy.toLocaleLowerCase())) {
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+        const totalSkuSize = skuModels.length;
+
+        skuModels = skuModels.slice(from, to);
+        productModels = productModels.filter((p) => skuModels.find((s) => s.productId === p.productId) !== undefined)
+
+        return { skuModels, productModels, totalSkuSize };
+    }
+
+    async fetchSkusInStock(siteId: number): Promise<{ skuModels: SkuModel[], productModels: ProductModel[] }> {
 
         const shipmentFilter = new ShipmentFilter();
         shipmentFilter.siteId = siteId;

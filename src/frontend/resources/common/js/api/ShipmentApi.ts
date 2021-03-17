@@ -422,7 +422,6 @@ export default class ShipmentApi extends AbsApi {
             }
 
             const res = new FetchShipmentsByIdRes(json.obj);
-            console.log(res);
 
             callback(res.shipmentModel, res.skuModels, res.skuOriginModels, res.shipmentDocumentModels);
         })
@@ -434,61 +433,88 @@ export default class ShipmentApi extends AbsApi {
         sortBy: number,
         from: number,
         to: number,
-        callBack: (skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize) => void,
+        callback: (skuModels: SkuModel[], productModels: ProductModel[], totalSkuSize: number) => void,
     ) {
-        this.disableActions();
+        // this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        // setTimeout(() => {
+        //     this.enableActions();
 
-            const req = new FetchProductsInStockReq(searchBy, sortBy, from, to);
+        //     const req = new FetchProductsInStockReq(searchBy, sortBy, from, to);
 
-            const json = this.fetchSkusInStock(searchBy);
-            const sign = sortBy / Math.abs(sortBy);
+        //     const json = this.fetchSkusInStock(searchBy);
+        //     const sign = sortBy / Math.abs(sortBy);
 
-            json.skuJsons = json.skuJsons.sort((a: SkuModel, b: SkuModel) => {
+        //     json.skuJsons = json.skuJsons.sort((a: SkuModel, b: SkuModel) => {
 
-                const productNameA = json.productJsons.find((productJson: ProductModel) => productJson.productId === a.productId).productName;
-                const productNameB = json.productJsons.find((productJson: ProductModel) => productJson.productId === b.productId).productName;
+        //         const productNameA = json.productJsons.find((productJson: ProductModel) => productJson.productId === a.productId).productName;
+        //         const productNameB = json.productJsons.find((productJson: ProductModel) => productJson.productId === b.productId).productName;
 
-                switch (Math.abs(sortBy)) {
-                    case SkuFilter.S_SORT_BY_ID:
-                        return a.skuId.localeCompare(b.skuId) * sign;
-                    case SkuFilter.S_SORT_BY_NAME:
-                        return productNameA.localeCompare(productNameB) * sign;
-                    default:
-                        return a.skuId.localeCompare(b.skuId);
+        //         switch (Math.abs(sortBy)) {
+        //             case SkuFilter.S_SORT_BY_ID:
+        //                 return a.skuId.localeCompare(b.skuId) * sign;
+        //             case SkuFilter.S_SORT_BY_NAME:
+        //                 return productNameA.localeCompare(productNameB) * sign;
+        //             default:
+        //                 return a.skuId.localeCompare(b.skuId);
 
-                }
-            })
+        //         }
+        //     })
 
-            json.skuJsons = json.skuJsons.slice(from, to);
+        //     json.skuJsons = json.skuJsons.slice(from, to);
 
-            const res = new FetchProductsInStockRes(json);
+        //     const res = new FetchProductsInStockRes(json);
 
-            callBack(res.skuModels, res.productModels, res.totalSkuSize)
-        }, 100);
+        //     callBack(res.skuModels, res.productModels, res.totalSkuSize)
+        // }, 100);
+
+        const req = new FetchProductsInStockReq(searchBy, sortBy, from, to);
+
+        this.shipmentApi.req(Actions.SHIPMENT.FETCH_PRODUCTS_IN_STOCK, req, (json: any) => {
+
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
+            }
+
+            const res = new FetchProductsInStockRes(json.obj);
+
+            callback(res.skuModels, res.productModels, res.totalSkuSize);
+        })
     }
 
     fetchTotalValueInStock(callBack: (totalValue: number) => void) {
-        this.disableActions();
+        // this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        // setTimeout(() => {
+        //     this.enableActions();
 
-            const req = new FetchTotalValueInStockReq();
+        //     const req = new FetchTotalValueInStockReq();
 
-            const json = {
-                totalValue: 0,
+        //     const json = {
+        //         totalValue: 0,
+        //     }
+
+        //     this.fetchSkusInStock('').skuJsons.forEach((skuModel: SkuModel) => {
+        //         json.totalValue += skuModel.quantity * skuModel.pricePerUnit;
+        //     });
+
+        //     const res = new FetchTotalValueInStockRes(json);
+
+        // }, 100);
+
+        const req = new FetchTotalValueInStockReq();
+
+        this.shipmentApi.req(Actions.SHIPMENT.FETCH_TOTAL_VALUE_IN_STOCK, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            this.fetchSkusInStock('').skuJsons.forEach((skuModel: SkuModel) => {
-                json.totalValue += skuModel.quantity * skuModel.pricePerUnit;
-            });
+            const res = new FetchTotalValueInStockRes(json.obj);
 
-            const res = new FetchTotalValueInStockRes(json);
-
-        }, 100);
+            callBack(res.totalValue);
+        })
     }
 
     fetchShipmentsWhereProductLeftByProductId(productId: string, callback: (skuModels: SkuModel[], shipmentModels: ShipmentModel[]) => void) {
@@ -531,66 +557,66 @@ export default class ShipmentApi extends AbsApi {
 
     fetchSkusInStock(searchBy: string) {
 
-        // const json = {
-        //     skuJsons: [],
-        //     productJsons: [],
-        //     totalSkuSize: 0,
-        // }
+        const json = {
+            skuJsons: [],
+            productJsons: [],
+            totalSkuSize: 0,
+        }
 
-        // const currentSiteId = CookieHelper.fetchAccounts().accountModel.siteId;
-        // const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED);
+        const currentSiteId = CookieHelper.fetchAccounts().accountModel.siteId;
+        const shipmentsDeliveredHere = storageHelper.shipmentsJson.filter((shipmentJson: ShipmentModel) => shipmentJson.shipmentDestinationSiteId === currentSiteId && shipmentJson.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED);
 
-        // shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
-        //     const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);
+        shipmentsDeliveredHere.forEach((shipmentJson: ShipmentModel) => {
+            const skusInCurrentShipment = storageHelper.skusJson.filter((skuJson: SkuModel) => skuJson.shipmentId === shipmentJson.shipmentId);
 
-        //     skusInCurrentShipment.forEach((skuJson: SkuModel) => {
-        //         let skuQuantity = skuJson.quantity;
+            skusInCurrentShipment.forEach((skuJson: SkuModel) => {
+                let skuQuantity = skuJson.quantity;
 
-        //         storageHelper.skuOriginsJson.filter((skuOriginJson: SkuOriginModel) => skuOriginJson.shipmentId === shipmentJson.shipmentId)
-        //             .forEach((skuOriginJson: SkuOriginModel) => {
-        //                 // console.log(skuOriginJson);
+                storageHelper.skuOriginsJson.filter((skuOriginJson: SkuOriginModel) => skuOriginJson.shipmentId === shipmentJson.shipmentId)
+                    .forEach((skuOriginJson: SkuOriginModel) => {
+                        // console.log(skuOriginJson);
 
-        //                 const skuInThisOrigin = storageHelper.skusJson.find((skuJsonTemp: SkuModel) => skuJsonTemp.skuId === skuOriginJson.skuId);
-        //                 // console.log(skuInThisOrigin);
+                        const skuInThisOrigin = storageHelper.skusJson.find((skuJsonTemp: SkuModel) => skuJsonTemp.skuId === skuOriginJson.skuId);
+                        // console.log(skuInThisOrigin);
 
-        //                 if (skuJson.productId === skuInThisOrigin.productId) {
-        //                     skuQuantity -= skuInThisOrigin.quantity;
-        //                 }
-        //             })
+                        if (skuJson.productId === skuInThisOrigin.productId) {
+                            skuQuantity -= skuInThisOrigin.quantity;
+                        }
+                    })
 
-        //         const productJson = storageHelper.productsJson.find((productJsonTemp: ProductModel) => productJsonTemp.productId === skuJson.productId);
+                const productJson = storageHelper.productsJson.find((productJsonTemp: ProductModel) => productJsonTemp.productId === skuJson.productId);
 
-        //         const skuTemp = JSON.parse(JSON.stringify(skuJson));
-        //         skuTemp.quantity = skuQuantity;
+                const skuTemp = JSON.parse(JSON.stringify(skuJson));
+                skuTemp.quantity = skuQuantity;
 
-        //         if (skuTemp.quantity > 0) {
-        //             json.skuJsons.push(skuTemp);
-        //             // console.log(skuTemp);
+                if (skuTemp.quantity > 0) {
+                    json.skuJsons.push(skuTemp);
+                    // console.log(skuTemp);
 
-        //             if (json.productJsons.find((p: ProductModel) => p.productId === productJson.productId) === undefined) {
-        //                 json.productJsons.push(productJson);
-        //             }
-        //         }
-        //     })
-        // })
+                    if (json.productJsons.find((p: ProductModel) => p.productId === productJson.productId) === undefined) {
+                        json.productJsons.push(productJson);
+                    }
+                }
+            })
+        })
 
-        // if (searchBy !== S.Strings.EMPTY) {
-        //     json.skuJsons = json.skuJsons.filter((skuJson: SkuModel) => {
-        //         if (skuJson.skuId.includes(searchBy.toLocaleLowerCase())) {
-        //             return true;
-        //         }
+        if (searchBy !== S.Strings.EMPTY) {
+            json.skuJsons = json.skuJsons.filter((skuJson: SkuModel) => {
+                if (skuJson.skuId.includes(searchBy.toLocaleLowerCase())) {
+                    return true;
+                }
 
-        //         if (json.productJsons.find((p: ProductModel) => p.productId === skuJson.productId).productName.toLowerCase().includes(searchBy.toLocaleLowerCase())) {
-        //             return true;
-        //         }
+                if (json.productJsons.find((p: ProductModel) => p.productId === skuJson.productId).productName.toLowerCase().includes(searchBy.toLocaleLowerCase())) {
+                    return true;
+                }
 
-        //         return false;
-        //     });
-        // }
+                return false;
+            });
+        }
 
-        // json.totalSkuSize = json.skuJsons.length;
+        json.totalSkuSize = json.skuJsons.length;
 
-        // return json;
+        return json;
     }
 
 }

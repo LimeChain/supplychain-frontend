@@ -1,30 +1,32 @@
 import fs from 'fs';
 import Config from '../../../config/config';
+import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
+import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
+import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
 
 import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import CreditShipmentReq from '../requests/network/requests/CreditShipmentReq';
+import FetchProductsInStockReq from '../requests/network/requests/FetchProductsInStockReq';
 import FetchShipmentByIdReq from '../requests/network/requests/FetchShipmentByIdReq';
 import FetchShipmentsByFilterReq from '../requests/network/requests/FetchShipmentsByFilterReq';
 import FetchShipmentsWithProductQuantityLeftByProductIdReq from '../requests/network/requests/FetchShipmentsWithProductQuantityLeftByProductIdReq';
+import FetchTotalValueInStockReq from '../requests/network/requests/FetchTotalValueInStockReq';
 import CreditShipmentRes from '../requests/network/responses/CreditShipmentRes';
+import FetchProductsInStockRes from '../requests/network/responses/FetchProductsInStockRes';
 import FetchShipmentsByFilterRes from '../requests/network/responses/FetchShipmentsByFilterRes';
 import FetchShipmentsByIdRes from '../requests/network/responses/FetchShipmentsByIdRes';
 import FetchShipmentsWithProductQuantityLeftByProductIdRes from '../requests/network/responses/FetchShipmentsWithProductQuantityLeftByProductIdRes';
+import FetchTotalValueInStockRes from '../requests/network/responses/FetchTotalValueInStockRes';
 import Context from '../utilities/network/Context';
 import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
 import Params from '../utilities/Params';
+import SV from '../utilities/SV';
 
 export default class ShipmentController {
 
     async creditShipment(context: Context) {
-        const session = context.session;
-
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
-
-        const accountId = session.getAccountId();
+        this.checkIfAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
@@ -32,33 +34,24 @@ export default class ShipmentController {
         const req = new CreditShipmentReq(payload);
 
         const shipmentService = servicesFactory.getShipmentService();
-        const accountService = servicesFactory.getAccountService();
 
-        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
+        const siteId = await this.getCurrentSiteId(context);
 
         const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await shipmentService.creditShipment(siteId, req.shipmentModel, req.skuModels, req.skuOriginModels, req.shipmentDocumentModels);
 
-        context.res.set(new CreditShipmentRes(shipmentModel, [], [], []));
+        context.res.set(new CreditShipmentRes(shipmentModel, skuOriginModels, skuModels, shipmentDocumentModels));
     }
 
     async fetchShipmentsByFilter(context: Context) {
-        const session = context.session;
-
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
-
-        const accountId = session.getAccountId();
+        this.checkIfAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const shipmentService = servicesFactory.getShipmentService();
 
         const req = new FetchShipmentsByFilterReq(payload);
 
-        const shipmentService = servicesFactory.getShipmentService();
-        const accountService = servicesFactory.getAccountService();
-
-        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
+        const siteId = await this.getCurrentSiteId(context);
 
         const { shipmentModels, totalSize } = await shipmentService.fetchShipmentsByFilter(
             siteId,
@@ -74,13 +67,7 @@ export default class ShipmentController {
     }
 
     async fetchShipmentById(context: Context) {
-        const session = context.session;
-
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
-
-        const accountId = session.getAccountId();
+        this.checkIfAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
@@ -95,27 +82,32 @@ export default class ShipmentController {
     }
 
     async fetchShipmentsWhereProductLeftByProductId(context: Context) {
-        const session = context.session;
+        this.checkIfAdmin(context);
 
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
-
-        const accountId = session.getAccountId();
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
-        const accountService = servicesFactory.getAccountService();
 
-        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
+        const siteId = await this.getCurrentSiteId(context);
         const req = new FetchShipmentsWithProductQuantityLeftByProductIdReq(payload);
         const shipmentService = servicesFactory.getShipmentService();
 
-        const { skuModels, productModels } = await shipmentService.fetchSkusInStock(siteId, '');
+        const { shipmentModels, skuModels } = await shipmentService.fetchShipmentsWhereProductLeftByProductId(req.productId, siteId);
 
-        // const { shipmentModels, skuModels } = await shipmentService.fetchShipmentsWhereProductLeftByProductId(req.productId);
+        context.res.set(new FetchShipmentsWithProductQuantityLeftByProductIdRes(skuModels, shipmentModels));
 
-        // context.res.set(new FetchShipmentsWithProductQuantityLeftByProductIdRes(skuModels, shipmentModels));
+    }
 
+    async fetchProductsInStock(context: Context) {
+        this.checkIfAdmin(context);
+        const servicesFactory = context.servicesFactory;
+        const payload = context.payload;
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const siteId = await this.getCurrentSiteId(context);
+        const req = new FetchProductsInStockReq(payload);
+
+        const { skuModels, productModels, totalSkuSize } = await shipmentService.fetchProductsInStock(siteId, req.searchBy, req.sortBy, req.from, req.to);
+        context.res.set(new FetchProductsInStockRes(skuModels, productModels, totalSkuSize));
     }
 
     async downloadShipmentJson(context: Context) {
@@ -140,5 +132,40 @@ export default class ShipmentController {
             // fs.unlinkSync(filepath);
         });
         context.res = stream;
+    }
+
+    async fetchTotalValueInStock(context: Context) {
+        this.checkIfAdmin(context);
+        const servicesFactory = context.servicesFactory;
+        const payload = context.payload;
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const siteId = await this.getCurrentSiteId(context);
+        const req = new FetchTotalValueInStockReq(payload);
+
+        const { skuModels } = await shipmentService.fetchProductsInStock(siteId, SV.Strings.EMPTY, req.sortBy, req.from, req.to);
+
+        let totalValue = 0;
+
+        skuModels.forEach((s) => { totalValue += s.quantity * s.pricePerUnit });
+
+        context.res.set(new FetchTotalValueInStockRes(totalValue));
+    }
+
+    checkIfAdmin(context) {
+        const session = context.session;
+
+        if (session.isAdmin() === false) {
+            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
+        }
+
+    }
+
+    async getCurrentSiteId(context): Promise<number> {
+        const accountId = context.session.getAccountId();
+        const accountService = context.servicesFactory.getAccountService();
+        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
+
+        return siteId;
     }
 }

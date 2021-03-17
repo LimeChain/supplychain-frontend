@@ -20,90 +20,117 @@ export default class GeneralApi extends AbsApi {
         this.generalApi = new Api(Apis.GENERAL, this.enableActions, this.disableActions);
     }
 
-    fetchNotificationsByFilter(notificationRead: number, from: number, to: number, callback: (notificationModels: NotificationModel[], totalSize: number, hasUnread: number) => void) {
-        this.disableActions();
+    fetchNotificationsByFilter(notificationRead: number, from: number, to: number, callback: (notificationModels: NotificationModel[], totalSize: number, unreadCount: number) => void) {
+        // this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        // setTimeout(() => {
+        //     this.enableActions();
 
-            const req = new FetchNotificationsByFilterReq(notificationRead, from, to);
+        //     const req = new FetchNotificationsByFilterReq(notificationRead, from, to);
 
-            const json = {
-                notificationJsons: [],
-                totalSize: 0,
-                unreadCount: 0,
-            }
-
-            json.notificationJsons = storageHelper.notificationsJson
-            if (notificationRead === S.INT_TRUE || notificationRead === S.INT_FALSE) {
-                json.notificationJsons = json.notificationJsons.filter((notificationJson) => notificationJson.notificationRead === notificationRead)
-            }
-
-            storageHelper.notificationsJson.forEach((j: NotificationModel) => (j.notificationRead === S.INT_FALSE ? json.unreadCount++ : ''));
-
-            json.notificationJsons.sort((a, b) => (a.notificationTime < b.notificationTime ? 1 : -1));
-
-            json.totalSize = json.notificationJsons.length;
-
-            json.notificationJsons = json.notificationJsons.slice(from, to);
-
-            const res = new FetchNotificationsByFilterRes(json);
-
-            callback(res.notificationModels, res.totalSize, res.unreadCount);
-        }, 100);
-
-        // const req = new FetchNotificationsByFilterReq(notificationRead, from, to);
-
-        // this.generalApi.req(Actions.GENERAL.FETCH_NOTIFICATIONS_BY_FILTER, req, (json: any) => {
-        //     if (json.status !== ResponseConsts.S_STATUS_OK) {
-        //         this.showAlert('Something went wrong');
-        //         return;
+        //     const json = {
+        //         notificationJsons: [],
+        //         totalSize: 0,
+        //         unreadCount: 0,
         //     }
 
-        //     const res = new FetchNotificationsByFilterRes(json.obj);
+        //     json.notificationJsons = storageHelper.notificationsJson
+        //     if (notificationRead === S.INT_TRUE || notificationRead === S.INT_FALSE) {
+        //         json.notificationJsons = json.notificationJsons.filter((notificationJson) => notificationJson.notificationRead === notificationRead)
+        //     }
 
-        //     callback(res.notificationModels, res.totalSize);
+        //     storageHelper.notificationsJson.forEach((j: NotificationModel) => (j.notificationRead === S.INT_FALSE ? json.unreadCount++ : ''));
 
-        // });
+        //     json.notificationJsons.sort((a, b) => (a.notificationTime < b.notificationTime ? 1 : -1));
+
+        //     json.totalSize = json.notificationJsons.length;
+
+        //     json.notificationJsons = json.notificationJsons.slice(from, to);
+
+        //     const res = new FetchNotificationsByFilterRes(json);
+
+        //     callback(res.notificationModels, res.totalSize, res.unreadCount);
+        // }, 100);
+
+        const req = new FetchNotificationsByFilterReq(notificationRead, from, to);
+
+        this.generalApi.req(Actions.GENERAL.FETCH_NOTIFICATIONS_BY_FILTER, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
+            }
+
+            const res = new FetchNotificationsByFilterRes(json.obj);
+
+            callback(res.notificationModels, res.totalSize, res.unreadCount);
+
+        });
     }
 
     readAllNotifications(callback: () => void) {
-        this.disableActions();
+        // this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        // setTimeout(() => {
+        //     this.enableActions();
 
-            storageHelper.notificationsJson.forEach((notificationJson) => {
-                notificationJson.notificationRead = S.INT_TRUE;
-            });
-            storageHelper.save();
+        //     storageHelper.notificationsJson.forEach((notificationJson) => {
+        //         notificationJson.notificationRead = S.INT_TRUE;
+        //     });
+        //     storageHelper.save();
+
+        //     callback();
+        // }, 100);
+
+        const req = new ReadAllNotificationsReq();
+
+        this.generalApi.req(Actions.GENERAL.READ_ALL_NOTIFICATIONS, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
+            }
+
+            const res = new ReadAllNotificationsRes();
 
             callback();
-        }, 100);
+        });
     }
 
     readNotification(notificationModel: NotificationModel, callback: () => void) {
-        this.disableActions();
+        // this.disableActions();
 
-        setTimeout(() => {
-            this.enableActions();
+        // setTimeout(() => {
+        //     this.enableActions();
 
-            const req = new ReadNotificationByIdReq(notificationModel);
+        //     const req = new ReadNotificationByIdReq(notificationModel);
 
-            const json = {
-                notificationJson: null,
+        //     const json = {
+        //         notificationJson: null,
+        //     }
+
+        //     json.notificationJson = storageHelper.notificationsJson.find((nJson: NotificationModel) => nJson.notificationId === notificationModel.notificationId)
+        //     json.notificationJson.notificationRead = S.INT_TRUE;
+
+        //     storageHelper.save();
+
+        //     const res = new ReadNotificationByIdRes(json);
+        //     notificationModel.notificationRead = res.notificationModel.notificationRead;
+
+        //     callback();
+        // }, 100);
+
+        const req = new ReadNotificationByIdReq(notificationModel);
+
+        this.generalApi.req(Actions.GENERAL.READ_NOTIFICATION_BY_ID, req, (json: any) => {
+            if (json.status !== ResponseConsts.S_STATUS_OK) {
+                this.showAlert('Something went wrong');
+                return;
             }
 
-            json.notificationJson = storageHelper.notificationsJson.find((nJson: NotificationModel) => nJson.notificationId === notificationModel.notificationId)
-            json.notificationJson.notificationRead = S.INT_TRUE;
+            const res = new ReadNotificationByIdRes(json.obj);
 
-            storageHelper.save();
-
-            const res = new ReadNotificationByIdRes(json);
             notificationModel.notificationRead = res.notificationModel.notificationRead;
-
             callback();
-        }, 100);
+        });
     }
 
     fetchAllSites(callback: (siteModels: SiteModel[], countryModels: CountryModel[]) => void) {

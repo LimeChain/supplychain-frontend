@@ -1,7 +1,7 @@
 export class FetchAllSitesRes {
 
-    siteModels: Array < SiteModel >
-    countryModels: Array < CountryModel >
+    siteModels: Array<SiteModel>
+    countryModels: Array<CountryModel>
 
 }
 
@@ -14,8 +14,11 @@ export class FetchNotificationsByFilterRes {
 }
 
 export class ReadAllNotificationsRes {
+
 }
 
 export class ReadNotificationByIdRes {
+
     notificationModel: NotificationModel
+
 }

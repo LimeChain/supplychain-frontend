@@ -93,6 +93,8 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                 if (sModel.isReceived() === false && savedShipmentModel.isReceived() === true) {
                     Object.assign(sModel, savedShipmentModel);
                 }
+
+                this.fetchProductsInStockData();
             });
         });
     }

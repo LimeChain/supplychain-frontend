@@ -30,7 +30,8 @@ export class FetchNotificationsByFilterRes {
 
 export class ReadAllNotificationsRes {
 
-    constructor(json) {
+    constructor() {
+
     }
 }
 

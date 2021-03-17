@@ -25,8 +25,14 @@ export default class ShipmentApi extends ShipmentApiH {
             case ShipmentApiH.Actions.FETCH_SHIPMENT_WHERE_PRODUCT_LEFT_BY_PRODUCT_ID:
                 await this.shipmentController.fetchShipmentsWhereProductLeftByProductId(context);
                 break;
+            case ShipmentApiH.Actions.FETCH_PRODUCTS_IN_STOCK:
+                await this.shipmentController.fetchProductsInStock(context);
+                break;
             case ShipmentApiH.Actions.DOWNLOAD_SHIPMENT_JSON:
                 await this.shipmentController.downloadShipmentJson(context);
+                break;
+            case ShipmentApiH.Actions.FETCH_TOTAL_VALUE_IN_STOCK:
+                await this.shipmentController.fetchTotalValueInStock(context);
                 break;
             default:
                 break;

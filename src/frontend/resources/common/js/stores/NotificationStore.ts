@@ -62,7 +62,6 @@ export default class NotificationStore {
                 return;
             }
 
-            console.log(notificationModels);
             if (wipe === true) {
                 this.onScreenData(notificationModels, totalSize);
             } else {
