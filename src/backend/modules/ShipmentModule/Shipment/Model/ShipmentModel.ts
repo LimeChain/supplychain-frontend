@@ -1,5 +1,7 @@
+import path from 'path';
 import SV from '../../../../utilities/SV';
 import ShipmentModelG from './ShipmentModelG';
+import Config from '../../../../../../config/config';
 
 export default class ShipmentModel extends ShipmentModelG {
 
@@ -24,6 +26,10 @@ export default class ShipmentModel extends ShipmentModelG {
 
     isShipmentStatusLocked(newShipmentStatus) {
         return this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED && newShipmentStatus !== ShipmentModel.S_STATUS_RECEIVED;
+    }
+
+    getStoragePath() {
+        return path.join(Config.Path.Root.Data.SHIPMENTS, this.shipmentId.toString());
     }
 
 }

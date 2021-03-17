@@ -85,6 +85,7 @@ const Config = {
             DATA: path.join(__dirname, '../data'),
             Data: {
                 SESSIONS: path.join(__dirname, '../data/sessions'),
+                SHIPMENTS: path.join(__dirname, '../data/shipments'),
             },
 
             BACKEND: path.join(__dirname, '../src/backend'),

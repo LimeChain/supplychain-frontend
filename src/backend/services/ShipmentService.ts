@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
 import SkuRepo from '../modules/ProductModule/Sku/Repo/SkuRepo';
@@ -141,6 +142,11 @@ export default class ShipmentService extends Service {
         }
 
         const shipmentDocumentModels = [];
+
+        if (reqShipmentDocumentModels.length > 0) {
+            const storagePath = shipmentModel.getStoragePath();
+            await fs.mkdir(storagePath, { 'recursive': true });
+        }
 
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             const reqShipmentDocumentModel = reqShipmentDocumentModels[i];

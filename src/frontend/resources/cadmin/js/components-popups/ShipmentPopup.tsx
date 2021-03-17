@@ -119,8 +119,14 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         this.props.popupStore.setTabProducts();
     }
 
-    onClickTabDocuments = () => {
-        this.props.popupStore.setTabDocuments();
+    onClickTabDocuments = async () => {
+        const popupStore = this.props.popupStore;
+        const shipmentModel = popupStore.shipmentModel;
+        if (shipmentModel.isNew() === true) {
+            popupStore.shipmentModel.saveAsDraft();
+            await this.creditShipment();
+        }
+        popupStore.setTabDocuments();
     }
 
     onClickChangeManufacturedPlace(value) {
