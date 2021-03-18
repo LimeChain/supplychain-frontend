@@ -259,6 +259,10 @@ export default class ShipmentService extends Service {
 
     }
 
+    async fetchShipmentDocumentById(shipmentDocumentId: number): Promise<ShipmentDocumentModel> {
+        return this.shipmentDocumentRepo.fetchByPrimaryValue(shipmentDocumentId);
+    }
+
     async fetchShipmentsByFilter(
         siteId: number,
         page: number,

@@ -157,25 +157,31 @@ export default class ShipmentController {
 
     async downloadShipmentDocumentFile(context: Context) {
         const payload = context.payload;
-        const shipmentId = payload.params[Params.ID];
+        const shipmentDocumentId = payload.params[Params.ID];
 
-        const filepath = `${__dirname}/ShipmentController.js`;
+        const servicesFactory = context.servicesFactory;
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const shipmentDocumentModel = await shipmentService.fetchShipmentDocumentById(shipmentDocumentId);
+        const { shipmentModel } = await shipmentService.fetchShipmentById(shipmentDocumentModel.shipmentId);
+
         payload.ctx.set('Content-Description', 'File Transfer');
         payload.ctx.set('Content-Type', 'application/octet-stream');
-        payload.ctx.set('Content-Disposition', `attachment; filename="shipment-${shipmentId}.json"`);
+        payload.ctx.set('Content-Disposition', `attachment; filename="${shipmentDocumentModel.name}"`);
         // payload.ctx.set('Content-Disposition: attachment; filename*=UTF-8\'\'' . rawurlencode($filename));
         payload.ctx.set('Content-Transfer-Encoding', 'binary');
         payload.ctx.set('Expires', '0');
         payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
         payload.ctx.set('Pragma', 'public');
-        payload.ctx.set('Content-Length', (await fsPromises.stat(filepath)).size);
+        payload.ctx.set('Content-Length', shipmentDocumentModel.sizeInBytes);
 
-        const stream = fs.createReadStream(filepath, {
+        const stream = fs.createReadStream(shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId), {
             'autoClose': true,
         });
         stream.on('end', () => {
             // fs.unlinkSync(filepath);
         });
+
         context.res = stream;
     }
 
