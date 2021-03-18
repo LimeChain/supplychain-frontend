@@ -18,6 +18,7 @@
   "dependencies": {
     "@grpc/proto-loader": "^0.5.6",
     "aes-js": "^3.1.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

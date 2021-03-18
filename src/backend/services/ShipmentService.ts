@@ -25,6 +25,7 @@ import ShipmentConsts from '../../../builds/dev-generated/ShipmentModule/Shipmen
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
+import S from '../../frontend/resources/common/js/utilities/Main';
 
 export default class ShipmentService extends Service {
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
@@ -87,9 +88,19 @@ export default class ShipmentService extends Service {
             notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
         }
 
+        // delete missing skuModels
+        const skuModDelDbWhere = new DatabaseWhere();
+
+        skuModDelDbWhere.andClause([
+            new DatabaseWhereClause(SkuModel.P_SKU_ID, '!=', reqSkuModels.map((s) => s.skuId)),
+            new DatabaseWhereClause(SkuModel.P_SHIPMENT_ID, '=', shipmentModel.shipmentId),
+        ])
+
+        const skuToDeleteModels = await this.skuRepo.fetch(skuModDelDbWhere);
+        await this.skuRepo.deleteByPrimaryValues(skuToDeleteModels.map((s) => s.skuId))
+
         // credit sku models
         const skuModels = []
-
         for (let i = 0; i < reqSkuModels.length; i++) {
             const reqSkuModel = reqSkuModels[i];
 
@@ -120,6 +131,13 @@ export default class ShipmentService extends Service {
             skuModels.push(skuModel);
         }
 
+        // delete missing skuOriginModels
+        const skuOriginModDelDbWhere = new DatabaseWhere();
+
+        skuOriginModDelDbWhere.clause(new DatabaseWhereClause(SkuOriginModel.P_SKU_ID, '=', skuToDeleteModels.map((s) => s.skuId)))
+
+        await this.skuOriginRepo.delete(skuOriginModDelDbWhere);
+
         const skuOriginModels = [];
         for (let i = 0; i < reqSkuOriginModels.length; i++) {
             const reqSkuOriginModel = reqSkuOriginModels[i];
@@ -147,6 +165,13 @@ export default class ShipmentService extends Service {
             const storagePath = shipmentModel.getStoragePath();
             await fs.mkdir(storagePath, { 'recursive': true });
         }
+
+        const docuDelDbWhere = new DatabaseWhere();
+        docuDelDbWhere.andClause([
+            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_DOCUMENT_ID, '!=', reqShipmentDocumentModels.map((s) => s.shipmentDocumentId)),
+            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', shipmentModel.shipmentId),
+        ])
+        await shipmentDocumentRepo.delete(docuDelDbWhere);
 
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             const reqShipmentDocumentModel = reqShipmentDocumentModels[i];
