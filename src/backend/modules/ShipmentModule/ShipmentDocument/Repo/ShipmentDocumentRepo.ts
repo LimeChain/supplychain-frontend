@@ -6,7 +6,7 @@ import ShipmentDocumentRepoG from './ShipmentDocumentRepoG';
 
 export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
 
-    async deleteUnsed(shipmentModel: ShipmentModel, usedShipmentDocumentModels: ShipmentDocumentModel[]) {
+    async deleteUnused(shipmentModel: ShipmentModel, usedShipmentDocumentModels: ShipmentDocumentModel[]) {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.andClause([
             new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_DOCUMENT_ID, '!=', usedShipmentDocumentModels.map((s) => s.shipmentDocumentId)),

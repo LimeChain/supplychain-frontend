@@ -89,6 +89,7 @@ export default class ShipmentService extends Service {
 
         // delete missing skuModels
         const skuToDeleteModels = await this.skuRepo.deleteUnused(shipmentModel, reqSkuModels);
+
         // credit sku models
         const skuModels = []
         for (let i = 0; i < reqSkuModels.length; i++) {
@@ -123,6 +124,7 @@ export default class ShipmentService extends Service {
 
         // delete missing skuOriginModels
         this.skuOriginRepo.deleteUnused(skuToDeleteModels);
+
         // credit sku origin models
         const skuOriginModels = [];
         for (let i = 0; i < reqSkuOriginModels.length; i++) {
@@ -146,7 +148,8 @@ export default class ShipmentService extends Service {
         }
 
         // delete missing document models from the db
-        await this.shipmentDocumentRepo.deleteUnsed(shipmentModel, reqShipmentDocumentModels);
+        await this.shipmentDocumentRepo.deleteUnused(shipmentModel, reqShipmentDocumentModels);
+
         // delete missing document files
         const storagePath = shipmentModel.getStoragePath();
         try {
@@ -165,6 +168,7 @@ export default class ShipmentService extends Service {
             }
         } catch (err) {
         }
+
         // credit shipment document models
         const shipmentDocumentModels = [];
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
