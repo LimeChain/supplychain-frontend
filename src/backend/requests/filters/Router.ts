@@ -118,6 +118,7 @@ export default class Router {
 
     static async processResources(ctx) {
         const url = ctx.URL.pathname;
+        console.log('url:', url);
 
         const i = Math.max(0, url.length - 6);
         let ext = null;
@@ -128,7 +129,9 @@ export default class Router {
             }
         }
 
+
         const path = Config.Path.Root.FRONTEND + url;
+        console.log('path:', path);
         let contentType = null;
         switch (ext) {
             case 'png':

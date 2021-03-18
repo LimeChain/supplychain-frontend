@@ -33,6 +33,7 @@ class ProdTarget {
                 fs.unlinkSync(sourceChildPath);
             }
         });
+        await RootModule.copyEnvFile(Config.Path.PROD, true);
     }
 
 }

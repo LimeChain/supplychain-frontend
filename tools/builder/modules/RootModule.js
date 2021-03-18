@@ -3,6 +3,7 @@ const fs = require('fs');
 const util = require('util');
 
 const existsAsync = util.promisify(fs.exists);
+const copyAsync = util.promisify(fs.copyFile);
 
 const Babel = require('@babel/core');
 
@@ -18,6 +19,18 @@ class RootModule {
         await FileHelper.traversePath(Config.Path.ROOT, configTargetPath, serverExclude, true, (sourceChildPath, targetChildPath) => {
             RootModule.processFile(sourceChildPath, targetChildPath, configTargetPath);
         });
+
+        // Copy correct ENV
+        await RootModule.copyEnvFile(configTargetPath);
+    }
+
+    static async copyEnvFile(configTargetPath, isFinal) {
+        let envName = path.basename(Config.ENV_PATH);
+        if (isFinal) {
+            envName = '.env';
+        }
+        const tragetPath = path.join(configTargetPath, 'config', envName);
+        await copyAsync(Config.ENV_PATH, tragetPath);
     }
 
     static match(targetPath) {
@@ -86,8 +99,12 @@ const serverExclude = [
     path.join(Config.Path.ROOT, '/.git'),
     path.join(Config.Path.ROOT, '/builds'),
     path.join(Config.Path.ROOT, '/docs'),
+    path.join(Config.Path.ROOT, '/definitions'),
     path.join(Config.Path.ROOT, '/config/nginx'),
     path.join(Config.Path.ROOT, '/config/.env.example'),
+    path.join(Config.Path.ROOT, '/config/.env.dev'),
+    path.join(Config.Path.ROOT, '/config/.env.production'),
+    path.join(Config.Path.ROOT, '/config/.env.staging'),
     path.join(Config.Path.ROOT, '/data'),
     path.join(Config.Path.ROOT, '/flow-typed'),
     path.join(Config.Path.ROOT, '/node_modules'),

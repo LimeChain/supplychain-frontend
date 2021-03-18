@@ -24,6 +24,9 @@ class ExecuteMigration {
                 clearInterval(intervalHandler);
                 await ExecuteMigration.execute(db, MIGRATIONS);
             } catch (ex) {
+                console.log(Config.Database.HOST);
+                console.log('-------11------');
+                console.log(ex);
                 console.log('waiting for db to start migrations');
                 // no database, so just wait for next execution
             } finally {

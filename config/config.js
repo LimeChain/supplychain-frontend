@@ -18,7 +18,6 @@ if (result.error) {
 const envVariables = [
     'NODE_ENV',
     'BACKEND_PORT',
-    'FRONTEND_PORT',
     'URL',
     'SESSION_UNIQUE_KEY',
     'DATABASE_HOST',
@@ -194,6 +193,7 @@ const Config = {
         CADMIN: `${URL_ROOT}/cadmin`,
         API: `${URL_ROOT}/api`,
     },
+    ENV_PATH: envPath,
 };
 
 module.exports = Config;
