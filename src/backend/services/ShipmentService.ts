@@ -46,11 +46,6 @@ export default class ShipmentService extends Service {
         reqSkuOriginModels: SkuOriginModel[],
         reqShipmentDocumentModels: ShipmentDocumentModel[],
     ): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
-
-        const skuRepo = this.repoFactory.getSkuRepo();
-        const skuOriginRepo = this.repoFactory.getSkuOriginRepo();
-        const shipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
-
         let shipmentModel: ShipmentModel | null = null;
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
@@ -87,23 +82,13 @@ export default class ShipmentService extends Service {
         shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
 
         // create notification
-
         if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
             const notificationService = this.servicesFactory.getNotificationService();
             notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
         }
 
         // delete missing skuModels
-        const skuModDelDbWhere = new DatabaseWhere();
-
-        skuModDelDbWhere.andClause([
-            new DatabaseWhereClause(SkuModel.P_SKU_ID, '!=', reqSkuModels.map((s) => s.skuId)),
-            new DatabaseWhereClause(SkuModel.P_SHIPMENT_ID, '=', shipmentModel.shipmentId),
-        ])
-
-        const skuToDeleteModels = await this.skuRepo.fetch(skuModDelDbWhere);
-        await this.skuRepo.deleteByPrimaryValues(skuToDeleteModels.map((s) => s.skuId))
-
+        const skuToDeleteModels = await this.skuRepo.deleteUnused(shipmentModel, reqSkuModels);
         // credit sku models
         const skuModels = []
         for (let i = 0; i < reqSkuModels.length; i++) {
@@ -115,7 +100,7 @@ export default class ShipmentService extends Service {
                 skuModel = new SkuModel();
                 skuModel.shipmentId = shipmentModel.shipmentId;
             } else {
-                skuModel = await skuRepo.fetchByPrimaryValue(reqSkuModel.skuId);
+                skuModel = await this.skuRepo.fetchByPrimaryValue(reqSkuModel.skuId);
                 if (skuModel === null) {
                     throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
                 }
@@ -125,7 +110,7 @@ export default class ShipmentService extends Service {
             skuModel.quantity = reqSkuModel.quantity;
             skuModel.pricePerUnit = reqSkuModel.pricePerUnit;
             skuModel.currency = reqSkuModel.currency;
-            skuModel.skuId = (await skuRepo.save(skuModel)).skuId;
+            skuModel.skuId = (await this.skuRepo.save(skuModel)).skuId;
 
             // change referenceId in origin to new actual id
             const reqSkuOriginModel = reqSkuOriginModels.find((reqSkuOModel) => reqSkuOModel.skuId === reqSkuModel.skuId)
@@ -137,12 +122,8 @@ export default class ShipmentService extends Service {
         }
 
         // delete missing skuOriginModels
-        const skuOriginModDelDbWhere = new DatabaseWhere();
-
-        skuOriginModDelDbWhere.clause(new DatabaseWhereClause(SkuOriginModel.P_SKU_ID, '=', skuToDeleteModels.map((s) => s.skuId)))
-
-        await this.skuOriginRepo.delete(skuOriginModDelDbWhere);
-
+        this.skuOriginRepo.deleteUnused(skuToDeleteModels);
+        // credit sku origin models
         const skuOriginModels = [];
         for (let i = 0; i < reqSkuOriginModels.length; i++) {
             const reqSkuOriginModel = reqSkuOriginModels[i];
@@ -151,7 +132,7 @@ export default class ShipmentService extends Service {
             if (reqSkuOriginModel.isNew() === true) {
                 skuOriginModel = new SkuOriginModel();
             } else {
-                skuOriginModel = await skuOriginRepo.fetchByPrimaryValue(reqSkuOriginModel.skuOriginId);
+                skuOriginModel = await this.skuOriginRepo.fetchByPrimaryValue(reqSkuOriginModel.skuOriginId);
                 if (skuOriginModel === null) {
                     throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
                 }
@@ -159,21 +140,14 @@ export default class ShipmentService extends Service {
 
             skuOriginModel.skuId = reqSkuOriginModel.skuId;
             skuOriginModel.shipmentId = reqSkuOriginModel.shipmentId;
-            skuOriginModel.skuOriginId = (await skuOriginRepo.save(skuOriginModel)).skuOriginId;
+            skuOriginModel.skuOriginId = (await this.skuOriginRepo.save(skuOriginModel)).skuOriginId;
 
             skuOriginModels.push(skuOriginModel);
         }
 
-        const shipmentDocumentModels = [];
-
-        const docuDelDbWhere = new DatabaseWhere();
-        docuDelDbWhere.andClause([
-            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_DOCUMENT_ID, '!=', reqShipmentDocumentModels.map((s) => s.shipmentDocumentId)),
-            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', shipmentModel.shipmentId),
-        ])
-        await shipmentDocumentRepo.delete(docuDelDbWhere);
-
-        // delete document files
+        // delete missing document models from the db
+        await this.shipmentDocumentRepo.deleteUnsed(shipmentModel, reqShipmentDocumentModels);
+        // delete missing document files
         const storagePath = shipmentModel.getStoragePath();
         try {
             const documentNames: string[] = await fs.readdir(storagePath);
@@ -181,7 +155,6 @@ export default class ShipmentService extends Service {
             const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentDocumentId.toString()))
             for (let i = 0; i < documentNames.length; i++) {
                 const documentName = documentNames[i];
-                // if (reqShipmentDocumentModels.find((s) => s.shipmentDocumentId === parseInt(documentName)) === undefined) {
                 if (set.has(documentName) === false) {
                     await fs.rm(path.join(storagePath, documentName));
                 }
@@ -191,9 +164,9 @@ export default class ShipmentService extends Service {
                 await fs.rmdir(storagePath);
             }
         } catch (err) {
-
         }
-
+        // credit shipment document models
+        const shipmentDocumentModels = [];
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             const reqShipmentDocumentModel = reqShipmentDocumentModels[i];
             let shipmentDocumentModel: ShipmentDocumentModel | null = null;
@@ -201,7 +174,7 @@ export default class ShipmentService extends Service {
             if (reqShipmentDocumentModel.isNew() === true) {
                 shipmentDocumentModel = new ShipmentDocumentModel();
             } else {
-                shipmentDocumentModel = await shipmentDocumentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentDocumentId);
+                shipmentDocumentModel = await this.shipmentDocumentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentDocumentId);
                 if (shipmentDocumentModel === null) {
                     throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
                 }
@@ -213,7 +186,7 @@ export default class ShipmentService extends Service {
             shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
             shipmentDocumentModel.name = reqShipmentDocumentModel.name;
             shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
-            shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+            shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
