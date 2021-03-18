@@ -30,7 +30,7 @@ export default class DatabaseWhereClause {
         if (this.value instanceof Array) {
             const count = this.value.length;
             if (count === 0) {
-                return 'FALSE';
+                return this.sign === '=' ? 'FALSE' : 'TRUE';
             }
 
             for (let i = count; i-- > 0;) {

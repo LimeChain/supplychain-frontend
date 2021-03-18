@@ -7,6 +7,7 @@ import FetchProductsByFilterRes from '../requests/network/responses/FetchProduct
 import Context from '../utilities/network/Context';
 import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
+import axios from 'axios'
 
 export default class ProductController {
 
@@ -31,6 +32,14 @@ export default class ProductController {
     }
 
     async fetchProductsByFilter(context: Context) {
+        // const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
+
+        // instance.get('/widgets')
+        //     .then((response) => {
+        //         console.log(response);
+        //     })
+        //     .catch((error) => { })
+
         const session = context.session;
         if (session.isAdmin() === false) {
             throw new StateException(Response.S_STATUS_ACCESS_DENIED);

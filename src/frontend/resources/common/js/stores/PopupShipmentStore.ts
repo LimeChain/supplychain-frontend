@@ -155,6 +155,9 @@ export default class PopupShipmentStore extends PopupStore {
         const skuModel = this.skuModels[i];
         this.skuModels.splice(i, 1);
         this.productIdsInSkuModels.delete(skuModel.productId);
+
+        const skuOriginModel = this.skuOriginModels[i];
+        this.skuOriginModels.splice(i, 1);
     }
 
     canAddProductById(productId: string) {
