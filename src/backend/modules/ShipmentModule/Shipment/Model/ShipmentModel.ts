@@ -18,10 +18,12 @@ export default class ShipmentModel extends ShipmentModelG {
         return this.shipmentId === SV.NOT_EXISTS;
     }
 
-    isStatusChangeForNotification(oldShipmentStatus): boolean {
-        return oldShipmentStatus !== this.shipmentStatus
-            && (this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT
-                || this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED)
+    shouldSubmitToIntegratioNode(oldShipmentStatus: number) {
+        return oldShipmentStatus === ShipmentModel.S_STATUS_DRAFT && this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT;
+    }
+
+    isStatusChangeForNotification(oldShipmentStatus: number): boolean {
+        return oldShipmentStatus !== this.shipmentStatus && (this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT || this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED);
     }
 
     isShipmentStatusLocked(newShipmentStatus) {

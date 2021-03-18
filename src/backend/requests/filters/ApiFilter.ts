@@ -6,6 +6,7 @@ import ShipmentApi from '../api/shipment/ShipmentApi';
 import Response from '../../utilities/network/Response';
 import ProductApi from '../api/product/ProductApi';
 import AccountApi from '../api/account/AccountApi';
+import IntegrationNodeApi from '../api/integration-node/IntegrationNodeApi';
 
 const Config = require('../../../../config/config');
 
@@ -19,6 +20,7 @@ export default class ApiFilter {
         ApiFilter.map.set(ShipmentApi.URL, new ShipmentApi());
         ApiFilter.map.set(ProductApi.URL, new ProductApi());
         ApiFilter.map.set(AccountApi.URL, new AccountApi());
+        ApiFilter.map.set(IntegrationNodeApi.URL, new IntegrationNodeApi());
     }
 
     static async onRequest(context: Context) {
