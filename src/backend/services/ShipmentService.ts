@@ -217,7 +217,6 @@ export default class ShipmentService extends Service {
             await fs.mkdir(storagePath, { 'recursive': true });
             const documentPath = shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId);
 
-            console.log(documentPath);
             await fs.writeFile(documentPath, documentBuffer);
             reqShipmentDocumentModel.sizeInBytes = (await fs.stat(documentPath)).size;
             reqShipmentDocumentModel.gupdateShipmentDocumentUrl();
