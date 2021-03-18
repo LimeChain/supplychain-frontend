@@ -201,7 +201,14 @@ export default class ShipmentApi extends AbsApi {
 
         this.shipmentApi.req(Actions.SHIPMENT.CREDIT, req, (json: any) => {
             if (json.status !== ResponseConsts.S_STATUS_OK) {
-                this.showAlert('Something went wrong');
+                switch (json.status) {
+                    case ResponseConsts.S_INTEGRATION_NODE_ERROR:
+                        this.showAlert('There was a problem with the integration node');
+                        break;
+                    default:
+                        this.showAlert('Something went wrong');
+                        break;
+                }
                 return;
             }
 
