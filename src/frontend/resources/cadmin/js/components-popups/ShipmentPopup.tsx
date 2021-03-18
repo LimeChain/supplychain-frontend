@@ -286,7 +286,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     makeDocumentUploadParams() {
         const popupStore = this.props.popupStore;
-        let shipmentDocumentModels = null;
+        let shipmentDocumentModels: ShipmentDocumentModel[] = [];
 
         return {
             'maxSize': 1 << 30, // 1GB
@@ -309,7 +309,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 const shipmentDocumentModel = res.shipmentDocumentModel;
 
                 shipmentDocumentModels[i].shipmentId = shipmentDocumentModel.shipmentId;
-                shipmentDocumentModels[i].shipmentDOcumentId = shipmentDocumentModel.shipmentDocumentId;
+                shipmentDocumentModels[i].shipmentDocumentId = shipmentDocumentModel.shipmentDocumentId;
                 shipmentDocumentModels[i].uploadProgress = 1;
                 shipmentDocumentModels[i].shipmentDocumentUrl = shipmentDocumentModel.shipmentDocumentUrl;
             },

@@ -153,6 +153,10 @@ class DevGeneratedModule {
             'URL': Config.URL,
             'Server': {
                 TRANSACTION_VIEW_URL: Config.Server.TRANSACTION_VIEW_URL,
+                COUNTRY_ID: Config.Server.COUNTRY_ID,
+                HEDERA_INTEGRATION_NODE_URL: Config.Server.HEDERA_INTEGRATION_NODE_URL,
+                HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX: Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX,
+                HEDERA_INTERGRATION_NODE_CREDIT_PRODUCT_SUFFIX: Config.Server.HEDERA_INTERGRATION_NODE_CREDIT_PRODUCT_SUFFIX,
             },
         };
 
