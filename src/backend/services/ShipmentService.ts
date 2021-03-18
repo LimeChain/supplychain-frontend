@@ -25,7 +25,12 @@ import ShipmentConsts from '../../../builds/dev-generated/ShipmentModule/Shipmen
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
+import buffer from 'buffer';
+import path from 'path';
 import S from '../../frontend/resources/common/js/utilities/Main';
+import ShipmentApiH from '../requests/api/shipment/ShipmentApi.h';
+import Params from '../utilities/Params';
+import { number } from 'prop-types';
 
 export default class ShipmentService extends Service {
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
@@ -161,17 +166,33 @@ export default class ShipmentService extends Service {
 
         const shipmentDocumentModels = [];
 
-        if (reqShipmentDocumentModels.length > 0) {
-            const storagePath = shipmentModel.getStoragePath();
-            await fs.mkdir(storagePath, { 'recursive': true });
-        }
-
         const docuDelDbWhere = new DatabaseWhere();
         docuDelDbWhere.andClause([
             new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_DOCUMENT_ID, '!=', reqShipmentDocumentModels.map((s) => s.shipmentDocumentId)),
             new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', shipmentModel.shipmentId),
         ])
         await shipmentDocumentRepo.delete(docuDelDbWhere);
+
+        // delete document files
+        const storagePath = shipmentModel.getStoragePath();
+        try {
+            const documentNames: string[] = await fs.readdir(storagePath);
+
+            const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentDocumentId.toString()))
+            for (let i = 0; i < documentNames.length; i++) {
+                const documentName = documentNames[i];
+                // if (reqShipmentDocumentModels.find((s) => s.shipmentDocumentId === parseInt(documentName)) === undefined) {
+                if (set.has(documentName) === false) {
+                    await fs.rm(path.join(storagePath, documentName));
+                }
+            }
+
+            if ((await fs.readdir(storagePath)).length === 0) {
+                await fs.rmdir(storagePath);
+            }
+        } catch (err) {
+
+        }
 
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             const reqShipmentDocumentModel = reqShipmentDocumentModels[i];
@@ -192,12 +213,50 @@ export default class ShipmentService extends Service {
             shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
             shipmentDocumentModel.name = reqShipmentDocumentModel.name;
             shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
-            shipmentDocumentModel.shipmentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentId;
+            shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
+    }
+
+    async uploadShipmentDocument(reqShipmentDocumentModel: ShipmentDocumentModel): Promise<ShipmentDocumentModel> {
+        let shipmentDocumentModel: ShipmentDocumentModel | null = null;
+        const shipmentDocumentRepo = this.shipmentDocumentRepo;
+
+        shipmentDocumentModel = new ShipmentDocumentModel();
+
+        if (reqShipmentDocumentModel.shipmentDocumentUrl.startsWith(ShipmentDocumentModel.FILE_DATA_STRING_BEGIN)) {
+            const base64Buffer = reqShipmentDocumentModel.shipmentDocumentUrl.substring(reqShipmentDocumentModel.shipmentDocumentUrl.indexOf(',') + 1);
+            const documentBuffer = Buffer.from(base64Buffer, 'base64');
+
+            reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
+            shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+
+            const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
+
+            const storagePath = shipmentModel.getStoragePath();
+            await fs.mkdir(storagePath, { 'recursive': true });
+            const documentPath = shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId);
+
+            console.log(documentPath);
+            await fs.writeFile(documentPath, documentBuffer);
+            reqShipmentDocumentModel.sizeInBytes = (await fs.stat(documentPath)).size;
+            reqShipmentDocumentModel.gupdateShipmentDocumentUrl();
+        }
+
+        shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
+        shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
+        shipmentDocumentModel.shipmentDocumentUrl = reqShipmentDocumentModel.shipmentDocumentUrl;
+        shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
+        shipmentDocumentModel.name = reqShipmentDocumentModel.name;
+        shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
+
+        shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+
+        return shipmentDocumentModel;
+
     }
 
     async fetchShipmentsByFilter(

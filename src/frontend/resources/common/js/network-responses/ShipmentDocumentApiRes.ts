@@ -5,7 +5,7 @@ export class UploadShipmentDocumentRes {
     shipmentDocumentModel: any;
 
     constructor(json) {
-        this.shipmentDocumentModel = ShipmentDocumentModel.fromJson(json.shipmentDocument);
+        this.shipmentDocumentModel = ShipmentDocumentModel.fromJson(json.shipmentDocumentJson);
     }
 
 }

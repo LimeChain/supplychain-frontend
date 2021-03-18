@@ -8,4 +8,7 @@ export default class CAdminContext {
         return `${Apis.SHIPMENT}?${Params.ACTION}=${Actions.SHIPMENT.DOWNLOAD_SHIPMENT_JSON}&${Params.ID}=${encodeURIComponent(shipmentId)}`;
     }
 
+    static urlShipmentDocumentUploadData(shipmentId: string) {
+        return `${Apis.SHIPMENT}?${Params.ACTION}=${Actions.SHIPMENT.UPLOAD_SHIPMENT_DOCUMENT_FILE}&${Params.ID}=${encodeURIComponent(shipmentId)}`;
+    }
 }

@@ -43,6 +43,8 @@ class DevTarget {
             await LangModule.process(Config.Path.Dev);
         }
 
+        await RootModule.copyEnvFile(Config.Path.DEV, true);
+
         if (ArgvHelper.WATCH === true) {
             WatchHelper.watch(serverHelper);
         }

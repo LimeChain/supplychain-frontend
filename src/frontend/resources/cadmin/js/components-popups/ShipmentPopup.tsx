@@ -46,6 +46,7 @@ import SvgDownload from '../../../common/svg/download.svg';
 import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
 import CAdminContext from '../CAdminContext';
+import { UploadShipmentDocumentRes } from '../../../common/js/network-responses/ShipmentDocumentApiRes';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -289,7 +290,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         return {
             'maxSize': 1 << 30, // 1GB
-            'controller': 'http://localhost:8001/resources/common/img/favicon/favicon-16x16.png',
+            'controller': CAdminContext.urlShipmentDocumentUploadData(popupStore.shipmentModel.shipmentId),
             'progressWindow': false,
             'onExceedLimit': () => {
                 this.props.alertStore.show('Max files size is 1GB.');
@@ -304,8 +305,13 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 shipmentDocumentModels[i].mimeType = files[i].type;
             },
             onUpload: (base64File, response, files: any[], i: number) => {
+                const res = new UploadShipmentDocumentRes(JSON.parse(response).obj);
+                const shipmentDocumentModel = res.shipmentDocumentModel;
+
+                shipmentDocumentModels[i].shipmentId = shipmentDocumentModel.shipmentId;
+                shipmentDocumentModels[i].shipmentDOcumentId = shipmentDocumentModel.shipmentDocumentId;
                 shipmentDocumentModels[i].uploadProgress = 1;
-                shipmentDocumentModels[i].shipmentDocumentUrl = base64File;
+                shipmentDocumentModels[i].shipmentDocumentUrl = shipmentDocumentModel.shipmentDocumentUrl;
             },
         }
     }
@@ -404,10 +410,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 </div>
                 <div className={'TabsContent'} >
                     <div className={`TabProducts ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabProducts())}`} >
-                        {this.renderProducts()}
+                        {this.props.popupStore.isActiveTabProducts() === true && this.renderProducts()}
                     </div>
                     <div className={`TabDocuments ActiveDisplayHidden Transition ${S.CSS.getActiveClassName(this.props.popupStore.isActiveTabDocuments())}`} >
-                        {this.renderDocuments()}
+                        {this.props.popupStore.isActiveTabDocuments() === true && this.renderDocuments()}
                     </div>
                 </div>
                 <hr />
