@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
+import axios from 'axios';
 import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
 import SkuRepo from '../modules/ProductModule/Sku/Repo/SkuRepo';
 import SkuOriginModel from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModel';
@@ -12,27 +12,19 @@ import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
 import SV from '../utilities/SV';
 import Service from './common/Service';
-import NotificationService from './NotificationService';
 import SkuOriginRepo from '../modules/ProductModule/SkuOrigin/Repo/SkuOriginRepo';
 import DatabaseWhere from '../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../utilities/database/DatabaseWhereClause';
-import SkuModelG from '../modules/ProductModule/Sku/Model/SkuModelG';
 import SkuModelH from '../modules/ProductModule/Sku/Model/SkuModelH';
 import SkuOriginModelH from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModelH';
 import ShipmentDocumentModelH from '../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
-import ShipmentModelH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
-import ShipmentConsts from '../../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
-import buffer from 'buffer';
 import path from 'path';
-import S from '../../frontend/resources/common/js/utilities/Main';
-import ShipmentApiH from '../requests/api/shipment/ShipmentApi.h';
-import Params from '../utilities/Params';
-import { number } from 'prop-types';
 
 export default class ShipmentService extends Service {
+
     shipmentRepo: ShipmentRepo = this.repoFactory.getShipmentRepo();
     skuRepo: SkuRepo = this.repoFactory.getSkuRepo();
     skuOriginRepo: SkuOriginRepo = this.repoFactory.getSkuOriginRepo();
@@ -194,6 +186,11 @@ export default class ShipmentService extends Service {
 
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
+
+        // if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
+        // const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
+        // const axiosResponse = await instance.post('/web-platform/credit-shipment', shipmentModel.toNetwork());
+        // }
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }
