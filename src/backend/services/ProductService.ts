@@ -1,5 +1,5 @@
+import axios from 'axios';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
-import ProductModelH from '../modules/ProductModule/Product/Model/ProductModelH';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import ProductFilter from '../modules/ProductModule/Product/Utils/ProductFilter';
 import Response from '../utilities/network/Response';
@@ -27,6 +27,13 @@ export default class ProductService extends Service {
         productModel.productDeleted = reqProductModel.productDeleted;
 
         productModel.productId = (await this.productRepo.save(productModel)).productId;
+
+        try {
+            const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
+            const axiosResponse = await instance.post('/web-platform/credit-product', productModel.toNetwork());
+        } catch (ex) {
+            throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
+        }
 
         return productModel;
     }

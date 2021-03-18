@@ -187,10 +187,16 @@ export default class ShipmentService extends Service {
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
 
-        // if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
-        // const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
-        // const axiosResponse = await instance.post('/web-platform/credit-shipment', shipmentModel.toNetwork());
-        // }
+        try {
+            if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
+                const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
+                const axiosResponse = await instance.post('/web-platform/credit-shipment', shipmentModel.toNetwork());
+                shipmentModel.shipmentDltProof = axiosResponse.data;
+                await this.shipmentRepo.save(shipmentModel);
+            }
+        } catch (ex) {
+            throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
+        }
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }

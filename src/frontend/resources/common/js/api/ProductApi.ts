@@ -2,13 +2,10 @@ import AbsApi from './AbsApi';
 import { CreditProductReq, FetchProductByIdReq, FetchProductsByFilterReq } from '../network-requests/ProductApiReq';
 import { CreditProductRes, FetchProductByIdRes, FetchProductsByFilterRes } from '../network-responses/ProductApiRes';
 import ProductModel from '../models/product-module/ProductModel';
-import storageHelper from '../helpers/StorageHelper';
-import S from '../utilities/Main';
 import Api from '../utilities/Api';
 import Apis from '../../../../../../builds/dev-generated/Apis';
 import Actions from '../../../../../../builds/dev-generated/Actions';
 import ResponseConsts from '../../../../../../builds/dev-generated/utilities/network/ResponseConsts';
-import ProductFilter from '../../../../../../builds/dev-generated/ProductModule/Product/Utils/ProductFilterConsts';
 
 export default class ProductApi extends AbsApi {
 
@@ -24,7 +21,14 @@ export default class ProductApi extends AbsApi {
 
         this.productApi.req(Actions.PRODUCT.CREDIT_PRODUCT, req, (json: any) => {
             if (json.status !== ResponseConsts.S_STATUS_OK) {
-                this.showAlert('Something went wrong');
+                switch (json.status) {
+                    case ResponseConsts.S_INTEGRATION_NODE_ERROR:
+                        this.showAlert('There was a problem with the integration node');
+                        break;
+                    default:
+                        this.showAlert('Something went wrong');
+                        break;
+                }
                 return;
             }
 
