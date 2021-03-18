@@ -22,6 +22,7 @@ import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
 import path from 'path';
+import Config from '../../../config/config';
 
 export default class ShipmentService extends Service {
 
@@ -148,7 +149,6 @@ export default class ShipmentService extends Service {
             const documentNames: string[] = await fs.readdir(storagePath);
 
             const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentDocumentId.toString()))
-            console.log(set);
 
             for (let i = 0; i < documentNames.length; i++) {
                 const documentName = documentNames[i];
@@ -191,8 +191,8 @@ export default class ShipmentService extends Service {
 
         try {
             if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
-                const instance = axios.create({ baseURL: 'http://hedera-integration-node:8181' })
-                const axiosResponse = await instance.post('/web-platform/credit-shipment', shipmentModel.toNetwork());
+                const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
+                const axiosResponse = await instance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, shipmentModel.toNetwork());
                 shipmentModel.shipmentDltProof = axiosResponse.data;
                 await this.shipmentRepo.save(shipmentModel);
             }
