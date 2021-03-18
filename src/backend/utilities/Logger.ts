@@ -71,25 +71,21 @@ if (Config.Build.PRODUCTION !== true) {
 }
 
 Logger.log = (...args_) => {
-    console.log(args_);
     const args = args_.map(argvMapper);
     infoLogger.info(args.join(' '));
 };
 
 Logger.db = (...args_) => {
-    console.log(args_);
     const args = args_.map(argvMapper);
     dbLogger.info(args.join(' '));
 };
 
 Logger.error = (...args_) => {
-    console.log(args_);
     const args = args_.map(argvMapper);
     errorLogger.error(args.join(' '));
 };
 
 Logger.request = (...args_) => {
-    console.log(args_);
     const args = args_.map(argvMapper);
     requestsLogger.info(args.join(' '));
 };
