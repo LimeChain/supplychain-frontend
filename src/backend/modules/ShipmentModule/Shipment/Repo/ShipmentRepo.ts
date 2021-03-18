@@ -7,6 +7,7 @@ import ShipmentFilter from '../Utils/ShipmentFilter';
 import ShipmentRepoG from './ShipmentRepoG';
 
 export default class ShipmentRepo extends ShipmentRepoG {
+
     async fetchByFilter(shipmentFilter: ShipmentFilter): Promise<Array<ShipmentModel>> {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.orderColumn = shipmentFilter.getSortColumn();
@@ -41,7 +42,7 @@ export default class ShipmentRepo extends ShipmentRepoG {
                 new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER, 'LIKE', `%${shipmentFilter.searchBy}%`),
             ];
 
-            if (!isNaN(parseInt(shipmentFilter.searchBy))) {
+            if (!Number.isNaN(parseInt(shipmentFilter.searchBy))) {
                 filterClauses.push(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ID, '=', parseInt(shipmentFilter.searchBy)));
             }
 
@@ -50,4 +51,5 @@ export default class ShipmentRepo extends ShipmentRepoG {
 
         return this.fetch(databaseWhere);
     }
+
 }

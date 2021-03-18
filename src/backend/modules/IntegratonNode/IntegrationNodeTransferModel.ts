@@ -1,4 +1,4 @@
-import S from '../../../frontend/resources/common/js/utilities/Main';
+import SV from '../../utilities/SV';
 
 export default class IntegrationNodeTransferModel {
 
@@ -9,7 +9,7 @@ export default class IntegrationNodeTransferModel {
     obj: any;
 
     constructor() {
-        this.type = S.NOT_EXISTS;
+        this.type = SV.NOT_EXISTS;
         this.obj = null;
     }
 

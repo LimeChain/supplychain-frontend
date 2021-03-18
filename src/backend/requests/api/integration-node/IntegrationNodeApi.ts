@@ -1,6 +1,4 @@
 import IntegrationNodeApiH from './IntegrationNodeApi.h';
-import GeneralController from '../../../controllers/GeneralController';
-import GrpcController from '../../../controllers/GrpcController';
 import Context from '../../../utilities/network/Context';
 import IntegrationNodeController from '../../../controllers/IntegrationNodeController';
 
