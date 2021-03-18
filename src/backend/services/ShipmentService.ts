@@ -148,6 +148,8 @@ export default class ShipmentService extends Service {
             const documentNames: string[] = await fs.readdir(storagePath);
 
             const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentDocumentId.toString()))
+            console.log(set);
+
             for (let i = 0; i < documentNames.length; i++) {
                 const documentName = documentNames[i];
                 if (set.has(documentName) === false) {
@@ -220,10 +222,8 @@ export default class ShipmentService extends Service {
             await fs.mkdir(storagePath, { 'recursive': true });
             const documentPath = shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId);
 
-            console.log(documentPath);
             await fs.writeFile(documentPath, documentBuffer);
             reqShipmentDocumentModel.sizeInBytes = (await fs.stat(documentPath)).size;
-            reqShipmentDocumentModel.gupdateShipmentDocumentUrl();
         }
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
@@ -234,6 +234,8 @@ export default class ShipmentService extends Service {
         shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
 
         shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+
+        shipmentDocumentModel.updateShipmentDocumentUrl();
 
         return shipmentDocumentModel;
 

@@ -157,7 +157,11 @@ export default class ShipmentController {
 
     async downloadShipmentDocumentFile(context: Context) {
         const payload = context.payload;
-        const shipmentDocumentId = payload.params[Params.ID];
+        console.log(payload);
+
+        console.log(parseInt(payload.params[Params.ID]));
+
+        const shipmentDocumentId = parseInt(payload.params[Params.ID]);
 
         const servicesFactory = context.servicesFactory;
         const shipmentService = servicesFactory.getShipmentService();
