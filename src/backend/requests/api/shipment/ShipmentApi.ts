@@ -34,6 +34,12 @@ export default class ShipmentApi extends ShipmentApiH {
             case ShipmentApiH.Actions.FETCH_TOTAL_VALUE_IN_STOCK:
                 await this.shipmentController.fetchTotalValueInStock(context);
                 break;
+            case ShipmentApiH.Actions.UPLOAD_SHIPMENT_DOCUMENT_FILE:
+                await this.shipmentController.uploadShipmentDocument(context);
+                break;
+            case ShipmentApiH.Actions.FETCH_SHIPMENT_DOCUMENT_FILE:
+                await this.shipmentController.downloadShipmentDocumentFile(context);
+                break;
             default:
                 break;
         }

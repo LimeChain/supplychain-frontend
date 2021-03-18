@@ -32,4 +32,7 @@ export default class ShipmentModel extends ShipmentModelG {
         return path.join(Config.Path.Root.Data.SHIPMENTS, this.shipmentId.toString());
     }
 
+    getShipmentDocumentStoragePath(shipmentDocumentId: number) {
+        return path.join(this.getStoragePath(), shipmentDocumentId.toString());
+    }
 }

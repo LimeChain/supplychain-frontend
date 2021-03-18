@@ -1,3 +1,4 @@
+import fsPromises from 'fs/promises';
 import fs from 'fs';
 import Config from '../../../config/config';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
@@ -22,6 +23,9 @@ import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
 import Params from '../utilities/Params';
 import SV from '../utilities/SV';
+import UploadShipmentDocumentReq from '../requests/network/requests/UploadShipmentDocumentReq';
+import UploadShipmentDocumentRes from '../requests/network/responses/UploadShipmentDocumentRes';
+import ShipmentService from '../services/ShipmentService';
 
 export default class ShipmentController {
 
@@ -127,7 +131,44 @@ export default class ShipmentController {
         payload.ctx.set('Expires', '0');
         payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
         payload.ctx.set('Pragma', 'public');
-        payload.ctx.set('Content-Length', fs.statSync(filepath).size);
+        payload.ctx.set('Content-Length', (await fsPromises.stat(filepath)).size);
+
+        const stream = fs.createReadStream(filepath, {
+            'autoClose': true,
+        });
+        stream.on('end', () => {
+            // fs.unlinkSync(filepath);
+        });
+        context.res = stream;
+    }
+
+    async uploadShipmentDocument(context: Context) {
+        this.checkIfAdmin(context);
+        const servicesFactory = context.servicesFactory;
+        const payload = context.payload;
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const req = new UploadShipmentDocumentReq(payload);
+
+        const shipmentDocumentModel = await shipmentService.uploadShipmentDocument(req.shipmentDocumentModel);
+
+        context.res.set(new UploadShipmentDocumentRes(shipmentDocumentModel));
+    }
+
+    async downloadShipmentDocumentFile(context: Context) {
+        const payload = context.payload;
+        const shipmentId = payload.params[Params.ID];
+
+        const filepath = `${__dirname}/ShipmentController.js`;
+        payload.ctx.set('Content-Description', 'File Transfer');
+        payload.ctx.set('Content-Type', 'application/octet-stream');
+        payload.ctx.set('Content-Disposition', `attachment; filename="shipment-${shipmentId}.json"`);
+        // payload.ctx.set('Content-Disposition: attachment; filename*=UTF-8\'\'' . rawurlencode($filename));
+        payload.ctx.set('Content-Transfer-Encoding', 'binary');
+        payload.ctx.set('Expires', '0');
+        payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+        payload.ctx.set('Pragma', 'public');
+        payload.ctx.set('Content-Length', (await fsPromises.stat(filepath)).size);
 
         const stream = fs.createReadStream(filepath, {
             'autoClose': true,
