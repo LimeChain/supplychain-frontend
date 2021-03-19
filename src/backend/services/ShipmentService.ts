@@ -23,6 +23,7 @@ import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
 import path from 'path';
 import Config from '../../../config/config';
+import IntegrationNodeTransferModel from '../modules/IntegratonNode/IntegrationNodeTransferModel';
 
 export default class ShipmentService extends Service {
 
@@ -190,6 +191,11 @@ export default class ShipmentService extends Service {
         }
 
         try {
+            // const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
+            // integrationNodeTransferModel.obj = {
+            //     shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
+            // }
+            // await fs.writeFile(`${__dirname}/shipment-model.json`, JSON.stringify(integrationNodeTransferModel.toNetwork()));
             if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
                 const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
                 const axiosResponse = await instance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, shipmentModel.toNetwork());

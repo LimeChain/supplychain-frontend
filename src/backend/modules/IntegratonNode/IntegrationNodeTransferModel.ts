@@ -13,6 +13,12 @@ export default class IntegrationNodeTransferModel {
         this.obj = null;
     }
 
+    static newInstanceShipment() {
+        const model = new IntegrationNodeTransferModel();
+        model.type = IntegrationNodeTransferModel.TYPE_SHIPMENT;
+        return model;
+    }
+
     toNetwork() {
         return {
             'type': this.type,
