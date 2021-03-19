@@ -391,16 +391,19 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         <div className={'WidthLimiter'}>
                             <Input
                                 placeholder={'Enter consigment ID'}
+                                readOnly={this.props.popupStore.shipmentModel.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT}
                                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[0])}
                                 error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[0])}
                                 onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[0])} />
                         </div>
                         {this.renderFromSite()}
                         {this.renderToSite()}
-                        <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
-                            <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
-                            <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
-                        </Actions>
+                        {this.props.popupStore.shipmentModel.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT
+                            && <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
+                                <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
+                                <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
+                            </Actions>
+                        }
                     </LayoutBlock>
                 </div>
                 <hr />
@@ -589,7 +592,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                             InputProps={{
                                                 startAdornment: <span className={'StartAdornment'}>€</span>,
                                             }}
-                                            inputType={InputType.INTEGER}
+                                            inputType={InputType.REAL}
                                             value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
                                             error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
                                             onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])} />

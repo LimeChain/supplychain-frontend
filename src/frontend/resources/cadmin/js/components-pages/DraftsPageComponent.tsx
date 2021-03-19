@@ -1,6 +1,8 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
 
+import SvgDelete from '../../../common/svg/delete.svg';
+
 import PagesCAdmin from '../../../../../../builds/dev-generated/PagesCAdmin';
 
 import PageComponent from '../../../common/js/components-pages/PageComponent';
@@ -163,6 +165,14 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
         this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], this.fetchShipmentsInit);
     }
 
+    onClickDeleteDraft = (e, shipmentModel: ShipmentModel) => {
+        e.stopPropagation();
+
+        shipmentModel.markAsDeleted();
+        this.shipmentApi.creditShipment(shipmentModel, [], [], [], this.fetchShipments);
+
+    }
+
     renderContent() {
         return (
             <div className={'PageContent'} >
@@ -257,6 +267,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
                         </Button>
                     </Actions>,
                 ),
+                Table.cell(<div className={'SVG IconDelete'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={(e) => this.onClickDeleteDraft(e, shipmentModel)} />),
             ])
         })
 
@@ -275,10 +286,11 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
             TableDesktop.ALIGN_CENTER,
+            TableDesktop.ALIGN_CENTER,
         ]
     }
 
     getTableWidths = () => {
-        return ['5%', '10%', '8%', '47%', '15%', '15%'];
+        return ['5%', '10%', '8%', '47%', '15%', '10%', '5%'];
     }
 }

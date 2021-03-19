@@ -13,6 +13,8 @@ export default class ShipmentRepo extends ShipmentRepoG {
         databaseWhere.orderColumn = shipmentFilter.getSortColumn();
         databaseWhere.orderType = shipmentFilter.getSortOrder();
 
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DELETED, '=', SV.FALSE))
+        
         // filter by page
         if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_DRAFTS) {
             databaseWhere.andClause([

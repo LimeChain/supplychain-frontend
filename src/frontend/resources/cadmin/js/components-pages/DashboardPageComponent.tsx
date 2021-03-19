@@ -118,7 +118,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                             <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
                             <div className='FlexColumn'>
                                 <div className='StatData'>{this.props.dashboardStore.incommingShipmentsTotalSize}</div>
-                                <div className='StatInfo'>Total Incomming Shipments</div>
+                                <div className='StatInfo'>Total Incoming Shipments</div>
                             </div>
                         </div>
                         <div className={'WhiteBox FlexRow FlexSplit'} >
@@ -176,7 +176,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                             </Scrollable>
                         </div>
                         <div className={'WhiteBox FlexColumn TableSection'} onScroll={this.onScrollIncommingShipments}>
-                            <div className='TableHeader'>Recent Incomming</div>
+                            <div className='TableHeader'>Recent Incoming</div>
                             <Scrollable >
                                 <div className='TableContainer'>
                                     {this.props.dashboardStore.screenIncommingShipments.map((shipmentModel: ShipmentModel) => <div onClick={() => this.onClickShipmentLine(shipmentModel)} className={' ShipmentLine FlexRow FlexSplit'} key={shipmentModel.shipmentId}>

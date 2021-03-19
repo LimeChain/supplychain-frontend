@@ -149,7 +149,7 @@ export default class ShipmentService extends Service {
         try {
             const documentNames: string[] = await fs.readdir(storagePath);
 
-            const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentDocumentId.toString()))
+            const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentId === shipmentModel.shipmentId && m.shipmentDocumentId.toString()))
 
             for (let i = 0; i < documentNames.length; i++) {
                 const documentName = documentNames[i];
@@ -168,6 +168,12 @@ export default class ShipmentService extends Service {
         const shipmentDocumentModels = [];
         for (let i = 0; i < reqShipmentDocumentModels.length; i++) {
             const reqShipmentDocumentModel = reqShipmentDocumentModels[i];
+
+            // if document is from another shipment through sku origin dont add it
+            if (reqShipmentDocumentModel.shipmentId !== shipmentModel.shipmentId) {
+                continue;
+            }
+
             let shipmentDocumentModel: ShipmentDocumentModel | null = null;
 
             if (reqShipmentDocumentModel.isNew() === true) {
@@ -181,7 +187,6 @@ export default class ShipmentService extends Service {
 
             shipmentDocumentModel.shipmentId = shipmentModel.shipmentId;
             shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
-            shipmentDocumentModel.shipmentDocumentUrl = reqShipmentDocumentModel.shipmentDocumentUrl;
             shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
             shipmentDocumentModel.name = reqShipmentDocumentModel.name;
             shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
@@ -234,14 +239,12 @@ export default class ShipmentService extends Service {
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
         shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
-        shipmentDocumentModel.shipmentDocumentUrl = reqShipmentDocumentModel.shipmentDocumentUrl;
         shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
         shipmentDocumentModel.name = reqShipmentDocumentModel.name;
         shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
+        shipmentDocumentModel.updateShipmentDocumentUrl();
 
         shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
-
-        shipmentDocumentModel.updateShipmentDocumentUrl();
 
         return shipmentDocumentModel;
 
@@ -293,7 +296,11 @@ export default class ShipmentService extends Service {
         const skuOriginModels = await this.skuOriginRepo.fetch(skuoriginDbWhere);
 
         const shipmentDocumentsDbWhere = new DatabaseWhere();
-        shipmentDocumentsDbWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentId));
+        shipmentDocumentsDbWhere.orClause([
+            new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentId),
+            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', skuOriginModels.map((s) => s.shipmentId)),
+        ]);
+
         const shipmentDocumentModels = await this.shipmentDocumentRepo.fetch(shipmentDocumentsDbWhere);
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };

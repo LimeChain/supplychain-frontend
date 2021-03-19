@@ -73,7 +73,11 @@ export default class PopupShipmentStore extends PopupStore {
                     this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     break;
                 case PopupShipmentStore.FIELDS_ADD_SKU[2]:
-                    this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
+                    console.log(value);
+
+                    this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY || Number.isNaN(parseFloat(value)) ? S.NOT_EXISTS : parseFloat(value);
+                    console.log(this.buildSkuModel.pricePerUnit);
+
                     break;
                 case PopupShipmentStore.FIELDS_ADD_SKU[3]:
                     this.buildSkuModel.quantity = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
