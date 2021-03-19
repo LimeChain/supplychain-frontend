@@ -19,12 +19,19 @@ import SvgNotification from '../../../common/svg/notification.svg';
 import './../../css/components-inc/notifications.css';
 
 import S from '../../../common/js/utilities/Main';
+import PopupShipmentStore from '../../../common/js/stores/PopupShipmentStore';
+import ShipmentApi from '../../../common/js/api/ShipmentApi';
+import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 
 interface Props {
     notifications: NotificationModel[];
     show: number,
     hasNotifications: number,
-    notificationStore: NotificationStore;
+    notificationStore: NotificationStore,
+    popupShipmentStore: PopupShipmentStore,
     appStore: AppStore,
     alertStore: AlertStore,
 }
@@ -54,6 +61,7 @@ const getNotificationStatus = (status: number, capitalLeter: number): string => 
 class Notifications extends React.Component<Props, State> {
 
     generalApi: GeneralApi;
+    shipmentApi: ShipmentApi;
     notificationFetches: NodeJS.Timeout;
 
     nodes: {
@@ -72,6 +80,7 @@ class Notifications extends React.Component<Props, State> {
         }
 
         this.generalApi = new GeneralApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
+        this.shipmentApi = new ShipmentApi(this.props.appStore.enableActions, this.props.appStore.disableActions, this.props.alertStore.show);
     }
 
     componentDidMount() {
@@ -111,11 +120,17 @@ class Notifications extends React.Component<Props, State> {
     }
 
     onClickNotificationMessage(notificationModel: NotificationModel) {
+        this.shipmentApi.fetchShipmentById(notificationModel.shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+            });
+        });
+
         if (notificationModel.isRead() === true) {
             return;
         }
 
         this.props.notificationStore.readNotification(notificationModel);
+
     }
 
     render() {
@@ -176,4 +191,4 @@ class Notifications extends React.Component<Props, State> {
 
 }
 
-export default inject('appStore', 'alertStore', 'notificationStore')(observer(Notifications));
+export default inject('appStore', 'alertStore', 'notificationStore', 'popupShipmentStore')(observer(Notifications));

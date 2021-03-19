@@ -108,6 +108,10 @@ export default class ShipmentModel {
         }
     }
 
+    markAsDeleted() {
+        this.shipmentDeleted = S.INT_TRUE;
+    }
+
     static fromJson(json): ShipmentModel {
         if (json === null) {
             return null;

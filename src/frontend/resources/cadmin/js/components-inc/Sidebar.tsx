@@ -16,7 +16,7 @@ interface Props {
     page: string;
 }
 
-export default class Sidebar extends React.Component < Props > {
+export default class Sidebar extends React.Component<Props> {
 
     render() {
         return (
@@ -30,10 +30,10 @@ export default class Sidebar extends React.Component < Props > {
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgDashboard }} />
                             Dashboard
                         </a>
-                        <div className = { 'SidebarButton SidebarButtonMarginTop' } >
+                        <div className={'SidebarButton SidebarButtonMarginTop'} >
                             <Expandable
-                                arrowOffset = { false }
-                                defaultExpanded = { this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK }
+                                arrowOffset={false}
+                                defaultExpanded={this.props.page === PagesCAdmin.PRODUCTS || this.props.page === PagesCAdmin.PRODUCTS_IN_STOCK}
                                 accordionSummary={
                                     <div className={'FlexRow'}>
                                         <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgProducts }} />
@@ -71,7 +71,7 @@ export default class Sidebar extends React.Component < Props > {
                             href={PagesCAdmin.INCOMMING}
                             className={`SidebarButton SidebarButtonMarginTop Transition FlexRow ${S.CSS.getActiveClassName(this.props.page === PagesCAdmin.INCOMMING)}`}>
                             <div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} />
-                            Incomming
+                            Incoming
                         </a>
                     </div>
                 </div>

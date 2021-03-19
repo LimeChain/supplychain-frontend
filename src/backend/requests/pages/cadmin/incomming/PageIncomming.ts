@@ -12,11 +12,11 @@ const CSS_PAGE_LOADING = fs.readFileSync(`${Config.Path.Root.Frontend.RESOURCES}
 
 export default class PageIncomming extends PageIncommingH {
 
-    async onRequest(context: Context): Promise < boolean > {
+    async onRequest(context: Context): Promise<boolean> {
         context.payload.ctx.type = 'html';
         context.payload.ctx.body = TEMPLATE.stream({
             META: {
-                TITLE: 'Hedera Admin | Incomming',
+                TITLE: 'Hedera Admin | Incoming',
                 DESC: '',
                 KEYWORDS: SV.KEYWORDS,
                 ROBOTS: 'noindex, nofollow',

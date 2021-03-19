@@ -73,7 +73,7 @@ const countriesJson = [
 
 const sitesJson = [
     jsonSite(SiteConsts.S_BERLIN, CountryConsts.S_GERMANY, 'Berlin'),
-    jsonSite(SiteConsts.S_ROTHERDAM, CountryConsts.S_NETHERLANDS, 'Rotherdam'),
+    jsonSite(SiteConsts.S_ROTHERDAM, CountryConsts.S_NETHERLANDS, 'Rotterdam'),
 ]
 
 const notificationsJson = [
