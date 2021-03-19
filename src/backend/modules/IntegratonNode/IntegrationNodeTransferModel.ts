@@ -19,6 +19,12 @@ export default class IntegrationNodeTransferModel {
         return model;
     }
 
+    static newInstanceProduct() {
+        const model = new IntegrationNodeTransferModel();
+        model.type = IntegrationNodeTransferModel.TYPE_PRODUCT;
+        return model;
+    }
+
     toNetwork() {
         return {
             'type': this.type,

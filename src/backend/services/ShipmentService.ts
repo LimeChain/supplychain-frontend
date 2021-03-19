@@ -196,14 +196,14 @@ export default class ShipmentService extends Service {
         }
 
         try {
-            // const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
-            // integrationNodeTransferModel.obj = {
-            //     shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
-            // }
+            const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
+            integrationNodeTransferModel.obj = {
+                shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
+            }
             // await fs.writeFile(`${__dirname}/shipment-model.json`, JSON.stringify(integrationNodeTransferModel.toNetwork()));
             if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
                 const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
-                const axiosResponse = await instance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, shipmentModel.toNetwork());
+                const axiosResponse = await instance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
                 shipmentModel.shipmentDltProof = axiosResponse.data;
                 await this.shipmentRepo.save(shipmentModel);
             }

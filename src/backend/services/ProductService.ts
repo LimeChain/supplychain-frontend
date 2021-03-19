@@ -1,5 +1,7 @@
+import fs from 'fs/promises';
 import axios from 'axios';
 import Config from '../../../config/config';
+import IntegrationNodeTransferModel from '../modules/IntegratonNode/IntegrationNodeTransferModel';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import ProductFilter from '../modules/ProductModule/Product/Utils/ProductFilter';
@@ -30,6 +32,11 @@ export default class ProductService extends Service {
         productModel.productId = (await this.productRepo.save(productModel)).productId;
 
         try {
+            const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceProduct();
+            integrationNodeTransferModel.obj = {
+                productModel,
+            }
+            await fs.writeFile(`${__dirname}/product-model.json`, JSON.stringify(integrationNodeTransferModel.toNetwork()));
             const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
             const axiosResponse = await instance.post(Config.Server.HEDERA_INTERGRATION_NODE_CREDIT_PRODUCT_SUFFIX, productModel.toNetwork());
         } catch (ex) {
