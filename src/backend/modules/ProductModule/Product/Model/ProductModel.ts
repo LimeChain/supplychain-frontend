@@ -14,4 +14,12 @@ export default class ProductModel extends ProductModelG {
         this.productEditable = SV.FALSE;
     }
 
+    setNewDeletableStatus(newDeletableStatus: number){
+        this.productDeletable = newDeletableStatus;
+    }
+
+    markAsDeletable(){
+        this.productDeletable = SV.TRUE;
+    }
+
 }

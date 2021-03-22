@@ -7,6 +7,7 @@ export default class ProductRepoH {
     static C_PRODUCT_DESCRIPTION = 'productDescription';
     static C_PRODUCT_DELETED = 'productDeleted';
     static C_PRODUCT_EDITABLE = 'productEditable';
+    static C_PRODUCT_DELETABLE = 'productDeletable';
         
     productId: number | null;
     productIdToDb: boolean;
@@ -20,6 +21,8 @@ export default class ProductRepoH {
     productDeletedToDb: boolean;
     productEditable: number | null;
     productEditableToDb: boolean;
+    productDeletable: number | null;
+    productDeletableToDb: boolean;
     
     constructor() {
         this.productId = null;
@@ -34,6 +37,8 @@ export default class ProductRepoH {
         this.productDeletedToDb = false;
         this.productEditable = null;
         this.productEditableToDb = false;
+        this.productDeletable = null;
+        this.productDeletableToDb = false;
     }
     
     static instanceByDbRow(row): ProductRepoH {
@@ -45,6 +50,7 @@ export default class ProductRepoH {
         repo.productDescription = row[ProductRepoH.C_PRODUCT_DESCRIPTION] ?? repo.productDescription;
         repo.productDeleted = row[ProductRepoH.C_PRODUCT_DELETED] ?? repo.productDeleted;
         repo.productEditable = row[ProductRepoH.C_PRODUCT_EDITABLE] ?? repo.productEditable;
+        repo.productDeletable = row[ProductRepoH.C_PRODUCT_DELETABLE] ?? repo.productDeletable;
 
         return repo;
     }
@@ -88,6 +94,11 @@ export default class ProductRepoH {
         if (this.productEditableToDb === true) {
             columns.push(ProductRepoH.C_PRODUCT_EDITABLE);
             values.push(this.productEditable === null ? null : this.productEditable.toString());
+        }
+
+        if (this.productDeletableToDb === true) {
+            columns.push(ProductRepoH.C_PRODUCT_DELETABLE);
+            values.push(this.productDeletable === null ? null : this.productDeletable.toString());
         }
 
         return [columns, values];

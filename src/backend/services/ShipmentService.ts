@@ -83,22 +83,25 @@ export default class ShipmentService extends Service {
             notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
         }
 
+        //mark used produts as undeletable if shipment is draft
+        if(shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_DRAFT) {
+            this.productRepo.changeDeletableStatus(reqSkuModels.map((s) => s.productId), SV.FALSE);
+        }
+
         //mark used produts as uneditable if shipment is submit
         if(shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_IN_TRANSIT) {
-            const produtcDbWhere = new DatabaseWhere();
-            produtcDbWhere.andClause([
-                new DatabaseWhereClause(ProductModelH.P_PRODUCT_ID, '=', reqSkuModels.map((s) => s.productId)),
-                new DatabaseWhereClause(ProductModelH.P_PRODUCT_EDITABLE, '=', SV.TRUE)
-            ])
-            const productModels = await this.productRepo.fetch(produtcDbWhere);
-            for(let i=0; i < productModels.length; i++ ){
-                productModels[i].markAsUneditable();
-                this.productRepo.save(productModels[i]);
-            }
+           this.productRepo.markAsUneditable(reqSkuModels.map((s) => s.productId));
         }
 
         // delete missing skuModels
         const skuToDeleteModels = await this.skuRepo.deleteUnused(shipmentModel, reqSkuModels);
+
+        //mark products that have been removed from shipment as deletable, if not used anywhere else
+        const skuDbWhere = new DatabaseWhere();
+        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', skuToDeleteModels.map((s) => s.productId)))
+        const productToMakeDeletableAgain = (await this.skuRepo.fetch(skuDbWhere)).map((s) => s.productId);
+        this.productRepo.changeDeletableStatus(productToMakeDeletableAgain, SV.TRUE);
+        
 
         // credit sku models
         const skuModels = []
@@ -134,6 +137,21 @@ export default class ShipmentService extends Service {
 
         // delete missing skuOriginModels
         this.skuOriginRepo.deleteUnused(skuToDeleteModels);
+
+        //mark if products removed from shipment mark them as deletable again
+        if(shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_DRAFT) {
+            const produtcDbWhere = new DatabaseWhere();
+            produtcDbWhere.andClause([
+                new DatabaseWhereClause(ProductModelH.P_PRODUCT_ID, '=', reqSkuModels.map((s) => s.productId)),
+                new DatabaseWhereClause(ProductModelH.P_PRODUCT_DELETABLE, '=', SV.TRUE)
+            ])
+            
+            const productModels = await this.productRepo.fetch(produtcDbWhere);
+            for(let i=0; i < productModels.length; i++ ){
+                productModels[i].markAsUndeletable();
+                this.productRepo.save(productModels[i]);
+            }
+        }
 
         // credit sku origin models
         const skuOriginModels = [];

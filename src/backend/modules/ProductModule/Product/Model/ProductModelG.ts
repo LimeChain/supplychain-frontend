@@ -14,6 +14,7 @@ export default class ProductModelG extends ProductModelH {
         this.productDescription = SV.Strings.EMPTY;
         this.productDeleted = SV.NOT_EXISTS;
         this.productEditable = SV.NOT_EXISTS;
+        this.productDeletable = SV.NOT_EXISTS;
     }
 
     copyRefProperties(sourceModel: ProductModel): void {
@@ -60,6 +61,10 @@ export default class ProductModelG extends ProductModelH {
             repo.productEditable = this.productEditable;
             repo.productEditableToDb = true;
         }
+        if (map.has(ProductModelH.P_PRODUCT_DELETABLE) === true && this.productDeletable !== undefined) {
+            repo.productDeletable = this.productDeletable;
+            repo.productDeletableToDb = true;
+        }
 
         return repo;
     }
@@ -73,6 +78,7 @@ export default class ProductModelG extends ProductModelH {
         model.productDescription = repo.productDescription ?? model.productDescription;
         model.productDeleted = parseInt((repo.productDeleted ?? model.productDeleted) as unknown as string);
         model.productEditable = parseInt((repo.productEditable ?? model.productEditable) as unknown as string);
+        model.productDeletable = parseInt((repo.productDeletable ?? model.productDeletable) as unknown as string);
 
         return model;
     }
@@ -86,6 +92,7 @@ export default class ProductModelG extends ProductModelH {
             productDescription: this.productDescription,
             productDeleted: this.productDeleted,
             productEditable: this.productEditable,
+            productDeletable: this.productDeletable,
         };
     }
 
@@ -102,6 +109,7 @@ export default class ProductModelG extends ProductModelH {
         model.productDescription = json.productDescription ?? model.productDescription;
         model.productDeleted = parseInt(json.productDeleted ?? model.productDeleted);
         model.productEditable = parseInt(json.productEditable ?? model.productEditable);
+        model.productDeletable = parseInt(json.productDeletable ?? model.productDeletable);
 
         return model;
     }
@@ -120,6 +128,8 @@ export default class ProductModelG extends ProductModelH {
                 return ProductRepoH.C_PRODUCT_DELETED;
             case ProductModelH.P_PRODUCT_EDITABLE:
                 return ProductRepoH.C_PRODUCT_EDITABLE;
+            case ProductModelH.P_PRODUCT_DELETABLE:
+                return ProductRepoH.C_PRODUCT_DELETABLE;
             default:
                 return null;
         }
