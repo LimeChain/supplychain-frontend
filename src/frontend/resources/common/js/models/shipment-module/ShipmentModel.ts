@@ -88,6 +88,10 @@ export default class ShipmentModel {
         return this.shipmentStatus === ShipmentConsts.S_STATUS_DRAFT;
     }
 
+    isInTransit(): boolean {
+        return this.shipmentStatus === ShipmentConsts.S_STATUS_IN_TRANSIT;
+    }
+
     isReceived(): boolean {
         return this.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED;
     }

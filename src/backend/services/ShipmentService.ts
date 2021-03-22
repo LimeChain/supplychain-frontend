@@ -311,7 +311,6 @@ export default class ShipmentService extends Service {
     }
 
     async fetchShipmentById(shipmentId: number): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
-
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) {
             throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
@@ -321,9 +320,9 @@ export default class ShipmentService extends Service {
         skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_SHIPMENT_ID, '=', shipmentId));
         const skuModels = await this.skuRepo.fetch(skuDbWhere);
 
-        const skuoriginDbWhere = new DatabaseWhere();
-        skuoriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SKU_ID, '=', skuModels.map((s) => s.skuId)));
-        const skuOriginModels = await this.skuOriginRepo.fetch(skuoriginDbWhere);
+        const skuOriginDbWhere = new DatabaseWhere();
+        skuOriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SKU_ID, '=', skuModels.map((s) => s.skuId)));
+        const skuOriginModels = await this.skuOriginRepo.fetch(skuOriginDbWhere);
 
         const shipmentDocumentsDbWhere = new DatabaseWhere();
         shipmentDocumentsDbWhere.orClause([

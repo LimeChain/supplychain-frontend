@@ -92,7 +92,7 @@ export default class Button extends React.Component<Props> {
     }
 
     render() {
-        const className = `Button Transition ${this.props.className}`;
+        const className = `Button Transition ${this.props.className} ${S.CSS.getClassName(!this.props.href && !this.props.onClick, 'NotClickable')}`;
 
         return (
             <ThemeProvider theme={theme01} >

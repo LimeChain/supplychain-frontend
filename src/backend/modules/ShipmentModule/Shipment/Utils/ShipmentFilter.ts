@@ -22,10 +22,11 @@ export default class ShipmentFilter {
     status: number = SV.NOT_EXISTS;
     page: number = SV.NOT_EXISTS;
     searchBy: string = SV.Strings.NOT_EXISTS;
-    sortBy: number = SV.NOT_EXISTS;
+    sortBy: number = -ShipmentFilter.S_SORT_BY_ID;
 
     getSortColumn(): number | null {
         switch (Math.abs(this.sortBy)) {
+            default:
             case ShipmentFilter.S_SORT_BY_ID:
                 return ShipmentModelH.P_SHIPMENT_ID;
             case ShipmentFilter.S_SORT_BY_NAME:
@@ -38,8 +39,6 @@ export default class ShipmentFilter {
                 return ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID;
             case ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID:
                 return ShipmentModelH.P_SHIPMENT_DESTINATION_SITE_ID;
-            default:
-                return null;
         }
     }
 

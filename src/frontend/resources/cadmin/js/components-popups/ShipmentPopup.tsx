@@ -391,19 +391,19 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         <div className={'WidthLimiter'}>
                             <Input
                                 placeholder={'Enter consigment ID'}
-                                readOnly={this.props.popupStore.shipmentModel.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT}
+                                readOnly={this.props.popupStore.shipmentModel.isDraft() === false}
                                 value={shipmentInputStateHelper.values.get(FIELDS_SHIPMENT[0])}
                                 error={shipmentInputStateHelper.errors.get(FIELDS_SHIPMENT[0])}
                                 onChange={shipmentInputStateHelper.onChanges.get(FIELDS_SHIPMENT[0])} />
                         </div>
                         {this.renderFromSite()}
                         {this.renderToSite()}
-                        {this.props.popupStore.shipmentModel.shipmentStatus !== ShipmentConsts.S_STATUS_DRAFT
-                            && <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
+                        {this.props.popupStore.shipmentModel.isDraft() === false && (
+                            <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
                                 <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
                                 <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
                             </Actions>
-                        }
+                        )}
                     </LayoutBlock>
                 </div>
                 <hr />
@@ -442,12 +442,9 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                     <Button onClick={this.onClickSubmitShipment}>Submit shipment</Button>
                                 </>
                             )}
-                            {this.props.popupStore.shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_IN_TRANSIT
-                                && this.props.accountSessionStore.accountModel.siteId === this.props.popupStore.shipmentModel.shipmentDestinationSiteId
-                                && (
-                                    <Button onClick={this.onClickReceiveShipment}>Mark as received</Button>
-                                )
-                            }
+                            {this.props.popupStore.shipmentModel.isInTransit() === true && this.props.accountSessionStore.accountModel.siteId === this.props.popupStore.shipmentModel.shipmentDestinationSiteId && (
+                                <Button onClick={this.onClickReceiveShipment}>Mark as received</Button>
+                            )}
                         </Actions>
                     </div>
                 </div>
@@ -666,10 +663,11 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     renderDocuments() {
         const shipmentModel = this.props.popupStore.shipmentModel;
+        const renderCredit = shipmentModel.isDraft() === true || (shipmentModel.isInTransit() === true && this.props.accountSessionStore.accountModel.siteId === this.props.popupStore.shipmentModel.shipmentDestinationSiteId);
         return (
             <>
-                {shipmentModel.isReceived() === false && this.renderDocumentsCredit()}
-                {shipmentModel.isReceived() === true && this.renderDocumentsAudit()}
+                {renderCredit === true && this.renderDocumentsCredit()}
+                {renderCredit === false && this.renderDocumentsAudit()}
             </>
         )
     }
@@ -694,11 +692,13 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 <hr />
                 <div className={'UploadedDocumentsCnt'} >
                     {popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
+                        const editable = shipmentModel.isDraft() === true || i >= popupStore.initialShipmentDocumentLength;
                         return (
                             <div key={i} className={'UploadedDocument FlexRow FlexSplit'} >
                                 <Select
                                     className={'UploadedDocumentType'}
                                     placeholder={'Select document type'}
+                                    readOnly = { editable === false }
                                     value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
                                     onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
                                     error={shipmentDocumentModel.documentType === S.NOT_EXISTS}
@@ -734,7 +734,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                 { shipmentDocumentModel.isUploaded() === true && (
                                     <>
                                         <a href={shipmentDocumentModel.shipmentDocumentUrl} download={shipmentDocumentModel.name} className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDownload }} />
-                                        { (shipmentModel.isDraft() === true || i >= popupStore.initialShipmentDocumentLength) && (
+                                        { editable === true && (
                                             <div className={'SVG IconUploadAction'} dangerouslySetInnerHTML={{ __html: SvgDelete }} onClick={this.onClickDeleteDocument.bind(this, shipmentDocumentModel)} />
                                         )}
                                     </>

@@ -78,7 +78,7 @@ class ProductRowMenu extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className={'ProductRowMenu'} ref={this.nodes.root}>
+            <div className={'ProductRowMenu Clickable'} ref={this.nodes.root}>
                 {this.props.productModel.productEditable === SV.TRUE && <>
                     <MoreHorizIcon onClick={this.toggleOpenState} />
 
