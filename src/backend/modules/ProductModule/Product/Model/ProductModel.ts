@@ -10,15 +10,15 @@ export default class ProductModel extends ProductModelG {
         return this.productId === SV.NOT_EXISTS;
     }
 
-    markAsUneditable(){
+    markAsUneditable() {
         this.productEditable = SV.FALSE;
     }
 
-    setNewDeletableStatus(newDeletableStatus: number){
+    setNewDeletableStatus(newDeletableStatus: number) {
         this.productDeletable = newDeletableStatus;
     }
 
-    markAsDeletable(){
+    markAsDeletable() {
         this.productDeletable = SV.TRUE;
     }
 

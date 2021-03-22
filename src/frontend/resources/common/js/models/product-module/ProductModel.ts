@@ -43,7 +43,7 @@ export default class ProductModel {
             'productDescription': this.productDescription,
             'productDeleted': this.productDeleted,
             'productEditable': this.productEditable,
-            'productDeletable': this.productDeleted,
+            'productDeletable': this.productDeletable,
         }
     }
 

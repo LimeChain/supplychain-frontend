@@ -15,6 +15,7 @@ import SvgProductEdit from '../../../common/svg/product-edit.svg';
 import SvgProductDelete from '../../../common/svg/product-delete.svg';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import './../../css/components-inc/product-row-menu.css';
+import SV from '../../../../../backend/utilities/SV';
 
 interface Props {
     show: number
@@ -30,12 +31,12 @@ interface State {
     show: boolean
 }
 
-class ProductRowMenu extends React.Component < Props, State > {
+class ProductRowMenu extends React.Component<Props, State> {
 
     productApi: ProductApi;
 
     nodes: {
-        root: RefObject < HTMLDivElement >,
+        root: RefObject<HTMLDivElement>,
     };
 
     constructor(props) {
@@ -65,7 +66,7 @@ class ProductRowMenu extends React.Component < Props, State > {
             this.productApi.creditProduct(this.props.productModel, () => {
                 this.props.onFinishDelete();
             });
-        }, () => {});
+        }, () => { });
         this.toggleOpenState();
     }
 
@@ -78,7 +79,7 @@ class ProductRowMenu extends React.Component < Props, State > {
     render() {
         return (
             <div className={'ProductRowMenu'} ref={this.nodes.root}>
-                {this.props.productModel.productEditable && <>
+                {this.props.productModel.productEditable === SV.TRUE && <>
                     <MoreHorizIcon onClick={this.toggleOpenState} />
 
                     <Popover classes={{ root: 'ProductRowMenuPopover' }}
@@ -87,19 +88,19 @@ class ProductRowMenu extends React.Component < Props, State > {
                         onClose={this.toggleOpenState}
                         open={this.state.show}
                         anchorEl={this.nodes.root.current}>
-                        <div className = { 'MenuBox' }>
+                        <div className={'MenuBox'}>
                             <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickEditProduct}>
                                 <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductEdit }}></div>
                                 Edit
                             </div>
-                            {this.props.productModel.productDeletable &&
-                            <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickDeleteProduct}>
-                                <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductDelete }}></div>
+                            {this.props.productModel.productDeletable === SV.TRUE
+                                && <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickDeleteProduct}>
+                                    <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductDelete }}></div>
                                 Delete
-                            </div>}
+                                </div>}
                         </div>
                     </Popover>
-                    </>
+                </>
                 }
             </div>
         );

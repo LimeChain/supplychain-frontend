@@ -28,6 +28,8 @@ export default class ProductService extends Service {
         productModel.productUnit = reqProductModel.productUnit;
         productModel.productDescription = reqProductModel.productDescription;
         productModel.productDeleted = reqProductModel.productDeleted;
+        productModel.productDeletable = reqProductModel.productDeletable;
+        productModel.productEditable = reqProductModel.productEditable;
 
         productModel.productId = (await this.productRepo.save(productModel)).productId;
 
