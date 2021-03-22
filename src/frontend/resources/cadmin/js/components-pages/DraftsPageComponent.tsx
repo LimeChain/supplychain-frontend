@@ -252,6 +252,7 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
 
             result.push([
                 Table.cellString(`#${shipmentModel.shipmentId}`),
+                Table.cellString(shipmentModel.shipmentConsignmentNumber),
                 Table.cellString(originCountryModel.countryName),
                 Table.cell(<div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgArrowRight }}></div>),
                 Table.cellString(destinationString),
@@ -275,11 +276,12 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     getTableLegend = () => {
-        return ['ID', 'Shipped From', '', 'Destination', 'Status', 'Action'];
+        return ['ID', 'Consignment ID', 'Shipped From', '', 'Destination', 'Status', 'Action'];
     }
 
     getTableAligns = () => {
         return [
+            TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
@@ -291,6 +293,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     getTableWidths = () => {
-        return ['5%', '10%', '8%', '47%', '15%', '10%', '5%'];
+        return ['5%', '20%', '10%', '8%', '27%', '15%', '10%', '5%'];
     }
 }

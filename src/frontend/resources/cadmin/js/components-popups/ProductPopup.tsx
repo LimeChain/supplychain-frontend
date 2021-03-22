@@ -107,7 +107,7 @@ class ProductPopup extends PopupWindow<Props> {
                         <Button onClick={this.addProduct} disabled = { inputStateHelperProduct.isValid() === false }>
                             <div className={'FlexRow'}>
                                 <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
-                                {productModel.isNew() === false ? 'Edit' : 'Add'} product
+                                {productModel.isNew() === false ? 'Save' : 'Add product'} 
                             </div>
                         </Button>
                     </Actions>

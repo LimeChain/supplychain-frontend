@@ -8,6 +8,8 @@ export default class ProductModel {
     productUnit: number
     productDescription: string
     productDeleted: number
+    productEditable: number
+    productDeletable: number
 
     constructor() {
         this.productId = S.Strings.NOT_EXISTS;
@@ -15,6 +17,8 @@ export default class ProductModel {
         this.productUnit = S.NOT_EXISTS;
         this.productDescription = S.Strings.EMPTY;
         this.productDeleted = S.INT_FALSE;
+        this.productEditable = S.INT_TRUE;
+        this.productDeletable = S.INT_TRUE;
 
         makeAutoObservable(this);
     }
@@ -38,6 +42,8 @@ export default class ProductModel {
             'productUnit': this.productUnit,
             'productDescription': this.productDescription,
             'productDeleted': this.productDeleted,
+            'productEditable': this.productEditable,
+            'productDeletable': this.productDeletable,
         }
     }
 
@@ -53,6 +59,8 @@ export default class ProductModel {
         model.productUnit = json.productUnit ?? model.productUnit;
         model.productDescription = json.productDescription ?? model.productDescription;
         model.productDeleted = json.productDeleted ?? model.productDeleted;
+        model.productEditable = json.productEditable ?? model.productEditable;
+        model.productDeletable = json.productDeletable ?? model.productDeletable;
 
         return model;
     }

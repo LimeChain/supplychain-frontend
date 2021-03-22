@@ -83,8 +83,24 @@ export default class ShipmentService extends Service {
             notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
         }
 
+        // mark used produts as undeletable
+        this.productRepo.changeDeletableStatus(reqSkuModels.map((s) => s.productId), SV.FALSE);
+
+        // mark used produts as uneditable if shipment is submit
+        if (shipmentModel.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT) {
+            this.productRepo.markAsUneditable(reqSkuModels.map((s) => s.productId));
+        }
+
         // delete missing skuModels
         const skuToDeleteModels = await this.skuRepo.deleteUnused(shipmentModel, reqSkuModels);
+
+        // mark products that have been removed from shipment as deletable, if not used anywhere else
+        const skuDbWhere = new DatabaseWhere();
+        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', skuToDeleteModels.map((s) => s.productId)))
+        const skuWhereProductUsed = await this.skuRepo.fetch(skuDbWhere);
+        const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
+        console.log();
+        this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
         // credit sku models
         const skuModels = []
