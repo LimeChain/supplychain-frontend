@@ -293,6 +293,6 @@ export default class DraftsPageComponent extends ContextPageComponent<Props, Sta
     }
 
     getTableWidths = () => {
-        return ['5%', '10%', '10%', '8%', '37%', '15%', '10%', '5%'];
+        return ['5%', '20%', '10%', '8%', '27%', '15%', '10%', '5%'];
     }
 }
