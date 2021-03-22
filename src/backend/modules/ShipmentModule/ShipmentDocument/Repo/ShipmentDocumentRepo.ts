@@ -3,6 +3,7 @@ import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereCla
 import ShipmentModel from '../../Shipment/Model/ShipmentModel';
 import ShipmentDocumentModel from '../Model/ShipmentDocumentModel';
 import ShipmentDocumentRepoG from './ShipmentDocumentRepoG';
+import ShipmentDocumentRepoH from './ShipmentDocumentRepoH';
 
 export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
 
@@ -14,6 +15,14 @@ export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
         ]);
 
         return this.delete(databaseWhere);
+    }
+
+    async saveWithPrimaryKey(shipmentDocumentModel: ShipmentDocumentModel) {
+        const repoObj = shipmentDocumentModel.toRepo();
+        repoObj.getPrimaryValueForInsert = () => {
+            return repoObj.shipmentDocumentId;
+        };
+        this.db.save(ShipmentDocumentRepoH.TABLE_NAME, repoObj);
     }
 
 }

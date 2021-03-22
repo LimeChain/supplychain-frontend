@@ -3,6 +3,7 @@ import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereCla
 import ShipmentModel from '../../../ShipmentModule/Shipment/Model/ShipmentModel';
 import SkuModel from '../Model/SkuModel';
 import SkuRepoG from './SkuRepoG';
+import SkuRepoH from './SkuRepoH';
 
 export default class SkuRepo extends SkuRepoG {
 
@@ -17,6 +18,14 @@ export default class SkuRepo extends SkuRepoG {
         const skuToDeleteModels = await this.fetch(databaseWhere);
         await this.deleteByPrimaryValues(skuToDeleteModels.map((s) => s.skuId))
         return skuToDeleteModels;
+    }
+
+    async saveWithPrimaryKey(skuModel: SkuModel) {
+        const repoObj = skuModel.toRepo();
+        repoObj.getPrimaryValueForInsert = () => {
+            return repoObj.skuId;
+        };
+        this.db.save(SkuRepoH.TABLE_NAME, repoObj);
     }
 
 }

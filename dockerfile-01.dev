@@ -25,4 +25,4 @@ COPY --chown=node:node ./ ./
 EXPOSE ${HTTP_PORT}
 EXPOSE ${GRPC_PORT}
 
-CMD ["sh", "-c", "npm run dev-migrate-db&& npm run dev"]
+CMD ["sh", "-c", "npm run dev-migrate-db-01&& npm run dev-01"]

@@ -4,6 +4,7 @@ import SV from '../../../../utilities/SV';
 import ProductModel from '../Model/ProductModel';
 import ProductFilter from '../Utils/ProductFilter';
 import ProductRepoG from './ProductRepoG';
+import ProductRepoH from './ProductRepoH';
 
 export default class ProductRepo extends ProductRepoG {
 
@@ -29,6 +30,14 @@ export default class ProductRepo extends ProductRepoG {
         databaseWhere.clause(new DatabaseWhereClause(ProductModel.P_PRODUCT_DELETED, '=', SV.FALSE));
         const productModels = await this.fetch(databaseWhere);
         return productModels.length === 0 ? null : productModels[0];
+    }
+
+    async saveWithPrimaryKey(productModel: ProductModel) {
+        const repoObj = productModel.toRepo();
+        repoObj.getPrimaryValueForInsert = () => {
+            return repoObj.productId;
+        };
+        this.db.save(ProductRepoH.TABLE_NAME, repoObj);
     }
 
 }

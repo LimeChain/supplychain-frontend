@@ -56,8 +56,9 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
         super.componentDidMount();
         this.generalApi.fetchAllSites((siteModels, countryModels) => {
             this.props.siteStore.onScreenData(siteModels, countryModels);
+            const siteModel = this.props.siteStore.getSiteModel(Config.Server.SITE_ID);
             this.inputStateHelper.updateValues([
-                `${siteModels[0].siteId},${countryModels[0].countryId}`,
+                `${siteModel.siteId},${siteModel.countryId}`,
                 S.Strings.EMPTY,
             ]);
             this.setState({});
@@ -127,6 +128,9 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
                             error = { this.inputStateHelper.errors.get(FIELDS[0]) }
                             onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >
                             { siteStore.screenSiteModels.map((siteModel, i) => {
+                                if (siteModel.siteId !== Config.Server.SITE_ID) {
+                                    return null;
+                                }
                                 const countryModel = siteStore.getCountryModel(siteModel.countryId);
                                 return (
                                     <MenuItem key = { i } value = { `${siteModel.siteId},${countryModel.countryId}` } >

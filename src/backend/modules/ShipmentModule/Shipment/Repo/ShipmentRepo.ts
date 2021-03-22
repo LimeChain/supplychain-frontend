@@ -5,6 +5,7 @@ import ShipmentModel from '../Model/ShipmentModel';
 import ShipmentModelH from '../Model/ShipmentModelH';
 import ShipmentFilter from '../Utils/ShipmentFilter';
 import ShipmentRepoG from './ShipmentRepoG';
+import ShipmentRepoH from './ShipmentRepoH';
 
 export default class ShipmentRepo extends ShipmentRepoG {
 
@@ -14,7 +15,7 @@ export default class ShipmentRepo extends ShipmentRepoG {
         databaseWhere.orderType = shipmentFilter.getSortOrder();
 
         databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DELETED, '=', SV.FALSE))
-        
+
         // filter by page
         if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_DRAFTS) {
             databaseWhere.andClause([
@@ -52,6 +53,14 @@ export default class ShipmentRepo extends ShipmentRepoG {
         }
 
         return this.fetch(databaseWhere);
+    }
+
+    async saveWithPrimaryKey(shipmentModel: ShipmentModel) {
+        const repoObj = shipmentModel.toRepo();
+        repoObj.getPrimaryValueForInsert = () => {
+            return repoObj.shipmentId;
+        };
+        this.db.save(ShipmentRepoH.TABLE_NAME, repoObj);
     }
 
 }
