@@ -15,6 +15,8 @@ export default class ShipmentFilter {
     static S_PAGE_STATUS_DRAFTS = 1
     static S_PAGE_STATUS_INCOMMING = 2
     static S_PAGE_STATUS_OUTGOING = 3
+    static S_PAGE_DASHBOARD_INCOMMING = 4
+    static S_PAGE_DASHBOARD_OUTGOING = 5
 
     siteId: number = SV.NOT_EXISTS;
     status: number = SV.NOT_EXISTS;

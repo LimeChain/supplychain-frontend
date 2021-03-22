@@ -8,19 +8,21 @@ import SvgAdd from '@material-ui/icons/Add';
 import '../../css/components-inc/no-entry-page.css';
 
 interface Props {
-    buttonFunction: any,
-    subText: string,
-    modelName: string,
-    buttonText: string,
+    buttonFunction?: any,
+    subText?: string,
+    modelName?: string,
+    buttonText?: string,
 }
 
-export default class PageView extends React.Component<Props> {
+export default class NoEntryPage extends React.Component<Props> {
+    static DEFAULT_TEXT = `Your list with {this.props.modelName}s is empty`;
+    static INCOMING_TEXT = 'No incoming shipments';
 
     render() {
         return (
             <div className={'NoEntryPage WhiteBox PageExtend FlexColumn'} >
                 <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgEmptyList }}></div>
-                <div className={'EmptyListHeader'}>Your list with {this.props.modelName}s is empty</div>
+                <div className={'EmptyListHeader'}>{this.props.modelName === null? NoEntryPage.INCOMING_TEXT : NoEntryPage.DEFAULT_TEXT}</div>
                 <div className={'EmptyListText'}>{this.props.subText}</div>
                 {this.props.buttonFunction === null ? ''
                     : <Actions>

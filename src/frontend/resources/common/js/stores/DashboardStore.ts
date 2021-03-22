@@ -80,9 +80,9 @@ export default class DashboardStore {
         const to = from + DashboardStore.SHIPMENTS_SHOW_COUNT;
 
         this.shipmentApi.fetchShipmentByFilter(
-            ShipmentFilter.S_PAGE_STATUS_INCOMMING,
+            ShipmentFilter.S_PAGE_DASHBOARD_INCOMMING,
             '',
-            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
+            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT * -1,
             from,
             to,
             (shipmentModels: ShipmentModel[], totalSize: number) => {
@@ -115,9 +115,9 @@ export default class DashboardStore {
         const to = from + DashboardStore.SHIPMENTS_SHOW_COUNT;
 
         this.shipmentApi.fetchShipmentByFilter(
-            ShipmentFilter.S_PAGE_STATUS_OUTGOING,
+            ShipmentFilter.S_PAGE_DASHBOARD_OUTGOING,
             '',
-            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
+            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT * -1,
             from,
             to,
             (shipmentModels: ShipmentModel[], totalSize: number) => {

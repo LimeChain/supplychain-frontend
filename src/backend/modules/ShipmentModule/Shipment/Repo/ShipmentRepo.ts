@@ -15,6 +15,10 @@ export default class ShipmentRepo extends ShipmentRepoG {
 
         databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DELETED, '=', SV.FALSE))
         
+
+        const dateForFetch = new Date(Date.now());
+        dateForFetch.setMonth(dateForFetch.getMonth() - 1);
+
         // filter by page
         if (shipmentFilter.page === ShipmentFilter.S_PAGE_STATUS_DRAFTS) {
             databaseWhere.andClause([
@@ -31,7 +35,18 @@ export default class ShipmentRepo extends ShipmentRepoG {
                 new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),
                 new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID, '=', shipmentFilter.siteId),
             ]);
-        }
+        } else if (shipmentFilter.page === ShipmentFilter.S_PAGE_DASHBOARD_INCOMMING) {
+            databaseWhere.andClause([
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DESTINATION_SITE_ID, '=', shipmentFilter.siteId),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DATE_OF_SHIPMENT, '>', dateForFetch)
+            ]);
+        } else if (shipmentFilter.page === ShipmentFilter.S_PAGE_DASHBOARD_OUTGOING) {
+            databaseWhere.andClause([
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '!=', ShipmentModel.S_STATUS_DRAFT),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID, '=', shipmentFilter.siteId),
+                new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_DATE_OF_SHIPMENT, '>', dateForFetch)
+            ]);
 
         if (shipmentFilter.status !== SV.NOT_EXISTS) {
             databaseWhere.clause(new DatabaseWhereClause(ShipmentModelH.P_SHIPMENT_STATUS, '=', shipmentFilter.status));

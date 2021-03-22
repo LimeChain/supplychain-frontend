@@ -128,13 +128,6 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
         alertStore.visible = true;
     }
 
-    onClickCreateNewShipment = () => {
-        const shipmentModel = ShipmentModel.newInstanceByOriginSiteId(this.props.accountSessionStore.accountModel.siteId);
-        this.props.popupShipmentStore.signalShow(shipmentModel, [], [], [], () => {
-            // creating a shipment from incoming page results in no any change on this page so we can do nothing
-        });
-    }
-
     onClickShipment = (i: number) => {
         const sourceShipmentModel = this.props.shipmentStore.screenShipmentModels[i];
         const shipmentId = sourceShipmentModel.shipmentId;
@@ -161,7 +154,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                     {this.props.shipmentStore.screenShipmentModels !== null && (
                         <>
                             {this.tableHelper.tableState.total === 0 && this.searchWord === S.Strings.EMPTY && (
-                                <NoEntryPage modelName='shipment' subText='Create shipment as a draft or submit one' buttonText='New Shipment' buttonFunction={this.onClickCreateNewShipment} />
+                                <NoEntryPage modelName='shipment'/>
                             )}
                             {(this.tableHelper.tableState.total > 0 || this.searchWord !== S.Strings.EMPTY) && (
                                 <PageTable
