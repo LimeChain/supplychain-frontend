@@ -237,7 +237,7 @@ export default class IncommingPageComponent extends ContextPageComponent<Props, 
                 Table.cellString(moment(shipmentModel.shipmentDateOfShipment).format('DD MMM YYYY'), 'ShipmentDateCell'),
                 Table.cell(
                     <Actions>
-                        <Button disabled={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED} onClick={(e) => this.onClickReceiveShipmentRowAction(shipmentModel, e)}>
+                        <Button color={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED ? Button.COLOR_SCHEME_2 : Button.COLOR_SCHEME_4} disabled={shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_RECEIVED} onClick={(e) => this.onClickReceiveShipmentRowAction(shipmentModel, e)}>
                             Goods Received
                         </Button>
                     </Actions>,
