@@ -15,14 +15,15 @@ interface Props {
 }
 
 export default class NoEntryPage extends React.Component<Props> {
-    static DEFAULT_TEXT = `Your list with {this.props.modelName}s is empty`;
-    static INCOMING_TEXT = 'No incoming shipments';
 
     render() {
+        const DEFAULT_TEXT = `Your list with ${this.props.modelName}s is empty`;
+        const INCOMING_TEXT = 'No incoming shipments';
+
         return (
             <div className={'NoEntryPage WhiteBox PageExtend FlexColumn'} >
                 <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgEmptyList }}></div>
-                <div className={'EmptyListHeader'}>{this.props.modelName === null? NoEntryPage.INCOMING_TEXT : NoEntryPage.DEFAULT_TEXT}</div>
+                <div className={'EmptyListHeader'}>{this.props.modelName === null ? INCOMING_TEXT : DEFAULT_TEXT}</div>
                 <div className={'EmptyListText'}>{this.props.subText}</div>
                 {this.props.buttonFunction === null ? ''
                     : <Actions>

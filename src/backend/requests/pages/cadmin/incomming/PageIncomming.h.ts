@@ -8,5 +8,5 @@ export default class PageIncommingH extends Page {
     static TEMPLATE_PATH: string;
 }
 
-PageIncommingH.URL = `${Config.URL.CADMIN}/incomming`;
+PageIncommingH.URL = `${Config.URL.CADMIN}/incoming`;
 PageIncommingH.TEMPLATE_PATH = `${Config.Path.Root.Frontend.Pages.CADMIN}/page-incomming.marko`;
