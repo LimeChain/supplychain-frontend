@@ -67,7 +67,7 @@ export default class ShipmentModel {
     getStatusString() {
         switch (this.shipmentStatus) {
             case ShipmentConsts.S_STATUS_IN_TRANSIT:
-                return 'In Transtit';
+                return 'In Transit';
             case ShipmentConsts.S_STATUS_RECEIVED:
                 return 'Received';
             default:
