@@ -5,5 +5,5 @@ export default class ProductModel {
     productUnit: number
     productDescription: string
     productDeleted: number
-
+    productEditable: number
 }

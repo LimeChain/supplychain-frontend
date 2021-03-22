@@ -13,6 +13,7 @@ import StateException from '../utilities/network/StateException';
 import SV from '../utilities/SV';
 import Service from './common/Service';
 import SkuOriginRepo from '../modules/ProductModule/SkuOrigin/Repo/SkuOriginRepo';
+import ShipmentConsts from '../../builds/dev-generated/ShipmentModule/Shipment/ShipmentModelConsts';
 import DatabaseWhere from '../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../utilities/database/DatabaseWhereClause';
 import SkuModelH from '../modules/ProductModule/Sku/Model/SkuModelH';
@@ -24,6 +25,7 @@ import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
 import path from 'path';
 import Config from '../../../config/config';
 import IntegrationNodeTransferModel from '../modules/IntegratonNode/IntegrationNodeTransferModel';
+import ProductModelH from '../modules/ProductModule/Product/Model/ProductModelH';
 
 export default class ShipmentService extends Service {
 
@@ -79,6 +81,20 @@ export default class ShipmentService extends Service {
         if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
             const notificationService = this.servicesFactory.getNotificationService();
             notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+        }
+
+        //mark used produts as uneditable if shipment is submit
+        if(shipmentModel.shipmentStatus === ShipmentConsts.S_STATUS_IN_TRANSIT) {
+            const produtcDbWhere = new DatabaseWhere();
+            produtcDbWhere.andClause([
+                new DatabaseWhereClause(ProductModelH.P_PRODUCT_ID, '=', reqSkuModels.map((s) => s.productId)),
+                new DatabaseWhereClause(ProductModelH.P_PRODUCT_EDITABLE, '=', SV.TRUE)
+            ])
+            const productModels = await this.productRepo.fetch(produtcDbWhere);
+            for(let i=0; i < productModels.length; i++ ){
+                productModels[i].markAsUneditable();
+                this.productRepo.save(productModels[i]);
+            }
         }
 
         // delete missing skuModels

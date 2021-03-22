@@ -88,10 +88,11 @@ class ProductRowMenu extends React.Component < Props, State > {
                     open={this.state.show}
                     anchorEl={this.nodes.root.current}>
                     <div className = { 'MenuBox' }>
+                        {this.props.productModel.productEditable &&
                         <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickEditProduct}>
                             <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductEdit }}></div>
                             Edit
-                        </div>
+                        </div>}
                         <div className={'MenuItem FlexRow Clickable'} onClick={this.onClickDeleteProduct}>
                             <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgProductDelete }}></div>
                             Delete
