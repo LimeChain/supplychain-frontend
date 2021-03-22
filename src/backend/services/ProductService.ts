@@ -43,16 +43,16 @@ export default class ProductService extends Service {
             const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
             const axiosResponse = await instance.post(Config.Server.HEDERA_INTERGRATION_NODE_CREDIT_PRODUCT_SUFFIX, integrationNodeTransferModel.toNetwork());
 
-            const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
-            await axiosTransfer01.post('/', {
-                [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
-                [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-            });
-            const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
-            await axiosTransfer02.post('/', {
-                [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
-                [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-            });
+            // const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
+            // await axiosTransfer01.post('/', {
+            //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
+            //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+            // });
+            // const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
+            // await axiosTransfer02.post('/', {
+            //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
+            //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+            // });
         } catch (ex) {
             throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
         }

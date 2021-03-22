@@ -225,16 +225,16 @@ export default class ShipmentService extends Service {
                 await this.shipmentRepo.save(shipmentModel);
                 integrationNodeTransferModel.obj.shipmentModel.shipmentDltProof = shipmentModel.shipmentDltProof;
 
-                const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
-                await axiosTransfer01.post('/', {
-                    [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
-                    [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-                });
-                const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
-                await axiosTransfer02.post('/', {
-                    [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
-                    [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-                });
+                // const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
+                // await axiosTransfer01.post('/', {
+                //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
+                //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+                // });
+                // const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
+                // await axiosTransfer02.post('/', {
+                //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
+                //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+                // });
             }
             // await fs.writeFile(`${__dirname}/shipment-model.json`, JSON.stringify(integrationNodeTransferModel.toNetwork()));
         } catch (ex) {

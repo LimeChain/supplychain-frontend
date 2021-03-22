@@ -128,9 +128,9 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
                             error = { this.inputStateHelper.errors.get(FIELDS[0]) }
                             onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >
                             { siteStore.screenSiteModels.map((siteModel, i) => {
-                                if (siteModel.siteId !== Config.Server.SITE_ID) {
-                                    return null;
-                                }
+                                // if (siteModel.siteId !== Config.Server.SITE_ID) {
+                                //     return null;
+                                // }
                                 const countryModel = siteStore.getCountryModel(siteModel.countryId);
                                 return (
                                     <MenuItem key = { i } value = { `${siteModel.siteId},${countryModel.countryId}` } >
