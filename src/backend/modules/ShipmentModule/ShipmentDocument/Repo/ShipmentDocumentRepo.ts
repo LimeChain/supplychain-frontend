@@ -2,6 +2,7 @@ import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
 import ShipmentModel from '../../Shipment/Model/ShipmentModel';
 import ShipmentDocumentModel from '../Model/ShipmentDocumentModel';
+import ShipmentDocumentModelH from '../Model/ShipmentDocumentModelH';
 import ShipmentDocumentRepoG from './ShipmentDocumentRepoG';
 import ShipmentDocumentRepoH from './ShipmentDocumentRepoH';
 
@@ -23,6 +24,12 @@ export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
             return repoObj.shipmentDocumentId;
         };
         this.db.save(ShipmentDocumentRepoH.TABLE_NAME, repoObj);
+    }
+
+    async fetchByShipmentIds(shipmentIds: number[]) {
+        const databaseWhere = new DatabaseWhere();
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentIds));
+        return this.fetch(databaseWhere);
     }
 
 }

@@ -316,21 +316,27 @@ export default class ShipmentService extends Service {
             throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
         }
 
-        const skuDbWhere = new DatabaseWhere();
-        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_SHIPMENT_ID, '=', shipmentId));
-        const skuModels = await this.skuRepo.fetch(skuDbWhere);
+        const skuModels = await this.skuRepo.fetchByShipmentId(shipmentId);
 
-        const skuOriginDbWhere = new DatabaseWhere();
-        skuOriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SKU_ID, '=', skuModels.map((s) => s.skuId)));
-        const skuOriginModels = await this.skuOriginRepo.fetch(skuOriginDbWhere);
+        const skuOriginModels = await this.skuOriginRepo.fetchBySkuIds(skuModels.map((s) => s.skuId));
 
-        const shipmentDocumentsDbWhere = new DatabaseWhere();
-        shipmentDocumentsDbWhere.orClause([
-            new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentId),
-            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', skuOriginModels.map((s) => s.shipmentId)),
-        ]);
+        // bfs over the origins
+        const queue = [shipmentId];
+        const usedShipmentIds = new Set();
+        while (queue.length !== 0) {
+            const sId = queue.shift();
+            usedShipmentIds.add(sId);
 
-        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetch(shipmentDocumentsDbWhere);
+            const skus = await this.skuRepo.fetchByShipmentId(sId);
+            const skuOrigins = await this.skuOriginRepo.fetchBySkuIds(skus.map((s) => s.skuId));
+            skuOrigins.forEach((skuOriginModel) => {
+                if (usedShipmentIds.has(skuOriginModel.shipmentId) === false) {
+                    queue.push(skuOriginModel.shipmentId);
+                }
+            });
+        }
+
+        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetchByShipmentIds(Array.from(usedShipmentIds) as number[]);
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }

@@ -138,6 +138,12 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         });
     }
 
+    onBlurPricePerSku = () => {
+        const popupStore = this.props.popupStore;
+        const buildSkuModel = popupStore.buildSkuModel;
+        popupStore.pricePerUnitDisplay = buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString();
+    }
+
     onClickMaxQuantity = () => {
         const popupStore = this.props.popupStore;
         const shipmentStore = this.props.shipmentStore;
@@ -366,7 +372,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         buildSkuInputStateHelper.updateValues([
             buildSkuModel.productId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuModel.productId, productStore.getProductName(buildSkuModel.productId)),
             buildSkuOriginModel.shipmentId === S.Strings.NOT_EXISTS ? null : SelectSearchable.option(buildSkuOriginModel.shipmentId, shipmentStore.getShipmentConsignmentNumber(buildSkuOriginModel.shipmentId)),
-            buildSkuModel.pricePerUnit === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.pricePerUnit.toString(),
+            popupStore.pricePerUnitDisplay,
             buildSkuModel.quantity === S.NOT_EXISTS ? S.Strings.EMPTY : buildSkuModel.quantity.toString(),
         ]);
 
@@ -592,7 +598,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                             inputType={InputType.REAL}
                                             value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
                                             error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
-                                            onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])} />
+                                            onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])}
+                                            onBlur = { this.onBlurPricePerSku } />
                                         <Input
                                             className={'InputQuantity'}
                                             label={'Quantity'}

@@ -31,6 +31,7 @@ export default class PopupShipmentStore extends PopupStore {
     @observable buildSkuOriginModel: SkuOriginModel;
 
     @observable dragging: boolean;
+    @observable pricePerUnitDisplay: string;
 
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
@@ -73,11 +74,8 @@ export default class PopupShipmentStore extends PopupStore {
                     this.buildSkuOriginModel.shipmentId = value === null ? S.Strings.NOT_EXISTS : value.value;
                     break;
                 case PopupShipmentStore.FIELDS_ADD_SKU[2]:
-                    console.log(value);
-
-                    this.buildSkuModel.pricePerUnit = value === S.Strings.EMPTY || Number.isNaN(parseFloat(value)) ? S.NOT_EXISTS : parseFloat(value);
-                    console.log(this.buildSkuModel.pricePerUnit);
-
+                    this.buildSkuModel.pricePerUnit = Number.isNaN(parseFloat(value)) === true ? S.NOT_EXISTS : parseFloat(value);
+                    this.pricePerUnitDisplay = value;
                     break;
                 case PopupShipmentStore.FIELDS_ADD_SKU[3]:
                     this.buildSkuModel.quantity = value === S.Strings.EMPTY ? S.NOT_EXISTS : parseInt(value);
@@ -109,6 +107,7 @@ export default class PopupShipmentStore extends PopupStore {
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
         this.dragging = false;
+        this.pricePerUnitDisplay = S.Strings.EMPTY;
         this.genSkuId = 0;
         this.initialShipmentDocumentLength = shipmentDocumentModels.length;
         this.onFinish = onFinish;
@@ -149,6 +148,7 @@ export default class PopupShipmentStore extends PopupStore {
 
         this.buildSkuModel = new SkuModel();
         this.buildSkuOriginModel = new SkuOriginModel();
+        this.pricePerUnitDisplay = S.Strings.EMPTY;
     }
 
     getSkuOriginModel(skuId: string): SkuOriginModel | null {
