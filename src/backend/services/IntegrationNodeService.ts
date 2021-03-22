@@ -12,6 +12,7 @@ import ShipmentDocumentModel from '../modules/ShipmentModule/ShipmentDocument/Mo
 import ShipmentDocumentRepo from '../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepo';
 import Response from '../utilities/network/Response';
 import StateException from '../utilities/network/StateException';
+import SV from '../utilities/SV';
 import Service from './common/Service';
 
 export default class IntegrationNodeService extends Service {
@@ -27,13 +28,19 @@ export default class IntegrationNodeService extends Service {
     }
 
     async creditShipment(reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise < void > {
+        const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
+        let oldShipmentStatus = SV.NOT_EXISTS;
+        if (shipmentModel !== null) {
+            oldShipmentStatus = shipmentModel.shipmentStatus;
+        }
+
         await this.shipmentRepo.saveWithPrimaryKey(reqShipmentModel);
 
         // create notification
-        // if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
-        //     const notificationService = this.servicesFactory.getNotificationService();
-        //     notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
-        // }
+        if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+            const notificationService = this.servicesFactory.getNotificationService();
+            notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+        }
 
         // credit sku models
         for (let i = 0; i < reqSkuModels.length; i++) {
