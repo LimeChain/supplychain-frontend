@@ -552,7 +552,14 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         )
     }
 
-    onClickShowOriginShipment = (shipmentId: string) => {
+    async onClickShowOriginShipment(shipmentId: string) {
+        const popupStore = this.props.popupStore;
+        const sourceShipmentModel = popupStore.shipmentModel;
+        if (sourceShipmentModel.isNew() === true) {
+            popupStore.shipmentModel.saveAsDraft();
+            await this.creditShipment();
+        }
+
         this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
             this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
         });
@@ -690,7 +697,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),
-                Table.cell(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : <a onClick={() => this.onClickShowOriginShipment(skuOriginModel.shipmentId)}>#{skuOriginModel.shipmentId}</a>),
+                Table.cell(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : <a onClick={this.onClickShowOriginShipment.bind(this, skuOriginModel.shipmentId)}>#{skuOriginModel.shipmentId}</a>),
                 Table.cellString(skuModel.quantity.toString()),
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cellString(skuModel.pricePerUnit.toString()),
