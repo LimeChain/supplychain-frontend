@@ -451,7 +451,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         <div className={'ShipmentRoute FlexRow'}>
                             {this.props.popupStore.shipmentLinksRoute.map((shipmentId, i) => <>
                                 {i === 0 ? '' : <div key={`1${i}`} >&lt;</div>}
-                                <a key={i} onClick={() => this.onClickShipmentRouteLink(i)}>#{shipmentId}</a>
+                                <a key={i} onClick={this.onClickShipmentRouteLink.bind(this, i)}>#{shipmentId}</a>
                             </>)}
                         </div>
                     </div>
@@ -565,7 +565,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         });
     }
 
-    onClickShipmentRouteLink = (shipmentRouteIndex: number) => {
+    onClickShipmentRouteLink(shipmentRouteIndex: number) {
         this.props.popupStore.moveToShipmentLinkRoute(shipmentRouteIndex, (shipmentId: string) => {
             this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
                 const resetRoute = shipmentRouteIndex === 0;
