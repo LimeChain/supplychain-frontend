@@ -47,6 +47,9 @@ import SvgFile from '../../../common/svg/file.svg';
 import '../../css/components-popups/shipment-popup.css';
 import CAdminContext from '../CAdminContext';
 import { UploadShipmentDocumentRes } from '../../../common/js/network-responses/ShipmentDocumentApiRes';
+import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
+import SkuModel from '../../../common/js/models/product-module/SkuModel';
+import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -432,7 +435,15 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                             Items: <span>{popupStore.skuModels.length}</span>
                         </div>
                         <div className={'ItemCnt'} >
-                            Price: <span>{formatPrice(this.getTotalPrice())}</span>
+                            Total Value: <span>{formatPrice(this.getTotalPrice())}</span>
+                        </div>
+                        <div className={'ShipmentRoute'}>
+                            {this.props.popupStore.shipmentLinksRoute.map((shipmentId, i) => {
+                                <>
+                                  {i === 0 ? '': <div>&lt;</div>}
+                                   <a onClick={() => this.onClickShipmentRouteLink(i)}>#{shipmentId}</a>
+                                </>
+                            })}
                         </div>
                     </div>
                     <div className={'FooterRight StartRight'} >
@@ -530,6 +541,20 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 )}
             </Select>
         )
+    }
+
+    onClickShowOriginShipment = (shipmentId: string) => {
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupStore.addToShipmentRoute(true, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+        });
+    }
+
+    onClickShipmentRouteLink = (shipmentRouteIndex: number) => {
+        this.props.popupStore.moveToShipmentLinkRoute(shipmentRouteIndex, (shipmentId: string) => {
+            this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+                this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+            });
+        });
     }
 
     renderProducts() {

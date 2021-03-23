@@ -123,6 +123,30 @@ export default class PopupShipmentStore extends PopupStore {
         })
     }
 
+    addToShipmentRoute( 
+        addToRoutePreviousShipment: boolean,
+        shipmentModel: ShipmentModel,
+        skuModels: SkuModel[],
+        skuOriginModels: SkuOriginModel[],
+        shipmentDocumentModels: ShipmentDocumentModel[])
+        {
+            if(addToRoutePreviousShipment === true){
+                this.shipmentLinksRoute.push(this.shipmentModel.shipmentId);
+            }
+
+            this.shipmentModel = shipmentModel;
+            this.skuModels = skuModels;
+            this.skuOriginModels = skuOriginModels;
+            this.shipmentDocumentModels = shipmentDocumentModels;
+    }
+
+    moveToShipmentLinkRoute(shipmentLinkIndex: number, callback: (shipmentId: string) => void){
+        const shipmentId = this.shipmentLinksRoute[shipmentLinkIndex];
+        this.shipmentLinksRoute = this.shipmentLinksRoute.slice(0, shipmentLinkIndex);
+
+        callback(shipmentId);
+    }
+
     setTabProducts() {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS
     }
