@@ -99,7 +99,6 @@ export default class ShipmentService extends Service {
         skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', skuToDeleteModels.map((s) => s.productId)))
         const skuWhereProductUsed = await this.skuRepo.fetch(skuDbWhere);
         const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
-        console.log();
         this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
         // credit sku models
@@ -246,7 +245,6 @@ export default class ShipmentService extends Service {
 
     async uploadShipmentDocument(reqShipmentDocumentModel: ShipmentDocumentModel): Promise<ShipmentDocumentModel> {
         let shipmentDocumentModel: ShipmentDocumentModel | null = null;
-        const shipmentDocumentRepo = this.shipmentDocumentRepo;
 
         shipmentDocumentModel = new ShipmentDocumentModel();
 
@@ -255,7 +253,7 @@ export default class ShipmentService extends Service {
             const documentBuffer = Buffer.from(base64Buffer, 'base64');
 
             reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
-            shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+            shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
             const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
 
@@ -268,13 +266,13 @@ export default class ShipmentService extends Service {
         }
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
-        shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
-        shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
-        shipmentDocumentModel.name = reqShipmentDocumentModel.name;
-        shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
+        // shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
+        // shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
+        // shipmentDocumentModel.name = reqShipmentDocumentModel.name;
+        // shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
         shipmentDocumentModel.updateShipmentDocumentUrl();
 
-        shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+        shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
         return shipmentDocumentModel;
 
@@ -311,27 +309,32 @@ export default class ShipmentService extends Service {
     }
 
     async fetchShipmentById(shipmentId: number): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
-
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) {
             throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
         }
 
-        const skuDbWhere = new DatabaseWhere();
-        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_SHIPMENT_ID, '=', shipmentId));
-        const skuModels = await this.skuRepo.fetch(skuDbWhere);
+        const skuModels = await this.skuRepo.fetchByShipmentId(shipmentId);
 
-        const skuoriginDbWhere = new DatabaseWhere();
-        skuoriginDbWhere.clause(new DatabaseWhereClause(SkuOriginModelH.P_SKU_ID, '=', skuModels.map((s) => s.skuId)));
-        const skuOriginModels = await this.skuOriginRepo.fetch(skuoriginDbWhere);
+        const skuOriginModels = await this.skuOriginRepo.fetchBySkuIds(skuModels.map((s) => s.skuId));
 
-        const shipmentDocumentsDbWhere = new DatabaseWhere();
-        shipmentDocumentsDbWhere.orClause([
-            new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentId),
-            new DatabaseWhereClause(ShipmentDocumentModel.P_SHIPMENT_ID, '=', skuOriginModels.map((s) => s.shipmentId)),
-        ]);
+        // bfs over the origins
+        const queue = [shipmentId];
+        const usedShipmentIds = new Set();
+        while (queue.length !== 0) {
+            const sId = queue.shift();
+            usedShipmentIds.add(sId);
 
-        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetch(shipmentDocumentsDbWhere);
+            const skus = await this.skuRepo.fetchByShipmentId(sId);
+            const skuOrigins = await this.skuOriginRepo.fetchBySkuIds(skus.map((s) => s.skuId));
+            skuOrigins.forEach((skuOriginModel) => {
+                if (usedShipmentIds.has(skuOriginModel.shipmentId) === false) {
+                    queue.push(skuOriginModel.shipmentId);
+                }
+            });
+        }
+
+        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetchForShipment(Array.from(usedShipmentIds) as number[]);
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }

@@ -27,6 +27,7 @@ import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import ShipmentDocumentModel from '../../../common/js/models/shipment-module/ShipmentDocumentModel';
 import ShipmentFilter from '../../../../../../builds/dev-generated/ShipmentModule/Shipment/Utils/ShipmentFilterConsts';
+import S from '../../../common/js/utilities/Main';
 
 interface Props extends ContextPageComponentProps {
     dashboardStore: DashboardStore
@@ -53,7 +54,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
     }
 
     fetchDraftShipmentsData = () => {
-        this.shipmentApi.fetchShipmentByFilter(ShipmentFilter.S_PAGE_STATUS_DRAFTS, '', 1, 0, 1, (shipmentModels: ShipmentModel[], totalSize: number) => {
+        this.shipmentApi.fetchShipmentByFilter(ShipmentFilter.S_PAGE_STATUS_DRAFTS, S.Strings.EMPTY, ShipmentFilter.S_SORT_BY_ID, 0, 1, (shipmentModels: ShipmentModel[], totalSize: number) => {
             this.props.dashboardStore.draftShipmentsTotalSize = totalSize;
         })
     }

@@ -3,16 +3,18 @@ import SV from '../../../../utilities/SV'
 import ProductModelH from '../Model/ProductModelH'
 
 export default class ProductFilter {
+
     static S_SORT_BY_ID: number = 1
     static S_SORT_BY_NAME: number = 2
     static S_SORT_BY_UNIT: number = 3
     static S_SORT_BY_DESCRIPTION: number = 4
 
-    sortBy: number = SV.NOT_EXISTS
+    sortBy: number = -ProductFilter.S_SORT_BY_ID;
     searchBy: string = SV.Strings.EMPTY;
 
     getSortColumn(): number | null {
         switch (Math.abs(this.sortBy)) {
+            default:
             case ProductFilter.S_SORT_BY_ID:
                 return ProductModelH.P_PRODUCT_ID;
             case ProductFilter.S_SORT_BY_NAME:
@@ -21,8 +23,6 @@ export default class ProductFilter {
                 return ProductModelH.P_PRODUCT_UNIT;
             case ProductFilter.S_SORT_BY_DESCRIPTION:
                 return ProductModelH.P_PRODUCT_DESCRIPTION;
-            default:
-                return null;
         }
     }
 

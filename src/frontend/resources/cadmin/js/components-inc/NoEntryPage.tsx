@@ -23,10 +23,10 @@ export default class NoEntryPage extends React.Component<Props> {
         return (
             <div className={'NoEntryPage WhiteBox PageExtend FlexColumn'} >
                 <div className={'SVG Icon'} dangerouslySetInnerHTML={{ __html: SvgEmptyList }}></div>
-                <div className={'EmptyListHeader'}>{this.props.modelName === null ? INCOMING_TEXT : DEFAULT_TEXT}</div>
+                <div className={'EmptyListHeader'}>{this.props.modelName === undefined ? INCOMING_TEXT : DEFAULT_TEXT}</div>
                 <div className={'EmptyListText'}>{this.props.subText}</div>
-                {this.props.buttonFunction === null ? ''
-                    : <Actions>
+                {this.props.buttonFunction !== undefined && (
+                    <Actions>
                         <Button onClick={this.props.buttonFunction}>
                             <div className={'FlexRow'}>
                                 <div className={'SVG Size ButtonSvg'} ><SvgAdd /></div>
@@ -34,7 +34,8 @@ export default class NoEntryPage extends React.Component<Props> {
                                 {this.props.buttonText}
                             </div>
                         </Button>
-                    </Actions>}
+                    </Actions>
+                )}
             </div>
         )
     }

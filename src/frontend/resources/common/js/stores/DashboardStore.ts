@@ -81,8 +81,8 @@ export default class DashboardStore {
 
         this.shipmentApi.fetchShipmentByFilter(
             ShipmentFilter.S_PAGE_DASHBOARD_INCOMMING,
-            '',
-            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT * -1,
+            S.Strings.EMPTY,
+            -ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
             from,
             to,
             (shipmentModels: ShipmentModel[], totalSize: number) => {
@@ -116,8 +116,8 @@ export default class DashboardStore {
 
         this.shipmentApi.fetchShipmentByFilter(
             ShipmentFilter.S_PAGE_DASHBOARD_OUTGOING,
-            '',
-            ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT * -1,
+            S.Strings.EMPTY,
+            -ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
             from,
             to,
             (shipmentModels: ShipmentModel[], totalSize: number) => {

@@ -8,6 +8,7 @@ export default class ShipmentDocumentModel extends ShipmentDocumentModelG {
 
     static FILE_DATA_STRING_BEGIN: string = 'data:'
 
+    static S_DOCUMENT_TYPE_JUST_UPLOADED: number = 0;
     static S_DOCUMENT_TYPE_CRM_DOCUMENT: number = 1;
     static S_DOCUMENT_TYPE_BILL_OF_LANDING: number = 2;
     static S_DOCUMENT_TYPE_INVOICE: number = 3;
@@ -19,8 +20,9 @@ export default class ShipmentDocumentModel extends ShipmentDocumentModelG {
 
     constructor() {
         super();
-        this.documentType = ShipmentDocumentModel.S_DOCUMENT_TYPE_OTHER;
+        this.documentType = ShipmentDocumentModel.S_DOCUMENT_TYPE_JUST_UPLOADED;
     }
+
     isNew(): boolean {
         return this.shipmentDocumentId === SV.NOT_EXISTS;
     }
