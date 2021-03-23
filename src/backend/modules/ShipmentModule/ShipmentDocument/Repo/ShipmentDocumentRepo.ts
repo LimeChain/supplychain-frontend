@@ -26,9 +26,10 @@ export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
         this.db.save(ShipmentDocumentRepoH.TABLE_NAME, repoObj);
     }
 
-    async fetchByShipmentIds(shipmentIds: number[]) {
+    async fetchForShipment(shipmentIds: number[]) {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentIds));
+        databaseWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_DOCUMENT_TYPE, '!=', ShipmentDocumentModel.S_DOCUMENT_TYPE_JUST_UPLOADED));
         return this.fetch(databaseWhere);
     }
 

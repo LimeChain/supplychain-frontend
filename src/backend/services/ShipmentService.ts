@@ -99,7 +99,6 @@ export default class ShipmentService extends Service {
         skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', skuToDeleteModels.map((s) => s.productId)))
         const skuWhereProductUsed = await this.skuRepo.fetch(skuDbWhere);
         const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
-        console.log();
         this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
         // credit sku models
@@ -246,7 +245,6 @@ export default class ShipmentService extends Service {
 
     async uploadShipmentDocument(reqShipmentDocumentModel: ShipmentDocumentModel): Promise<ShipmentDocumentModel> {
         let shipmentDocumentModel: ShipmentDocumentModel | null = null;
-        const shipmentDocumentRepo = this.shipmentDocumentRepo;
 
         shipmentDocumentModel = new ShipmentDocumentModel();
 
@@ -255,7 +253,7 @@ export default class ShipmentService extends Service {
             const documentBuffer = Buffer.from(base64Buffer, 'base64');
 
             reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
-            shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+            shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
             const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
 
@@ -268,13 +266,13 @@ export default class ShipmentService extends Service {
         }
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
-        shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
-        shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
-        shipmentDocumentModel.name = reqShipmentDocumentModel.name;
-        shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
+        // shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
+        // shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
+        // shipmentDocumentModel.name = reqShipmentDocumentModel.name;
+        // shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
         shipmentDocumentModel.updateShipmentDocumentUrl();
 
-        shipmentDocumentModel.shipmentDocumentId = (await shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+        shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
 
         return shipmentDocumentModel;
 
@@ -336,7 +334,7 @@ export default class ShipmentService extends Service {
             });
         }
 
-        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetchByShipmentIds(Array.from(usedShipmentIds) as number[]);
+        const shipmentDocumentModels = await this.shipmentDocumentRepo.fetchForShipment(Array.from(usedShipmentIds) as number[]);
 
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }
