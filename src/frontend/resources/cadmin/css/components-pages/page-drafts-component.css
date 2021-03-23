@@ -1,5 +1,5 @@
 .PageDrafts .IconDelete {
-    fill: #CAD0DB;
+    fill: var(--color-gray-light-minus-05);
 }
 
 /* .PageDrafts .ShipmentsTable .ShipmentOriginCell {
