@@ -35,7 +35,7 @@
 }
 
 .ShipmentPopup .PopupHeader .TimeStamp {
-    color: #8C99AC;
+    color: var(--color-gray);
 }
 
 .ShipmentPopup .PopupHeader .WidthLimiter {
@@ -169,7 +169,7 @@
 }
 
 .ShipmentPopup .TabProducts .IconDelete {
-    fill: #CAD0DB;
+    fill: var(--color-gray-light-minus-05);
 }
 
 /* documents - credit */
@@ -327,5 +327,21 @@
 }
 
 .ShipmentPopup .PopupFooter .FooterLeft .ItemCnt span {
+    color: var(--color-gray-dark);
+}
+
+.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute {
+    color: var(--color-gray);
+    margin-left: 45px;
+    padding-left: 20px;
+    border-left: 1px solid var(--color-gray-light-minus-05);
+}
+
+.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute a {
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute a:last-child {
     color: var(--color-gray-dark);
 }

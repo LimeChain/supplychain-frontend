@@ -17,7 +17,7 @@
     font-size: 30px;
     line-height: 45px;
     /* identical to box height */
-    color: #07172F;
+    color: var(--color-gray-dark);
     margin-bottom: 8px;
 }
 
