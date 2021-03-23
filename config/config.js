@@ -47,8 +47,11 @@ envVariables.forEach((envVariable) => {
         throw new Error(`Environment variable ${envVariable} is missing`);
     }
 });
+if (process.env.REWRITE_DOMAIN === undefined) {
+    process.env.REWRITE_DOMAIN = '';
+}
 
-const URL_ROOT = process.env.URL + ((process.env.FRONTEND_PORT.trim() !== '') ? `:${process.env.FRONTEND_PORT}` : '')
+const URL_ROOT = process.env.URL + ((process.env.FRONTEND_PORT.trim() !== '') ? `:${process.env.FRONTEND_PORT}` : '') + ((process.env.REWRITE_DOMAIN.trim() !== '') ? `/${process.env.REWRITE_DOMAIN}` : '');
 
 const Config = {
     Build: {
@@ -185,6 +188,7 @@ const Config = {
     },
     URL: {
         ROOT: URL_ROOT,
+        REWRITE_DOMAIN: process.env.REWRITE_DOMAIN,
 
         RESOURCES: `${URL_ROOT}/resources`,
         Resources: {

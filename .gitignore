@@ -21,3 +21,6 @@ npm-debug.log.*
 vendor
 .node*
 dist
+config/.env.production.01
+config/.env.production.02
+config/.env.production.03

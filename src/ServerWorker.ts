@@ -6,6 +6,8 @@ import Router from './backend/requests/filters/Router';
 import DatabasePool from './backend/utilities/database/DatabasePool';
 import Logger from './backend/utilities/Logger';
 
+const Config = require('../config/config');
+
 const SESSION_CONFIG = {
     key: 'pwc-bat-session',
     /** (string) cookie key (default is koa:sess) */
@@ -24,6 +26,7 @@ const SESSION_CONFIG = {
     renew: true,
     /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false) */
     // store: sessionStore,
+    path: `/${Config.URL.REWRITE_DOMAIN}`,
 };
 
 class ServerWorker {
