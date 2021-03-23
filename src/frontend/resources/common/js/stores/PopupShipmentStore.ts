@@ -32,6 +32,7 @@ export default class PopupShipmentStore extends PopupStore {
 
     @observable dragging: boolean;
 
+    shipmentLinksRoute: string[];
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
     documentInputStateHelper: InputStateHelper;
@@ -102,6 +103,7 @@ export default class PopupShipmentStore extends PopupStore {
     ) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => { });
+        this.shipmentLinksRoute = [];
         this.shipmentModel = shipmentModel;
         this.skuModels = skuModels;
         this.skuOriginModels = skuOriginModels;

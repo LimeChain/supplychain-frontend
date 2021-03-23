@@ -650,7 +650,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),
-                Table.cellString(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : `#${skuOriginModel.shipmentId}`),
+                Table.cell(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : <a onClick={() => this.onClickShowOriginShipment(skuOriginModel.shipmentId)}>`#${skuOriginModel.shipmentId}`</a>),
                 Table.cellString(skuModel.quantity.toString()),
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cellString(skuModel.pricePerUnit.toString()),
