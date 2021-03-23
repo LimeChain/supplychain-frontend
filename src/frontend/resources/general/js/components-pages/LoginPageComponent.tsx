@@ -30,7 +30,7 @@ interface Props extends ContextPageComponentProps {
 
 const FIELDS = ['country', 'pass'];
 
-export default class PageNotFoundComponent extends ContextPageComponent < Props > {
+export default class PageNotFoundComponent extends ContextPageComponent<Props> {
 
     inputStateHelper: InputStateHelper;
     accountApi: AccountApi;
@@ -114,42 +114,42 @@ export default class PageNotFoundComponent extends ContextPageComponent < Props 
         const siteStore = this.props.siteStore;
 
         return (
-            <div className = { 'PageContent FlexSingleCenter' } style = { ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.General.IMG}/login-bg.png`) } >
+            <div className={'PageContent FlexSingleCenter'} style={ProjectUtils.makeBgImgStyle(`${Config.URL.Resources.General.IMG}/login-bg.png`)} >
 
-                <div className = { 'LoginBox FlexColumn' } >
+                <div className={'LoginBox FlexColumn'} >
 
-                    <div className = { 'Title' } > Welcome to VAT Check! </div>
-                    <div className = { 'Subtitle' } > Enter your credentials to access your account </div>
+                    <div className={'Title'} > Welcome to VAT Check! </div>
+                    <div className={'Subtitle'} > Enter your credentials to access your account </div>
 
-                    <LayoutBlock className = { 'LoginForm' } >
+                    <LayoutBlock className={'LoginForm'} >
                         <Select
-                            label = { 'EU Member State' }
-                            value = { this.inputStateHelper.values.get(FIELDS[0]) }
-                            error = { this.inputStateHelper.errors.get(FIELDS[0]) }
-                            onChange = { this.inputStateHelper.onChanges.get(FIELDS[0]) } >
-                            { siteStore.screenSiteModels.map((siteModel, i) => {
-                                // if (siteModel.siteId !== Config.Server.SITE_ID) {
-                                //     return null;
-                                // }
+                            label={'EU Member State'}
+                            value={this.inputStateHelper.values.get(FIELDS[0])}
+                            error={this.inputStateHelper.errors.get(FIELDS[0])}
+                            onChange={this.inputStateHelper.onChanges.get(FIELDS[0])} >
+                            {siteStore.screenSiteModels.map((siteModel, i) => {
+                                if (siteModel.siteId !== Config.Server.SITE_ID) {
+                                    return null;
+                                }
                                 const countryModel = siteStore.getCountryModel(siteModel.countryId);
                                 return (
-                                    <MenuItem key = { i } value = { `${siteModel.siteId},${countryModel.countryId}` } >
-                                        <div className ={ 'FlexRow' }>
-                                            <div className = { 'SVG LoginPageIconFlag' } dangerouslySetInnerHTML = {{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }} /> { siteModel.siteName }, { countryModel.countryName }
+                                    <MenuItem key={i} value={`${siteModel.siteId},${countryModel.countryId}`} >
+                                        <div className={'FlexRow'}>
+                                            <div className={'SVG LoginPageIconFlag'} dangerouslySetInnerHTML={{ __html: ProjectUtils.getCountrySvg(countryModel.countryId) }} /> {siteModel.siteName}, {countryModel.countryName}
                                         </div>
                                     </MenuItem>
                                 )
                             })}
                         </Select>
                         <Input
-                            label = { 'Password' }
-                            type = { 'password' }
-                            value = { this.inputStateHelper.values.get(FIELDS[1]) }
-                            error = { this.inputStateHelper.errors.get(FIELDS[1]) }
-                            onChange = { this.inputStateHelper.onChanges.get(FIELDS[1]) }
-                            onKeyPress = { this.onKeyPress } />
-                        <Actions layout = { Actions.LAYOUT_COLUMN_FULL } >
-                            <Button onClick = { this.onClickLogin }>Login</Button>
+                            label={'Password'}
+                            type={'password'}
+                            value={this.inputStateHelper.values.get(FIELDS[1])}
+                            error={this.inputStateHelper.errors.get(FIELDS[1])}
+                            onChange={this.inputStateHelper.onChanges.get(FIELDS[1])}
+                            onKeyPress={this.onKeyPress} />
+                        <Actions layout={Actions.LAYOUT_COLUMN_FULL} >
+                            <Button onClick={this.onClickLogin}>Login</Button>
                         </Actions>
                     </LayoutBlock>
                 </div>

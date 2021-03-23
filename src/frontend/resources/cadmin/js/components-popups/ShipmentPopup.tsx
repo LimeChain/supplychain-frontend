@@ -437,13 +437,11 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         <div className={'ItemCnt'} >
                             Total Value: <span>{formatPrice(this.getTotalPrice())}</span>
                         </div>
-                        <div className={'ShipmentRoute'}>
-                            {this.props.popupStore.shipmentLinksRoute.map((shipmentId, i) => {
-                                <>
-                                  {i === 0 ? '': <div>&lt;</div>}
-                                   <a onClick={() => this.onClickShipmentRouteLink(i)}>#{shipmentId}</a>
-                                </>
-                            })}
+                        <div className={'ShipmentRoute FlexRow'}>
+                            {this.props.popupStore.shipmentLinksRoute.map((shipmentId, i) => <>
+                                {i === 0 ? '' : <div key={`1${i}`} >&lt;</div>}
+                                <a key={i} onClick={() => this.onClickShipmentRouteLink(i)}>#{shipmentId}</a>
+                            </>)}
                         </div>
                     </div>
                     <div className={'FooterRight StartRight'} >
@@ -465,7 +463,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         </Actions>
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 
@@ -545,14 +543,16 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     onClickShowOriginShipment = (shipmentId: string) => {
         this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupStore.addToShipmentRoute(true, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+            this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
         });
     }
 
     onClickShipmentRouteLink = (shipmentRouteIndex: number) => {
         this.props.popupStore.moveToShipmentLinkRoute(shipmentRouteIndex, (shipmentId: string) => {
             this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-                this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+                const resetRoute = shipmentRouteIndex === 0;
+
+                this.props.popupStore.addToShipmentRoute(resetRoute, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
             });
         });
     }
@@ -624,7 +624,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                             value={buildSkuInputStateHelper.values.get(FIELDS_ADD_SKU[2])}
                                             error={buildSkuInputStateHelper.errors.get(FIELDS_ADD_SKU[2])}
                                             onChange={buildSkuInputStateHelper.onChanges.get(FIELDS_ADD_SKU[2])}
-                                            onBlur = { this.onBlurPricePerSku } />
+                                            onBlur={this.onBlurPricePerSku} />
                                         <Input
                                             className={'InputQuantity'}
                                             label={'Quantity'}
@@ -679,7 +679,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),
-                Table.cell(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : <a onClick={() => this.onClickShowOriginShipment(skuOriginModel.shipmentId)}>`#${skuOriginModel.shipmentId}`</a>),
+                Table.cell(skuOriginModel.isLocallyProduced() === true ? 'Locally produced' : <a onClick={() => this.onClickShowOriginShipment(skuOriginModel.shipmentId)}>#{skuOriginModel.shipmentId}</a>),
                 Table.cellString(skuModel.quantity.toString()),
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
                 Table.cellString(skuModel.pricePerUnit.toString()),
@@ -730,7 +730,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                                 <Select
                                     className={'UploadedDocumentType'}
                                     placeholder={'Select document type'}
-                                    readOnly = { editable === false }
+                                    readOnly={editable === false}
                                     value={shipmentDocumentModel.documentType === S.NOT_EXISTS ? S.Strings.EMPTY : shipmentDocumentModel.documentType}
                                     onChange={this.onChangeDocumentType.bind(this, shipmentDocumentModel)}
                                     error={shipmentDocumentModel.documentType === S.NOT_EXISTS}

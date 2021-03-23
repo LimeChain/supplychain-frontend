@@ -333,14 +333,15 @@
 .ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute {
     color: var(--color-gray);
     margin-left: 45px;
-    padding-left: 25px;
+    padding-left: 20px;
     border-left: 1px solid var(--color-gray-light-minus-05);
 }
 
-.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute:not(:first-child) {
-    margin-left: var(--desktop-spacing-small);
+.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute a {
+    margin: 0 5px;
+    cursor: pointer;
 }
 
-.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute:last-child {
+.ShipmentPopup .PopupFooter .FooterLeft .ShipmentRoute a:last-child {
     color: var(--color-gray-dark);
 }

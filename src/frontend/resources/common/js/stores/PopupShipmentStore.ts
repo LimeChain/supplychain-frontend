@@ -123,24 +123,28 @@ export default class PopupShipmentStore extends PopupStore {
         })
     }
 
-    addToShipmentRoute( 
-        addToRoutePreviousShipment: boolean,
+    addToShipmentRoute(
+        resetRoute: boolean,
         shipmentModel: ShipmentModel,
         skuModels: SkuModel[],
         skuOriginModels: SkuOriginModel[],
-        shipmentDocumentModels: ShipmentDocumentModel[])
-        {
-            if(addToRoutePreviousShipment === true){
+        shipmentDocumentModels: ShipmentDocumentModel[],
+    ) {
+        if (!resetRoute) {
+            if (this.shipmentLinksRoute.length === 0) {
                 this.shipmentLinksRoute.push(this.shipmentModel.shipmentId);
             }
 
-            this.shipmentModel = shipmentModel;
-            this.skuModels = skuModels;
-            this.skuOriginModels = skuOriginModels;
-            this.shipmentDocumentModels = shipmentDocumentModels;
+            this.shipmentLinksRoute.push(shipmentModel.shipmentId);
+        }
+
+        this.shipmentModel = shipmentModel;
+        this.skuModels = skuModels;
+        this.skuOriginModels = skuOriginModels;
+        this.shipmentDocumentModels = shipmentDocumentModels;
     }
 
-    moveToShipmentLinkRoute(shipmentLinkIndex: number, callback: (shipmentId: string) => void){
+    moveToShipmentLinkRoute(shipmentLinkIndex: number, callback: (shipmentId: string) => void) {
         const shipmentId = this.shipmentLinksRoute[shipmentLinkIndex];
         this.shipmentLinksRoute = this.shipmentLinksRoute.slice(0, shipmentLinkIndex);
 
