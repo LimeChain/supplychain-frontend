@@ -34,12 +34,13 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
         const req = new CreditShipmentReq(payload);
 
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
 
         servicesFactory.db.beginTransaction();
 
@@ -55,11 +56,12 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
         const req = new FetchShipmentsByFilterReq(payload);
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
 
         const { shipmentModels, totalSize } = await shipmentService.fetchShipmentsByFilter(
             siteId,
@@ -79,6 +81,7 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
         const req = new FetchShipmentByIdReq(payload);
         const shipmentService = servicesFactory.getShipmentService();
@@ -94,8 +97,9 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchShipmentsWithProductQuantityLeftByProductIdReq(payload);
         const shipmentService = servicesFactory.getShipmentService();
 
@@ -109,9 +113,10 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchProductsInStockReq(payload);
 
         const { skuModels, productModels, totalSkuSize } = await shipmentService.fetchProductsInStock(siteId, req.searchBy, req.sortBy, req.from, req.to);
@@ -120,6 +125,7 @@ export default class ShipmentController {
 
     async downloadShipmentJson(context: Context) {
         const payload = context.payload;
+        const session = context.session;
         const shipmentId = payload.params[Params.ID];
 
         const filepath = `${__dirname}/ShipmentController.js`;
@@ -146,6 +152,7 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
         const req = new UploadShipmentDocumentReq(payload);
@@ -157,6 +164,7 @@ export default class ShipmentController {
 
     async downloadShipmentDocumentFile(context: Context) {
         const payload = context.payload;
+        const session = context.session;
 
         const shipmentDocumentId = parseInt(payload.params[Params.ID]);
 
@@ -190,9 +198,10 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchTotalValueInStockReq(payload);
 
         const { skuModels } = await shipmentService.fetchProductsInStock(siteId, SV.Strings.EMPTY, req.sortBy, req.from, req.to);

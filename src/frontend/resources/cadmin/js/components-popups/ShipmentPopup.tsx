@@ -116,6 +116,12 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         }, 0);
     }
 
+    onClickNoTransactionLink = () => {
+        this.props.alertStore.show('Transaction is being processed. Please try again in a moment. Thanks!', () => {
+            this.props.popupStore.hide();
+        });
+    }
+
     onClickTabProducts = () => {
         this.props.popupStore.setTabProducts();
     }
@@ -406,7 +412,12 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         {this.renderToSite()}
                         {this.props.popupStore.shipmentModel.isDraft() === false && (
                             <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
-                                <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
+                                { shipmentModel.hasTransactionLink() === true && (
+                                    <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
+                                ) }
+                                { shipmentModel.hasTransactionLink() === false && (
+                                    <Button target={'_blank'} color={Button.COLOR_SCHEME_2} onClick = { this.onClickNoTransactionLink }>Transaction hash</Button>
+                                ) }
                                 <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
                             </Actions>
                         )}

@@ -37,9 +37,9 @@ export default class IntegrationNodeService extends Service {
         await this.shipmentRepo.saveWithPrimaryKey(reqShipmentModel);
 
         // create notification
-        if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+        if (reqShipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
             const notificationService = this.servicesFactory.getNotificationService();
-            notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+            notificationService.createNotification(reqShipmentModel.shipmentId, reqShipmentModel.shipmentStatus);
         }
 
         // credit sku models
@@ -88,6 +88,17 @@ export default class IntegrationNodeService extends Service {
 
             await this.shipmentDocumentRepo.saveWithPrimaryKey(reqShipmentDocumentModel);
         }
+    }
+
+    async dlt(shipmentId: number, dlt: string) {
+        console.log(shipmentId, dlt);
+        const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
+        if (shipmentModel === null) { // this node does not have this shipment
+            return;
+        }
+
+        shipmentModel.shipmentDltProof = dlt;
+        await this.shipmentRepo.save(shipmentModel);
     }
 
 }

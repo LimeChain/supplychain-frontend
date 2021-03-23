@@ -76,7 +76,11 @@ export default class ShipmentModel {
     }
 
     getTransactionLink() {
-        return `${Config.Server.TRANSACTION_VIEW_URL.replace('%s', this.shipmentDltProof || '0x4141f431e431d4413e1a4a156454141f431e431d4413e1a4a15645')}`
+        return `${Config.Server.TRANSACTION_VIEW_URL.replace('%s', this.shipmentDltProof)}`
+    }
+
+    hasTransactionLink(): boolean {
+        return this.shipmentDltProof !== S.Strings.EMPTY;
     }
 
     receiveShipment() {

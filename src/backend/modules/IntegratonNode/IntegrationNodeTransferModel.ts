@@ -7,10 +7,12 @@ export default class IntegrationNodeTransferModel {
 
     type: number;
     obj: any;
+    destination: string;
 
     constructor() {
         this.type = SV.NOT_EXISTS;
         this.obj = null;
+        this.destination = SV.Strings.EMPTY;
     }
 
     static newInstanceShipment() {
@@ -29,6 +31,7 @@ export default class IntegrationNodeTransferModel {
         return {
             'type': this.type,
             'obj': this.obj,
+            'destination': this.destination,
         }
     }
 
@@ -41,6 +44,7 @@ export default class IntegrationNodeTransferModel {
 
         model.type = parseInt(json.type ?? model.type);
         model.obj = json.obj ?? model.obj;
+        model.destination = json.destination ?? model.destination;
 
         return model;
     }

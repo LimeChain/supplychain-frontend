@@ -1,3 +1,5 @@
+import Config from '../../../config/config';
+
 const SV = require('./SV');
 const crypto = require('crypto');
 const aesjs = require('aes-js');
@@ -52,6 +54,48 @@ export default class SF {
         const aesCtr = new aesjs.ModeOfOperation.ctr(ENCRYPTION_KEY, new aesjs.Counter(5));
         const decryptedBytes = aesCtr.decrypt(encryptedBytes);
         return aesjs.utils.utf8.fromBytes(decryptedBytes);
+    }
+
+    static getTargetSiteWebUrlButMine(): string[] {
+        const result = [];
+
+        if (Config.Server.SITE_ID !== 1) {
+            result.push(Config.Server.SITE_ID_1_WEB_URL);
+        }
+        if (Config.Server.SITE_ID !== 2) {
+            result.push(Config.Server.SITE_ID_2_WEB_URL);
+        }
+        if (Config.Server.SITE_ID !== 3) {
+            result.push(Config.Server.SITE_ID_3_WEB_URL);
+        }
+
+        return result;
+    }
+
+    static getTargetSiteWebUrlByDestinationSiteId(destinationSiteId: number): string {
+        switch (destinationSiteId) {
+            case 1:
+                return Config.Server.SITE_ID_1_WEB_URL;
+            case 2:
+                return Config.Server.SITE_ID_2_WEB_URL;
+            case 3:
+                return Config.Server.SITE_ID_3_WEB_URL;
+            default:
+                return SV.Strings.EMPTY;
+        }
+    }
+
+    static getIntegrationNodeDestinationAddrByDestinationSiteId(destinationSiteId: number): string {
+        switch (destinationSiteId) {
+            case 1:
+                return Config.Server.SITE_ID_1_INTEGRATION_NODE_ADDR;
+            case 2:
+                return Config.Server.SITE_ID_2_INTEGRATION_NODE_ADDR;
+            case 3:
+                return SV.Strings.EMPTY;
+            default:
+                return SV.Strings.EMPTY;
+        }
     }
 
 }

@@ -26,6 +26,8 @@ import Config from '../../../config/config';
 import IntegrationNodeTransferModel from '../modules/IntegratonNode/IntegrationNodeTransferModel';
 import Params from '../utilities/Params';
 import IntegrationNodeApiH from '../requests/api/integration-node/IntegrationNodeApi.h';
+import SF from '../utilities/SF';
+import IntegrationNodeConnectModel from '../modules/IntegratonNode/IntegrationNodeConnectModel';
 
 export default class ShipmentService extends Service {
 
@@ -43,6 +45,7 @@ export default class ShipmentService extends Service {
         reqShipmentDocumentModels: ShipmentDocumentModel[],
     ): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
         let shipmentModel: ShipmentModel | null = null;
+        let oldShipmentStatus = ShipmentModel.S_STATUS_DRAFT;
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
             shipmentModel.shipmentOriginSiteId = siteId;
@@ -57,9 +60,8 @@ export default class ShipmentService extends Service {
                 throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
             }
             shipmentModel.shipmentOriginSiteId = reqShipmentModel.shipmentOriginSiteId;
+            oldShipmentStatus = shipmentModel.shipmentStatus;
         }
-
-        const oldShipmentStatus = shipmentModel.shipmentStatus;
 
         shipmentModel.shipmentName = reqShipmentModel.shipmentName;
         shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
@@ -213,29 +215,27 @@ export default class ShipmentService extends Service {
         }
 
         try {
-            const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
-            integrationNodeTransferModel.obj = {
-                shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
-            }
             if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
-                const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
-                const axiosResponse = await instance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
-                shipmentModel.shipmentDltProof = axiosResponse.data;
-                await this.shipmentRepo.save(shipmentModel);
-                integrationNodeTransferModel.obj.shipmentModel.shipmentDltProof = shipmentModel.shipmentDltProof;
+                const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
+                integrationNodeTransferModel.obj = {
+                    shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
+                }
+                integrationNodeTransferModel.destination = SF.getIntegrationNodeDestinationAddrByDestinationSiteId(siteId === shipmentModel.shipmentDestinationSiteId ? shipmentModel.shipmentOriginSiteId : shipmentModel.shipmentDestinationSiteId);
 
-                // const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
-                // await axiosTransfer01.post('/', {
-                //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
-                //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-                // });
-                // const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
-                // await axiosTransfer02.post('/', {
-                //     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
-                //     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-                // });
+                const targetWebUrl = SF.getTargetSiteWebUrlByDestinationSiteId(shipmentModel.shipmentDestinationSiteId);
+                const axiosTransfer = axios.create({ baseURL: targetWebUrl });
+                await axiosTransfer.post('/', {
+                    [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
+                    [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+                });
+
+                console.log('integrationNodeTransferModel.destination', integrationNodeTransferModel.destination);
+                const axiosConnectInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL });
+                await axiosConnectInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CONNECT_SUFFIX, IntegrationNodeConnectModel.newInstanceByPeerAddress(integrationNodeTransferModel.destination));
+
+                const axiosSendShipmentInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
+                await axiosSendShipmentInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
             }
-            // await fs.writeFile(`${__dirname}/shipment-model.json`, JSON.stringify(integrationNodeTransferModel.toNetwork()));
         } catch (ex) {
             throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
         }
