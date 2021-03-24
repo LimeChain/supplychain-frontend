@@ -2,7 +2,7 @@
             
 export default class SkuModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_SKU_ID = 1;
     static P_SHIPMENT_ID = 2;

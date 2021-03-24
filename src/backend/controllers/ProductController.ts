@@ -24,7 +24,9 @@ export default class ProductController {
         const productService = servicesFactory.getProductService();
 
         servicesFactory.db.beginTransaction();
+        await servicesFactory.repoFactory.aquireAutoIncrementer();
         const productModel = await productService.creditProduct(req.productModel);
+        await servicesFactory.repoFactory.saveAutoIncrementer();
         servicesFactory.db.commitTransaction();
 
         context.res.set(new CreditProductRes(productModel));

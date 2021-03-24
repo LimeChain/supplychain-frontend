@@ -8,10 +8,13 @@ import ShipmentDocumentRepo from '../../modules/ShipmentModule/ShipmentDocument/
 import SiteRepo from '../../modules/Site/Repo/SiteRepo';
 import AccountRepo from '../../modules/Account/Repo/AccountRepo';
 import Database from './Database';
+import AutoIncrementerRepo from '../../modules/AutoIncrementer/Repo/AutoIncrementerRepo';
+import AutoIncrementerModel from '../../modules/AutoIncrementer/Model/AutoIncrementerModel';
 
 export default class RepoFactory {
 
     db: Database;
+    autoIncrementerModel: AutoIncrementerModel;
     countryRepo: CountryRepo | null = null;
     notificationRepo: NotificationRepo | null = null;
     productRepo: ProductRepo | null = null;
@@ -21,9 +24,19 @@ export default class RepoFactory {
     shipmentDocumentRepo: ShipmentDocumentRepo | null = null;
     siteRepo: SiteRepo | null = null;
     accountRepo: AccountRepo | null = null;
+    autoIncremeterRepo: AutoIncrementerRepo | null = null;
 
     constructor(db: Database) {
         this.db = db;
+        this.autoIncrementerModel = new AutoIncrementerModel();
+    }
+
+    async aquireAutoIncrementer() {
+        await this.autoIncrementerModel.aquire(this.db);
+    }
+
+    async saveAutoIncrementer() {
+        await this.getAutoIncrementerRepo().save(this.autoIncrementerModel);
     }
 
     getCountryRepo(): CountryRepo {
@@ -69,6 +82,11 @@ export default class RepoFactory {
     getAccountRepo(): AccountRepo {
         this.accountRepo = this.accountRepo ?? new AccountRepo(this);
         return this.accountRepo;
+    }
+
+    getAutoIncrementerRepo(): AutoIncrementerRepo {
+        this.autoIncremeterRepo = this.autoIncremeterRepo ?? new AutoIncrementerRepo(this);
+        return this.autoIncremeterRepo;
     }
 
 }

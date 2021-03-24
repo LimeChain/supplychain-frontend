@@ -64,7 +64,7 @@ export default class ProductRepoH {
     }
 
     getPrimaryValueForInsert(): number | null {
-        return null;
+        return this.getPrimaryValue();
     }
 
     getDbPairs() {

@@ -2,7 +2,7 @@
             
 export default class ProductModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_PRODUCT_ID = 1;
     static P_PRODUCT_NAME = 2;

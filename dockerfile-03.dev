@@ -1,9 +1,5 @@
 FROM node:14-alpine
 
-ARG HTTP_PORT=3333
-ARG HTTPS_PORT=8443
-ARG GRPC_PORT=8006
-
 RUN apk add --no-cache make gcc g++ python
 
 WORKDIR /usr/src/app
@@ -21,8 +17,5 @@ RUN npm install
 USER root
 
 COPY --chown=node:node ./ ./
-
-EXPOSE ${HTTP_PORT}
-EXPOSE ${GRPC_PORT}
 
 CMD ["sh", "-c", "npm run dev-migrate-db-03&& npm run dev-03"]

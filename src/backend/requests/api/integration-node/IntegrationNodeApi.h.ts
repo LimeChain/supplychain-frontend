@@ -13,4 +13,5 @@ IntegrationNodeApiH.URL = `${Config.URL.API}/integration-node`;
 IntegrationNodeApiH.Actions = {
     CREDIT_SHIPMENT: 'a',
     CREDIT_PRODUCT: 'b',
+    DLT_SHIPMENT: 'c',
 };

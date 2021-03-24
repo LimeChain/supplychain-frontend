@@ -2,7 +2,7 @@
             
 export default class SkuOriginModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_SKU_ORIGIN_ID = 1;
     static P_SKU_ID = 2;

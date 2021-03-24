@@ -7,4 +7,6 @@ export default class SkuModel {
     pricePerUnit: number;
     currency: number;
 
+    primaryValueInInsert: boolean = true
+
 }

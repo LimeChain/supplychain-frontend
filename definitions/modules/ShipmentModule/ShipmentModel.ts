@@ -8,8 +8,9 @@ export default class ShipmentModel {
     shipmentDestinationSiteId: number
     shipmentDateOfShipment: number
     shipmentDateOfArrival: number
-    shipmentDltAnchored: number
     shipmentDltProof: string
     shipmentDeleted: number
+
+    primaryValueInInsert: boolean = true
 
 }

@@ -33,6 +33,7 @@ export default class PopupShipmentStore extends PopupStore {
     @observable dragging: boolean;
     @observable pricePerUnitDisplay: string;
 
+    shipmentLinksRoute: string[];
     shipmentInputStateHelper: InputStateHelper;
     buildSkuInputStateHelper: InputStateHelper;
     documentInputStateHelper: InputStateHelper;
@@ -100,6 +101,7 @@ export default class PopupShipmentStore extends PopupStore {
     ) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => { });
+        this.shipmentLinksRoute = [];
         this.shipmentModel = shipmentModel;
         this.skuModels = skuModels;
         this.skuOriginModels = skuOriginModels;
@@ -119,6 +121,34 @@ export default class PopupShipmentStore extends PopupStore {
         this.productStore.fetchProductsList(() => {
             this.show();
         })
+    }
+
+    addToShipmentRoute(
+        resetRoute: boolean,
+        shipmentModel: ShipmentModel,
+        skuModels: SkuModel[],
+        skuOriginModels: SkuOriginModel[],
+        shipmentDocumentModels: ShipmentDocumentModel[],
+    ) {
+        if (!resetRoute) {
+            if (this.shipmentLinksRoute.length === 0) {
+                this.shipmentLinksRoute.push(this.shipmentModel.shipmentId);
+            }
+
+            this.shipmentLinksRoute.push(shipmentModel.shipmentId);
+        }
+
+        this.shipmentModel = shipmentModel;
+        this.skuModels = skuModels;
+        this.skuOriginModels = skuOriginModels;
+        this.shipmentDocumentModels = shipmentDocumentModels;
+    }
+
+    moveToShipmentLinkRoute(shipmentLinkIndex: number, callback: (shipmentId: string) => void) {
+        const shipmentId = this.shipmentLinksRoute[shipmentLinkIndex];
+        this.shipmentLinksRoute = this.shipmentLinksRoute.slice(0, shipmentLinkIndex);
+
+        callback(shipmentId);
     }
 
     setTabProducts() {

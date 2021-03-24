@@ -153,7 +153,7 @@ class DevGeneratedModule {
             'URL': Config.URL,
             'Server': {
                 TRANSACTION_VIEW_URL: Config.Server.TRANSACTION_VIEW_URL,
-                SITE_ID: Config.Server.SITE_ID,
+                SITE_ID: Config.Server.SITE_ID.toString(),
             },
         };
 

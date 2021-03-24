@@ -19,6 +19,9 @@ export default class IntegrationNodeApi extends IntegrationNodeApiH {
             case IntegrationNodeApiH.Actions.CREDIT_PRODUCT:
                 await this.integrationNodeController.creditProduct(context);
                 break;
+            case IntegrationNodeApiH.Actions.DLT_SHIPMENT:
+                await this.integrationNodeController.dltShipment(context);
+                break;
             default:
                 break;
         }

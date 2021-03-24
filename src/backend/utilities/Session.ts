@@ -31,6 +31,15 @@ export default class Session {
         return Number.isNaN(accountId) === true ? null : accountId;
     }
 
+    getSiteId(): number {
+        let siteId = getProperty(this.ctx, Session.ACCOUNT_SITE);
+        if (siteId === null) {
+            return null;
+        }
+        siteId = parseInt(siteId);
+        return Number.isNaN(siteId) === true ? null : siteId;
+    }
+
     isAdmin(): boolean {
         return this.getAccountId() !== null;
     }

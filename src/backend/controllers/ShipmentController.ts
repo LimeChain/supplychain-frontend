@@ -1,11 +1,5 @@
 import fsPromises from 'fs/promises';
 import fs from 'fs';
-import Config from '../../../config/config';
-import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
-import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
-import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
-
-import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import CreditShipmentReq from '../requests/network/requests/CreditShipmentReq';
 import FetchProductsInStockReq from '../requests/network/requests/FetchProductsInStockReq';
 import FetchShipmentByIdReq from '../requests/network/requests/FetchShipmentByIdReq';
@@ -25,7 +19,6 @@ import Params from '../utilities/Params';
 import SV from '../utilities/SV';
 import UploadShipmentDocumentReq from '../requests/network/requests/UploadShipmentDocumentReq';
 import UploadShipmentDocumentRes from '../requests/network/responses/UploadShipmentDocumentRes';
-import ShipmentService from '../services/ShipmentService';
 
 export default class ShipmentController {
 
@@ -34,17 +27,20 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
         const req = new CreditShipmentReq(payload);
 
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
 
         servicesFactory.db.beginTransaction();
+        await servicesFactory.repoFactory.aquireAutoIncrementer();
 
         const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await shipmentService.creditShipment(siteId, req.shipmentModel, req.skuModels, req.skuOriginModels, req.shipmentDocumentModels);
 
+        await servicesFactory.repoFactory.saveAutoIncrementer();
         servicesFactory.db.commitTransaction();
 
         context.res.set(new CreditShipmentRes(shipmentModel, skuOriginModels, skuModels, shipmentDocumentModels));
@@ -55,11 +51,12 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
         const req = new FetchShipmentsByFilterReq(payload);
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
 
         const { shipmentModels, totalSize } = await shipmentService.fetchShipmentsByFilter(
             siteId,
@@ -79,6 +76,7 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
         const req = new FetchShipmentByIdReq(payload);
         const shipmentService = servicesFactory.getShipmentService();
@@ -94,8 +92,9 @@ export default class ShipmentController {
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchShipmentsWithProductQuantityLeftByProductIdReq(payload);
         const shipmentService = servicesFactory.getShipmentService();
 
@@ -109,9 +108,10 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchProductsInStockReq(payload);
 
         const { skuModels, productModels, totalSkuSize } = await shipmentService.fetchProductsInStock(siteId, req.searchBy, req.sortBy, req.from, req.to);
@@ -120,6 +120,7 @@ export default class ShipmentController {
 
     async downloadShipmentJson(context: Context) {
         const payload = context.payload;
+        const session = context.session;
         const shipmentId = payload.params[Params.ID];
 
         const filepath = `${__dirname}/ShipmentController.js`;
@@ -146,17 +147,25 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
         const req = new UploadShipmentDocumentReq(payload);
 
+        servicesFactory.db.beginTransaction();
+        await servicesFactory.repoFactory.aquireAutoIncrementer();
+
         const shipmentDocumentModel = await shipmentService.uploadShipmentDocument(req.shipmentDocumentModel);
+
+        await servicesFactory.repoFactory.saveAutoIncrementer();
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new UploadShipmentDocumentRes(shipmentDocumentModel));
     }
 
     async downloadShipmentDocumentFile(context: Context) {
         const payload = context.payload;
+        const session = context.session;
 
         const shipmentDocumentId = parseInt(payload.params[Params.ID]);
 
@@ -190,9 +199,10 @@ export default class ShipmentController {
         this.checkIfAdmin(context);
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
+        const session = context.session;
         const shipmentService = servicesFactory.getShipmentService();
 
-        const siteId = await this.getCurrentSiteId(context);
+        const siteId = session.getSiteId();
         const req = new FetchTotalValueInStockReq(payload);
 
         const { skuModels } = await shipmentService.fetchProductsInStock(siteId, SV.Strings.EMPTY, req.sortBy, req.from, req.to);
@@ -213,11 +223,4 @@ export default class ShipmentController {
 
     }
 
-    async getCurrentSiteId(context): Promise<number> {
-        const accountId = context.session.getAccountId();
-        const accountService = context.servicesFactory.getAccountService();
-        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
-
-        return siteId;
-    }
 }

@@ -24,7 +24,7 @@ export default class IntegrationNodeService extends Service {
     productRepo: ProductRepo = this.repoFactory.getProductRepo();
 
     async creditProduct(reqProductModel: ProductModel) {
-        await this.productRepo.saveWithPrimaryKey(reqProductModel);
+        await this.productRepo.save(reqProductModel);
     }
 
     async creditShipment(reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise < void > {
@@ -34,24 +34,24 @@ export default class IntegrationNodeService extends Service {
             oldShipmentStatus = shipmentModel.shipmentStatus;
         }
 
-        await this.shipmentRepo.saveWithPrimaryKey(reqShipmentModel);
+        await this.shipmentRepo.save(reqShipmentModel);
 
         // create notification
-        if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+        if (reqShipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
             const notificationService = this.servicesFactory.getNotificationService();
-            notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+            notificationService.createNotification(reqShipmentModel.shipmentId, reqShipmentModel.shipmentStatus);
         }
 
         // credit sku models
         for (let i = 0; i < reqSkuModels.length; i++) {
             const reqSkuModel = reqSkuModels[i];
-            await this.skuRepo.saveWithPrimaryKey(reqSkuModel);
+            await this.skuRepo.save(reqSkuModel);
         }
 
         // credit sku origin models
         for (let i = 0; i < reqSkuOriginModels.length; i++) {
             const reqSkuOriginModel = reqSkuOriginModels[i];
-            await this.skuOriginRepo.saveWithPrimaryKey(reqSkuOriginModel);
+            await this.skuOriginRepo.save(reqSkuOriginModel);
         }
 
         // delete missing document models from the db
@@ -86,8 +86,18 @@ export default class IntegrationNodeService extends Service {
                 continue;
             }
 
-            await this.shipmentDocumentRepo.saveWithPrimaryKey(reqShipmentDocumentModel);
+            await this.shipmentDocumentRepo.save(reqShipmentDocumentModel);
         }
+    }
+
+    async dlt(shipmentId: number, dlt: string) {
+        const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
+        if (shipmentModel === null) { // this node does not have this shipment
+            return;
+        }
+
+        shipmentModel.shipmentDltProof = dlt;
+        await this.shipmentRepo.save(shipmentModel);
     }
 
 }

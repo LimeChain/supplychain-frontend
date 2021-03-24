@@ -58,7 +58,7 @@ export default class OutgoingPageComponent extends ContextPageComponent<Props, S
         };
 
         this.tableHelper = new TableHelper(
-            ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER,
+            -ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT,
             [
                 [ShipmentFilter.S_SORT_BY_CONSIGNMENT_NUMBER, 1],
                 [ShipmentFilter.S_SORT_BY_ORIGIN_SITE_ID, 2],

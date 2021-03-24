@@ -9,7 +9,6 @@ export default class ShipmentRepoH {
     static C_SHIPMENT_DESTINATION_SITE_ID = 'shipmentDestinationSiteId';
     static C_SHIPMENT_DATE_OF_SHIPMENT = 'shipmentDateOfShipment';
     static C_SHIPMENT_DATE_OF_ARRIVAL = 'shipmentDateOfArrival';
-    static C_SHIPMENT_DLT_ANCHORED = 'shipmentDltAnchored';
     static C_SHIPMENT_DLT_PROOF = 'shipmentDltProof';
     static C_SHIPMENT_DELETED = 'shipmentDeleted';
         
@@ -29,8 +28,6 @@ export default class ShipmentRepoH {
     shipmentDateOfShipmentToDb: boolean;
     shipmentDateOfArrival: number | null;
     shipmentDateOfArrivalToDb: boolean;
-    shipmentDltAnchored: number | null;
-    shipmentDltAnchoredToDb: boolean;
     shipmentDltProof: string | null;
     shipmentDltProofToDb: boolean;
     shipmentDeleted: number | null;
@@ -53,8 +50,6 @@ export default class ShipmentRepoH {
         this.shipmentDateOfShipmentToDb = false;
         this.shipmentDateOfArrival = null;
         this.shipmentDateOfArrivalToDb = false;
-        this.shipmentDltAnchored = null;
-        this.shipmentDltAnchoredToDb = false;
         this.shipmentDltProof = null;
         this.shipmentDltProofToDb = false;
         this.shipmentDeleted = null;
@@ -72,7 +67,6 @@ export default class ShipmentRepoH {
         repo.shipmentDestinationSiteId = row[ShipmentRepoH.C_SHIPMENT_DESTINATION_SITE_ID] ?? repo.shipmentDestinationSiteId;
         repo.shipmentDateOfShipment = row[ShipmentRepoH.C_SHIPMENT_DATE_OF_SHIPMENT] ?? repo.shipmentDateOfShipment;
         repo.shipmentDateOfArrival = row[ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL] ?? repo.shipmentDateOfArrival;
-        repo.shipmentDltAnchored = row[ShipmentRepoH.C_SHIPMENT_DLT_ANCHORED] ?? repo.shipmentDltAnchored;
         repo.shipmentDltProof = row[ShipmentRepoH.C_SHIPMENT_DLT_PROOF] ?? repo.shipmentDltProof;
         repo.shipmentDeleted = row[ShipmentRepoH.C_SHIPMENT_DELETED] ?? repo.shipmentDeleted;
 
@@ -88,7 +82,7 @@ export default class ShipmentRepoH {
     }
 
     getPrimaryValueForInsert(): number | null {
-        return null;
+        return this.getPrimaryValue();
     }
 
     getDbPairs() {
@@ -128,11 +122,6 @@ export default class ShipmentRepoH {
         if (this.shipmentDateOfArrivalToDb === true) {
             columns.push(ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL);
             values.push(this.shipmentDateOfArrival === null ? null : this.shipmentDateOfArrival.toString());
-        }
-
-        if (this.shipmentDltAnchoredToDb === true) {
-            columns.push(ShipmentRepoH.C_SHIPMENT_DLT_ANCHORED);
-            values.push(this.shipmentDltAnchored === null ? null : this.shipmentDltAnchored.toString());
         }
 
         if (this.shipmentDltProofToDb === true) {

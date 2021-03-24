@@ -19,7 +19,7 @@ export default class ShipmentModel extends ShipmentModelG {
     }
 
     shouldSubmitToIntegratioNode(oldShipmentStatus: number) {
-        return oldShipmentStatus === ShipmentModel.S_STATUS_DRAFT && this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT;
+        return (oldShipmentStatus === ShipmentModel.S_STATUS_DRAFT && this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT) || (oldShipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT && this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED);
     }
 
     isStatusChangeForNotification(oldShipmentStatus: number): boolean {

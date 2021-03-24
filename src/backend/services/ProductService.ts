@@ -10,6 +10,7 @@ import StateException from '../utilities/network/StateException';
 import Service from './common/Service';
 import IntegrationNodeApiH from '../requests/api/integration-node/IntegrationNodeApi.h';
 import Params from '../utilities/Params';
+import SF from '../utilities/SF';
 
 export default class ProductService extends Service {
 
@@ -19,6 +20,7 @@ export default class ProductService extends Service {
         let productModel: ProductModel | null = null;
         if (reqProductModel.isNew() === true) {
             productModel = new ProductModel();
+            productModel.productId = this.repoFactory.autoIncrementerModel.getAndIncrementProductId();
         } else {
             productModel = await this.productRepo.fetchByPrimaryValue(reqProductModel.productId);
             if (productModel === null) {
@@ -33,26 +35,22 @@ export default class ProductService extends Service {
         productModel.productDeletable = reqProductModel.productDeletable;
         productModel.productEditable = reqProductModel.productEditable;
 
-        productModel.productId = (await this.productRepo.save(productModel)).productId;
+        await this.productRepo.save(productModel);
 
         try {
             const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceProduct();
             integrationNodeTransferModel.obj = {
                 productModel,
-            }
-            const instance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
-            const axiosResponse = await instance.post(Config.Server.HEDERA_INTERGRATION_NODE_CREDIT_PRODUCT_SUFFIX, integrationNodeTransferModel.toNetwork());
+            };
 
-            const axiosTransfer01 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_01_URL });
-            await axiosTransfer01.post('/', {
-                [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
-                [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-            });
-            const axiosTransfer02 = axios.create({ baseURL: Config.Server.TARGET_INSTANCE_02_URL });
-            await axiosTransfer02.post('/', {
-                [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
-                [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
-            });
+            const targetWebUrls = SF.getTargetSiteWebUrlButMine();
+            for (let i = targetWebUrls.length; i-- > 0;) {
+                const axiosTransfer = axios.create({ baseURL: targetWebUrls[i] });
+                await axiosTransfer.post('/', {
+                    [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_PRODUCT,
+                    [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
+                });
+            }
         } catch (ex) {
             throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
         }

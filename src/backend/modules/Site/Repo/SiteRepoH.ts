@@ -40,7 +40,7 @@ export default class SiteRepoH {
     }
 
     getPrimaryValueForInsert(): number | null {
-        return null;
+        return this.getPrimaryValue();
     }
 
     getDbPairs() {

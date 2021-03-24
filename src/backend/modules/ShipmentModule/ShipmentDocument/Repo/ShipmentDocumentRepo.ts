@@ -18,14 +18,6 @@ export default class ShipmentDocumentRepo extends ShipmentDocumentRepoG {
         return this.delete(databaseWhere);
     }
 
-    async saveWithPrimaryKey(shipmentDocumentModel: ShipmentDocumentModel) {
-        const repoObj = shipmentDocumentModel.toRepo();
-        repoObj.getPrimaryValueForInsert = () => {
-            return repoObj.shipmentDocumentId;
-        };
-        this.db.save(ShipmentDocumentRepoH.TABLE_NAME, repoObj);
-    }
-
     async fetchForShipment(shipmentIds: number[]) {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.clause(new DatabaseWhereClause(ShipmentDocumentModelH.P_SHIPMENT_ID, '=', shipmentIds));

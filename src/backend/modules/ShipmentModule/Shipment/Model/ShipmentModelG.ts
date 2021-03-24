@@ -16,7 +16,6 @@ export default class ShipmentModelG extends ShipmentModelH {
         this.shipmentDestinationSiteId = SV.NOT_EXISTS;
         this.shipmentDateOfShipment = SV.NOT_EXISTS;
         this.shipmentDateOfArrival = SV.NOT_EXISTS;
-        this.shipmentDltAnchored = SV.NOT_EXISTS;
         this.shipmentDltProof = SV.Strings.EMPTY;
         this.shipmentDeleted = SV.NOT_EXISTS;
     }
@@ -73,10 +72,6 @@ export default class ShipmentModelG extends ShipmentModelH {
             repo.shipmentDateOfArrival = this.shipmentDateOfArrival;
             repo.shipmentDateOfArrivalToDb = true;
         }
-        if (map.has(ShipmentModelH.P_SHIPMENT_DLT_ANCHORED) === true && this.shipmentDltAnchored !== undefined) {
-            repo.shipmentDltAnchored = this.shipmentDltAnchored;
-            repo.shipmentDltAnchoredToDb = true;
-        }
         if (map.has(ShipmentModelH.P_SHIPMENT_DLT_PROOF) === true && this.shipmentDltProof !== undefined) {
             repo.shipmentDltProof = this.shipmentDltProof;
             repo.shipmentDltProofToDb = true;
@@ -100,7 +95,6 @@ export default class ShipmentModelG extends ShipmentModelH {
         model.shipmentDestinationSiteId = parseInt((repo.shipmentDestinationSiteId ?? model.shipmentDestinationSiteId) as unknown as string);
         model.shipmentDateOfShipment = parseInt((repo.shipmentDateOfShipment ?? model.shipmentDateOfShipment) as unknown as string);
         model.shipmentDateOfArrival = parseInt((repo.shipmentDateOfArrival ?? model.shipmentDateOfArrival) as unknown as string);
-        model.shipmentDltAnchored = parseInt((repo.shipmentDltAnchored ?? model.shipmentDltAnchored) as unknown as string);
         model.shipmentDltProof = repo.shipmentDltProof ?? model.shipmentDltProof;
         model.shipmentDeleted = parseInt((repo.shipmentDeleted ?? model.shipmentDeleted) as unknown as string);
 
@@ -118,7 +112,6 @@ export default class ShipmentModelG extends ShipmentModelH {
             shipmentDestinationSiteId: this.shipmentDestinationSiteId,
             shipmentDateOfShipment: this.shipmentDateOfShipment,
             shipmentDateOfArrival: this.shipmentDateOfArrival,
-            shipmentDltAnchored: this.shipmentDltAnchored,
             shipmentDltProof: this.shipmentDltProof,
             shipmentDeleted: this.shipmentDeleted,
         };
@@ -139,7 +132,6 @@ export default class ShipmentModelG extends ShipmentModelH {
         model.shipmentDestinationSiteId = parseInt(json.shipmentDestinationSiteId ?? model.shipmentDestinationSiteId);
         model.shipmentDateOfShipment = parseInt(json.shipmentDateOfShipment ?? model.shipmentDateOfShipment);
         model.shipmentDateOfArrival = parseInt(json.shipmentDateOfArrival ?? model.shipmentDateOfArrival);
-        model.shipmentDltAnchored = parseInt(json.shipmentDltAnchored ?? model.shipmentDltAnchored);
         model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
         model.shipmentDeleted = parseInt(json.shipmentDeleted ?? model.shipmentDeleted);
 
@@ -164,8 +156,6 @@ export default class ShipmentModelG extends ShipmentModelH {
                 return ShipmentRepoH.C_SHIPMENT_DATE_OF_SHIPMENT;
             case ShipmentModelH.P_SHIPMENT_DATE_OF_ARRIVAL:
                 return ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL;
-            case ShipmentModelH.P_SHIPMENT_DLT_ANCHORED:
-                return ShipmentRepoH.C_SHIPMENT_DLT_ANCHORED;
             case ShipmentModelH.P_SHIPMENT_DLT_PROOF:
                 return ShipmentRepoH.C_SHIPMENT_DLT_PROOF;
             case ShipmentModelH.P_SHIPMENT_DELETED:

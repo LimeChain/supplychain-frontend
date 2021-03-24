@@ -1,6 +1,6 @@
-import SkuModel from '../../../../../../definitions/modules/ProductModule/SkuModel';
 import DatabaseWhere from '../../../../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../../../../utilities/database/DatabaseWhereClause';
+import SkuModel from '../../Sku/Model/SkuModel';
 import SkuOriginModel from '../Model/SkuOriginModel';
 import SkuOriginModelH from '../Model/SkuOriginModelH';
 import SkuOriginRepoG from './SkuOriginRepoG';

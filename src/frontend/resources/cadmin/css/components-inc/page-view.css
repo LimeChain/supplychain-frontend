@@ -35,7 +35,7 @@
     width: 1px;
     height: 15px;
     margin-right: 15px;
-    border-left: 1px solid #8C99AC;
+    border-left: 1px solid var(--color-gray);
 }
 
 .PageHeader .HeaderRight .UserTab .CountryTab {

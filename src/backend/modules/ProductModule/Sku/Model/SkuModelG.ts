@@ -3,6 +3,7 @@ import SkuModelH from './SkuModelH';
 import SkuRepoH from '../Repo/SkuRepoH';
 import SV from '../../../../utilities/SV';
 
+
 export default class SkuModelG extends SkuModelH {
 
     constructor() {
@@ -19,8 +20,8 @@ export default class SkuModelG extends SkuModelH {
 
     }
 
-    static asMap(models: SkuModel[]): Map<any, SkuModel> {
-        const map = new Map<any, SkuModel>();
+    static asMap(models: SkuModel[]): Map < any, SkuModel > {
+        const map = new Map < any, SkuModel >();
 
         models.forEach((m) => {
             map.set(m.skuId, m);
@@ -28,6 +29,7 @@ export default class SkuModelG extends SkuModelH {
 
         return map;
     }
+
 
     toRepo(props: number[] | null = null): SkuRepoH {
         const map = SkuModelG.getPropsAsMap(props);
@@ -69,11 +71,12 @@ export default class SkuModelG extends SkuModelH {
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
         model.productId = parseInt((repo.productId ?? model.productId) as unknown as string);
         model.quantity = parseInt((repo.quantity ?? model.quantity) as unknown as string);
-        model.pricePerUnit = parseFloat((repo.pricePerUnit ?? model.pricePerUnit) as unknown as string);
+        model.pricePerUnit = parseInt((repo.pricePerUnit ?? model.pricePerUnit) as unknown as string);
         model.currency = parseInt((repo.currency ?? model.currency) as unknown as string);
 
         return model;
     }
+        
 
     toNetwork(): any {
         return {
@@ -92,12 +95,12 @@ export default class SkuModelG extends SkuModelH {
         }
 
         const model = new SkuModel();
-
+        
         model.skuId = parseInt(json.skuId ?? model.skuId);
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
         model.productId = parseInt(json.productId ?? model.productId);
         model.quantity = parseInt(json.quantity ?? model.quantity);
-        model.pricePerUnit = parseFloat(json.pricePerUnit ?? model.pricePerUnit);
+        model.pricePerUnit = parseInt(json.pricePerUnit ?? model.pricePerUnit);
         model.currency = parseInt(json.currency ?? model.currency);
 
         return model;
@@ -122,10 +125,10 @@ export default class SkuModelG extends SkuModelH {
         }
     }
 
-    static getPropsAsMap(props: number[] | null = null): Map<number, boolean> {
+    static getPropsAsMap(props: number[] | null = null): Map < number, boolean > {
         props = props ?? SkuModelH.PROPERTIES;
 
-        const map = new Map<number, boolean>();
+        const map = new Map < number, boolean >();
         props.forEach((prop) => {
             map.set(prop, true);
         });

@@ -27,12 +27,4 @@ export default class SkuRepo extends SkuRepoG {
         return this.fetch(databaseWhere);
     }
 
-    async saveWithPrimaryKey(skuModel: SkuModel) {
-        const repoObj = skuModel.toRepo();
-        repoObj.getPrimaryValueForInsert = () => {
-            return repoObj.skuId;
-        };
-        this.db.save(SkuRepoH.TABLE_NAME, repoObj);
-    }
-
 }

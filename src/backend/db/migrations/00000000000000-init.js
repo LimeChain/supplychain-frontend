@@ -21,8 +21,6 @@ const SkuOriginRepoH = require('../../modules/ProductModule/SkuOrigin/Repo/SkuOr
 const ShipmentRepoH = require('../../modules/ShipmentModule/Shipment/Repo/ShipmentRepoH').default;
 const ShipmentDocumentRepoH = require('../../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepoH').default;
 
-const autoIncrementInit = (Config.Server.SITE_ID - 1) * 700000000 + 1;
-
 module.exports = class Migration00000000000000 {
 
     async up(db) {
@@ -53,7 +51,7 @@ module.exports = class Migration00000000000000 {
         const countryRepo = repoFactory.getCountryRepo();
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${CountryRepoH.TABLE_NAME}(
-            ${CountryRepoH.C_COUNTRY_ID} INT AUTO_INCREMENT,
+            ${CountryRepoH.C_COUNTRY_ID} INT UNIQUE,
             ${CountryRepoH.C_COUNTRY_NAME} TEXT,
             ${CountryRepoH.C_COUNTRY_VAT} DOUBLE,
             PRIMARY KEY(${CountryRepoH.C_COUNTRY_ID})
@@ -83,7 +81,7 @@ module.exports = class Migration00000000000000 {
         const siteRepo = repoFactory.getSiteRepo();
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${SiteRepoH.TABLE_NAME}(
-            ${SiteRepoH.C_SITE_ID} INT AUTO_INCREMENT,
+            ${SiteRepoH.C_SITE_ID} INT UNIQUE,
             ${SiteRepoH.C_COUNTRY_ID} INT,
             ${SiteRepoH.C_SITE_NAME} TEXT,
             PRIMARY KEY(${SiteRepoH.C_SITE_ID})
@@ -176,17 +174,16 @@ module.exports = class Migration00000000000000 {
         const db = repoFactory.db;
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${ProductRepoH.TABLE_NAME}(
-            ${ProductRepoH.C_PRODUCT_ID} INT AUTO_INCREMENT,
+            ${ProductRepoH.C_PRODUCT_ID} INT UNIQUE,
             ${ProductRepoH.C_PRODUCT_NAME} TEXT COLLATE utf8mb4_general_ci,
             ${ProductRepoH.C_PRODUCT_UNIT} INT,
             ${ProductRepoH.C_PRODUCT_DESCRIPTION} TEXT COLLATE utf8mb4_general_ci,
             ${ProductRepoH.C_PRODUCT_DELETED} TINYINT,
             PRIMARY KEY(${ProductRepoH.C_PRODUCT_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
-        await db.query(`ALTER TABLE ${ProductRepoH.TABLE_NAME} AUTO_INCREMENT=${autoIncrementInit}`)
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${SkuRepoH.TABLE_NAME}(
-            ${SkuRepoH.C_SKU_ID} INT AUTO_INCREMENT,
+            ${SkuRepoH.C_SKU_ID} INT UNIQUE,
             ${SkuRepoH.C_SHIPMENT_ID} INT,
             ${SkuRepoH.C_PRODUCT_ID} INT,
             ${SkuRepoH.C_QUANTITY} DOUBLE,
@@ -194,22 +191,20 @@ module.exports = class Migration00000000000000 {
             ${SkuRepoH.C_CURRENCY} INT,
             PRIMARY KEY(${SkuRepoH.C_SKU_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
-        await db.query(`ALTER TABLE ${SkuRepoH.TABLE_NAME} AUTO_INCREMENT=${autoIncrementInit}`)
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${SkuOriginRepoH.TABLE_NAME} (
-            ${SkuOriginRepoH.C_SKU_ORIGIN_ID} INT AUTO_INCREMENT,
+            ${SkuOriginRepoH.C_SKU_ORIGIN_ID} INT UNIQUE,
             ${SkuOriginRepoH.C_SKU_ID} INT,
             ${SkuOriginRepoH.C_SHIPMENT_ID} INT,
             PRIMARY KEY(${SkuOriginRepoH.C_SKU_ORIGIN_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
-        await db.query(`ALTER TABLE ${SkuOriginRepoH.TABLE_NAME} AUTO_INCREMENT=${autoIncrementInit}`)
     }
 
     async shipment(repoFactory) {
         const db = repoFactory.db;
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${ShipmentDocumentRepoH.TABLE_NAME}(
-            ${ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_ID} INT AUTO_INCREMENT,
+            ${ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_ID} INT UNIQUE,
             ${ShipmentDocumentRepoH.C_SHIPMENT_ID} INT,
             ${ShipmentDocumentRepoH.C_DOCUMENT_TYPE} TINYINT,
             ${ShipmentDocumentRepoH.C_MIME_TYPE} VARCHAR(64),
@@ -218,10 +213,9 @@ module.exports = class Migration00000000000000 {
             ${ShipmentDocumentRepoH.C_NAME} TEXT,
             PRIMARY KEY(${ShipmentDocumentRepoH.C_SHIPMENT_DOCUMENT_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
-        await db.query(`ALTER TABLE ${ShipmentDocumentRepoH.TABLE_NAME} AUTO_INCREMENT=${autoIncrementInit}`)
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${ShipmentRepoH.TABLE_NAME}(
-            ${ShipmentRepoH.C_SHIPMENT_ID} INT AUTO_INCREMENT,
+            ${ShipmentRepoH.C_SHIPMENT_ID} INT UNIQUE,
             ${ShipmentRepoH.C_SHIPMENT_CONSIGNMENT_NUMBER} TEXT,
             ${ShipmentRepoH.C_SHIPMENT_NAME} TEXT,
             ${ShipmentRepoH.C_SHIPMENT_STATUS} TINYINT,
@@ -229,12 +223,11 @@ module.exports = class Migration00000000000000 {
             ${ShipmentRepoH.C_SHIPMENT_DESTINATION_SITE_ID} INT,
             ${ShipmentRepoH.C_SHIPMENT_DATE_OF_SHIPMENT} BIGINT,
             ${ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL} BIGINT,
-            ${ShipmentRepoH.C_SHIPMENT_DLT_ANCHORED} INT,
+            ${'shipmentDltAnchored'} INT,
             ${ShipmentRepoH.C_SHIPMENT_DLT_PROOF} TEXT,
             ${ShipmentRepoH.C_SHIPMENT_DELETED} TINYINT,
             PRIMARY KEY(${ShipmentRepoH.C_SHIPMENT_ID})
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
-        await db.query(`ALTER TABLE ${ShipmentRepoH.TABLE_NAME} AUTO_INCREMENT=${autoIncrementInit}`)
     }
 
 }

@@ -4,4 +4,6 @@ export default class CountryModel {
     countryName: string
     countryVat: number
 
+    primaryValueInInsert: boolean = true
+
 }
