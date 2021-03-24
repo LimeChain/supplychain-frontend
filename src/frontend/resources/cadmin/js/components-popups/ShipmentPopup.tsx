@@ -398,7 +398,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             <div className={'PopupWindowContent LargeContent'} >
                 <div className={'PopupHeader'} >
                     <div className={'PopupTitleCnt'}>
-                        <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isDraft() ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
+                        <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isNew() === true ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
                         {shipmentModel.isDraft() === false && (
                             <div className={'FlexSplit'} >
                                 <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>

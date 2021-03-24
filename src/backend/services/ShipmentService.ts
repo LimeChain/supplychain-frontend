@@ -223,18 +223,18 @@ export default class ShipmentService extends Service {
                 const targetSiteId = siteId === shipmentModel.shipmentDestinationSiteId ? shipmentModel.shipmentOriginSiteId : shipmentModel.shipmentDestinationSiteId;
                 integrationNodeTransferModel.destination = SF.getIntegrationNodeDestinationAddrByDestinationSiteId(targetSiteId);
 
+                const axiosConnectInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL });
+                await axiosConnectInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CONNECT_SUFFIX, IntegrationNodeConnectModel.newInstanceByPeerAddress(integrationNodeTransferModel.destination));
+
+                const axiosSendShipmentInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
+                await axiosSendShipmentInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
+
                 const targetWebUrl = SF.getTargetSiteWebUrlByDestinationSiteId(targetSiteId);
                 const axiosTransfer = axios.create({ baseURL: targetWebUrl });
                 await axiosTransfer.post('/', {
                     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
                     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
                 });
-
-                const axiosConnectInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL });
-                await axiosConnectInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CONNECT_SUFFIX, IntegrationNodeConnectModel.newInstanceByPeerAddress(integrationNodeTransferModel.destination));
-
-                const axiosSendShipmentInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL })
-                await axiosSendShipmentInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
             }
         } catch (ex) {
             Logger.error(ex);
