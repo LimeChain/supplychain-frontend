@@ -26,6 +26,7 @@ import Params from '../utilities/Params';
 import IntegrationNodeApiH from '../requests/api/integration-node/IntegrationNodeApi.h';
 import SF from '../utilities/SF';
 import IntegrationNodeConnectModel from '../modules/IntegratonNode/IntegrationNodeConnectModel';
+import Logger from '../utilities/Logger';
 
 export default class ShipmentService extends Service {
 
@@ -94,7 +95,8 @@ export default class ShipmentService extends Service {
 
         // mark products that have been removed from shipment as deletable, if not used anywhere else
         const skuWhereProductUsed = await this.skuRepo.fetchByProductIds(skuToDeleteModels.map((s) => s.productId));
-        const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
+        const usedProductIdsSet = new Set(skuWhereProductUsed.map((m) => m.productId));
+        const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => usedProductIdsSet.has(s.productId) === false).map((s) => s.productId);
         this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
         // credit sku models
@@ -235,6 +237,7 @@ export default class ShipmentService extends Service {
                 await axiosSendShipmentInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
             }
         } catch (ex) {
+            Logger.error(ex);
             throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
         }
 
