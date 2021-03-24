@@ -103,6 +103,10 @@ export default class Router {
     }
 
     static processCtx(ctx) {
+        if (ctx.URL.pathname.indexOf(`/${Config.URL.REWRITE_DOMAIN}`) === 0) {
+            ctx.URL.pathname = ctx.URL.pathname.replace(`/${Config.URL.REWRITE_DOMAIN}`, '');
+        }
+
         if (ctx.URL.pathname[ctx.URL.pathname.length - 1] === '/') {
             ctx.URL.pathname = ctx.URL.pathname.substring(0, ctx.URL.pathname.length - 1);
         }
