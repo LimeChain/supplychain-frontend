@@ -94,7 +94,8 @@ export default class ShipmentService extends Service {
 
         // mark products that have been removed from shipment as deletable, if not used anywhere else
         const skuWhereProductUsed = await this.skuRepo.fetchByProductIds(skuToDeleteModels.map((s) => s.productId));
-        const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
+        const usedProductIdsSet = new Set(skuWhereProductUsed.map((m) => m.productId));
+        const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => usedProductIdsSet.has(s.productId) === false).map((s) => s.productId);
         this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
         // credit sku models
