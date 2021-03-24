@@ -426,6 +426,8 @@ export default class ShipmentService extends Service {
         }
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
+        shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
+        shipmentDocumentModel.name = reqShipmentDocumentModel.name;
         shipmentDocumentModel.updateShipmentDocumentUrl();
 
         await this.shipmentDocumentRepo.save(shipmentDocumentModel);
