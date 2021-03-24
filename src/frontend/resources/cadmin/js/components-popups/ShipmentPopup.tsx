@@ -50,11 +50,13 @@ import { UploadShipmentDocumentRes } from '../../../common/js/network-responses/
 import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentModel';
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
+import NotificationStore from '../../../common/js/stores/NotificationStore';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
     appStore: AppStore;
     siteStore: SiteStore;
+    notificationStore: NotificationStore;
     accountSessionStore: AccountSessionStore;
     popupStore: PopupShipmentStore;
     productStore: ProductStore;
@@ -207,6 +209,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 setTimeout(() => {
                     this.props.popupSubmitShipmentStatusStore.hide();
                     popupStore.hide();
+                    this.props.notificationStore.fetchMoreNotifications(true);
                 }, 2000);
             }
             run();
@@ -231,6 +234,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 setTimeout(() => {
                     this.props.popupSubmitShipmentStatusStore.hide();
                     popupStore.hide();
+                    this.props.notificationStore.fetchMoreNotifications(true);
                 }, 2000);
             }
             run();
@@ -417,10 +421,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                             <Actions className={'ActionsTransaction StartRight'} height={Actions.HEIGHT_32} >
                                 { shipmentModel.hasTransactionLink() === true && (
                                     <Button href={shipmentModel.getTransactionLink()} target={'_blank'} color={Button.COLOR_SCHEME_2}>Transaction hash</Button>
-                                ) }
+                                )}
                                 { shipmentModel.hasTransactionLink() === false && (
-                                    <Button target={'_blank'} color={Button.COLOR_SCHEME_2} onClick = { this.onClickNoTransactionLink }>Transaction hash</Button>
-                                ) }
+                                    <Button target={'_blank'} color={Button.COLOR_SCHEME_2} onClick={this.onClickNoTransactionLink}>Transaction hash</Button>
+                                )}
                                 <Button href={CAdminContext.urlShipmentDownloadData(shipmentModel.shipmentId)} download={`shipment-${shipmentModel.shipmentId}.json`} color={Button.COLOR_SCHEME_2} >Raw Data</Button>
                             </Actions>
                         )}
@@ -830,6 +834,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 export default inject((stores) => {
     return {
         alertStore: stores.alertStore,
+        notificationStore: stores.notificationStore,
         appStore: stores.appStore,
         siteStore: stores.siteStore,
         accountSessionStore: stores.accountSessionStore,
