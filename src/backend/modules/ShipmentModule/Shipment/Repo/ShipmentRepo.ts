@@ -68,12 +68,4 @@ export default class ShipmentRepo extends ShipmentRepoG {
         return this.fetch(databaseWhere);
     }
 
-    async saveWithPrimaryKey(shipmentModel: ShipmentModel) {
-        const repoObj = shipmentModel.toRepo();
-        repoObj.getPrimaryValueForInsert = () => {
-            return repoObj.shipmentId;
-        };
-        this.db.save(ShipmentRepoH.TABLE_NAME, repoObj);
-    }
-
 }

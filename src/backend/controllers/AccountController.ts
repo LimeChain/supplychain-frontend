@@ -33,7 +33,7 @@ export default class AccountController {
         const accountModel = await accountService.login(req.login, req.pass);
 
         if (accountModel !== null) {
-            session.onLogin(accountModel.accountId, accountModel.siteId, accountModel.countryId);
+            session.onLogin(accountModel.accountId, accountModel.countryId, accountModel.siteId);
         }
 
         const res = new LoginRes(accountModel);

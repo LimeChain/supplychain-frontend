@@ -48,6 +48,7 @@ export default class ShipmentService extends Service {
         let oldShipmentStatus = ShipmentModel.S_STATUS_DRAFT;
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
+            shipmentModel.shipmentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentId();
             shipmentModel.shipmentOriginSiteId = siteId;
             // if there is some specific fields that must be set just on creation, e.g. -> creation timestamp
         } else {
@@ -76,7 +77,7 @@ export default class ShipmentService extends Service {
             shipmentModel.shipmentDeleted = reqShipmentModel.shipmentDeleted;
         }
 
-        shipmentModel.shipmentId = (await this.shipmentRepo.save(shipmentModel)).shipmentId;
+        await this.shipmentRepo.save(shipmentModel);
 
         // create notification
         if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
@@ -111,6 +112,7 @@ export default class ShipmentService extends Service {
 
             if (reqSkuModel.isNew() === true || reqSkuModel.skuId < 0) {
                 skuModel = new SkuModel();
+                skuModel.skuId = this.repoFactory.autoIncrementerModel.getAndIncremenetSkuId();
                 skuModel.shipmentId = shipmentModel.shipmentId;
             } else {
                 skuModel = await this.skuRepo.fetchByPrimaryValue(reqSkuModel.skuId);
@@ -123,7 +125,7 @@ export default class ShipmentService extends Service {
             skuModel.quantity = reqSkuModel.quantity;
             skuModel.pricePerUnit = reqSkuModel.pricePerUnit;
             skuModel.currency = reqSkuModel.currency;
-            skuModel.skuId = (await this.skuRepo.save(skuModel)).skuId;
+            await this.skuRepo.save(skuModel);
 
             // change referenceId in origin to new actual id
             const reqSkuOriginModel = reqSkuOriginModels.find((reqSkuOModel) => reqSkuOModel.skuId === reqSkuModel.skuId)
@@ -145,6 +147,7 @@ export default class ShipmentService extends Service {
 
             if (reqSkuOriginModel.isNew() === true) {
                 skuOriginModel = new SkuOriginModel();
+                skuOriginModel.skuOriginId = this.repoFactory.autoIncrementerModel.getAndIncremenetSkuOriginId();
             } else {
                 skuOriginModel = await this.skuOriginRepo.fetchByPrimaryValue(reqSkuOriginModel.skuOriginId);
                 if (skuOriginModel === null) {
@@ -154,7 +157,7 @@ export default class ShipmentService extends Service {
 
             skuOriginModel.skuId = reqSkuOriginModel.skuId;
             skuOriginModel.shipmentId = reqSkuOriginModel.shipmentId;
-            skuOriginModel.skuOriginId = (await this.skuOriginRepo.save(skuOriginModel)).skuOriginId;
+            await this.skuOriginRepo.save(skuOriginModel);
 
             skuOriginModels.push(skuOriginModel);
         }
@@ -196,6 +199,7 @@ export default class ShipmentService extends Service {
 
             if (reqShipmentDocumentModel.isNew() === true) {
                 shipmentDocumentModel = new ShipmentDocumentModel();
+                shipmentDocumentModel.shipmentDocumentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentDocumentId();
             } else {
                 shipmentDocumentModel = await this.shipmentDocumentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentDocumentId);
                 if (shipmentDocumentModel === null) {
@@ -208,7 +212,7 @@ export default class ShipmentService extends Service {
             shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
             shipmentDocumentModel.name = reqShipmentDocumentModel.name;
             shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
-            shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+            await this.shipmentDocumentRepo.save(shipmentDocumentModel);
 
             shipmentDocumentModels.push(shipmentDocumentModel);
         }
@@ -219,16 +223,16 @@ export default class ShipmentService extends Service {
                 integrationNodeTransferModel.obj = {
                     shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
                 }
-                integrationNodeTransferModel.destination = SF.getIntegrationNodeDestinationAddrByDestinationSiteId(siteId === shipmentModel.shipmentDestinationSiteId ? shipmentModel.shipmentOriginSiteId : shipmentModel.shipmentDestinationSiteId);
+                const targetSiteId = siteId === shipmentModel.shipmentDestinationSiteId ? shipmentModel.shipmentOriginSiteId : shipmentModel.shipmentDestinationSiteId;
+                integrationNodeTransferModel.destination = SF.getIntegrationNodeDestinationAddrByDestinationSiteId(targetSiteId);
 
-                const targetWebUrl = SF.getTargetSiteWebUrlByDestinationSiteId(shipmentModel.shipmentDestinationSiteId);
+                const targetWebUrl = SF.getTargetSiteWebUrlByDestinationSiteId(targetSiteId);
                 const axiosTransfer = axios.create({ baseURL: targetWebUrl });
                 await axiosTransfer.post('/', {
                     [Params.ACTION]: IntegrationNodeApiH.Actions.CREDIT_SHIPMENT,
                     [Params.PAYLOAD]: JSON.stringify(integrationNodeTransferModel.toNetwork()),
                 });
 
-                console.log('integrationNodeTransferModel.destination', integrationNodeTransferModel.destination);
                 const axiosConnectInstance = axios.create({ baseURL: Config.Server.HEDERA_INTEGRATION_NODE_URL });
                 await axiosConnectInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CONNECT_SUFFIX, IntegrationNodeConnectModel.newInstanceByPeerAddress(integrationNodeTransferModel.destination));
 
@@ -252,7 +256,7 @@ export default class ShipmentService extends Service {
             const documentBuffer = Buffer.from(base64Buffer, 'base64');
 
             reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
-            shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+            shipmentDocumentModel.shipmentDocumentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentDocumentId();
 
             const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
 
@@ -265,13 +269,9 @@ export default class ShipmentService extends Service {
         }
 
         shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
-        // shipmentDocumentModel.documentType = reqShipmentDocumentModel.documentType;
-        // shipmentDocumentModel.sizeInBytes = reqShipmentDocumentModel.sizeInBytes;
-        // shipmentDocumentModel.name = reqShipmentDocumentModel.name;
-        // shipmentDocumentModel.mimeType = reqShipmentDocumentModel.mimeType;
         shipmentDocumentModel.updateShipmentDocumentUrl();
 
-        shipmentDocumentModel.shipmentDocumentId = (await this.shipmentDocumentRepo.save(shipmentDocumentModel)).shipmentDocumentId;
+        await this.shipmentDocumentRepo.save(shipmentDocumentModel);
 
         return shipmentDocumentModel;
 

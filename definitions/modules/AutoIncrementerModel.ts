@@ -1,4 +1,4 @@
-export default class AutoIncrementer {
+export default class AutoIncrementerModel {
 
     autoIncrementerId: number;
     nextProductId: number;

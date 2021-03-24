@@ -1,11 +1,5 @@
 import fsPromises from 'fs/promises';
 import fs from 'fs';
-import Config from '../../../config/config';
-import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
-import SkuModel from '../modules/ProductModule/Sku/Model/SkuModel';
-import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
-
-import ShipmentConstsH from '../modules/ShipmentModule/Shipment/Model/ShipmentModelH';
 import CreditShipmentReq from '../requests/network/requests/CreditShipmentReq';
 import FetchProductsInStockReq from '../requests/network/requests/FetchProductsInStockReq';
 import FetchShipmentByIdReq from '../requests/network/requests/FetchShipmentByIdReq';
@@ -25,7 +19,6 @@ import Params from '../utilities/Params';
 import SV from '../utilities/SV';
 import UploadShipmentDocumentReq from '../requests/network/requests/UploadShipmentDocumentReq';
 import UploadShipmentDocumentRes from '../requests/network/responses/UploadShipmentDocumentRes';
-import ShipmentService from '../services/ShipmentService';
 
 export default class ShipmentController {
 
@@ -43,9 +36,11 @@ export default class ShipmentController {
         const siteId = session.getSiteId();
 
         servicesFactory.db.beginTransaction();
+        await servicesFactory.repoFactory.aquireAutoIncrementer();
 
         const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await shipmentService.creditShipment(siteId, req.shipmentModel, req.skuModels, req.skuOriginModels, req.shipmentDocumentModels);
 
+        await servicesFactory.repoFactory.saveAutoIncrementer();
         servicesFactory.db.commitTransaction();
 
         context.res.set(new CreditShipmentRes(shipmentModel, skuOriginModels, skuModels, shipmentDocumentModels));
@@ -157,7 +152,13 @@ export default class ShipmentController {
 
         const req = new UploadShipmentDocumentReq(payload);
 
+        servicesFactory.db.beginTransaction();
+        await servicesFactory.repoFactory.aquireAutoIncrementer();
+
         const shipmentDocumentModel = await shipmentService.uploadShipmentDocument(req.shipmentDocumentModel);
+
+        await servicesFactory.repoFactory.saveAutoIncrementer();
+        servicesFactory.db.commitTransaction();
 
         context.res.set(new UploadShipmentDocumentRes(shipmentDocumentModel));
     }
@@ -222,11 +223,4 @@ export default class ShipmentController {
 
     }
 
-    async getCurrentSiteId(context): Promise<number> {
-        const accountId = context.session.getAccountId();
-        const accountService = context.servicesFactory.getAccountService();
-        const siteId = (await accountService.fetchSessionAccounts(accountId)).siteId;
-
-        return siteId;
-    }
 }

@@ -13,6 +13,4 @@ export default class AccountModel {
     pass: string;
     salt: string;
 
-    primaryValueInInsert: boolean = true
-
 }

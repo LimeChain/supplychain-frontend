@@ -9,10 +9,12 @@ import SiteRepo from '../../modules/Site/Repo/SiteRepo';
 import AccountRepo from '../../modules/Account/Repo/AccountRepo';
 import Database from './Database';
 import AutoIncrementerRepo from '../../modules/AutoIncrementer/Repo/AutoIncrementerRepo';
+import AutoIncrementerModel from '../../modules/AutoIncrementer/Model/AutoIncrementerModel';
 
 export default class RepoFactory {
 
     db: Database;
+    autoIncrementerModel: AutoIncrementerModel;
     countryRepo: CountryRepo | null = null;
     notificationRepo: NotificationRepo | null = null;
     productRepo: ProductRepo | null = null;
@@ -26,6 +28,15 @@ export default class RepoFactory {
 
     constructor(db: Database) {
         this.db = db;
+        this.autoIncrementerModel = new AutoIncrementerModel();
+    }
+
+    async aquireAutoIncrementer() {
+        await this.autoIncrementerModel.aquire(this.db);
+    }
+
+    async saveAutoIncrementer() {
+        await this.getAutoIncrementerRepo().save(this.autoIncrementerModel);
     }
 
     getCountryRepo(): CountryRepo {

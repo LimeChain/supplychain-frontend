@@ -67,12 +67,4 @@ export default class ProductRepo extends ProductRepoG {
         }
     }
 
-    async saveWithPrimaryKey(productModel: ProductModel) {
-        const repoObj = productModel.toRepo();
-        repoObj.getPrimaryValueForInsert = () => {
-            return repoObj.productId;
-        };
-        this.db.save(ProductRepoH.TABLE_NAME, repoObj);
-    }
-
 }

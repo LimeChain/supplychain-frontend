@@ -20,6 +20,7 @@ export default class ProductService extends Service {
         let productModel: ProductModel | null = null;
         if (reqProductModel.isNew() === true) {
             productModel = new ProductModel();
+            productModel.productId = this.repoFactory.autoIncrementerModel.getAndIncrementProductId();
         } else {
             productModel = await this.productRepo.fetchByPrimaryValue(reqProductModel.productId);
             if (productModel === null) {
@@ -34,7 +35,7 @@ export default class ProductService extends Service {
         productModel.productDeletable = reqProductModel.productDeletable;
         productModel.productEditable = reqProductModel.productEditable;
 
-        productModel.productId = (await this.productRepo.save(productModel)).productId;
+        await this.productRepo.save(productModel);
 
         try {
             const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceProduct();

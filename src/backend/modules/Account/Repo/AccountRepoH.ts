@@ -94,7 +94,7 @@ export default class AccountRepoH {
     }
 
     getPrimaryValueForInsert(): number | null {
-        return this.getPrimaryValue();
+        return null;
     }
 
     getDbPairs() {

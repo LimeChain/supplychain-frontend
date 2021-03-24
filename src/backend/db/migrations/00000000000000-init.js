@@ -51,7 +51,7 @@ module.exports = class Migration00000000000000 {
         const countryRepo = repoFactory.getCountryRepo();
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${CountryRepoH.TABLE_NAME}(
-            ${CountryRepoH.C_COUNTRY_ID} INT AUTO_INCREMENT,
+            ${CountryRepoH.C_COUNTRY_ID} INT UNIQUE,
             ${CountryRepoH.C_COUNTRY_NAME} TEXT,
             ${CountryRepoH.C_COUNTRY_VAT} DOUBLE,
             PRIMARY KEY(${CountryRepoH.C_COUNTRY_ID})
@@ -81,7 +81,7 @@ module.exports = class Migration00000000000000 {
         const siteRepo = repoFactory.getSiteRepo();
 
         await db.query(`CREATE TABLE IF NOT EXISTS ${SiteRepoH.TABLE_NAME}(
-            ${SiteRepoH.C_SITE_ID} INT AUTO_INCREMENT,
+            ${SiteRepoH.C_SITE_ID} INT UNIQUE,
             ${SiteRepoH.C_COUNTRY_ID} INT,
             ${SiteRepoH.C_SITE_NAME} TEXT,
             PRIMARY KEY(${SiteRepoH.C_SITE_ID})
@@ -127,7 +127,7 @@ module.exports = class Migration00000000000000 {
         ) DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_bin, ENGINE = InnoDB`);
 
         let accountModel = new AccountModel();
-        accountModel.accountId = CountryModel.S_GERMANY;
+        accountModel.countryId = CountryModel.S_GERMANY;
         accountModel.siteId = SiteModel.S_BERLIN;
         accountModel.email = 'germany@pwc.com';
         accountModel.name = 'Berlin, Germany';
@@ -137,7 +137,7 @@ module.exports = class Migration00000000000000 {
         await accountRepo.save(accountModel);
 
         accountModel = new AccountModel();
-        accountModel.accountId = CountryModel.S_NETHERLANDS;
+        accountModel.countryId = CountryModel.S_NETHERLANDS;
         accountModel.siteId = SiteModel.S_ROTHERDAM;
         accountModel.email = 'netherlands@pwc.com';
         accountModel.name = 'Rotherdam, Netherlands';
@@ -147,7 +147,7 @@ module.exports = class Migration00000000000000 {
         await accountRepo.save(accountModel);
 
         accountModel = new AccountModel();
-        accountModel.accountId = CountryModel.S_POLAND;
+        accountModel.countryId = CountryModel.S_POLAND;
         accountModel.siteId = SiteModel.S_WARSAW;
         accountModel.email = 'poland@pwc.com';
         accountModel.name = 'Warsaw, Poland';
