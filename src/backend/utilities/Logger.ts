@@ -57,18 +57,18 @@ const requestsLogger = winston.createLogger({
     maxFiles: 128,
 });
 
-if (Config.Build.PRODUCTION !== true) {
-    infoLogger.add(new winston.transports.Console({
-        'format': winston.format.combine(
-            winston.format.printf((info) => info.message),
-        ),
-    }));
-    errorLogger.add(new winston.transports.Console({
-        'format': winston.format.combine(
-            winston.format.printf((info) => info.message),
-        ),
-    }));
-}
+// if (Config.Build.PRODUCTION !== true) {
+infoLogger.add(new winston.transports.Console({
+    'format': winston.format.combine(
+        winston.format.printf((info) => info.message),
+    ),
+}));
+errorLogger.add(new winston.transports.Console({
+    'format': winston.format.combine(
+        winston.format.printf((info) => info.message),
+    ),
+}));
+// }
 
 Logger.log = (...args_) => {
     const args = args_.map(argvMapper);

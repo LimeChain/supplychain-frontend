@@ -26,10 +26,10 @@ export class FetchProductsInStockReq {
 
 export class FetchShipmentsWithProductQuantityLeftByProductIdReq {
 
-    productId: string
+    productId: number
 }
 
 export class FetchShipmentByIdReq {
 
-    shipmentId: string
+    shipmentId: number
 }

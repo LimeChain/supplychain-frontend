@@ -1,4 +1,3 @@
-import fsPromises from 'fs/promises';
 import fs from 'fs';
 import CreditShipmentReq from '../requests/network/requests/CreditShipmentReq';
 import FetchProductsInStockReq from '../requests/network/requests/FetchProductsInStockReq';
@@ -19,21 +18,22 @@ import Params from '../utilities/Params';
 import SV from '../utilities/SV';
 import UploadShipmentDocumentReq from '../requests/network/requests/UploadShipmentDocumentReq';
 import UploadShipmentDocumentRes from '../requests/network/responses/UploadShipmentDocumentRes';
+import ShipmentService from '../services/ShipmentService';
+import IntegrationNodeTransferModel from '../modules/IntegratonNode/IntegrationNodeTransferModel';
 
 export default class ShipmentController {
 
     async creditShipment(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
         const session = context.session;
+        const siteId = session.getSiteId();
 
         const req = new CreditShipmentReq(payload);
 
         const shipmentService = servicesFactory.getShipmentService();
-
-        const siteId = session.getSiteId();
 
         servicesFactory.db.beginTransaction();
         await servicesFactory.repoFactory.aquireAutoIncrementer();
@@ -47,83 +47,102 @@ export default class ShipmentController {
     }
 
     async fetchShipmentsByFilter(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
         const session = context.session;
-        const shipmentService = servicesFactory.getShipmentService();
+        const siteId = session.getSiteId();
 
         const req = new FetchShipmentsByFilterReq(payload);
 
-        const siteId = session.getSiteId();
+        const shipmentService = servicesFactory.getShipmentService();
 
-        const { shipmentModels, totalSize } = await shipmentService.fetchShipmentsByFilter(
-            siteId,
-            req.page,
-            req.searchBy,
-            req.sortBy,
-            req.from,
-            req.to,
-        );
+        const { shipmentModels, totalSize } = await shipmentService.fetchShipmentsByFilter(siteId, req.page, req.searchBy, req.sortBy, req.from, req.to);
 
         context.res.set(new FetchShipmentsByFilterRes(shipmentModels, totalSize));
-
     }
 
     async fetchShipmentById(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
-        const session = context.session;
 
         const req = new FetchShipmentByIdReq(payload);
+
         const shipmentService = servicesFactory.getShipmentService();
 
         const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await shipmentService.fetchShipmentById(req.shipmentId);
 
         context.res.set(new FetchShipmentsByIdRes(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels));
-
     }
 
     async fetchShipmentsWhereProductLeftByProductId(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
         const session = context.session;
-
         const siteId = session.getSiteId();
+
         const req = new FetchShipmentsWithProductQuantityLeftByProductIdReq(payload);
+
         const shipmentService = servicesFactory.getShipmentService();
 
         const { shipmentModels, skuModels } = await shipmentService.fetchShipmentsWhereProductLeftByProductId(req.productId, siteId);
 
         context.res.set(new FetchShipmentsWithProductQuantityLeftByProductIdRes(skuModels, shipmentModels));
-
     }
 
     async fetchProductsInStock(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
+
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
         const session = context.session;
-        const shipmentService = servicesFactory.getShipmentService();
-
         const siteId = session.getSiteId();
+
         const req = new FetchProductsInStockReq(payload);
 
+        const shipmentService = servicesFactory.getShipmentService();
+
         const { skuModels, productModels, totalSkuSize } = await shipmentService.fetchProductsInStock(siteId, req.searchBy, req.sortBy, req.from, req.to);
+
         context.res.set(new FetchProductsInStockRes(skuModels, productModels, totalSkuSize));
     }
 
-    async downloadShipmentJson(context: Context) {
+    async fetchTotalValueInStock(context: Context) {
+        ShipmentController.validateAdmin(context);
+
+        const servicesFactory = context.servicesFactory;
         const payload = context.payload;
         const session = context.session;
+        const siteId = session.getSiteId();
+
+        const req = new FetchTotalValueInStockReq(payload);
+
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const { skuModels } = await shipmentService.fetchProductsInStock(siteId, SV.Strings.EMPTY, req.sortBy, req.from, req.to);
+
+        let totalValue = 0;
+        skuModels.forEach((s) => { totalValue += s.quantity * s.pricePerUnit });
+
+        context.res.set(new FetchTotalValueInStockRes(totalValue));
+    }
+
+    async downloadShipmentJson(context: Context) {
+        ShipmentController.validateAdmin(context);
+
+        const servicesFactory = context.servicesFactory;
+        const payload = context.payload;
+        const shipmentService = servicesFactory.getShipmentService();
         const shipmentId = payload.params[Params.ID];
 
-        const filepath = `${__dirname}/ShipmentController.js`;
+        const content = await shipmentService.downloadShipmentJson(shipmentId);
+
+        // const filepath = `${__dirname}/ShipmentController.js`;
         payload.ctx.set('Content-Description', 'File Transfer');
         payload.ctx.set('Content-Type', 'application/octet-stream');
         payload.ctx.set('Content-Disposition', `attachment; filename="shipment-${shipmentId}.json"`);
@@ -132,25 +151,53 @@ export default class ShipmentController {
         payload.ctx.set('Expires', '0');
         payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
         payload.ctx.set('Pragma', 'public');
-        payload.ctx.set('Content-Length', (await fsPromises.stat(filepath)).size);
+        // payload.ctx.set('Content-Length', (await fsPromises.stat(filepath)).size);
+        payload.ctx.set('Content-Length', content.length);
 
-        const stream = fs.createReadStream(filepath, {
+        // const stream = fs.createReadStream(filepath, {
+        //     'autoClose': true,
+        // });
+        // stream.on('end', () => {
+        //     // fs.unlinkSync(filepath);
+        // });
+        // context.res = stream;
+        context.res = content;
+    }
+
+    async downloadShipmentDocumentFile(context: Context) {
+        const payload = context.payload;
+        const servicesFactory = context.servicesFactory;
+
+        const shipmentDocumentId = parseInt(payload.params[Params.ID]);
+
+        const shipmentService = servicesFactory.getShipmentService();
+
+        const { shipmentModel, shipmentDocumentModel } = await shipmentService.downloadShipmentDocumentFile(shipmentDocumentId);
+
+        payload.ctx.set('Content-Description', 'File Transfer');
+        payload.ctx.set('Content-Type', 'application/octet-stream');
+        payload.ctx.set('Content-Disposition', `attachment; filename="${shipmentDocumentModel.name}"`);
+        payload.ctx.set('Content-Transfer-Encoding', 'binary');
+        payload.ctx.set('Expires', '0');
+        payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
+        payload.ctx.set('Pragma', 'public');
+        payload.ctx.set('Content-Length', shipmentDocumentModel.sizeInBytes);
+
+        const stream = fs.createReadStream(shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId), {
             'autoClose': true,
-        });
-        stream.on('end', () => {
-            // fs.unlinkSync(filepath);
         });
         context.res = stream;
     }
 
     async uploadShipmentDocument(context: Context) {
-        this.checkIfAdmin(context);
+        ShipmentController.validateAdmin(context);
+
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
-        const session = context.session;
-        const shipmentService = servicesFactory.getShipmentService();
 
         const req = new UploadShipmentDocumentReq(payload);
+
+        const shipmentService = servicesFactory.getShipmentService();
 
         servicesFactory.db.beginTransaction();
         await servicesFactory.repoFactory.aquireAutoIncrementer();
@@ -163,60 +210,8 @@ export default class ShipmentController {
         context.res.set(new UploadShipmentDocumentRes(shipmentDocumentModel));
     }
 
-    async downloadShipmentDocumentFile(context: Context) {
-        const payload = context.payload;
+    static validateAdmin(context) {
         const session = context.session;
-
-        const shipmentDocumentId = parseInt(payload.params[Params.ID]);
-
-        const servicesFactory = context.servicesFactory;
-        const shipmentService = servicesFactory.getShipmentService();
-
-        const shipmentDocumentModel = await shipmentService.fetchShipmentDocumentById(shipmentDocumentId);
-        const { shipmentModel } = await shipmentService.fetchShipmentById(shipmentDocumentModel.shipmentId);
-
-        payload.ctx.set('Content-Description', 'File Transfer');
-        payload.ctx.set('Content-Type', 'application/octet-stream');
-        payload.ctx.set('Content-Disposition', `attachment; filename="${shipmentDocumentModel.name}"`);
-        // payload.ctx.set('Content-Disposition: attachment; filename*=UTF-8\'\'' . rawurlencode($filename));
-        payload.ctx.set('Content-Transfer-Encoding', 'binary');
-        payload.ctx.set('Expires', '0');
-        payload.ctx.set('Cache-Control', 'must-revalidate, post-check=0, pre-check=0');
-        payload.ctx.set('Pragma', 'public');
-        payload.ctx.set('Content-Length', shipmentDocumentModel.sizeInBytes);
-
-        const stream = fs.createReadStream(shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId), {
-            'autoClose': true,
-        });
-        stream.on('end', () => {
-            // fs.unlinkSync(filepath);
-        });
-
-        context.res = stream;
-    }
-
-    async fetchTotalValueInStock(context: Context) {
-        this.checkIfAdmin(context);
-        const servicesFactory = context.servicesFactory;
-        const payload = context.payload;
-        const session = context.session;
-        const shipmentService = servicesFactory.getShipmentService();
-
-        const siteId = session.getSiteId();
-        const req = new FetchTotalValueInStockReq(payload);
-
-        const { skuModels } = await shipmentService.fetchProductsInStock(siteId, SV.Strings.EMPTY, req.sortBy, req.from, req.to);
-
-        let totalValue = 0;
-
-        skuModels.forEach((s) => { totalValue += s.quantity * s.pricePerUnit });
-
-        context.res.set(new FetchTotalValueInStockRes(totalValue));
-    }
-
-    checkIfAdmin(context) {
-        const session = context.session;
-
         if (session.isAdmin() === false) {
             throw new StateException(Response.S_STATUS_ACCESS_DENIED);
         }

@@ -27,6 +27,10 @@ export default class ShipmentDocumentModel extends ShipmentDocumentModelG {
         return this.shipmentDocumentId === SV.NOT_EXISTS;
     }
 
+    clone(): ShipmentDocumentModel {
+        return Object.assign(new ShipmentDocumentModel(), this);
+    }
+
     updateShipmentDocumentUrl() {
         this.shipmentDocumentUrl = `${ShipmentApiH.URL}?${Params.ACTION}=${ShipmentApiH.Actions.FETCH_SHIPMENT_DOCUMENT_FILE}&${Params.ID}=${this.shipmentDocumentId}`;
     }

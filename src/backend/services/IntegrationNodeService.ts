@@ -10,8 +10,6 @@ import ShipmentModel from '../modules/ShipmentModule/Shipment/Model/ShipmentMode
 import ShipmentRepo from '../modules/ShipmentModule/Shipment/Repo/ShipmentRepo';
 import ShipmentDocumentModel from '../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModel';
 import ShipmentDocumentRepo from '../modules/ShipmentModule/ShipmentDocument/Repo/ShipmentDocumentRepo';
-import Response from '../utilities/network/Response';
-import StateException from '../utilities/network/StateException';
 import SV from '../utilities/SV';
 import Service from './common/Service';
 
@@ -59,6 +57,7 @@ export default class IntegrationNodeService extends Service {
 
         // delete missing document files
         const storagePath = reqShipmentModel.getStoragePath();
+        await fs.mkdir(storagePath, { 'recursive': true });
         try {
             const documentNames: string[] = await fs.readdir(storagePath);
 
@@ -69,10 +68,6 @@ export default class IntegrationNodeService extends Service {
                 if (set.has(documentName) === false) {
                     await fs.rm(path.join(storagePath, documentName));
                 }
-            }
-
-            if ((await fs.readdir(storagePath)).length === 0) {
-                await fs.rmdir(storagePath);
             }
         } catch (err) {
         }
@@ -86,13 +81,27 @@ export default class IntegrationNodeService extends Service {
                 continue;
             }
 
+            // do not need to remove the begging of the URL, because here shipmentDocumentUrl is only base64 encoded bytes, without the prefix
+            const documentBuffer = Buffer.from(reqShipmentDocumentModel.shipmentDocumentUrl, 'base64');
+            const documentPath = reqShipmentModel.getShipmentDocumentStoragePath(reqShipmentDocumentModel.shipmentDocumentId);
+
+            reqShipmentDocumentModel.updateShipmentDocumentUrl();
+            await fs.writeFile(documentPath, documentBuffer);
             await this.shipmentDocumentRepo.save(reqShipmentDocumentModel);
+        }
+
+        if ((await fs.readdir(storagePath)).length === 0) {
+            await fs.rmdir(storagePath);
         }
     }
 
-    async dlt(shipmentId: number, dlt: string) {
+    async dlt(shipmentId: number, shipmentStatus: number, dlt: string) {
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) { // this node does not have this shipment
+            return;
+        }
+
+        if (shipmentModel.shipmentStatus !== shipmentStatus) {
             return;
         }
 

@@ -11,10 +11,7 @@ import StateException from '../utilities/network/StateException';
 export default class ProductController {
 
     async creditProduct(context: Context) {
-        const session = context.session;
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
+        ProductController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
@@ -25,7 +22,9 @@ export default class ProductController {
 
         servicesFactory.db.beginTransaction();
         await servicesFactory.repoFactory.aquireAutoIncrementer();
+
         const productModel = await productService.creditProduct(req.productModel);
+
         await servicesFactory.repoFactory.saveAutoIncrementer();
         servicesFactory.db.commitTransaction();
 
@@ -33,10 +32,7 @@ export default class ProductController {
     }
 
     async fetchProductsByFilter(context: Context) {
-        const session = context.session;
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
+        ProductController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
@@ -51,10 +47,7 @@ export default class ProductController {
     }
 
     async fetchProductById(context: Context) {
-        const session = context.session;
-        if (session.isAdmin() === false) {
-            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
-        }
+        ProductController.validateAdmin(context);
 
         const servicesFactory = context.servicesFactory;
         const payload = context.payload;
@@ -66,6 +59,12 @@ export default class ProductController {
 
         const res = new FetchProductByIdRes(productModel);
         context.res.set(res);
+    }
 
+    static validateAdmin(context: Context) {
+        const session = context.session;
+        if (session.isAdmin() === false) {
+            throw new StateException(Response.S_STATUS_ACCESS_DENIED);
+        }
     }
 }

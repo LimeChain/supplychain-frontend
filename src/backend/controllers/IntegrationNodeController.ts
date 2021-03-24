@@ -40,7 +40,7 @@ export default class IntegrationNodeController {
         const integrationNodeService = servicesFactory.getIntegrationNodeService();
 
         servicesFactory.db.beginTransaction();
-        await integrationNodeService.dlt(req.shipmentId, req.dlt);
+        await integrationNodeService.dlt(req.shipmentId, req.shipmentStatus, req.dlt);
         servicesFactory.db.commitTransaction();
     }
 
