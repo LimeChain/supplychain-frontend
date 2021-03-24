@@ -41,18 +41,20 @@ class ProductPopup extends PopupWindow<Props> {
         return 'ProductPopup PopupPadding PopupBox';
     }
 
-    addProduct = () => {
+    onClickAddProduct = () => {
         const inputStateHelperProduct = this.props.popupStore.inputStateHelperProduct;
         if (inputStateHelperProduct.getValues() === null) {
             return;
         }
 
-        const onFinish = this.props.popupStore.onFinish;
-        const productModel = this.props.popupStore.productModel;
-        this.productApi.creditProduct(productModel, () => {
-            this.props.popupStore.hide();
-            onFinish(productModel);
-        });
+        this.props.alertStore.show('Please check the data, because once it is saved you will be not able to modify or delete it', () => {
+            const onFinish = this.props.popupStore.onFinish;
+            const productModel = this.props.popupStore.productModel;
+            this.productApi.creditProduct(productModel, () => {
+                this.props.popupStore.hide();
+                onFinish(productModel);
+            });
+        }, () => {});
     }
 
     renderContent() {
@@ -104,7 +106,7 @@ class ProductPopup extends PopupWindow<Props> {
                         error={inputStateHelperProduct.errors.get(FIELDS[2])}
                         onChange={inputStateHelperProduct.onChanges.get(FIELDS[2])} />
                     <Actions className = { 'Actions' }>
-                        <Button onClick={this.addProduct} disabled = { inputStateHelperProduct.isValid() === false }>
+                        <Button onClick={this.onClickAddProduct} disabled = { inputStateHelperProduct.isValid() === false }>
                             <div className={'FlexRow'}>
                                 {productModel.isNew() === false && 'Save'}
                                 {productModel.isNew() === true && (

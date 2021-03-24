@@ -4,7 +4,6 @@ import ShipmentModel from '../../../ShipmentModule/Shipment/Model/ShipmentModel'
 import SkuModel from '../Model/SkuModel';
 import SkuModelH from '../Model/SkuModelH';
 import SkuRepoG from './SkuRepoG';
-import SkuRepoH from './SkuRepoH';
 
 export default class SkuRepo extends SkuRepoG {
 
@@ -24,6 +23,12 @@ export default class SkuRepo extends SkuRepoG {
     async fetchByShipmentId(shipmentId: number) {
         const databaseWhere = new DatabaseWhere();
         databaseWhere.clause(new DatabaseWhereClause(SkuModelH.P_SHIPMENT_ID, '=', shipmentId));
+        return this.fetch(databaseWhere);
+    }
+
+    async fetchByProductIds(productIds: number[]) {
+        const databaseWhere = new DatabaseWhere();
+        databaseWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', productIds));
         return this.fetch(databaseWhere);
     }
 

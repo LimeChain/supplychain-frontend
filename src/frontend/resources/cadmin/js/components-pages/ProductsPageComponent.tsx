@@ -180,11 +180,11 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
                 Table.cellString(productModel.productName),
                 Table.cellString(productModel.productDescription, 'ProductDescriptionCell'),
                 Table.cellString(ProductModel.getUnitName(productModel.productUnit)),
-                Table.cell(
-                    <ProductRowMenu
-                        productModel={productModel}
-                        onFinishDelete={this.fetchProducts} />,
-                ),
+                // Table.cell(
+                //     <ProductRowMenu
+                //         productModel={productModel}
+                //         onFinishDelete={this.fetchProducts} />,
+                // ),
             ])
         })
 
@@ -192,7 +192,7 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
     }
 
     getTableLegend() {
-        return ['ID', 'Product Name', 'Description', 'Measurement', ''];
+        return ['ID', 'Product Name', 'Description', 'Measurement'];
     }
 
     getTableAligns = () => {
@@ -201,11 +201,11 @@ export default class ProductsPageComponent extends ContextPageComponent<Props, S
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_LEFT,
             TableDesktop.ALIGN_CENTER,
-            TableDesktop.ALIGN_CENTER,
+            // TableDesktop.ALIGN_CENTER,
         ]
     }
 
     getTableWidths = () => {
-        return ['5%', '33%', '43%', '14%', '5%'];
+        return ['5%', '33%', '43%', '19%'];
     }
 }

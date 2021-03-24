@@ -18,6 +18,18 @@ export default class ShipmentModel extends ShipmentModelG {
         return this.shipmentId === SV.NOT_EXISTS;
     }
 
+    isDraft(): boolean {
+        return this.shipmentStatus === ShipmentModel.S_STATUS_DRAFT;
+    }
+
+    isInTransit(): boolean {
+        return this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT;
+    }
+
+    isReceived(): boolean {
+        return this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED;
+    }
+
     shouldSubmitToIntegratioNode(oldShipmentStatus: number) {
         return (oldShipmentStatus === ShipmentModel.S_STATUS_DRAFT && this.shipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT) || (oldShipmentStatus === ShipmentModel.S_STATUS_IN_TRANSIT && this.shipmentStatus === ShipmentModel.S_STATUS_RECEIVED);
     }

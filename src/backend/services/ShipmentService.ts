@@ -16,8 +16,6 @@ import SkuOriginRepo from '../modules/ProductModule/SkuOrigin/Repo/SkuOriginRepo
 import DatabaseWhere from '../utilities/database/DatabaseWhere';
 import DatabaseWhereClause from '../utilities/database/DatabaseWhereClause';
 import SkuModelH from '../modules/ProductModule/Sku/Model/SkuModelH';
-import SkuOriginModelH from '../modules/ProductModule/SkuOrigin/Model/SkuOriginModelH';
-import ShipmentDocumentModelH from '../modules/ShipmentModule/ShipmentDocument/Model/ShipmentDocumentModelH';
 import ProductModel from '../modules/ProductModule/Product/Model/ProductModel';
 import ProductRepo from '../modules/ProductModule/Product/Repo/ProductRepo';
 import SkuFilter from '../modules/ProductModule/Sku/Utils/SkuFilter';
@@ -37,20 +35,14 @@ export default class ShipmentService extends Service {
     shipmentDocumentRepo: ShipmentDocumentRepo = this.repoFactory.getShipmentDocumentRepo();
     productRepo: ProductRepo = this.repoFactory.getProductRepo();
 
-    async creditShipment(
-        siteId: number,
-        reqShipmentModel: ShipmentModel,
-        reqSkuModels: SkuModel[],
-        reqSkuOriginModels: SkuOriginModel[],
-        reqShipmentDocumentModels: ShipmentDocumentModel[],
-    ): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
+    async creditShipment(siteId: number, reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
         let shipmentModel: ShipmentModel | null = null;
         let oldShipmentStatus = ShipmentModel.S_STATUS_DRAFT;
+
         if (reqShipmentModel.isNew() === true) {
             shipmentModel = new ShipmentModel();
             shipmentModel.shipmentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentId();
             shipmentModel.shipmentOriginSiteId = siteId;
-            // if there is some specific fields that must be set just on creation, e.g. -> creation timestamp
         } else {
             shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
             if (shipmentModel === null) {
@@ -60,17 +52,21 @@ export default class ShipmentService extends Service {
             if (shipmentModel.isShipmentStatusLocked(reqShipmentModel.shipmentStatus)) {
                 throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
             }
+
             shipmentModel.shipmentOriginSiteId = reqShipmentModel.shipmentOriginSiteId;
             oldShipmentStatus = shipmentModel.shipmentStatus;
         }
 
+        if (shipmentModel.isDraft() === true && reqShipmentModel.isInTransit() === true) {
+            shipmentModel.shipmentDateOfShipment = Date.now();
+        }
+        if (shipmentModel.isInTransit() === true && reqShipmentModel.isReceived() === true) {
+            shipmentModel.shipmentDateOfArrival = Date.now();
+        }
         shipmentModel.shipmentName = reqShipmentModel.shipmentName;
         shipmentModel.shipmentStatus = reqShipmentModel.shipmentStatus;
-
         shipmentModel.shipmentConsignmentNumber = reqShipmentModel.shipmentConsignmentNumber;
         shipmentModel.shipmentDestinationSiteId = reqShipmentModel.shipmentDestinationSiteId;
-        shipmentModel.shipmentDateOfShipment = reqShipmentModel.shipmentDateOfShipment;
-        shipmentModel.shipmentDateOfArrival = reqShipmentModel.shipmentDateOfArrival;
         shipmentModel.shipmentDltProof = reqShipmentModel.shipmentDltProof;
 
         if (reqShipmentModel.shipmentDeleted !== SV.NOT_EXISTS) {
@@ -97,9 +93,7 @@ export default class ShipmentService extends Service {
         const skuToDeleteModels = await this.skuRepo.deleteUnused(shipmentModel, reqSkuModels);
 
         // mark products that have been removed from shipment as deletable, if not used anywhere else
-        const skuDbWhere = new DatabaseWhere();
-        skuDbWhere.clause(new DatabaseWhereClause(SkuModelH.P_PRODUCT_ID, '=', skuToDeleteModels.map((s) => s.productId)))
-        const skuWhereProductUsed = await this.skuRepo.fetch(skuDbWhere);
+        const skuWhereProductUsed = await this.skuRepo.fetchByProductIds(skuToDeleteModels.map((s) => s.productId));
         const productsToMakeDeletableAgain = skuToDeleteModels.filter((s) => skuWhereProductUsed.find((sU) => sU.productId === s.productId) === undefined).map((s) => s.productId);
         this.productRepo.changeDeletableStatus(productsToMakeDeletableAgain, SV.TRUE);
 
@@ -168,9 +162,9 @@ export default class ShipmentService extends Service {
         // delete missing document files
         const storagePath = shipmentModel.getStoragePath();
         try {
-            const documentNames: string[] = await fs.readdir(storagePath);
+            const set = new Set(reqShipmentDocumentModels.filter((m) => m.shipmentId === shipmentModel.shipmentId).map((m) => m.shipmentDocumentId.toString()))
 
-            const set = new Set(reqShipmentDocumentModels.map((m) => m.shipmentId === shipmentModel.shipmentId && m.shipmentDocumentId.toString()))
+            const documentNames = await fs.readdir(storagePath);
 
             for (let i = 0; i < documentNames.length; i++) {
                 const documentName = documentNames[i];
@@ -219,9 +213,10 @@ export default class ShipmentService extends Service {
 
         try {
             if (shipmentModel.shouldSubmitToIntegratioNode(oldShipmentStatus) === true) {
+                const clonedShipmentDocumentModels = await ShipmentService.restoreBase64Urls(shipmentDocumentModels, shipmentModel);
                 const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
                 integrationNodeTransferModel.obj = {
-                    shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels,
+                    shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels: clonedShipmentDocumentModels,
                 }
                 const targetSiteId = siteId === shipmentModel.shipmentDestinationSiteId ? shipmentModel.shipmentOriginSiteId : shipmentModel.shipmentDestinationSiteId;
                 integrationNodeTransferModel.destination = SF.getIntegrationNodeDestinationAddrByDestinationSiteId(targetSiteId);
@@ -246,49 +241,7 @@ export default class ShipmentService extends Service {
         return { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels };
     }
 
-    async uploadShipmentDocument(reqShipmentDocumentModel: ShipmentDocumentModel): Promise<ShipmentDocumentModel> {
-        let shipmentDocumentModel: ShipmentDocumentModel | null = null;
-
-        shipmentDocumentModel = new ShipmentDocumentModel();
-
-        if (reqShipmentDocumentModel.shipmentDocumentUrl.startsWith(ShipmentDocumentModel.FILE_DATA_STRING_BEGIN)) {
-            const base64Buffer = reqShipmentDocumentModel.shipmentDocumentUrl.substring(reqShipmentDocumentModel.shipmentDocumentUrl.indexOf(',') + 1);
-            const documentBuffer = Buffer.from(base64Buffer, 'base64');
-
-            reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
-            shipmentDocumentModel.shipmentDocumentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentDocumentId();
-
-            const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
-
-            const storagePath = shipmentModel.getStoragePath();
-            await fs.mkdir(storagePath, { 'recursive': true });
-            const documentPath = shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId);
-
-            await fs.writeFile(documentPath, documentBuffer);
-            reqShipmentDocumentModel.sizeInBytes = (await fs.stat(documentPath)).size;
-        }
-
-        shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
-        shipmentDocumentModel.updateShipmentDocumentUrl();
-
-        await this.shipmentDocumentRepo.save(shipmentDocumentModel);
-
-        return shipmentDocumentModel;
-
-    }
-
-    async fetchShipmentDocumentById(shipmentDocumentId: number): Promise<ShipmentDocumentModel> {
-        return this.shipmentDocumentRepo.fetchByPrimaryValue(shipmentDocumentId);
-    }
-
-    async fetchShipmentsByFilter(
-        siteId: number,
-        page: number,
-        searchBy: string,
-        sortBy: number,
-        from: number,
-        to: number,
-    ): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
+    async fetchShipmentsByFilter(siteId: number, page: number, searchBy: string, sortBy: number, from: number, to: number): Promise<{ shipmentModels: Array<ShipmentModel>, totalSize: number }> {
         const shipmentFilter = new ShipmentFilter();
         shipmentFilter.page = page;
         shipmentFilter.searchBy = searchBy;
@@ -339,7 +292,6 @@ export default class ShipmentService extends Service {
     }
 
     async fetchShipmentsWhereProductLeftByProductId(productId: number, siteId): Promise<{ shipmentModels: ShipmentModel[], skuModels: SkuModel[] }> {
-        const skuDbWhere = new DatabaseWhere();
         let { skuModels } = await this.fetchSkusInStock(siteId);
 
         skuModels = skuModels.filter((s) => s.productId === productId);
@@ -390,7 +342,6 @@ export default class ShipmentService extends Service {
     }
 
     async fetchSkusInStock(siteId: number): Promise<{ skuModels: SkuModel[], productModels: ProductModel[] }> {
-
         const shipmentFilter = new ShipmentFilter();
         shipmentFilter.siteId = siteId;
         shipmentFilter.page = ShipmentFilter.S_PAGE_STATUS_INCOMMING;
@@ -431,4 +382,67 @@ export default class ShipmentService extends Service {
 
         return { skuModels, productModels };
     }
+
+    async downloadShipmentJson(shipmentId: number): Promise < string > {
+        const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await this.fetchShipmentById(shipmentId);
+        const clonedShipmentDocumentModels = await ShipmentService.restoreBase64Urls(shipmentDocumentModels, shipmentModel);
+        const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
+        integrationNodeTransferModel.obj = {
+            shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels: clonedShipmentDocumentModels,
+        }
+
+        return JSON.stringify(integrationNodeTransferModel.obj);
+    }
+
+    async downloadShipmentDocumentFile(shipmentDocumentId: number): Promise < { shipmentModel: ShipmentModel, shipmentDocumentModel: ShipmentDocumentModel } > {
+        const shipmentDocumentModel = await this.shipmentDocumentRepo.fetchByPrimaryValue(shipmentDocumentId);
+        const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentDocumentModel.shipmentId);
+        return { shipmentModel, shipmentDocumentModel };
+    }
+
+    async uploadShipmentDocument(reqShipmentDocumentModel: ShipmentDocumentModel): Promise<ShipmentDocumentModel> {
+        let shipmentDocumentModel: ShipmentDocumentModel | null = null;
+
+        shipmentDocumentModel = new ShipmentDocumentModel();
+
+        if (reqShipmentDocumentModel.shipmentDocumentUrl.startsWith(ShipmentDocumentModel.FILE_DATA_STRING_BEGIN)) {
+            const base64Buffer = reqShipmentDocumentModel.shipmentDocumentUrl.substring(reqShipmentDocumentModel.shipmentDocumentUrl.indexOf(',') + 1);
+            const documentBuffer = Buffer.from(base64Buffer, 'base64');
+
+            reqShipmentDocumentModel.shipmentDocumentUrl = SV.Strings.EMPTY;
+            shipmentDocumentModel.shipmentDocumentId = this.repoFactory.autoIncrementerModel.getAndIncremenetShipmentDocumentId();
+
+            const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentDocumentModel.shipmentId);
+
+            const storagePath = shipmentModel.getStoragePath();
+            await fs.mkdir(storagePath, { 'recursive': true });
+            const documentPath = shipmentModel.getShipmentDocumentStoragePath(shipmentDocumentModel.shipmentDocumentId);
+
+            await fs.writeFile(documentPath, documentBuffer);
+            reqShipmentDocumentModel.sizeInBytes = (await fs.stat(documentPath)).size;
+        }
+
+        shipmentDocumentModel.shipmentId = reqShipmentDocumentModel.shipmentId;
+        shipmentDocumentModel.updateShipmentDocumentUrl();
+
+        await this.shipmentDocumentRepo.save(shipmentDocumentModel);
+
+        return shipmentDocumentModel;
+    }
+
+    static async restoreBase64Urls(shipmentDocumentModels: ShipmentDocumentModel[], shipmentModel: ShipmentModel) {
+        const result = [];
+
+        for (let i = 0; i < shipmentDocumentModels.length; ++i) {
+            const cloned = shipmentDocumentModels[i].clone();
+
+            const documentPath = shipmentModel.getShipmentDocumentStoragePath(cloned.shipmentDocumentId);
+            cloned.shipmentDocumentUrl = await fs.readFile(documentPath, { encoding: 'base64' });
+
+            result.push(cloned);
+        }
+
+        return result;
+    }
+
 }
