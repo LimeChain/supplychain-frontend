@@ -2,7 +2,7 @@
             
 export default class AccountModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_ACCOUNT_ID = 1;
     static P_COUNTRY_ID = 2;

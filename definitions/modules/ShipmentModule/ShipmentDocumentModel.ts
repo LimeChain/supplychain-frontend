@@ -8,4 +8,6 @@ export default class ShipmentDocumentModel {
     sizeInBytes: number;
     name: string;
 
+    primaryValueInInsert: boolean = true
+
 }

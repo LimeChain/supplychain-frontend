@@ -4,4 +4,6 @@ export default class SiteModel {
     countryId: number
     siteName: string
 
+    primaryValueInInsert: boolean = true
+
 }

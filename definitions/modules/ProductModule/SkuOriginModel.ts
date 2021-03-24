@@ -4,4 +4,6 @@ export default class SkuOriginModel {
     skuId: number;
     shipmentId: number;
 
+    primaryValueInInsert: boolean = true
+
 }

@@ -64,7 +64,7 @@ export default class ShipmentDocumentRepoH {
     }
 
     getPrimaryValueForInsert(): number | null {
-        return null;
+        return this.getPrimaryValue();
     }
 
     getDbPairs() {

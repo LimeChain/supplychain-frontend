@@ -7,7 +7,7 @@ export default class SkuRepoH {
     static C_QUANTITY = 'quantity';
     static C_PRICE_PER_UNIT = 'pricePerUnit';
     static C_CURRENCY = 'currency';
-
+        
     skuId: number | null;
     skuIdToDb: boolean;
     shipmentId: number | null;
@@ -20,7 +20,7 @@ export default class SkuRepoH {
     pricePerUnitToDb: boolean;
     currency: number | null;
     currencyToDb: boolean;
-
+    
     constructor() {
         this.skuId = null;
         this.skuIdToDb = false;
@@ -35,10 +35,10 @@ export default class SkuRepoH {
         this.currency = null;
         this.currencyToDb = false;
     }
-
+    
     static instanceByDbRow(row): SkuRepoH {
         const repo = new SkuRepoH();
-
+    
         repo.skuId = row[SkuRepoH.C_SKU_ID] ?? repo.skuId;
         repo.shipmentId = row[SkuRepoH.C_SHIPMENT_ID] ?? repo.shipmentId;
         repo.productId = row[SkuRepoH.C_PRODUCT_ID] ?? repo.productId;
@@ -54,11 +54,11 @@ export default class SkuRepoH {
     }
 
     setPrimaryValue(value: number): void {
-        this.skuId = parseFloat(value as unknown as string);
+        this.skuId = parseInt(value as unknown as string);
     }
 
     getPrimaryValueForInsert(): number | null {
-        return null;
+        return this.getPrimaryValue();
     }
 
     getDbPairs() {

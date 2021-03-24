@@ -2,7 +2,7 @@
             
 export default class CountryModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_COUNTRY_ID = 1;
     static P_COUNTRY_NAME = 2;

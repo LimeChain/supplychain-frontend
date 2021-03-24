@@ -70,7 +70,6 @@ export default class ShipmentService extends Service {
         shipmentModel.shipmentDestinationSiteId = reqShipmentModel.shipmentDestinationSiteId;
         shipmentModel.shipmentDateOfShipment = reqShipmentModel.shipmentDateOfShipment;
         shipmentModel.shipmentDateOfArrival = reqShipmentModel.shipmentDateOfArrival;
-        shipmentModel.shipmentDltAnchored = reqShipmentModel.shipmentDltAnchored;
         shipmentModel.shipmentDltProof = reqShipmentModel.shipmentDltProof;
 
         if (reqShipmentModel.shipmentDeleted !== SV.NOT_EXISTS) {

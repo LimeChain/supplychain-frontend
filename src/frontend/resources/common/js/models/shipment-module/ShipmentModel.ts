@@ -16,7 +16,6 @@ export default class ShipmentModel {
     shipmentDestinationSiteId: string
     shipmentDateOfShipment: number
     shipmentDateOfArrival: number
-    shipmentDltAnchored: number
     shipmentDltProof: string
     shipmentDeleted: number
 
@@ -29,7 +28,6 @@ export default class ShipmentModel {
         this.shipmentDestinationSiteId = S.Strings.NOT_EXISTS;
         this.shipmentDateOfShipment = S.NOT_EXISTS;
         this.shipmentDateOfArrival = S.NOT_EXISTS;
-        this.shipmentDltAnchored = S.INT_FALSE;
         this.shipmentDltProof = S.Strings.EMPTY;
         this.shipmentDeleted = S.NOT_EXISTS;
 
@@ -110,7 +108,6 @@ export default class ShipmentModel {
             'shipmentDestinationSiteId': this.shipmentDestinationSiteId,
             'shipmentDateOfShipment': this.shipmentDateOfShipment,
             'shipmentDateOfArrival': this.shipmentDateOfArrival,
-            'shipmentDltAnchored': this.shipmentDltAnchored,
             'shipmentDltProof': this.shipmentDltProof,
             'shipmentDeleted': this.shipmentDeleted,
         }
@@ -135,7 +132,6 @@ export default class ShipmentModel {
         model.shipmentDestinationSiteId = (json.shipmentDestinationSiteId ?? model.shipmentDestinationSiteId).toString();
         model.shipmentDateOfShipment = json.shipmentDateOfShipment ?? model.shipmentDateOfShipment;
         model.shipmentDateOfArrival = json.shipmentDateOfArrival ?? model.shipmentDateOfArrival;
-        model.shipmentDltAnchored = json.shipmentDltAnchored ?? model.shipmentDltAnchored;
         model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
         model.shipmentDeleted = json.shipmentDeleted ?? model.shipmentDeleted;
 

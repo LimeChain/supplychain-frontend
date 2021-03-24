@@ -7,4 +7,6 @@ export default class ProductModel {
     productDeleted: number
     productEditable: number
     productDeletable: number
+
+    primaryValueInInsert: boolean = true
 }

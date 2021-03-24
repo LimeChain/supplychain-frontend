@@ -2,7 +2,7 @@
             
 export default class ShipmentDocumentModelH {
 
-
+    static primaryValueInInsert = true;
 
     static P_SHIPMENT_DOCUMENT_ID = 1;
     static P_SHIPMENT_ID = 2;
