@@ -11,6 +11,7 @@ export default class ShipmentModel extends ShipmentModelG {
 
     constructor() {
         super();
+        this.shipmentStatus = ShipmentModel.S_STATUS_DRAFT;
         this.shipmentDeleted = SV.FALSE;
     }
 

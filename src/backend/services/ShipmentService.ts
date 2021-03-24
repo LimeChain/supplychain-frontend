@@ -26,6 +26,7 @@ import Params from '../utilities/Params';
 import IntegrationNodeApiH from '../requests/api/integration-node/IntegrationNodeApi.h';
 import SF from '../utilities/SF';
 import IntegrationNodeConnectModel from '../modules/IntegratonNode/IntegrationNodeConnectModel';
+import Logger from '../utilities/Logger';
 
 export default class ShipmentService extends Service {
 
@@ -236,6 +237,7 @@ export default class ShipmentService extends Service {
                 await axiosSendShipmentInstance.post(Config.Server.HEDERA_INTEGRATION_NODE_CREDIT_SHIPMENT_SUFFIX, integrationNodeTransferModel.toNetwork());
             }
         } catch (ex) {
+            Logger.error(ex);
             throw new StateException(Response.S_INTEGRATION_NODE_ERROR);
         }
 
