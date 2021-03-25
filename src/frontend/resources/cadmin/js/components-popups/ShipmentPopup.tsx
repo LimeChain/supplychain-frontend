@@ -322,6 +322,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 shipmentDocumentModels[i].name = files[i].name;
                 shipmentDocumentModels[i].sizeInBytes = files[i].size;
                 shipmentDocumentModels[i].mimeType = files[i].type;
+                console.log(shipmentDocumentModels[i].mimeType);
             },
             onUpload: (base64File, response, files: any[], i: number) => {
                 const res = new UploadShipmentDocumentRes(JSON.parse(response).obj);
@@ -746,7 +747,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 <hr />
                 <div className={'UploadedDocumentsCnt'} >
                     {popupStore.shipmentDocumentModels.map((shipmentDocumentModel, i: number) => {
-                        const editable = shipmentModel.isDraft() === true || i >= popupStore.initialShipmentDocumentLength;
+                        const editable = shipmentDocumentModel.isFromShipment(shipmentModel.shipmentId) === true && (shipmentModel.isDraft() === true || i >= popupStore.initialShipmentDocumentLength);
                         return (
                             <div key={i} className={'UploadedDocument FlexRow FlexSplit'} >
                                 <Select

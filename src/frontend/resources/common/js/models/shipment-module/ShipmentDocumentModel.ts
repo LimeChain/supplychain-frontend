@@ -34,6 +34,10 @@ export default class ShipmentDocumentModel {
         return this.shipmentDocumentUrl !== S.Strings.EMPTY;
     }
 
+    isFromShipment(shipmentId: string): boolean {
+        return this.shipmentId === S.Strings.NOT_EXISTS || this.shipmentId === shipmentId;
+    }
+
     toJson(): any {
         return {
             'shipmentDocumentId': this.shipmentDocumentId,
