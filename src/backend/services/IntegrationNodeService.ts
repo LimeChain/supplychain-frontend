@@ -95,7 +95,7 @@ export default class IntegrationNodeService extends Service {
         }
     }
 
-    async dlt(shipmentId: number, shipmentStatus: number, dlt: string) {
+    async dlt(shipmentId: number, shipmentStatus: number, dlt: string, hash: string) {
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) { // this node does not have this shipment
             return;
@@ -106,6 +106,7 @@ export default class IntegrationNodeService extends Service {
         }
 
         shipmentModel.shipmentDltProof = dlt;
+        shipmentModel.shipmentHash = hash;
         await this.shipmentRepo.save(shipmentModel);
     }
 

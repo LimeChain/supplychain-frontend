@@ -17,6 +17,7 @@ export default class ShipmentModel {
     shipmentDateOfShipment: number
     shipmentDateOfArrival: number
     shipmentDltProof: string
+    shipmentHash: string;
     shipmentDeleted: number
 
     constructor() {
@@ -29,6 +30,7 @@ export default class ShipmentModel {
         this.shipmentDateOfShipment = S.NOT_EXISTS;
         this.shipmentDateOfArrival = S.NOT_EXISTS;
         this.shipmentDltProof = S.Strings.EMPTY;
+        this.shipmentHash = S.Strings.EMPTY;
         this.shipmentDeleted = S.NOT_EXISTS;
 
         makeAutoObservable(this);
@@ -109,6 +111,7 @@ export default class ShipmentModel {
             'shipmentDateOfShipment': this.shipmentDateOfShipment,
             'shipmentDateOfArrival': this.shipmentDateOfArrival,
             'shipmentDltProof': this.shipmentDltProof,
+            'shipmentHash': this.shipmentHash,
             'shipmentDeleted': this.shipmentDeleted,
         }
     }
@@ -133,6 +136,7 @@ export default class ShipmentModel {
         model.shipmentDateOfShipment = json.shipmentDateOfShipment ?? model.shipmentDateOfShipment;
         model.shipmentDateOfArrival = json.shipmentDateOfArrival ?? model.shipmentDateOfArrival;
         model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
+        model.shipmentHash = json.shipmentHash ?? model.shipmentHash;
         model.shipmentDeleted = json.shipmentDeleted ?? model.shipmentDeleted;
 
         return model;

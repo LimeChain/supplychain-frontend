@@ -263,7 +263,7 @@ export default class ShipmentService extends Service {
         }
     }
 
-    async fetchShipmentById(shipmentId: number): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
+    async fetchShipmentById(shipmentId: number, fetchAllDocuments: boolean = true): Promise<{ shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[] }> {
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(shipmentId);
         if (shipmentModel === null) {
             throw new StateException(Response.S_STATUS_RUNTIME_ERROR);
@@ -280,13 +280,15 @@ export default class ShipmentService extends Service {
             const sId = queue.shift();
             usedShipmentIds.add(sId);
 
-            const skus = await this.skuRepo.fetchByShipmentId(sId);
-            const skuOrigins = await this.skuOriginRepo.fetchBySkuIds(skus.map((s) => s.skuId));
-            skuOrigins.forEach((skuOriginModel) => {
-                if (usedShipmentIds.has(skuOriginModel.shipmentId) === false) {
-                    queue.push(skuOriginModel.shipmentId);
-                }
-            });
+            if (fetchAllDocuments === true) {
+                const skus = await this.skuRepo.fetchByShipmentId(sId);
+                const skuOrigins = await this.skuOriginRepo.fetchBySkuIds(skus.map((s) => s.skuId));
+                skuOrigins.forEach((skuOriginModel) => {
+                    if (usedShipmentIds.has(skuOriginModel.shipmentId) === false) {
+                        queue.push(skuOriginModel.shipmentId);
+                    }
+                });
+            }
         }
 
         const shipmentDocumentModels = await this.shipmentDocumentRepo.fetchForShipment(Array.from(usedShipmentIds) as number[]);
@@ -387,7 +389,7 @@ export default class ShipmentService extends Service {
     }
 
     async downloadShipmentJson(shipmentId: number): Promise < string > {
-        const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await this.fetchShipmentById(shipmentId);
+        const { shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels } = await this.fetchShipmentById(shipmentId, false);
         const clonedShipmentDocumentModels = await ShipmentService.restoreBase64Urls(shipmentDocumentModels, shipmentModel);
         const integrationNodeTransferModel = IntegrationNodeTransferModel.newInstanceShipment();
         integrationNodeTransferModel.obj = {

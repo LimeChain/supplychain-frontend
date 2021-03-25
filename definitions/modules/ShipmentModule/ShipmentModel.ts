@@ -9,6 +9,7 @@ export default class ShipmentModel {
     shipmentDateOfShipment: number
     shipmentDateOfArrival: number
     shipmentDltProof: string
+    shipmentHash: string
     shipmentDeleted: number
 
     primaryValueInInsert: boolean = true

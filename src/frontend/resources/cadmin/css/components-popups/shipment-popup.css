@@ -30,6 +30,19 @@
     font-size: 9px;
 }
 
+.ShipmentPopup .PopupHeader .TranssactionHash {
+    width: 0;
+    flex: 1 1 auto;
+    font-size: 10px;
+    margin-right: 6px;
+}
+
+.ShipmentPopup .PopupHeader .IconCopy {
+    flex: 0 0 auto;
+    fill: var(--color-primary);
+    cursor: pointer;
+}
+
 .ShipmentPopup .PopupHeader .Status {
     font-style: italic;
 }

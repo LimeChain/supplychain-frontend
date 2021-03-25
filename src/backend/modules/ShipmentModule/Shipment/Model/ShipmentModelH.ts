@@ -13,7 +13,8 @@ export default class ShipmentModelH {
     static P_SHIPMENT_DATE_OF_SHIPMENT = 7;
     static P_SHIPMENT_DATE_OF_ARRIVAL = 8;
     static P_SHIPMENT_DLT_PROOF = 9;
-    static P_SHIPMENT_DELETED = 10;
+    static P_SHIPMENT_HASH = 10;
+    static P_SHIPMENT_DELETED = 11;
     static PROPERTIES = [ShipmentModelH.P_SHIPMENT_ID,
         ShipmentModelH.P_SHIPMENT_CONSIGNMENT_NUMBER,
         ShipmentModelH.P_SHIPMENT_NAME,
@@ -23,6 +24,7 @@ export default class ShipmentModelH {
         ShipmentModelH.P_SHIPMENT_DATE_OF_SHIPMENT,
         ShipmentModelH.P_SHIPMENT_DATE_OF_ARRIVAL,
         ShipmentModelH.P_SHIPMENT_DLT_PROOF,
+        ShipmentModelH.P_SHIPMENT_HASH,
         ShipmentModelH.P_SHIPMENT_DELETED];
 
     shipmentId: number;
@@ -34,6 +36,7 @@ export default class ShipmentModelH {
     shipmentDateOfShipment: number;
     shipmentDateOfArrival: number;
     shipmentDltProof: string;
+    shipmentHash: string;
     shipmentDeleted: number;
 
 }

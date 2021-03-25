@@ -5,12 +5,14 @@ export default class INDltShipmentReq {
     shipmentId: number;
     shipmentStatus: number;
     dlt: string;
+    hash: string;
 
     constructor(payload: Payload) {
         const json = payload.params;
         this.shipmentId = parseInt(json.shipmentId);
         this.shipmentStatus = parseInt(json.shipmentStatus);
         this.dlt = json.dlt;
+        this.hash = json.hash;
     }
 
 }

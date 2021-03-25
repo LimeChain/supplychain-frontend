@@ -17,6 +17,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         this.shipmentDateOfShipment = SV.NOT_EXISTS;
         this.shipmentDateOfArrival = SV.NOT_EXISTS;
         this.shipmentDltProof = SV.Strings.EMPTY;
+        this.shipmentHash = SV.Strings.EMPTY;
         this.shipmentDeleted = SV.NOT_EXISTS;
     }
 
@@ -76,6 +77,10 @@ export default class ShipmentModelG extends ShipmentModelH {
             repo.shipmentDltProof = this.shipmentDltProof;
             repo.shipmentDltProofToDb = true;
         }
+        if (map.has(ShipmentModelH.P_SHIPMENT_HASH) === true && this.shipmentHash !== undefined) {
+            repo.shipmentHash = this.shipmentHash;
+            repo.shipmentHashToDb = true;
+        }
         if (map.has(ShipmentModelH.P_SHIPMENT_DELETED) === true && this.shipmentDeleted !== undefined) {
             repo.shipmentDeleted = this.shipmentDeleted;
             repo.shipmentDeletedToDb = true;
@@ -96,6 +101,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         model.shipmentDateOfShipment = parseInt((repo.shipmentDateOfShipment ?? model.shipmentDateOfShipment) as unknown as string);
         model.shipmentDateOfArrival = parseInt((repo.shipmentDateOfArrival ?? model.shipmentDateOfArrival) as unknown as string);
         model.shipmentDltProof = repo.shipmentDltProof ?? model.shipmentDltProof;
+        model.shipmentHash = repo.shipmentHash ?? model.shipmentHash;
         model.shipmentDeleted = parseInt((repo.shipmentDeleted ?? model.shipmentDeleted) as unknown as string);
 
         return model;
@@ -113,6 +119,7 @@ export default class ShipmentModelG extends ShipmentModelH {
             shipmentDateOfShipment: this.shipmentDateOfShipment,
             shipmentDateOfArrival: this.shipmentDateOfArrival,
             shipmentDltProof: this.shipmentDltProof,
+            shipmentHash: this.shipmentHash,
             shipmentDeleted: this.shipmentDeleted,
         };
     }
@@ -133,6 +140,7 @@ export default class ShipmentModelG extends ShipmentModelH {
         model.shipmentDateOfShipment = parseInt(json.shipmentDateOfShipment ?? model.shipmentDateOfShipment);
         model.shipmentDateOfArrival = parseInt(json.shipmentDateOfArrival ?? model.shipmentDateOfArrival);
         model.shipmentDltProof = json.shipmentDltProof ?? model.shipmentDltProof;
+        model.shipmentHash = json.shipmentHash ?? model.shipmentHash;
         model.shipmentDeleted = parseInt(json.shipmentDeleted ?? model.shipmentDeleted);
 
         return model;
@@ -158,6 +166,8 @@ export default class ShipmentModelG extends ShipmentModelH {
                 return ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL;
             case ShipmentModelH.P_SHIPMENT_DLT_PROOF:
                 return ShipmentRepoH.C_SHIPMENT_DLT_PROOF;
+            case ShipmentModelH.P_SHIPMENT_HASH:
+                return ShipmentRepoH.C_SHIPMENT_HASH;
             case ShipmentModelH.P_SHIPMENT_DELETED:
                 return ShipmentRepoH.C_SHIPMENT_DELETED;
             default:

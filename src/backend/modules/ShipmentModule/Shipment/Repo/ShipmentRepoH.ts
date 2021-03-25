@@ -10,6 +10,7 @@ export default class ShipmentRepoH {
     static C_SHIPMENT_DATE_OF_SHIPMENT = 'shipmentDateOfShipment';
     static C_SHIPMENT_DATE_OF_ARRIVAL = 'shipmentDateOfArrival';
     static C_SHIPMENT_DLT_PROOF = 'shipmentDltProof';
+    static C_SHIPMENT_HASH = 'shipmentHash';
     static C_SHIPMENT_DELETED = 'shipmentDeleted';
         
     shipmentId: number | null;
@@ -30,6 +31,8 @@ export default class ShipmentRepoH {
     shipmentDateOfArrivalToDb: boolean;
     shipmentDltProof: string | null;
     shipmentDltProofToDb: boolean;
+    shipmentHash: string | null;
+    shipmentHashToDb: boolean;
     shipmentDeleted: number | null;
     shipmentDeletedToDb: boolean;
     
@@ -52,6 +55,8 @@ export default class ShipmentRepoH {
         this.shipmentDateOfArrivalToDb = false;
         this.shipmentDltProof = null;
         this.shipmentDltProofToDb = false;
+        this.shipmentHash = null;
+        this.shipmentHashToDb = false;
         this.shipmentDeleted = null;
         this.shipmentDeletedToDb = false;
     }
@@ -68,6 +73,7 @@ export default class ShipmentRepoH {
         repo.shipmentDateOfShipment = row[ShipmentRepoH.C_SHIPMENT_DATE_OF_SHIPMENT] ?? repo.shipmentDateOfShipment;
         repo.shipmentDateOfArrival = row[ShipmentRepoH.C_SHIPMENT_DATE_OF_ARRIVAL] ?? repo.shipmentDateOfArrival;
         repo.shipmentDltProof = row[ShipmentRepoH.C_SHIPMENT_DLT_PROOF] ?? repo.shipmentDltProof;
+        repo.shipmentHash = row[ShipmentRepoH.C_SHIPMENT_HASH] ?? repo.shipmentHash;
         repo.shipmentDeleted = row[ShipmentRepoH.C_SHIPMENT_DELETED] ?? repo.shipmentDeleted;
 
         return repo;
@@ -127,6 +133,11 @@ export default class ShipmentRepoH {
         if (this.shipmentDltProofToDb === true) {
             columns.push(ShipmentRepoH.C_SHIPMENT_DLT_PROOF);
             values.push(this.shipmentDltProof === null ? null : this.shipmentDltProof.toString());
+        }
+
+        if (this.shipmentHashToDb === true) {
+            columns.push(ShipmentRepoH.C_SHIPMENT_HASH);
+            values.push(this.shipmentHash === null ? null : this.shipmentHash.toString());
         }
 
         if (this.shipmentDeletedToDb === true) {

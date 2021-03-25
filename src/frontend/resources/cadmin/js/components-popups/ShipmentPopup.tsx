@@ -44,6 +44,7 @@ import SvgDelete from '../../../common/svg/delete.svg';
 import SvgSave from '../../../common/svg/save.svg';
 import SvgDownload from '../../../common/svg/download.svg';
 import SvgFile from '../../../common/svg/file.svg';
+import SvgCopy from '../../../common/svg/copy.svg';
 import '../../css/components-popups/shipment-popup.css';
 import CAdminContext from '../CAdminContext';
 import { UploadShipmentDocumentRes } from '../../../common/js/network-responses/ShipmentDocumentApiRes';
@@ -51,6 +52,7 @@ import ShipmentModel from '../../../common/js/models/shipment-module/ShipmentMod
 import SkuModel from '../../../common/js/models/product-module/SkuModel';
 import SkuOriginModel from '../../../common/js/models/product-module/SkuOriginModel';
 import NotificationStore from '../../../common/js/stores/NotificationStore';
+import ProjectUtils from '../../../common/js/ProjectUtils';
 
 interface Props extends PopupWindowProps {
     alertStore: AlertStore;
@@ -119,6 +121,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         return this.props.popupStore.skuModels.reduce((acc, skuModel) => {
             return acc + skuModel.getTotalPrice();
         }, 0);
+    }
+
+    onClickCopyHash = () => {
+        ProjectUtils.copyText(this.props.popupStore.shipmentModel.shipmentHash);
     }
 
     onClickNoTransactionLink = () => {
@@ -401,10 +407,16 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                     <div className={'PopupTitleCnt'}>
                         <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isNew() === true ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
                         {shipmentModel.isDraft() === false && (
-                            <div className={'FlexSplit'} >
-                                <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>
-                                <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
-                            </div>
+                            <>
+                                <div className = { 'FlexSplit FlexRow' } >
+                                    <div className = { 'SubData TranssactionHash Dots' } >{shipmentModel.shipmentHash}</div>
+                                    <div className = { 'SubData SVG IconCopy' } dangerouslySetInnerHTML = {{ __html: SvgCopy }} onClick = { this.onClickCopyHash } />
+                                </div>
+                                <div className={'FlexSplit'} >
+                                    <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>
+                                    <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
+                                </div>
+                            </>
                         )}
                     </div>
                     <LayoutBlock className={'FlexSplit'} direction={LayoutBlock.DIRECTION_ROW} >

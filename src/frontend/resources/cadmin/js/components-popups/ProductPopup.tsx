@@ -47,14 +47,20 @@ class ProductPopup extends PopupWindow<Props> {
             return;
         }
 
-        this.props.alertStore.show('Please check the data, because once it is saved you will be not able to modify or delete it', () => {
+        const alertStore = this.props.alertStore;
+        alertStore.msg = 'Are you sure you want to submit?';
+        alertStore.subMsg = 'Once the product is added, you want be able to modify or delete it.';
+        alertStore.positiveLabel = 'Submit';
+        alertStore.negativeLabel = 'Cancel';
+        alertStore.positiveListener = () => {
             const onFinish = this.props.popupStore.onFinish;
             const productModel = this.props.popupStore.productModel;
             this.productApi.creditProduct(productModel, () => {
                 this.props.popupStore.hide();
                 onFinish(productModel);
             });
-        }, () => {});
+        }
+        alertStore.visible = true;
     }
 
     renderContent() {
