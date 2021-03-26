@@ -687,7 +687,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 <hr className={'MarginBottomOnly'} />
                 <div className={'BlockLabel'} >Product list</div>
                 <Table
-                    widths={['7%', '33%', '11%', '11%', '11%', '11%', '11%', '5%']}
+                    widths={['7%', '30%', '14%', '11%', '11%', '11%', '11%', '5%']}
                     legend={['ID', 'Product name', 'From shipment', 'Quantity', 'Measurement', 'SKU value', 'Total value', S.Strings.EMPTY]}
                     aligns={[TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_LEFT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT, TableDesktop.ALIGN_RIGHT]}
                     rows={this.renderProductRows()}
