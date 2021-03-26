@@ -138,13 +138,8 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     onClickTabDocuments = async () => {
-        const popupStore = this.props.popupStore;
-        const shipmentModel = popupStore.shipmentModel;
-        if (shipmentModel.isNew() === true) {
-            popupStore.shipmentModel.saveAsDraft();
-            await this.creditShipment();
-        }
-        popupStore.setTabDocuments();
+        await this.creditShipmentIfNew();
+        this.props.popupStore.setTabDocuments();
     }
 
     onClickChangeManufacturedPlace(value) {
@@ -201,6 +196,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         if (popupStore.shipmentInputStateHelper.getValues() === null) {
             return;
         }
+        if (popupStore.skuModels.length === 0) {
+            this.props.alertStore.show('You must add at least one product');
+            return;
+        }
 
         const alertStore = this.props.alertStore;
         alertStore.msg = 'Are you sure you want to submit shipment?';
@@ -209,8 +208,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         alertStore.negativeLabel = 'Cancel';
         alertStore.positiveListener = () => {
             const run = async () => {
-                popupStore.shipmentModel.submitShipment();
-                await this.creditShipment();
+                const clonedShipmentModel = popupStore.shipmentModel.clone();
+                clonedShipmentModel.submitShipment();
+                await this.creditShipment(clonedShipmentModel);
+                Object.assign(popupStore.shipmentModel, clonedShipmentModel);
                 this.props.popupSubmitShipmentStatusStore.signalShow(PopupSubmitShipmentStatusStore.ACTION_NAME_SUBMITTED);
                 setTimeout(() => {
                     this.props.popupSubmitShipmentStatusStore.hide();
@@ -234,8 +235,10 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
         alertStore.positiveListener = () => {
             const run = async () => {
-                popupStore.shipmentModel.receiveShipment();
-                await this.creditShipment();
+                const clonedShipmentModel = popupStore.shipmentModel.clone();
+                clonedShipmentModel.receiveShipment();
+                await this.creditShipment(clonedShipmentModel);
+                Object.assign(popupStore.shipmentModel, clonedShipmentModel);
                 this.props.popupSubmitShipmentStatusStore.signalShow(PopupSubmitShipmentStatusStore.ACTION_NAME_RECEIVED);
                 setTimeout(() => {
                     this.props.popupSubmitShipmentStatusStore.hide();
@@ -249,7 +252,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
     }
 
     onClickSaveAsDraft = async () => {
-        this.props.popupStore.shipmentModel.saveAsDraft();
         await this.creditShipment();
         this.props.popupStore.hide();
     }
@@ -260,6 +262,24 @@ class ShipmentPopup extends PopupWindow<Props, State> {
 
     onChangeDocumentType(shipmentDocumentModel: ShipmentDocumentModel, value: number) {
         shipmentDocumentModel.documentType = value;
+    }
+
+    async onClickShowOriginShipment(shipmentId: string) {
+        await this.creditShipmentIfNew();
+
+        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+            this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+        });
+    }
+
+    onClickShipmentRouteLink(shipmentRouteIndex: number) {
+        this.props.popupStore.moveToShipmentLinkRoute(shipmentRouteIndex, (shipmentId: string) => {
+            this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
+                const resetRoute = shipmentRouteIndex === 0;
+
+                this.props.popupStore.addToShipmentRoute(resetRoute, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
+            });
+        });
     }
 
     onDrop = (e) => {
@@ -297,12 +317,23 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         e.preventDefault();
     }
 
-    creditShipment = (): Promise<void> => {
-        return new Promise<void>((resolve, reject) => {
+    async creditShipmentIfNew() {
+        const popupStore = this.props.popupStore;
+        const shipmentModel = popupStore.shipmentModel;
+        if (shipmentModel.isNew() === true) {
+            await this.creditShipment();
+        }
+    }
+
+    creditShipment(shipmentModel: ShipmentModel | null = null): Promise < void > {
+        return new Promise < void >((resolve, reject) => {
             const popupStore = this.props.popupStore;
-            const shipmentModel = popupStore.shipmentModel;
             const onFinish = popupStore.onFinish;
-            this.shipmentApi.creditShipment(popupStore.shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, popupStore.shipmentDocumentModels, () => {
+            // const shipmentModel = popupStore.shipmentModel;
+            if (shipmentModel === null) {
+                shipmentModel = popupStore.shipmentModel;
+            }
+            this.shipmentApi.creditShipment(shipmentModel, popupStore.skuModels, popupStore.skuOriginModels, popupStore.shipmentDocumentModels, () => {
                 onFinish(shipmentModel);
                 resolve();
             })
@@ -318,7 +349,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
             'controller': CAdminContext.urlShipmentDocumentUploadData(popupStore.shipmentModel.shipmentId),
             'progressWindow': false,
             'onExceedLimit': () => {
-                this.props.alertStore.show('Max files size is 1GB.');
+                this.props.alertStore.show('Max files size is 1GB');
             },
             onBeforeStart: (totalFiles: number) => {
                 shipmentDocumentModels = popupStore.onStartUploading(totalFiles);
@@ -408,10 +439,12 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                         <div className={'PopupTitle'}>{this.props.popupStore.shipmentModel.isNew() === true ? 'New shipment' : `Shipment #${this.props.popupStore.shipmentModel.shipmentId}`}</div>
                         {shipmentModel.isDraft() === false && (
                             <>
-                                <div className = { 'FlexSplit FlexRow' } >
-                                    <div className = { 'SubData TranssactionHash Dots' } >{shipmentModel.shipmentHash}</div>
-                                    <div className = { 'SubData SVG IconCopy' } dangerouslySetInnerHTML = {{ __html: SvgCopy }} onClick = { this.onClickCopyHash } />
-                                </div>
+                                {shipmentModel.hasHash() === true && (
+                                    <div className = { 'FlexSplit FlexRow' } >
+                                        <div className = { 'SubData TranssactionHash Dots' } >{shipmentModel.shipmentHash}</div>
+                                        <div className = { 'SubData SVG IconCopy' } dangerouslySetInnerHTML = {{ __html: SvgCopy }} onClick = { this.onClickCopyHash } />
+                                    </div>
+                                )}
                                 <div className={'FlexSplit'} >
                                     <div className={'SubData TimeStamp'}>Shipped <strong>{moment(this.props.popupStore.shipmentModel.shipmentDateOfShipment).format('DD.MM.YYYY')}</strong></div>
                                     <div className={'SubData Status StartRight'}>{shipmentModel.getStatusString()}</div>
@@ -569,29 +602,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
         )
     }
 
-    async onClickShowOriginShipment(shipmentId: string) {
-        const popupStore = this.props.popupStore;
-        const sourceShipmentModel = popupStore.shipmentModel;
-        if (sourceShipmentModel.isNew() === true) {
-            popupStore.shipmentModel.saveAsDraft();
-            await this.creditShipment();
-        }
-
-        this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupStore.addToShipmentRoute(false, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
-        });
-    }
-
-    onClickShipmentRouteLink(shipmentRouteIndex: number) {
-        this.props.popupStore.moveToShipmentLinkRoute(shipmentRouteIndex, (shipmentId: string) => {
-            this.shipmentApi.fetchShipmentById(shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-                const resetRoute = shipmentRouteIndex === 0;
-
-                this.props.popupStore.addToShipmentRoute(resetRoute, shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels);
-            });
-        });
-    }
-
     renderProducts() {
         const popupStore = this.props.popupStore;
         const productStore = this.props.productStore;
@@ -711,6 +721,7 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 continue;
             }
 
+            console.log('price', skuModel.getTotalPrice());
             result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),

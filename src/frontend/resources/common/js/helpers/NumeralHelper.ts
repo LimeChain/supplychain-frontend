@@ -46,14 +46,14 @@ export const formatDashboardBigPrice = (value: number): string => {
     }
 
     if (value < bil) {
-        return `${numeral(value / mil).format('$ 0.0')}M`;
+        return `${numeral(value / mil).format('$ 0.00')}M`;
     }
 
-    return `${numeral(value / bil).format('$ 0.0')}B`;
+    return `${numeral(value / bil).format('$ 0.00')}B`;
 }
 
 export const formatPrice = (value): string => {
-    return numeral(value).format('$ 0,0');
+    return numeral(value).format('$ 0,0.00');
 }
 
 export const formatBytes = (value): string => {

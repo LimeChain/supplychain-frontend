@@ -74,6 +74,10 @@ export default class ShipmentService extends Service {
             shipmentModel.shipmentDeleted = reqShipmentModel.shipmentDeleted;
         }
 
+        if (shipmentModel.isDraft() === false && reqSkuModels.length === 0) {
+            throw new StateException(Response.S_STATUS_SUBMIT_WITHOUT_SKU);
+        }
+
         await this.shipmentRepo.save(shipmentModel);
 
         // create notification

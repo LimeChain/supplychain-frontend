@@ -6,6 +6,7 @@ export default class Response {
     static S_STATUS_RUNTIME_ERROR: number;
     static S_STATUS_ACCESS_DENIED: number;
     static S_INTEGRATION_NODE_ERROR: number;
+    static S_STATUS_SUBMIT_WITHOUT_SKU: number;
 
     status: number;
     obj: any;
@@ -33,3 +34,4 @@ Response.S_STATUS_DO_NOT_HANDLE = 2;
 Response.S_STATUS_RUNTIME_ERROR = 3;
 Response.S_STATUS_ACCESS_DENIED = 4;
 Response.S_INTEGRATION_NODE_ERROR = 5;
+Response.S_STATUS_SUBMIT_WITHOUT_SKU = 6;

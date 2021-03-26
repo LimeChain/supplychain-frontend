@@ -39,6 +39,10 @@ export default class ShipmentFilter {
                 return ShipmentModelH.P_SHIPMENT_ORIGIN_SITE_ID;
             case ShipmentFilter.S_SORT_BY_DESTINATION_SITE_ID:
                 return ShipmentModelH.P_SHIPMENT_DESTINATION_SITE_ID;
+            case ShipmentFilter.S_SORT_BY_DATE_OF_SHIPMENT:
+                return ShipmentModelH.P_SHIPMENT_DATE_OF_SHIPMENT;
+            case ShipmentFilter.S_SORT_BY_DATE_OF_ARRIVAL:
+                return ShipmentModelH.P_SHIPMENT_DATE_OF_ARRIVAL;
         }
     }
 

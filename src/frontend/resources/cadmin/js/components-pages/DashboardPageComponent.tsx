@@ -90,7 +90,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
 
     onClickShipmentLine = (sModel: ShipmentModel) => {
         this.shipmentApi.fetchShipmentById(sModel.shipmentId, (shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[]) => {
-            this.props.popupShipmentStore.signalShow(sModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
+            this.props.popupShipmentStore.signalShow(shipmentModel, skuModels, skuOriginModels, shipmentDocumentModels, (savedShipmentModel: ShipmentModel) => {
                 if (sModel.isReceived() === false && savedShipmentModel.isReceived() === true) {
                     Object.assign(sModel, savedShipmentModel);
                 }
@@ -110,22 +110,22 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                     <div className={'Stats MarginBottom'} >
                         <div className={'WhiteBox FlexRow'} >
                             <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgOutgoing }} /></div>
-                            <div className='FlexColumn'>
-                                <div className='StatData'>{this.props.dashboardStore.outgoingShipmentsTotalSize}</div>
+                            <div className='FlexColumn FlexibleWidth'>
+                                <div className='StatData Dots' title = {this.props.dashboardStore.outgoingShipmentsTotalSize.toString()}>{this.props.dashboardStore.outgoingShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Total Outgoing Shipments</div>
                             </div>
                         </div>
                         <div className={'WhiteBox FlexRow'} >
                             <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgIncomming }} /></div>
-                            <div className='FlexColumn'>
-                                <div className='StatData'>{this.props.dashboardStore.incommingShipmentsTotalSize}</div>
+                            <div className='FlexColumn FlexibleWidth'>
+                                <div className='StatData Dots' title = {this.props.dashboardStore.incommingShipmentsTotalSize.toString()}>{this.props.dashboardStore.incommingShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Total Incoming Shipments</div>
                             </div>
                         </div>
                         <div className={'WhiteBox FlexRow FlexSplit'} >
                             <div className='Icon'><div className={'SVG'} dangerouslySetInnerHTML={{ __html: SvgNotification }} /></div>
-                            <div className='FlexColumn'>
-                                <div className='StatData'>{formatDashboardBigPrice(this.props.dashboardStore.totalValueOfProducts)}</div>
+                            <div className='FlexColumn FlexibleWidth'>
+                                <div className='StatData Dots' title = {formatDashboardBigPrice(this.props.dashboardStore.totalValueOfProducts)}>{formatDashboardBigPrice(this.props.dashboardStore.totalValueOfProducts)}</div>
                                 <div className='StatInfo '>Total value of products in stock</div>
                             </div>
                             <div className='StatMoreInfo StartRight FlexColumn'>
@@ -135,8 +135,8 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                             </div>
                         </div>
                         <div className={'WhiteBox FlexRow FlexSplit'} >
-                            <div className='FlexColumn'>
-                                <div className='StatData'>{this.props.dashboardStore.draftShipmentsTotalSize}</div>
+                            <div className='FlexColumn FlexibleWidth'>
+                                <div className='StatData Dots' title = {this.props.dashboardStore.draftShipmentsTotalSize.toString()}>{this.props.dashboardStore.draftShipmentsTotalSize}</div>
                                 <div className='StatInfo'>Prepared Shipments</div>
                             </div>
                             <a href={PagesCAdmin.DRAFTS} className='SeeAll StartRight'>See All</a>
@@ -156,7 +156,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                                 <div className='FlexRow'>
                                                     <div className={'SVG'} dangerouslySetInnerHTML={{
                                                         __html: ProjectUtils.getCountrySvg(
-                                                            this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
+                                                            this.props.siteStore.sitesMap.get(shipmentModel.shipmentDestinationSiteId).countryId,
                                                         ),
                                                     }} />
                                                     <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>
@@ -186,7 +186,7 @@ export default class DashboardPageComponent extends ContextPageComponent<Props> 
                                             <div className='FlexRow'>
                                                 <div className={'SVG'} dangerouslySetInnerHTML={{
                                                     __html: ProjectUtils.getCountrySvg(
-                                                        this.props.siteStore.countriesMap.get(this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId).countryId,
+                                                        this.props.siteStore.sitesMap.get(shipmentModel.shipmentOriginSiteId).countryId,
                                                     ),
                                                 }} />
                                                 <div className={'ConsignmentNumber'}>#{shipmentModel.shipmentConsignmentNumber}</div>

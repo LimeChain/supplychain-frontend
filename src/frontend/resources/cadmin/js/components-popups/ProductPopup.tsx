@@ -49,7 +49,7 @@ class ProductPopup extends PopupWindow<Props> {
 
         const alertStore = this.props.alertStore;
         alertStore.msg = 'Are you sure you want to submit?';
-        alertStore.subMsg = 'Once the product is added, you want be able to modify or delete it.';
+        alertStore.subMsg = 'Once the product is added, you won’t be able to modify or delete it.';
         alertStore.positiveLabel = 'Submit';
         alertStore.negativeLabel = 'Cancel';
         alertStore.positiveListener = () => {

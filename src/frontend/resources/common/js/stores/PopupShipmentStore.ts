@@ -92,17 +92,11 @@ export default class PopupShipmentStore extends PopupStore {
         makeObservable(this);
     }
 
-    signalShow(
-        shipmentModel: ShipmentModel,
-        skuModels: SkuModel[],
-        skuOriginModels: SkuOriginModel[],
-        shipmentDocumentModels: ShipmentDocumentModel[],
-        onFinish: (savedShipmentModel: ShipmentModel) => void,
-    ) {
+    signalShow(shipmentModel: ShipmentModel, skuModels: SkuModel[], skuOriginModels: SkuOriginModel[], shipmentDocumentModels: ShipmentDocumentModel[], onFinish: (savedShipmentModel: ShipmentModel) => void) {
         this.popupActiveTab = PopupShipmentStore.POPUP_TAB_PRODUCTS;
         this.productTableHelper = new TableHelper(S.NOT_EXISTS, [], () => { });
         this.shipmentLinksRoute = [];
-        this.shipmentModel = shipmentModel;
+        this.shipmentModel = shipmentModel.clone();
         this.skuModels = skuModels;
         this.skuOriginModels = skuOriginModels;
         this.shipmentDocumentModels = shipmentDocumentModels;
@@ -120,7 +114,7 @@ export default class PopupShipmentStore extends PopupStore {
 
         this.productStore.fetchProductsList(() => {
             this.show();
-        })
+        });
     }
 
     addToShipmentRoute(

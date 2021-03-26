@@ -9,7 +9,16 @@
     gap: var(--desktop-spacing);
 }
 
-.PageDashboard .Stats>* {
+.PageDashboard .Stats > .WhiteBox {
+    width: 0;
+    flex: 1 1 auto;
+}
+
+.PageDashboard .Stats > .WhiteBox > * {
+    flex: 0 0 auto;
+}
+
+.PageDashboard .Stats > .WhiteBox > .FlexibleWidth {
     width: 0;
     flex: 1 1 auto;
 }
@@ -19,7 +28,7 @@
     gap: var(--desktop-spacing);
 }
 
-.PageDashboard .Tables>* {
+.PageDashboard .Tables > * {
     display: flex;
     width: 0;
     flex: 1 1 auto;

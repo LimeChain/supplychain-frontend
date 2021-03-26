@@ -55,13 +55,12 @@ export default class ShipmentModel {
         return this.shipmentDestinationSiteId !== S.Strings.NOT_EXISTS && this.shipmentConsignmentNumber !== S.Strings.EMPTY;
     }
 
-    saveAsDraft() {
-        this.shipmentStatus = ShipmentConsts.S_STATUS_DRAFT;
-    }
-
     submitShipment() {
         this.shipmentStatus = ShipmentConsts.S_STATUS_IN_TRANSIT;
-        this.shipmentDateOfShipment = Date.now();
+    }
+
+    receiveShipment() {
+        this.shipmentStatus = ShipmentConsts.S_STATUS_RECEIVED;
     }
 
     getStatusString() {
@@ -83,9 +82,8 @@ export default class ShipmentModel {
         return this.shipmentDltProof !== S.Strings.EMPTY;
     }
 
-    receiveShipment() {
-        this.shipmentStatus = ShipmentConsts.S_STATUS_RECEIVED;
-        this.shipmentDateOfArrival = Date.now();
+    hasHash(): boolean {
+        return this.shipmentHash !== S.Strings.EMPTY;
     }
 
     isDraft(): boolean {
