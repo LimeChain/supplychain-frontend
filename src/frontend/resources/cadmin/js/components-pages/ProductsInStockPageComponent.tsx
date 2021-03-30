@@ -180,7 +180,7 @@ export default class ProductsInStockPageComponent extends ContextPageComponent<P
             if (productModel === undefined) {
                 return;
             }
-            const totalPrice = skuModel.quantity * skuModel.pricePerUnit;
+            const totalPrice = skuModel.getTotalPrice();
 
             result.push([
                 Table.cellString(`#${skuModel.skuId}`),

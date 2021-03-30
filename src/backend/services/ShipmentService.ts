@@ -81,10 +81,10 @@ export default class ShipmentService extends Service {
         await this.shipmentRepo.save(shipmentModel);
 
         // create notification
-        if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
-            const notificationService = this.servicesFactory.getNotificationService();
-            notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
-        }
+        // if (shipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+        //     const notificationService = this.servicesFactory.getNotificationService();
+        //     notificationService.createNotification(shipmentModel.shipmentId, shipmentModel.shipmentStatus);
+        // }
 
         // mark used produts as undeletable
         this.productRepo.changeDeletableStatus(reqSkuModels.map((s) => s.productId), SV.FALSE);

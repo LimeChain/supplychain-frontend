@@ -31,7 +31,7 @@ export default class SkuModel {
     }
 
     getTotalPrice(): number {
-        return this.pricePerUnit * this.quantity;
+        return Number((this.pricePerUnit * this.quantity).toFixed(2));
     }
 
     toJson(): any {

@@ -71,7 +71,7 @@ export default class SkuModelG extends SkuModelH {
         model.shipmentId = parseInt((repo.shipmentId ?? model.shipmentId) as unknown as string);
         model.productId = parseInt((repo.productId ?? model.productId) as unknown as string);
         model.quantity = parseInt((repo.quantity ?? model.quantity) as unknown as string);
-        model.pricePerUnit = parseInt((repo.pricePerUnit ?? model.pricePerUnit) as unknown as string);
+        model.pricePerUnit = parseFloat((repo.pricePerUnit ?? model.pricePerUnit) as unknown as string);
         model.currency = parseInt((repo.currency ?? model.currency) as unknown as string);
 
         return model;
@@ -100,7 +100,7 @@ export default class SkuModelG extends SkuModelH {
         model.shipmentId = parseInt(json.shipmentId ?? model.shipmentId);
         model.productId = parseInt(json.productId ?? model.productId);
         model.quantity = parseInt(json.quantity ?? model.quantity);
-        model.pricePerUnit = parseInt(json.pricePerUnit ?? model.pricePerUnit);
+        model.pricePerUnit = parseFloat(json.pricePerUnit ?? model.pricePerUnit);
         model.currency = parseInt(json.currency ?? model.currency);
 
         return model;

@@ -25,7 +25,7 @@ export default class IntegrationNodeService extends Service {
         await this.productRepo.save(reqProductModel);
     }
 
-    async creditShipment(reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise < void > {
+    async creditShipment(siteId: number, reqShipmentModel: ShipmentModel, reqSkuModels: SkuModel[], reqSkuOriginModels: SkuOriginModel[], reqShipmentDocumentModels: ShipmentDocumentModel[]): Promise < void > {
         const shipmentModel = await this.shipmentRepo.fetchByPrimaryValue(reqShipmentModel.shipmentId);
         let oldShipmentStatus = SV.NOT_EXISTS;
         if (shipmentModel !== null) {
@@ -35,9 +35,17 @@ export default class IntegrationNodeService extends Service {
         await this.shipmentRepo.save(reqShipmentModel);
 
         // create notification
-        if (reqShipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
-            const notificationService = this.servicesFactory.getNotificationService();
-            notificationService.createNotification(reqShipmentModel.shipmentId, reqShipmentModel.shipmentStatus);
+        // if (reqShipmentModel.isStatusChangeForNotification(oldShipmentStatus)) {
+        console.log(siteId, oldShipmentStatus, reqShipmentModel.shipmentStatus);
+        if (oldShipmentStatus !== reqShipmentModel.shipmentStatus) {
+            const destinatioNotification = reqShipmentModel.isInTransit() === true && reqShipmentModel.shipmentDestinationSiteId === siteId;
+            const originNotification = reqShipmentModel.isReceived() === true && reqShipmentModel.shipmentOriginSiteId === siteId;
+            console.log(reqShipmentModel.isInTransit(), reqShipmentModel.isReceived(), reqShipmentModel.shipmentOriginSiteId, reqShipmentModel.shipmentDestinationSiteId);
+            if (destinatioNotification === true || originNotification === true) {
+                const notificationService = this.servicesFactory.getNotificationService();
+                console.log('create notification', reqShipmentModel.shipmentId, reqShipmentModel.shipmentStatus);
+                notificationService.createNotification(reqShipmentModel.shipmentId, reqShipmentModel.shipmentStatus);
+            }
         }
 
         // credit sku models

@@ -721,7 +721,6 @@ class ShipmentPopup extends PopupWindow<Props, State> {
                 continue;
             }
 
-            console.log('price', skuModel.getTotalPrice());
             result.push([
                 Table.cellString(skuModel.isNew() === true ? 'N/A' : skuModel.skuId.toString()),
                 Table.cellString(productModel.productName),
