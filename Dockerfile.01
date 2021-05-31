@@ -15,8 +15,8 @@ COPY ./package*.json ./
 RUN npm install
 
 COPY --chown=node:node ./ /usr/src/app
-RUN mv /usr/src/app/config/.env.production.01 /usr/src/app/config/.env.production && cp /usr/src/app/config/.env.production /usr/src/app/config/.env && npm run prod
-
+RUN mv /usr/src/app/config/.env.production.01 /usr/src/app/config/.env.production && cp /usr/src/app/config/.env.production /usr/src/app/config/.env
+RUN npm run prod
 
 FROM node:14-alpine as runtime
 

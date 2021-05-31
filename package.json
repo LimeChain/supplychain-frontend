@@ -10,6 +10,7 @@
     "dev-02": "export ENV_FILENAME=.env.dev.02|| set ENV_FILENAME=.env.dev.02&& node ./tools/builder/Main.js -target=dev",
     "dev-03": "export ENV_FILENAME=.env.dev.03|| set ENV_FILENAME=.env.dev.03&& node ./tools/builder/Main.js -target=dev",
     "prod": "export ENV_FILENAME=.env.production|| set ENV_FILENAME=.env.production&& node ./tools/builder/Main.js -target=prod",
+    "prod-01": "export ENV_FILENAME=.env.production.01|| set ENV_FILENAME=.env.production.01&& node ./tools/builder/Main.js -target=prod",
     "create-migration": "node ./src/backend/db/cli/CreateMigration.js",
     "dev-migrate-db-01": "export ENV_FILENAME=.env.dev.01|| set ENV_FILENAME=.env.dev.01&& node ./tools/builder/Main.js -target=dev -start-server=0 -webpack=0 -server=0 -watch=0&& node ./builds/dev/src/backend/db/cli/ExecuteMigrations.js",
     "dev-migrate-db-02": "export ENV_FILENAME=.env.dev.02|| set ENV_FILENAME=.env.dev.02&& node ./tools/builder/Main.js -target=dev -start-server=0 -webpack=0 -server=0 -watch=0&& node ./builds/dev/src/backend/db/cli/ExecuteMigrations.js",
