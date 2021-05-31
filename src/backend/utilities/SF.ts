@@ -1,6 +1,6 @@
+import SV from './SV';
 import Config from '../../../config/config';
 
-const SV = require('./SV');
 const crypto = require('crypto');
 const aesjs = require('aes-js');
 
