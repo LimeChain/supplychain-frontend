@@ -1,21 +1,49 @@
-FROM node:14-alpine
+FROM node:14-buster
 
-RUN apk add --no-cache make gcc g++ python
+# RUN apk add --no-cache make gcc g++ python shadow bash
+
+ARG USER_ID
+ARG USER_NAME
+ARG GROUP_ID
+ARG GROUP_NAME
+
+RUN if [ $USER_NAME != 'root' ]; then \
+        groupmod -g 2000 node; \
+        usermod -u 2000 -g 2000 node; \
+        addgroup -gid $GROUP_ID $GROUP_NAME; \
+        adduser --disabled-password -gecos "" -uid $USER_ID -gid $GROUP_ID $USER_NAME; \
+    fi
+
+# RUN apk add --no-cache make gcc g++ python
 
 WORKDIR /usr/src/app
 
-RUN chown node:node /usr/src/app
-RUN mkdir -p /usr/src/data
-RUN chown node:node /usr/src/data
+RUN mkdir -p /usr/src/app/node_modules && \
+    chown ${USER_NAME}:$GROUP_NAME /usr/src/app/node_modules && \
+    mkdir -p /usr/src/app/builds && \
+    chown ${USER_NAME}:$GROUP_NAME /usr/src/app/builds && \
+    mkdir -p /usr/src/data && \
+    chown ${USER_NAME}:$GROUP_NAME /usr/src/data
 
-USER node
+# RUN chown node:node /usr/src/app
+# RUN mkdir -p /usr/src/data
+# RUN chown node:node /usr/src/data
+
+# USER node
+
+# USER ${USER_NAME}:${GROUP_NAME}
 
 COPY ./package*.json ./
 
 RUN npm install
 
-USER root
+# USER root
 
-COPY --chown=node:node ./ ./
+# COPY --chown=node:node ./ ./
 
-CMD ["sh", "-c", "npm run dev-migrate-db-03&& npm run dev-03"]
+# CMD ["sh", "-c", "npm run dev-migrate-db-01&& npm run dev-01"]
+
+ENV USER_NAME=${USER_NAME}
+ENV GROUP_NAME=${GROUP_NAME}
+
+CMD ["sh", "-c", "chown -R ${USER_NAME}:${GROUP_NAME} /usr/src/data && su ${USER_NAME} -c \"npm run dev-migrate-db-03 && npm run dev-03\""]
