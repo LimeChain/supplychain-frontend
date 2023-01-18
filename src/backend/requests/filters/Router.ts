@@ -36,7 +36,13 @@ export default class Router {
     }
 
     static async onRequest(ctx) {
+        Logger.log('Request ');
         Router.processCtx(ctx);
+        Logger.log(`Request ${ctx.URL.pathname}`);
+
+        if ((await Router.healthCheck(ctx)) === true) {
+            return;
+        }
 
         let db: Database = null;
         try {
@@ -114,6 +120,14 @@ export default class Router {
         // load this values based on session
         ctx.TR_STRING = TR_EN;
         ctx.TR = TR.EN;
+    }
+
+    static async healthCheck(ctx) {
+        const url = ctx.URL.pathname;
+        if (url.indexOf('healthz') !== -1) {
+            return true;
+        }
+        return false;
     }
 
     static async processResources(ctx) {

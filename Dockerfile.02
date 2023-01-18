@@ -3,7 +3,7 @@ FROM node:14-alpine as builder
 ARG HTTP_PORT=8002
 ARG GRPC_PORT=8012
 
-RUN apk add --no-cache make gcc g++ python
+RUN apk add --no-cache make gcc g++ python3
 
 WORKDIR /usr/src/app
 
@@ -16,7 +16,7 @@ RUN npm install
 
 COPY --chown=node:node ./ /usr/src/app
 RUN mv /usr/src/app/config/.env.production.02 /usr/src/app/config/.env.production && cp /usr/src/app/config/.env.production /usr/src/app/config/.env
-RUN npm run prod
+RUN cat /usr/src/app/config/.env && npm run prod
 
 FROM node:14-alpine as runtime
 
@@ -32,7 +32,6 @@ USER node
 RUN cd /usr/src/app/builds/prod && npm install --only=prod
 
 USER root
-COPY --chown=node:node ./ ./
 
 EXPOSE ${HTTP_PORT}
 EXPOSE ${GRPC_PORT}

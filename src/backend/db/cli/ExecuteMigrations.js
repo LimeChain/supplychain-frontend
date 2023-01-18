@@ -1,3 +1,7 @@
 const ExecuteMigration = require('../utils/ExecuteMigration');
 
-ExecuteMigration.migrate();
+(async () => {
+    console.log('Start ExecuteMigration');
+    await ExecuteMigration.migrate();
+    console.log('Finish ExecuteMigration');
+})();

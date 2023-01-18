@@ -1,6 +1,5 @@
 FROM node:14-buster
 
-# RUN apk add --no-cache make gcc g++ python shadow bash
 
 ARG USER_ID
 ARG USER_NAME
@@ -14,7 +13,7 @@ RUN if [ $USER_NAME != 'root' ]; then \
         adduser --disabled-password -gecos "" -uid $USER_ID -gid $GROUP_ID $USER_NAME; \
     fi
 
-# RUN apk add --no-cache make gcc g++ python
+RUN apk add --no-cache make gcc g++ python3
 
 WORKDIR /usr/src/app
 

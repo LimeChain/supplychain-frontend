@@ -16,6 +16,8 @@ const MIGRATIONS = `${__dirname}/../migrations`;
 class ExecuteMigration {
 
     static async migrate() {
+        console.log(Config.Database.NAME);
+
         const intervalHandler = setInterval(async () => {
             const dbPool = new DatabasePool();
             let db = null;
@@ -23,11 +25,11 @@ class ExecuteMigration {
                 db = await dbPool.aquireConnection();
                 clearInterval(intervalHandler);
                 await ExecuteMigration.execute(db, MIGRATIONS);
+                console.log('Migration completed.');
             } catch (ex) {
                 console.log(Config.Database.HOST);
-                console.log('-------11------');
                 console.log(ex);
-                console.log('waiting for db to start migrations');
+                console.log('Waiting for db to start migrations');
                 // no database, so just wait for next execution
             } finally {
                 if (db !== null) {
